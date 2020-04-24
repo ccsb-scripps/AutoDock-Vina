@@ -65,6 +65,7 @@ qt angle_to_quaternion(const vec& axis, fl angle); // axis is assumed to be a un
 qt angle_to_quaternion(const vec& rotation); // rotation == angle * axis
 vec quaternion_to_angle(const qt& q);
 mat quaternion_to_r3(const qt& q);
+bool quaternion_is_normalized(const qt& q);
 
 inline fl quaternion_norm_sqr(const qt& q) { // equivalent to sqr(boost::math::abs(const qt&))
 	return sqr(q.R_component_1()) + sqr(q.R_component_2()) + sqr(q.R_component_3()) + sqr(q.R_component_4());
@@ -73,7 +74,7 @@ inline fl quaternion_norm_sqr(const qt& q) { // equivalent to sqr(boost::math::a
 inline void quaternion_normalize(qt& q) {
 	const fl s = quaternion_norm_sqr(q);
 	assert(eq(s, sqr(boost::math::abs(q))));
-    const fl a = std::sqrt(s);
+	const fl a = std::sqrt(s);
 	assert(a > epsilon_fl);
 	q *= 1/a;
 	assert(quaternion_is_normalized(q));
@@ -82,14 +83,14 @@ inline void quaternion_normalize(qt& q) {
 inline void quaternion_normalize_approx(qt& q, const fl tolerance = 1e-6) {
 	const fl s = quaternion_norm_sqr(q);
 	assert(eq(s, sqr(boost::math::abs(q))));
-    if(std::abs(s - 1) < tolerance)
-        ; // most likely scenario
-    else {
-        const fl a = std::sqrt(s);
-        assert(a > epsilon_fl);
-        q *= 1/a;
-        assert(quaternion_is_normalized(q));
-    }
+	if(std::abs(s - 1) < tolerance)
+		; // most likely scenario
+	else {
+		const fl a = std::sqrt(s);
+		assert(a > epsilon_fl);
+		q *= 1/a;
+		assert(quaternion_is_normalized(q));
+	}
 }
 
 qt random_orientation(rng& generator);
