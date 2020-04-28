@@ -16,8 +16,8 @@ LDFLAGS = -L$(BASE)/lib -L.
 # libboost_thread (e.g. macOS)
 threadmt=
 $(shell echo "int main(){ return 0; }" > linktest.cpp)
-$(shell $(GPP) $(LDFLAGS) -l boost_thread-mt linktest.cpp -o linktest &>/dev/null)
-ifneq ("$(wildcard ./linktest)","") # ./linktest exists, hence it compiled and libboost_thread-mt exists
+$(shell $(GPP) $(LDFLAGS) -l boost_thread-mt linktest.cpp -o linktest 2>&1 >/dev/null)
+ifneq ($(wildcard ./linktest),"") # ./linktest exists, hence it compiled and libboost_thread-mt exists
 threadmt=-mt
 $(shell rm ./linktest)
 endif
