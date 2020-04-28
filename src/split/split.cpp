@@ -35,10 +35,9 @@
 #include "file.h"
 #include "parse_error.h"
 
-using boost::filesystem::path;
-
 path make_path(const std::string& str) {
-	return path(str, boost::filesystem::native);
+    boost::filesystem::path p(str);
+	return p;
 }
 
 std::string default_prefix(const std::string& input_name, const std::string& add) {
@@ -208,7 +207,7 @@ Thank you!\n";
 		write_multimodel_pdbqt(tmp, ligand_prefix, flex_prefix);
 	}
 	catch(file_error& e) {
-		std::cerr << "\n\nError: could not open \"" << e.name.native_file_string() << "\" for " << (e.in ? "reading" : "writing") << ".\n";
+		std::cerr << "\n\nError: could not open \"" << e.name.string() << "\" for " << (e.in ? "reading" : "writing") << ".\n";
 		return 1;
 	}
 	catch(boost::filesystem::filesystem_error& e) {
@@ -220,7 +219,7 @@ Thank you!\n";
 		return 1;
 	}
 	catch(parse_error& e) {
-		std::cerr << "\n\nParse error on line " << e.line << " in file \"" << e.file.native_file_string() << "\": " << e.reason << '\n';
+		std::cerr << "\n\nParse error on line " << e.line << " in file \"" << e.file.string() << "\": " << e.reason << '\n';
 		return 1;
 	}
 	catch(std::bad_alloc&) {
