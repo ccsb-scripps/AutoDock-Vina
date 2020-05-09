@@ -229,7 +229,7 @@ const fl xs_vdw_radii[] = {
 	2.0, // Br_H
 	2.2, // I_H
 	1.2, // Met_D
-	1.1  // Si
+	2.2  // Si
 };
 
 inline fl xs_radius(sz t) {
