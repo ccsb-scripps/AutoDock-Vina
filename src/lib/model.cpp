@@ -411,6 +411,7 @@ void model::assign_types() {
 			case EL_TYPE_Br   : x = XS_TYPE_Br_H; break;
 			case EL_TYPE_I    : x = XS_TYPE_I_H; break;
 			case EL_TYPE_Met  : x = XS_TYPE_Met_D; break;
+			case EL_TYPE_Si   : x = XS_TYPE_Si; break;
 			case EL_TYPE_SIZE : break;
 			default: VINA_CHECK(false);
 		}

@@ -37,7 +37,8 @@ const sz EL_TYPE_Cl   =  7;
 const sz EL_TYPE_Br   =  8;
 const sz EL_TYPE_I    =  9;
 const sz EL_TYPE_Met  = 10;
-const sz EL_TYPE_SIZE = 11;
+const sz EL_TYPE_Si   = 11;
+const sz EL_TYPE_SIZE = 12;
 
 // AutoDock4
 const sz AD_TYPE_C    =  0;
@@ -60,7 +61,8 @@ const sz AD_TYPE_Ca   = 16;
 const sz AD_TYPE_Fe   = 17;
 const sz AD_TYPE_Cl   = 18;
 const sz AD_TYPE_Br   = 19;
-const sz AD_TYPE_SIZE = 20;
+const sz AD_TYPE_Si   = 20;
+const sz AD_TYPE_SIZE = 21;
 
 // X-Score
 const sz XS_TYPE_C_H   =  0;
@@ -80,7 +82,8 @@ const sz XS_TYPE_Cl_H  = 13;
 const sz XS_TYPE_Br_H  = 14;
 const sz XS_TYPE_I_H   = 15;
 const sz XS_TYPE_Met_D = 16;
-const sz XS_TYPE_SIZE  = 17;
+const sz XS_TYPE_Si    = 17;
+const sz XS_TYPE_SIZE  = 18;
 
 // DrugScore-CSD
 const sz SY_TYPE_C_3   =  0;
@@ -134,7 +137,8 @@ const atom_kind atom_kind_data[] = { // name, radius, depth, solvation parameter
 	{"Ca",    0.99000,    0.55000,   -0.00110,    2.77000,   1.74}, // 16
 	{"Fe",    0.65000,    0.01000,   -0.00110,    1.84000,   1.25}, // 17
 	{"Cl",    2.04500,    0.27600,   -0.00110,   35.82350,   0.99}, // 18
-	{"Br",    2.16500,    0.38900,   -0.00110,   42.56610,   1.14}  // 19
+	{"Br",    2.16500,    0.38900,   -0.00110,   42.56610,   1.14}, // 19
+	{"Si",    2.30000,    0.20000,   -0.00143,   50.96500,   1.11}, // 20
 };
 
 const fl metal_solvation_parameter = -0.00110;
@@ -200,6 +204,7 @@ inline sz ad_type_to_el_type(sz t) {
 		case AD_TYPE_Fe   : return EL_TYPE_Met;
 		case AD_TYPE_Cl   : return EL_TYPE_Cl;
 		case AD_TYPE_Br   : return EL_TYPE_Br;
+		case AD_TYPE_Si   : return EL_TYPE_Si;
 		case AD_TYPE_SIZE : return EL_TYPE_SIZE;
 		default: VINA_CHECK(false);
 	}
@@ -223,7 +228,8 @@ const fl xs_vdw_radii[] = {
 	1.8, // Cl_H
 	2.0, // Br_H
 	2.2, // I_H
-	1.2  // Met_D
+	1.2, // Met_D
+	1.1  // Si
 };
 
 inline fl xs_radius(sz t) {
