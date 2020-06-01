@@ -29,6 +29,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/exception.hpp>
 #include <boost/filesystem/convenience.hpp> // filesystem::basename
+#include <boost/python.hpp>
 #include <boost/thread/thread.hpp> // hardware_concurrency // FIXME rm ?
 #include "parse_pdbqt.h"
 #include "parallel_mc.h"
@@ -43,6 +44,17 @@
 #include "quasi_newton.h"
 #include "tee.h"
 #include "coords.h" // add_to_output_container
+
+char const* greet()
+{
+   return "Welcome to Vina python! :)";
+}
+
+BOOST_PYTHON_MODULE(vina)
+{
+    using namespace boost::python;
+    def("greet", greet);
+}
 
 path make_path(const std::string& str) {
     boost::filesystem::path p(str);
