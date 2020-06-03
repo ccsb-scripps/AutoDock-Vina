@@ -1,4 +1,4 @@
-LIBOBJ = cache.o coords.o current_weights.o everything.o grid.o szv_grid.o manifold.o model.o monte_carlo.o mutate.o my_pid.o naive_non_cache.o non_cache.o parallel_mc.o parse_pdbqt.o pdb.o quasi_newton.o quaternion.o random.o ssd.o terms.o weighted_terms.o
+LIBOBJ = cache.o coords.o current_weights.o everything.o grid.o szv_grid.o manifold.o model.o monte_carlo.o mutate.o my_pid.o naive_non_cache.o non_cache.o parallel_mc.o parse_pdbqt.o pdb.o quasi_newton.o quaternion.o random.o ssd.o terms.o weighted_terms.o python.o utils.o vina.o
 MAINOBJ = main.o
 SPLITOBJ = split.o
 

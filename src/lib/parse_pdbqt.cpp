@@ -20,18 +20,8 @@
 
 */
 
-#include <fstream> // for getline ?
-#include <sstream> // in parse_two_unsigneds
-#include <cctype> // isspace
-#include <boost/utility.hpp> // for noncopyable 
-#include <boost/optional.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/lexical_cast.hpp>
 #include "parse_pdbqt.h"
-#include "atom_constants.h"
-#include "file.h"
-#include "convert_substring.h"
-#include "parse_error.h"
+
 
 struct stream_parse_error {
 	unsigned line;
@@ -615,10 +605,10 @@ struct pdbqt_initializer {
 	}
 };
 
-model parse_ligand_pdbqt  (const path& name) { // can throw parse_error
+model parse_ligand_pdbqt(const std::string& name) { // can throw parse_error
 	non_rigid_parsed nrp;
 	context c;
-	parse_pdbqt_ligand(name, nrp, c);
+	parse_pdbqt_ligand(make_path(name), nrp, c);
 
 	pdbqt_initializer tmp;
 	tmp.initialize_from_nrp(nrp, c, true);
@@ -626,12 +616,23 @@ model parse_ligand_pdbqt  (const path& name) { // can throw parse_error
 	return tmp.m;
 }
 
-model parse_receptor_pdbqt(const path& rigid_name, const path& flex_name) { // can throw parse_error
+model parse_ligand_pdbqt(const std::vector<std::string>& name) { // can throw parse_error
+	VINA_CHECK(!name.empty()); // FIXME check elsewhere
+    
+    model tmp = parse_ligand_pdbqt(name[0]);
+    
+    VINA_RANGE(i, 1, name.size())
+        tmp.append(parse_ligand_pdbqt(name[i]));
+    
+    return tmp;
+}
+
+model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& flex_name) { // can throw parse_error
 	rigid r;
 	non_rigid_parsed nrp;
 	context c;
-	parse_pdbqt_rigid(rigid_name, r);
-	parse_pdbqt_flex(flex_name, nrp, c);
+	parse_pdbqt_rigid(make_path(rigid_name), r);
+	parse_pdbqt_flex(make_path(flex_name), nrp, c);
 
 	pdbqt_initializer tmp;
 	tmp.initialize_from_rigid(r);
@@ -640,9 +641,9 @@ model parse_receptor_pdbqt(const path& rigid_name, const path& flex_name) { // c
 	return tmp.m;
 }
 
-model parse_receptor_pdbqt(const path& rigid_name) { // can throw parse_error
+model parse_receptor_pdbqt(const std::string& rigid_name) { // can throw parse_error
 	rigid r;
-	parse_pdbqt_rigid(rigid_name, r);
+	parse_pdbqt_rigid(make_path(rigid_name), r);
 
 	pdbqt_initializer tmp;
 	tmp.initialize_from_rigid(r);

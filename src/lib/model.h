@@ -167,6 +167,10 @@ struct model {
 
 	fl clash_penalty() const;
 
+	// Had to move it from private to public to make it work. 
+	// So we might have to fix that later
+	model() : m_num_movable_atoms(0), m_atom_typing_used(atom_type::XS) {};
+
 private:
 	friend struct non_cache;
 	friend struct naive_non_cache;
@@ -177,8 +181,6 @@ private:
 	friend struct appender_info;
 	friend struct pdbqt_initializer;
 	friend struct model_test;
-
-	model() : m_num_movable_atoms(0), m_atom_typing_used(atom_type::XS) {};
 
 	const atom& get_atom(const atom_index& i) const { return (i.in_grid ? grid_atoms[i.i] : atoms[i.i]); }
 	      atom& get_atom(const atom_index& i)       { return (i.in_grid ? grid_atoms[i.i] : atoms[i.i]); }
