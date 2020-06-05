@@ -109,6 +109,7 @@ struct precalculate_element {
 };
 
 struct precalculate {
+	precalculate() {}
 	precalculate(const scoring_function& sf, fl v = max_fl, fl factor_ = 32) : // sf should not be discontinuous, even near cutoff, for the sake of the derivatives
 		m_cutoff_sqr(sqr(sf.cutoff())),
 		n(sz(factor_ * m_cutoff_sqr) + 3),  // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below

@@ -28,6 +28,7 @@
 #include "array3d.h"
 
 struct szv_grid {
+  szv_grid() {}
 	szv_grid(const model& m, const grid_dims& gd, fl cutoff_sqr);
 	const szv& possibilities(const vec& coords) const;
 	fl average_num_possibilities() const;

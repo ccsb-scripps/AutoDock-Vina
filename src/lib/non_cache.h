@@ -27,6 +27,7 @@
 #include "szv_grid.h"
 
 struct non_cache : public igrid {
+  non_cache() {}
 	non_cache(const model& m, const grid_dims& gd_, const precalculate* p_, fl slope_);
 	virtual fl eval      (const model& m, fl v) const; // needs m.coords // clean up
 	virtual fl eval_deriv(      model& m, fl v) const; // needs m.coords, sets m.minus_forces // clean up

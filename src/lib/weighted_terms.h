@@ -26,13 +26,13 @@
 #include "terms.h"
 
 struct weighted_terms : public scoring_function {
+  weighted_terms() {}
 	weighted_terms(const terms* t, const flv& weights); // does not own t
 	atom_type::t atom_typing_used() const { return atom_typing_used_; }
 	fl cutoff() const { return cutoff_; }
 	fl eval(sz t1, sz t2, fl r) const; // intentionally not checking for cutoff
 	fl conf_independent(const model& m, fl e) const;
 private:
-	weighted_terms() {}
 	const terms* t;
 	flv weights;
 	atom_type::t atom_typing_used_;
