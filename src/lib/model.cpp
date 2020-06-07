@@ -647,17 +647,16 @@ fl model::evale(const precalculate& p, const igrid& ig, const vec& v            
 	return e;
 }
 
-fl model::eval         (const precalculate& p, const igrid& ig, const vec& v, const conf& c           ) { // clean up
-	set(c);
+fl model::eval(const precalculate& p, const igrid& ig, const vec& v) { // clean up
 	fl e = evale(p, ig, v);
 	VINA_FOR_IN(i, ligands) 
 		e += eval_interacting_pairs(p, v[0], ligands[i].pairs, coords); // coords instead of internal coords
 	return e;
 }
 
-fl model::eval_deriv  (const precalculate& p, const igrid& ig, const vec& v, const conf& c, change& g) { // clean up
-	set(c);
+fl model::eval_deriv  (const precalculate& p, const igrid& ig, const vec& v, change& g) { // clean up
 	fl e = ig.eval_deriv(*this, v[1]); // sets minus_forces, except inflex
+
 	e += eval_interacting_pairs_deriv(p, v[2], other_pairs, coords, minus_forces); // adds to minus_forces
 	VINA_FOR_IN(i, ligands)
 		e += eval_interacting_pairs_deriv(p, v[0], ligands[i].pairs, coords, minus_forces); // adds to minus_forces
@@ -667,16 +666,14 @@ fl model::eval_deriv  (const precalculate& p, const igrid& ig, const vec& v, con
 	return e;
 }
 
-fl model::eval_intramolecular(const precalculate& p, const vec& v, const conf& c) {
-	set(c);
+fl model::eval_intramolecular(const precalculate& p, const vec& v) {
 	fl e = 0;
+	sz nat = num_atom_types(atom_typing_used());
+	const fl cutoff_sqr = p.cutoff_sqr();
 
 	// internal for each ligand
 	VINA_FOR_IN(i, ligands)
 		e += eval_interacting_pairs(p, v[0], ligands[i].pairs, coords); // coords instead of internal coords
-
-	sz nat = num_atom_types(atom_typing_used());
-	const fl cutoff_sqr = p.cutoff_sqr();
 
 	// flex-rigid
 	VINA_FOR(i, num_movable_atoms()) {
@@ -709,11 +706,12 @@ fl model::eval_intramolecular(const precalculate& p, const vec& v, const conf& c
 			e += this_e;
 		}
 	}
+
 	return e;
 }
 
-fl model::eval_adjusted      (const scoring_function& sf, const precalculate& p, const igrid& ig, const vec& v, const conf& c, fl intramolecular_energy) {
-	fl e = eval(p, ig, v, c); // sets c
+fl model::eval_adjusted      (const scoring_function& sf, const precalculate& p, const igrid& ig, const vec& v, fl intramolecular_energy) {
+	fl e = eval(p, ig, v); // sets c
 	return sf.conf_independent(*this, e - intramolecular_energy);
 }
 
@@ -843,12 +841,12 @@ void model::print_stuff() const {
 		std::cout << a.bonds.size() << "  "; printnl(a.coords);
 	}
 
-	std::cout << "grid_atoms:\n";
+	/*std::cout << "grid_atoms:\n";
 	VINA_FOR_IN(i, grid_atoms) {
 		const atom& a = grid_atoms[i];
 		std::cout << a.el << " " << a.ad << " " << a.xs << " " << a.sy << "    " << a.charge << '\n';
 		std::cout << a.bonds.size() << "  "; printnl(a.coords);
-	}
+	}*/
 	about();
 }
 

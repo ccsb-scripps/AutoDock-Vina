@@ -54,17 +54,11 @@
 
 class Vina {
 public:
-    Vina(bool score_only = false, bool local_only = false, bool randomize_only = false, int cpu = 0, 
-         int seed = 0, int exhaustiveness = 8, sz num_modes = 9, fl energy_range = 3.0, 
-         bool no_cache = false, int verbosity = 2) {
-        m_score_only = score_only;
-        m_local_only = local_only;
-        m_randomize_only = randomize_only;
+    Vina(int exhaustiveness=8, int cpu=0, int seed=0, bool no_cache=false, int verbosity=2) {
         m_exhaustiveness = exhaustiveness;
-        m_num_modes = num_modes;
-        m_energy_range = energy_range;
         m_no_cache = no_cache;
         m_verbosity = verbosity;
+        m_receptor_initialized = false;
 
         // Generate seed
         if (seed == 0) {
@@ -87,19 +81,8 @@ public:
             m_cpu = cpu;
         }
 
-        // Default VINA weigths
-        fl weight_gauss1      = -0.035579;
-        fl weight_gauss2      = -0.005156;
-        fl weight_repulsion   =  0.840245;
-        fl weight_hydrophobic = -0.035069;
-        fl weight_hydrogen    = -0.587439;
-        fl weight_rot         =  0.05846;
-        m_weights.push_back(weight_gauss1);
-        m_weights.push_back(weight_gauss2);
-        m_weights.push_back(weight_repulsion);
-        m_weights.push_back(weight_hydrophobic);
-        m_weights.push_back(weight_hydrogen);
-        m_weights.push_back(5 * weight_rot / 0.1 - 1);
+        // Set default weights
+        set_weights();
     }
 
     void set_receptor(const std::string& rigid_name);
@@ -107,38 +90,42 @@ public:
     void set_ligand(const std::string& ligand_name);
     void set_ligand(const std::vector<std::string>& ligand_name);
     void set_box(double center_x, double center_y, double center_z, int size_x, int size_y, int size_z, double granularity);
-    void set_weights(flv weigths);
-    void run(const std::string& out_name);
+    void set_weights(const double weight_gauss1=-0.035579, const double weight_gauss2=-0.005156, 
+                     const double weight_repulsion=0.840245, const double weight_hydrophobic=-0.035069, 
+                     const double weight_hydrogen=-0.587439, const double weight_rot=0.05846);
+    void set_forcefield();
+    void compute_grid();
+    void randomize(const int max_steps=10000);
+    void score_robust();
+    double score();
+    void optimize(const int max_steps=0);
+    void refine_structure(output_type& out, const int max_steps=0);
+    void global_search(const int n_poses=20, const double min_rmsd=1.0);
+    void write_results(const std::string& output_name, const int how_many=9, const double energy_range=3.0);
+    void write_pose(const std::string& output_name, const std::string& remark=std::string());
 
 private:
-    model m_m;
+    model m_model;
     grid_dims m_gd;
     flv m_weights;
+    vec m_corner1;
+    vec m_corner2;
+    cache m_grid;
+    parallel_mc m_parallelmc;
+    weighted_terms m_scoring_function;
+    precalculate m_precalculated_sf;
+    non_cache m_nc;
+    output_container m_poses;
     int m_cpu; 
     int m_seed; 
     int m_verbosity;
     int m_exhaustiveness;
-    bool m_local_only; 
-    bool m_score_only;
-    bool m_randomize_only;
     bool m_no_cache;
-    sz m_num_modes;
-    fl m_energy_range;
+    bool m_receptor_initialized;
     tee m_log;
 
-    void write_all_output(model& m, const output_container& out, sz how_many, 
-                          const std::string& output_name, const std::vector<std::string>& remarks);
-    void do_randomization(model& m, const std::string& out_name, const vec& corner1, 
-                          const vec& corner2, int seed, int verbosity, tee& log);
-    void refine_structure(model& m, const precalculate& prec, non_cache& nc, output_type& out, 
-                          const vec& cap, sz max_step);
     std::string vina_remark(fl e, fl lb, fl ub);
     output_container remove_redundant(const output_container& in, fl min_rmsd);
-    void do_search(model& m, const scoring_function& sf, const precalculate& prec, 
-                   const igrid& ig, const precalculate& prec_widened, const igrid& ig_widened, non_cache& nc, // nc.slope is changed
-                   const std::string& out_name, const vec& corner1, const vec& corner2, const parallel_mc& par, 
-                   fl energy_range, sz num_modes, int seed, int verbosity, bool score_only, bool local_only, 
-                   tee& log, const terms& t, const flv& weights);
 };
 
 

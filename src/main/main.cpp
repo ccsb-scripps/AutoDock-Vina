@@ -107,18 +107,18 @@ Thank you!\n";
 		std::string rigid_name, ligand_name, flex_name, config_name, out_name, log_name;
 		double center_x, center_y, center_z; 
 		int size_x, size_y, size_z;
-		int cpu = 0, seed, exhaustiveness, verbosity = 2, num_modes = 9;
-		fl energy_range = 2.0;
+		int cpu = 0, seed, exhaustiveness = 8, verbosity = 2, num_modes = 9;
+		double energy_range = 2.0;
 		double granularity = 0.375;
 		bool no_cache = false;
 
 		// -0.035579, -0.005156, 0.840245, -0.035069, -0.587439, 0.05846
-		fl weight_gauss1      = -0.035579;
-		fl weight_gauss2      = -0.005156;
-		fl weight_repulsion   =  0.840245;
-		fl weight_hydrophobic = -0.035069;
-		fl weight_hydrogen    = -0.587439;
-		fl weight_rot         =  0.05846;
+		double weight_gauss1      = -0.035579;
+		double weight_gauss2      = -0.005156;
+		double weight_repulsion   =  0.840245;
+		double weight_hydrophobic = -0.035069;
+		double weight_hydrogen    = -0.587439;
+		double weight_rot         =  0.05846;
 		bool score_only = false, local_only = false, randomize_only = false, help = false, help_advanced = false, version = false; // FIXME
 
 		positional_options_description positional; // remains empty
@@ -150,12 +150,12 @@ Thank you!\n";
 			("score_only",     bool_switch(&score_only),     "score only - search space can be omitted")
 			("local_only",     bool_switch(&local_only),     "do local search only")
 			("randomize_only", bool_switch(&randomize_only), "randomize input, attempting to avoid clashes")
-			("weight_gauss1", value<fl>(&weight_gauss1)->default_value(weight_gauss1),                "gauss_1 weight")
-			("weight_gauss2", value<fl>(&weight_gauss2)->default_value(weight_gauss2),                "gauss_2 weight")
-			("weight_repulsion", value<fl>(&weight_repulsion)->default_value(weight_repulsion),       "repulsion weight")
-			("weight_hydrophobic", value<fl>(&weight_hydrophobic)->default_value(weight_hydrophobic), "hydrophobic weight")
-			("weight_hydrogen", value<fl>(&weight_hydrogen)->default_value(weight_hydrogen),          "Hydrogen bond weight")
-			("weight_rot", value<fl>(&weight_rot)->default_value(weight_rot),                         "N_rot weight")
+			("weight_gauss1", value<double>(&weight_gauss1)->default_value(weight_gauss1),                "gauss_1 weight")
+			("weight_gauss2", value<double>(&weight_gauss2)->default_value(weight_gauss2),                "gauss_2 weight")
+			("weight_repulsion", value<double>(&weight_repulsion)->default_value(weight_repulsion),       "repulsion weight")
+			("weight_hydrophobic", value<double>(&weight_hydrophobic)->default_value(weight_hydrophobic), "hydrophobic weight")
+			("weight_hydrogen", value<double>(&weight_hydrogen)->default_value(weight_hydrogen),          "Hydrogen bond weight")
+			("weight_rot", value<double>(&weight_rot)->default_value(weight_rot),                         "N_rot weight")
 		;
 		options_description misc("Misc (optional)");
 		misc.add_options()
@@ -163,7 +163,7 @@ Thank you!\n";
 			("seed", value<int>(&seed), "explicit random seed")
 			("exhaustiveness", value<int>(&exhaustiveness)->default_value(8), "exhaustiveness of the global search (roughly proportional to time): 1+")
 			("num_modes", value<int>(&num_modes)->default_value(9), "maximum number of binding modes to generate")
-			("energy_range", value<fl>(&energy_range)->default_value(3.0), "maximum energy difference between the best binding mode and the worst one displayed (kcal/mol)")
+			("energy_range", value<double>(&energy_range)->default_value(3.0), "maximum energy difference between the best binding mode and the worst one displayed (kcal/mol)")
 		;
 		options_description config("Configuration file (optional)");
 		config.add_options()
@@ -303,21 +303,13 @@ Thank you!\n";
 		doing(verbosity, "Reading input", log);
 		done(verbosity, log);
 
-		flv weights;
-		weights.push_back(weight_gauss1);
-		weights.push_back(weight_gauss2);
-		weights.push_back(weight_repulsion);
-		weights.push_back(weight_hydrophobic);
-		weights.push_back(weight_hydrogen);
-		weights.push_back(5 * weight_rot / 0.1 - 1); // linearly maps onto a different range, internally. see everything.cpp
-
-		Vina v(score_only, local_only, randomize_only, cpu, seed, exhaustiveness, 
-			   max_modes_sz, energy_range, no_cache, verbosity);
+		Vina v(exhaustiveness, cpu, seed, no_cache, verbosity);
 		v.set_receptor(rigid_name, flex_name);
 		v.set_ligand(ligand_name);
 		v.set_box(size_x, size_y, size_z, center_x, center_y, center_z, granularity);
-		v.set_weights(weights);
-		v.run(out_name);
+		v.set_weights(weight_gauss1, weight_gauss2, weight_repulsion, weight_hydrophobic, weight_hydrogen, weight_rot);
+		v.global_search();
+		v.write_results(out_name, num_modes, energy_range);
 
 	}
 	catch(file_error& e) {

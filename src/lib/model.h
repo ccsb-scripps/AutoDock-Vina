@@ -69,6 +69,10 @@ struct pdbqt_initializer; // forward declaration - only declared in parse_pdbqt.
 struct model_test;
 
 struct model {
+	// Had to move it from private to public to make it work. 
+	// So we might have to fix that later
+	model() : m_num_movable_atoms(0), m_atom_typing_used(atom_type::XS) {}
+	
 	void append(const model& m);
 	atom_type::t atom_typing_used() const { return m_atom_typing_used; }
 
@@ -122,13 +126,13 @@ struct model {
 	distance_type distance_type_between(const distance_type_matrix& mobility, const atom_index& i, const atom_index& j) const;
 
 	// clean up
-	fl evali     (const precalculate& p,                  const vec& v                          ) const;
-	fl evale     (const precalculate& p, const igrid& ig, const vec& v                          ) const;
-	fl eval      (const precalculate& p, const igrid& ig, const vec& v, const conf& c           );
-	fl eval_deriv(const precalculate& p, const igrid& ig, const vec& v, const conf& c, change& g);
+	fl evali     (const precalculate& p,                  const vec& v           ) const;
+	fl evale     (const precalculate& p, const igrid& ig, const vec& v           ) const;
+	fl eval      (const precalculate& p, const igrid& ig, const vec& v           );
+	fl eval_deriv(const precalculate& p, const igrid& ig, const vec& v, change& g);
 
-	fl eval_intramolecular(                            const precalculate& p,                  const vec& v, const conf& c);
-	fl eval_adjusted      (const scoring_function& sf, const precalculate& p, const igrid& ig, const vec& v, const conf& c, fl intramolecular_energy);
+	fl eval_intramolecular(                            const precalculate& p,                  const vec& v                          );
+	fl eval_adjusted      (const scoring_function& sf, const precalculate& p, const igrid& ig, const vec& v, fl intramolecular_energy);
 
 
 	fl rmsd_lower_bound(const model& m) const; // uses coords
@@ -166,10 +170,6 @@ struct model {
 	void print_stuff() const; // FIXME rm
 
 	fl clash_penalty() const;
-
-	// Had to move it from private to public to make it work. 
-	// So we might have to fix that later
-	model() : m_num_movable_atoms(0), m_atom_typing_used(atom_type::XS) {};
 
 private:
 	friend struct non_cache;

@@ -39,12 +39,19 @@ BOOST_PYTHON_MODULE(vina)
     using namespace boost::python;
 
     class_<Vina>("Vina")
-        .def("run", &Vina::run)
+        .def("global_search", &Vina::global_search)
         .def("set_receptor", set_receptor_1)
         .def("set_receptor", set_receptor_2)
         .def("set_ligand", set_ligand_1)
         .def("set_ligand", set_ligand_2)
         .def("set_box", &Vina::set_box)
         .def("set_weights", &Vina::set_weights)
+        .def("randomize", &Vina::randomize)
+        .def("optimize", &Vina::optimize)
+        .def("score", &Vina::score)
+        .def("compute_grid", &Vina::compute_grid)
+        .def("set_forcefield", &Vina::set_forcefield)
+        .def("write_results", &Vina::write_results)
+        .def("write_pose", &Vina::write_pose)
     ;
 }

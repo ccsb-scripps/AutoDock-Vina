@@ -24,22 +24,26 @@
 
 // clean up
 void ssd::operator()(model& m, const precalculate& p, const igrid& ig, output_type& out, change& g, const vec& v) const { // g must have correct size
-	out.e = m.eval_deriv(p, ig, v, out.c, g);
-	fl factor = initial_factor;
-	VINA_U_FOR(i, evals) {
-		if(factor < min_factor) break;
-		output_type candidate(out);
-		candidate.c.increment(g, -factor);
-		change candidate_g(g); 
-		candidate.e = m.eval_deriv(p, ig, v, candidate.c, candidate_g);
-		if(candidate.e <= out.e) {
-			out = candidate;
-			g = candidate_g;
-			factor *= up;
-		}
-		else {
-			factor *= down;
-		}
-	}
-	out.coords = m.get_heavy_atom_movable_coords();
+    fl factor = initial_factor;
+
+    out.e = m.eval_deriv(p, ig, v, g);
+    
+    VINA_U_FOR(i, evals) {
+        if(factor < min_factor) break;
+        
+        output_type candidate(out);
+        candidate.c.increment(g, -factor);
+        change candidate_g(g); 
+        candidate.e = m.eval_deriv(p, ig, v, candidate_g);
+        
+        if(candidate.e <= out.e) {
+            out = candidate;
+            g = candidate_g;
+            factor *= up;
+        } else {
+            factor *= down;
+        }
+    }
+    
+    out.coords = m.get_heavy_atom_movable_coords();
 }
