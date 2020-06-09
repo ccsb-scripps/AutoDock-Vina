@@ -6,8 +6,10 @@ SPLITOBJ = split.o
 PYINCFLAGS = $(shell python${PYTHON_VERSION}-config --includes)
 PYLDFLAGS = -L$(shell python${PYTHON_VERSION}-config --exec-prefix)/lib
 PYLIBFLAGS = -l boost_python$(subst .,,$(PYTHON_VERSION)) # Version of python without the dot
+# OpenBabel
+OBINCFLAGS = $(shell python${PYTHON_VERSION}-config --exec-prefix)/include/openbabel3
 
-INCFLAGS = -I $(BOOST_INCLUDE) -I $(PYINCFLAGS)
+INCFLAGS = -I $(BOOST_INCLUDE) -I $(PYINCFLAGS) -I $(OBINCFLAGS)
 
 # -pedantic fails on Mac with Boost 1.41 (syntax problems in their headers)
 #CC = ${GPP} ${C_PLATFORM} -ansi -pedantic -Wno-long-long ${C_OPTIONS} $(INCFLAGS)

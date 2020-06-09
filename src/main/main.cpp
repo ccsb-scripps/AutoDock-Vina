@@ -307,6 +307,7 @@ Thank you!\n";
 		v.set_receptor(rigid_name, flex_name);
 		v.set_ligand(ligand_name);
 		v.set_box(size_x, size_y, size_z, center_x, center_y, center_z, granularity);
+		v.compute_vina_grid();
 		v.set_weights(weight_gauss1, weight_gauss2, weight_repulsion, weight_hydrophobic, weight_hydrogen, weight_rot);
 		v.global_search();
 		v.write_results(out_name, num_modes, energy_range);
