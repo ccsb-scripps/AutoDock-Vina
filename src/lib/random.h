@@ -23,6 +23,7 @@
 #ifndef VINA_RANDOM_H
 #define VINA_RANDOM_H
 
+#include <random>
 #include <boost/random.hpp>
 #include "common.h"
 

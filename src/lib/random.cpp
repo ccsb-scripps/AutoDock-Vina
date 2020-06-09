@@ -82,6 +82,15 @@ vec random_in_box(const vec& corner1, const vec& corner2, rng& generator) { // e
 	return tmp;
 }
 
-int auto_seed() { // make seed from PID and time
-	return my_pid() * int(std::time(NULL));
+int auto_seed() {
+    // Seed generator, fix previous seed generator based on PID and time
+    // Source: https://stackoverflow.com/questions/22883840/c-get-random-number-from-0-to-max-long-long-integer
+    std::random_device rd; // Get a random seed from the OS entropy device, or whatever
+    std::mt19937_64 eng(rd()); // Use the 64-bit Mersenne Twister 19937 generator
+                               // and seed it with entropy.
+
+    // Define the distribution, by default it goes from 0 to MAX(unsigned int)
+    // or what have you.
+    std::uniform_int_distribution<unsigned int> distr;
+    return distr(eng);
 }
