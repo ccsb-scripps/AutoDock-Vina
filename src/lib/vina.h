@@ -52,10 +52,9 @@
 #include "utils.h"
 #include <openbabel/mol.h>
 
-using namespace OpenBabel;
-
 class Vina {
 public:
+    // Constructor
     Vina(int exhaustiveness=8, int cpu=0, int seed=0, bool no_cache=false, int verbosity=2) {
         m_exhaustiveness = exhaustiveness;
         m_no_cache = no_cache;
@@ -86,6 +85,8 @@ public:
         // Set default weights
         set_weights();
     }
+    // Destructor
+    virtual ~Vina();
 
     void set_receptor(const std::string& rigid_name);
     void set_receptor(const std::string& rigid_name, const std::string& flex_name);
@@ -106,10 +107,10 @@ public:
     void write_results(const std::string& output_name, const int how_many=9, const double energy_range=3.0);
     void write_pose(const std::string& output_name, const std::string& remark=std::string());
     void set_obmol(OpenBabel::OBMol mol);
-    OBMol get_obmol();
+    OpenBabel::OBMol get_obmol();
 
 private:
-    OBMol m_mol;
+    OpenBabel::OBMol m_mol;
     // model and poses
     model m_receptor;
     model m_model;

@@ -86,7 +86,7 @@ void Vina::set_obmol(OpenBabel::OBMol mol) {
     m_mol = mol;
 }
 
-OBMol Vina::get_obmol() {
+OpenBabel::OBMol Vina::get_obmol() {
     return m_mol;
 }
 
@@ -533,4 +533,37 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
 
     // Store results in Vina object
     m_poses = poses;
+}
+
+
+Vina::~Vina() {
+    OpenBabel::OBMol m_mol;
+    // model and poses
+    model m_receptor;
+    model m_model;
+    cache m_grid;
+    output_container m_poses;
+    bool m_receptor_initialized;
+    bool m_ligand_initialized;
+    // scoring function
+    flv m_weights;
+    non_cache m_nc;
+    weighted_terms m_scoring_function;
+    precalculate m_precalculated_sf;
+    bool m_ff_initialized;
+    // maps
+    grid_dims m_gd;
+    vec m_corner1;
+    vec m_corner2;
+    bool m_no_cache;
+    bool m_box_initialized;
+    bool m_grid_initialized;
+    // global search
+    parallel_mc m_parallelmc;
+    int m_cpu;
+    int m_seed;
+    int m_exhaustiveness;
+    // others
+    int m_verbosity;
+    tee m_log;
 }
