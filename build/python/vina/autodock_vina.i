@@ -1,0 +1,104 @@
+%define DOCSTRING
+"#################################################################\n\
+# If you used AutoDock Vina in your work, please cite:          #\n\
+#                                                               #\n\
+# O. Trott, A. J. Olson,                                        #\n\
+# AutoDock Vina: improving the speed and accuracy of docking    #\n\
+# with a new scoring function, efficient optimization and       #\n\
+# multithreading, Journal of Computational Chemistry 31 (2010)  #\n\
+# 455-461                                                       #\n\
+#                                                               #\n\
+# DOI 10.1002/jcc.21334                                         #\n\
+#                                                               #\n\
+# Please see http://vina.scripps.edu for more information.      #\n\
+#################################################################\n"
+%enddef
+
+%module(docstring=DOCSTRING, package="vina") vina
+
+%begin %{
+#define SWIG_PYTHON_2_UNICODE
+//#define SWIG_FILE_WITH_INIT
+%}
+
+%{
+#include "array3d.h"
+#include "atom_base.h"
+#include "atom_constants.h"
+#include "atom.h"
+#include "atom_type.h"
+#include "bfgs.h"
+#include "brick.h"
+#include "cache.h"
+#include "common.h"
+#include "conf.h"
+#include "convert_substring.h"
+#include "coords.h"
+#include "curl.h"
+#include "current_weights.h"
+#include "everything.h"
+#include "file.h"
+#include "grid_dim.h"
+#include "grid.h"
+#include "igrid.h"
+#include "incrementable.h"
+#include "int_pow.h"
+#include "macros.h"
+#include "manifold.h"
+#include "matrix.h"
+#include "model.h"
+#include "monte_carlo.h"
+#include "mutate.h"
+#include "my_pid.h"
+#include "naive_non_cache.h"
+#include "non_cache.h"
+#include "parallel.h"
+#include "parallel_mc.h"
+#include "parallel_progress.h"
+#include "parse_error.h"
+#include "parse_pdbqt.h"
+#include "pdb.h"
+#include "precalculate.h"
+#include "quasi_newton.h"
+#include "quaternion.h"
+#include "random.h"
+#include "recent_history.h"
+#include "scoring_function.h"
+#include "ssd.h"
+#include "statistics.h"
+#include "szv_grid.h"
+#include "tee.h"
+#include "terms.h"
+#include "tree.h"
+#include "triangular_matrix_index.h"
+#include "utils.h"
+#include "weighted_terms.h"
+%}
+
+// Set and reset dlopenflags so that plugin loading works fine for "import _openbabel"
+%pythonbegin %{
+import sys
+if sys.platform.find("linux") != -1:
+    dlflags = sys.getdlopenflags()
+    import ctypes
+    sys.setdlopenflags(dlflags | ctypes.RTLD_GLOBAL)
+%}
+%pythoncode %{
+if sys.platform.find("linux") != -1:
+    sys.setdlopenflags(dlflags)
+%}
+
+// Add standard C++ library
+%include "std_array.i"
+%include "std_list.i"
+%include "std_map.i"
+%include "std_vector.i"
+%include "std_string.i"
+
+// Add numpy
+//%include "numpy.i"
+//%init %{
+//import_array();
+//%}
+
+%include "vina.i"
