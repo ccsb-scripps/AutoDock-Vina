@@ -1,0 +1,18 @@
+#!/bin/bash
+
+ligand="10gs"
+
+# @Jerome: the ../$ligand is for you to be able to extend the script later (it used to be ../data/$ligand)
+center_x=`paste -d" " - - - < ../$ligand/protein.maps.xyz | awk '{print \$1+(\$2-\$1)/2}'`
+center_y=`paste -d" " - - - < ../$ligand/protein.maps.xyz | awk '{print \$3+(\$4-\$3)/2}'`
+center_z=`paste -d" " - - - < ../$ligand/protein.maps.xyz | awk '{print \$5+(\$6-\$5)/2}'`
+
+size_x=`paste -d" " - - - < ../$ligand/protein.maps.xyz | awk '{print \$2-\$1}'`
+size_y=`paste -d" " - - - < ../$ligand/protein.maps.xyz | awk '{print \$4-\$3}'`
+size_z=`paste -d" " - - - < ../$ligand/protein.maps.xyz | awk '{print \$6-\$5}'`
+
+		{ time ../vina --ligand ..//$ligand/flex-xray.pdbqt \
+		--receptor ..//$ligand/protein.pdbqt --exhaustiveness 32\
+		--center_x $center_x --center_y $center_y --center_z $center_z \
+		--size_x $size_x --size_y $size_y --size_z $size_z --out vina-${ligand}.pdbqt ; } > vina-${ligand}.out 2>&1
+

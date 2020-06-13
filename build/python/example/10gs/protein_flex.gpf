@@ -1,0 +1,18 @@
+npts 80 80 80                        # num.grid points in xyz
+gridfld protein_flex.maps.fld        # grid_data_file
+spacing 0.375                        # spacing(A)
+receptor_types A C NA OA N S SA HD   # receptor atom types
+ligand_types A C OA N S SA HD        # ligand atom types
+receptor protein_rigid.pdbqt         # macromolecule
+gridcenter   10.472    6.967   27.934 # xyz-coordinates or auto
+smooth 0.5                           # store minimum energy w/in rad(A)
+map protein_flex.A.map               # atom-specific affinity map
+map protein_flex.C.map               # atom-specific affinity map
+map protein_flex.OA.map              # atom-specific affinity map
+map protein_flex.N.map               # atom-specific affinity map
+map protein_flex.S.map               # atom-specific affinity map
+map protein_flex.SA.map              # atom-specific affinity map
+map protein_flex.HD.map              # atom-specific affinity map
+elecmap protein_flex.e.map           # electrostatic potential map
+dsolvmap protein_flex.d.map          # desolvation potential map
+dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant

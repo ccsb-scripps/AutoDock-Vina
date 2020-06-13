@@ -1,0 +1,41 @@
+HETATM    1  CA1 GSH A 210      14.820  10.124  24.553  1.00 73.72      C    C  
+HETATM    2  CA2 GSH A 210      10.345   7.036  27.698  1.00 75.19      C    C  
+HETATM    3  CA3 GSH A 210       7.932   8.116  30.417  1.00 74.66      C    C  
+HETATM    4  CB1 GSH A 210      13.422   9.543  24.740  1.00 74.00      C    C  
+HETATM    5  CB2 GSH A 210      10.585   5.521  27.753  1.00 75.74      C    C  
+HETATM    6  CG1 GSH A 210      13.237   8.843  26.061  1.00 74.50      C    C  
+HETATM    7  SG2 GSH A 210      11.440   4.813  26.310  1.00 76.23      C    S  
+HETATM    8  CD1 GSH A 210      11.904   8.151  26.176  1.00 75.17      C    C  
+HETATM    9  OE1 GSH A 210      11.170   8.008  25.193  1.00 75.35      C    O  
+HETATM   10  C1  GSH A 210      15.860   9.001  24.508  1.00 73.51      C    C  
+HETATM   11  N1  GSH A 210      14.887  10.883  23.275  1.00 73.31      C    N  
+HETATM   12  C2  GSH A 210       9.835   7.523  29.054  1.00 74.65      C    C  
+HETATM   13  N2  GSH A 210      11.589   7.729  27.397  1.00 75.35      C    N  
+HETATM   14  O2  GSH A 210      10.623   7.766  29.973  1.00 73.83      C    O  
+HETATM   15  C3  GSH A 210       7.340   9.505  30.290  1.00 74.96      C    C  
+HETATM   16  N3  GSH A 210       8.520   7.663  29.172  1.00 74.50      C    N  
+HETATM   17  O11 GSH A 210      16.281   8.656  23.381  1.00 73.55      C    O  
+HETATM   18  O12 GSH A 210      16.269   8.500  25.582  1.00 72.23      C    O  
+HETATM   19  O31 GSH A 210       7.761  10.251  29.379  1.00 74.82      C    O  
+HETATM   20  O32 GSH A 210       6.438   9.842  31.087  1.00 75.16      C    O  
+CONECT    1    4   10   11
+CONECT    2    5   12   13
+CONECT    3   15   16
+CONECT    4    1    6
+CONECT    5    2    7
+CONECT    6    4    8
+CONECT    7    5
+CONECT    8    6    9   13
+CONECT    9    8
+CONECT   10    1   17   18
+CONECT   11    1
+CONECT   12    2   14   16
+CONECT   13    8    2
+CONECT   14   12
+CONECT   15    3   19   20
+CONECT   16   12    3
+CONECT   17   10
+CONECT   18   10
+CONECT   19   15
+CONECT   20   15
+END
