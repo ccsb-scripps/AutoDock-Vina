@@ -82,6 +82,104 @@ void write_all_output(model& m, const output_container& out, sz how_many,
 	}
 }
 
+void write_all_output(model& m, const output_container& out, sz how_many,
+				  const std::string& output_name,
+				  const std::vector<std::string>& remarks,
+                  std::vector<search_stats>& stats) {
+	if(out.size() < how_many)
+		how_many = out.size();
+	VINA_CHECK(how_many <= remarks.size());
+	ofile f(make_path(output_name));
+    std::vector<std::string> more_remarks;
+    std::string s;
+    unsigned linesum = 0;
+    unsigned linecount = 0;
+    char buffer[16]; // to convert int to string in C++03 with sprintf
+    std::string tmp;
+	VINA_FOR(i, how_many) {
+        more_remarks.clear();
+        
+        sprintf(buffer, "%d", stats[i].done_evals); 
+        tmp = buffer;
+        s = "REMARK SEARCH_STATS EVALCOUNT " + tmp + "\n"; 
+        more_remarks.push_back(s);
+        
+        sprintf(buffer, "%d", stats[i].done_steps); 
+        tmp = buffer;
+        s = "REMARK SEARCH_STATS MC_STEPS " + tmp + "\n"; 
+        more_remarks.push_back(s);
+        
+        sprintf(buffer, "%d", stats[i].count_accepted); 
+        tmp = buffer;
+        s = "REMARK SEARCH_STATS MC_ACCEPTED " + tmp + "\n"; 
+        more_remarks.push_back(s);
+        
+        sprintf(buffer, "%d", stats[i].count_rejected); 
+        tmp = buffer;
+        s = "REMARK SEARCH_STATS MC_REJECTED " + tmp + "\n"; 
+        more_remarks.push_back(s);
+        
+        sprintf(buffer, "%.3f", (float)stats[i].count_accepted / stats[i].done_steps); 
+        tmp = buffer;
+        s = "REMARK SEARCH_STATS MC_ACCEPT_RATE " + tmp + "\n"; 
+        more_remarks.push_back(s);
+        
+        sprintf(buffer, "%d", stats[i].best_mc_step);
+        tmp = buffer;
+        s = "REMARK SEARCH_STATS MC_BEST_STEP " + tmp + "\n";
+        more_remarks.push_back(s);
+        
+        sprintf(buffer, "%d", stats[i].nr_promising);
+        tmp = buffer;
+        s = "REMARK SEARCH_STATS MC_NR_PROMISING " + tmp + "\n";
+        more_remarks.push_back(s);
+
+        sprintf(buffer, "%d", stats[i].bfgs_reject);
+        tmp = buffer;
+        s = "REMARK SEARCH_STATS BFGS_REJECT " + tmp + "\n";
+        more_remarks.push_back(s);
+        
+        sprintf(buffer, "%d", stats[i].bfgs_accept);
+        tmp = buffer;
+        s = "REMARK SEARCH_STATS BFGS_ACCEPT " + tmp + "\n";
+        more_remarks.push_back(s);
+
+        s = "REMARK SEARCH_STATS HIST_BFGS";
+        VINA_FOR_IN(j, stats[i].hist_bfgs){
+            sprintf(buffer, "%ld", j);
+            tmp = buffer;
+            s += " " + tmp;
+            sprintf(buffer, "%d", stats[i].hist_bfgs[j]);
+            tmp = buffer;
+            s += ":" + tmp;
+        }
+        s += "\n";
+        more_remarks.push_back(s);
+
+        s = "REMARK SEARCH_STATS HIST_LINESEARCH";
+        VINA_FOR_IN(j, stats[i].hist_linesearch) {
+            linesum   += (j + 1) * stats[i].hist_linesearch[j];
+            linecount +=           stats[i].hist_linesearch[j];
+            sprintf(buffer, "%ld", j);
+            tmp = buffer;
+            s += " " + tmp;
+            sprintf(buffer, "%d", stats[i].hist_linesearch[j]);
+            tmp = buffer;
+            s += ":" + tmp;
+        }
+        s += "\n";
+        more_remarks.push_back(s);
+
+        sprintf(buffer, "%.3f", (float)linesum / linecount);
+        tmp = buffer;
+        s = "REMARK SEARCH_STATS AVG_LINESEARCH " + tmp + "\n";
+        more_remarks.push_back(s);
+
+		m.set(out[i].c);
+		m.write_model(f, i+1, remarks[i], more_remarks); // so that model numbers start with 1
+	}
+}
+
 void do_randomization(model& m,
 					  const std::string& out_name,
 					  const vec& corner1, const vec& corner2, int seed, int verbosity, tee& log) {
@@ -112,14 +210,17 @@ void do_randomization(model& m,
 	m.write_structure(make_path(out_name));
 }
 
-void refine_structure(model& m, const precalculate& prec, non_cache& nc, output_type& out, const vec& cap, sz max_steps = 1000) {
+void refine_structure(model& m, const precalculate& prec, non_cache& nc, output_type& out, search_stats& stats, const vec& cap, sz max_steps = 1000) {
 	change g(m.get_size());
 	quasi_newton quasi_newton_par;
 	quasi_newton_par.max_steps = max_steps;
+    int evalcount = 0;
 	const fl slope_orig = nc.slope;
 	VINA_FOR(p, 5) {
 		nc.slope = 100 * std::pow(10.0, 2.0*p);
-		quasi_newton_par(m, prec, nc, out, g, cap);
+		quasi_newton_par(m, prec, nc, out, g, cap, evalcount,
+                stats.bfgs_reject, stats.bfgs_accept,
+                stats.hist_bfgs, stats.hist_linesearch);
 		m.set(out.c); // just to be sure
 		if(nc.within(m))
 			break;
@@ -135,7 +236,7 @@ std::string vina_remark(fl e, fl lb, fl ub) {
 	remark.setf(std::ios::fixed, std::ios::floatfield);
 	remark.setf(std::ios::showpoint);
 	remark << "REMARK VINA RESULT: " 
-		                << std::setw(9) << std::setprecision(1) << e
+		                << std::setw(9) << std::setprecision(3) << e
 	                    << "  " << std::setw(9) << std::setprecision(3) << lb
 						<< "  " << std::setw(9) << std::setprecision(3) << ub
 						<< '\n';
@@ -187,7 +288,8 @@ void do_search(model& m, const boost::optional<model>& ref, const scoring_functi
 	else if(local_only) {
 		output_type out(c, e);
 		doing(verbosity, "Performing local search", log);
-		refine_structure(m, prec, nc, out, authentic_v, par.mc.ssd_par.evals);
+        search_stats stats;
+		refine_structure(m, prec, nc, out, stats, authentic_v, par.mc.ssd_par.evals);
 		done(verbosity, log);
 		fl intramolecular_energy = m.eval_intramolecular(prec, authentic_v, out.c);
 		e = m.eval_adjusted(sf, prec, nc, authentic_v, out.c, intramolecular_energy);
@@ -209,26 +311,34 @@ void do_search(model& m, const boost::optional<model>& ref, const scoring_functi
 		log << "Using random seed: " << seed;
 		log.endl();
 		output_container out_cont;
+        std::vector<search_stats> stats;
 		doing(verbosity, "Performing search", log);
-		par(m, out_cont, prec, ig, prec_widened, ig_widened, corner1, corner2, generator);
+		par(m, out_cont, stats, prec, ig, prec_widened, ig_widened, corner1, corner2, generator);
 		done(verbosity, log);
 
-		doing(verbosity, "Refining results", log);
-		VINA_FOR_IN(i, out_cont)
-			refine_structure(m, prec, nc, out_cont[i], authentic_v, par.mc.ssd_par.evals);
+       	// Do NOT do the following
+	//  - extra local search, i.e. refine_structure()
+	//  - subtract intramolecular energy
+	//  - cluster output poses, i.e. remove_redundant()
 
-		if(!out_cont.empty()) {
-			out_cont.sort();
-			const fl best_mode_intramolecular_energy = m.eval_intramolecular(prec, authentic_v, out_cont[0].c);
-			VINA_FOR_IN(i, out_cont)
-				if(not_max(out_cont[i].e))
-					out_cont[i].e = m.eval_adjusted(sf, prec, nc, authentic_v, out_cont[i].c, best_mode_intramolecular_energy); 
-			// the order must not change because of non-decreasing g (see paper), but we'll re-sort in case g is non strictly increasing
-			out_cont.sort();
-		}
+	//	doing(verbosity, "Refining results", log);
+	//	VINA_FOR_IN(i, out_cont)
+	//		refine_structure(m, prec, nc, out_cont[i], authentic_v, par.mc.ssd_par.evals);
 
-		const fl out_min_rmsd = 1;
-		out_cont = remove_redundant(out_cont, out_min_rmsd);
+	//	if(!out_cont.empty()) {
+	//		out_cont.sort();
+	//		const fl best_mode_intramolecular_energy = m.eval_intramolecular(prec, authentic_v, out_cont[0].c);
+	//		VINA_FOR_IN(i, out_cont)
+	//			if(not_max(out_cont[i].e))
+	//				out_cont[i].e = m.eval_adjusted(sf, prec, nc, authentic_v, out_cont[i].c, best_mode_intramolecular_energy); 
+	//		// the order must not change because of non-decreasing g (see paper), but we'll re-sort in case g is non strictly increasing
+	//		out_cont.sort();
+	//	}
+
+	//	const fl out_min_rmsd = 1;
+	//	out_cont = remove_redundant(out_cont, out_min_rmsd);
+
+        //out_cont.sort(); // dont do this so that output poses match the order of search_stats
 
 		done(verbosity, log);
 
@@ -246,7 +356,7 @@ void do_search(model& m, const boost::optional<model>& ref, const scoring_functi
 		sz how_many = 0;
 		std::vector<std::string> remarks;
 		VINA_FOR_IN(i, out_cont) {
-			if(how_many >= num_modes || !not_max(out_cont[i].e) || out_cont[i].e > out_cont[0].e + energy_range) break; // check energy_range sanity FIXME
+			// if(how_many >= num_modes || !not_max(out_cont[i].e) || out_cont[i].e > out_cont[0].e + energy_range) break; // check energy_range sanity FIXME
 			++how_many;
 			log << std::setw(4) << i+1
 				<< "    " << std::setw(9) << std::setprecision(1) << out_cont[i].e; // intermolecular_energies[i];
@@ -261,7 +371,7 @@ void do_search(model& m, const boost::optional<model>& ref, const scoring_functi
 			log.endl();
 		}
 		doing(verbosity, "Writing output", log);
-		write_all_output(m, out_cont, how_many, out_name, remarks);
+		write_all_output(m, out_cont, how_many, out_name, remarks, stats);
 		done(verbosity, log);
 
 		if(how_many < 1) {
@@ -277,7 +387,7 @@ void main_procedure(model& m, const boost::optional<model>& ref, // m is non-con
 				 bool score_only, bool local_only, bool randomize_only, bool no_cache,
 				 const grid_dims& gd, int exhaustiveness,
 				 const flv& weights,
-				 int cpu, int seed, int verbosity, sz num_modes, fl energy_range, tee& log) {
+				 int cpu, int seed, int verbosity, sz num_modes, fl energy_range, tee& log, int evalcap) {
 
 	doing(verbosity, "Setting up the scoring function", log);
 
@@ -297,10 +407,18 @@ void main_procedure(model& m, const boost::optional<model>& ref, // m is non-con
 
 	parallel_mc par;
 	sz heuristic = m.num_movable_atoms() + 10 * m.get_size().num_degrees_of_freedom();
-	par.mc.num_steps = unsigned(70 * 3 * (50 + heuristic) / 2); // 2 * 70 -> 8 * 20 // FIXME
+    if (evalcap == 0) {
+	    par.mc.num_steps = unsigned(70 * 3 * (50 + heuristic) / 2); // 2 * 70 -> 8 * 20 // FIXME
+        par.mc.evalcap = unsigned(evalcap);
+    }
+    else {
+	    par.mc.num_steps = unsigned(9999999);
+        par.mc.evalcap = unsigned(evalcap);
+    }
+	// par.mc.num_steps = unsigned(70 * 3 * (50 + heuristic) / 2); // 2 * 70 -> 8 * 20 // FIXME
 	par.mc.ssd_par.evals = unsigned((25 + m.num_movable_atoms()) / 3);
-	par.mc.min_rmsd = 1.0;
-	par.mc.num_saved_mins = 20;
+	par.mc.min_rmsd = 0.2;
+	par.mc.num_saved_mins = par.num_tasks;      // one output per monte_carlo (n = exhaustiveness)
 	par.mc.hunt_cap = vec(10, 10, 10);
 	par.num_tasks = exhaustiveness;
 	par.num_threads = cpu;
@@ -444,6 +562,8 @@ Thank you!\n";
 		fl weight_rot         =  0.05846;
 		bool score_only = false, local_only = false, randomize_only = false, help = false, help_advanced = false, version = false; // FIXME
 
+        int evalcap = 0;
+
 		positional_options_description positional; // remains empty
 
 		options_description inputs("Input");
@@ -470,6 +590,7 @@ Thank you!\n";
 		;
 		options_description advanced("Advanced options (see the manual)");
 		advanced.add_options()
+			("evalcap",        value<int>(&evalcap),         "maximum number of score evaluations")
 			("score_only",     bool_switch(&score_only),     "score only - search space can be omitted")
 			("local_only",     bool_switch(&local_only),     "do local search only")
 			("randomize_only", bool_switch(&randomize_only), "randomize input, attempting to avoid clashes")
@@ -657,7 +778,7 @@ Thank you!\n";
 					score_only, local_only, randomize_only, false, // no_cache == false
 					gd, exhaustiveness,
 					weights,
-					cpu, seed, verbosity, max_modes_sz, energy_range, log);
+					cpu, seed, verbosity, max_modes_sz, energy_range, log, evalcap);
 	}
 	catch(file_error& e) {
 		std::cerr << "\n\nError: could not open \"" << e.name.string() << "\" for " << (e.in ? "reading" : "writing") << ".\n";

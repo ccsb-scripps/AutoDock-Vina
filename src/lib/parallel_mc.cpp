@@ -28,6 +28,7 @@
 struct parallel_mc_task {
 	model m;
 	output_container out;
+    search_stats stats; 
 	rng generator;
 	parallel_mc_task(const model& m_, int seed) : m(m_), generator(static_cast<rng::result_type>(seed)) {}
 };
@@ -46,7 +47,7 @@ struct parallel_mc_aux {
 	parallel_mc_aux(const monte_carlo* mc_, const precalculate* p_, const igrid* ig_, const precalculate* p_widened_, const igrid* ig_widened_, const vec* corner1_, const vec* corner2_, parallel_progress* pg_)
 		: mc(mc_), p(p_), ig(ig_), p_widened(p_widened_), ig_widened(ig_widened_), corner1(corner1_), corner2(corner2_), pg(pg_) {}
 	void operator()(parallel_mc_task& t) const {
-		(*mc)(t.m, t.out, *p, *ig, *p_widened, *ig_widened, *corner1, *corner2, pg, t.generator);
+		(*mc)(t.m, t.out, t.stats, *p, *ig, *p_widened, *ig_widened, *corner1, *corner2, pg, t.generator);
 	}
 };
 
@@ -62,7 +63,7 @@ void merge_output_containers(const parallel_mc_task_container& many, output_cont
 	out.sort();
 }
 
-void parallel_mc::operator()(const model& m, output_container& out, const precalculate& p, const igrid& ig, const precalculate& p_widened, const igrid& ig_widened, const vec& corner1, const vec& corner2, rng& generator) const {
+void parallel_mc::operator()(const model& m, output_container& out, std::vector<search_stats>& stats, const precalculate& p, const igrid& ig, const precalculate& p_widened, const igrid& ig_widened, const vec& corner1, const vec& corner2, rng& generator) const {
 	parallel_progress pp;
 	parallel_mc_aux parallel_mc_aux_instance(&mc, &p, &ig, &p_widened, &ig_widened, &corner1, &corner2, (display_progress ? (&pp) : NULL));
 	parallel_mc_task_container task_container;
@@ -72,5 +73,12 @@ void parallel_mc::operator()(const model& m, output_container& out, const precal
 		pp.init(num_tasks * mc.num_steps);
 	parallel_iter<parallel_mc_aux, parallel_mc_task_container, parallel_mc_task, true> parallel_iter_instance(&parallel_mc_aux_instance, num_threads);
 	parallel_iter_instance.run(task_container);
-	merge_output_containers(task_container, out, mc.min_rmsd, mc.num_saved_mins);
+	// merge_output_containers(task_container, out, mc.min_rmsd, mc.num_saved_mins); // do not merge..
+    // ...instead save top result from each MC run
+    VINA_FOR_IN(i, task_container) {
+        out.push_back(new output_type(task_container[i].out[0])); // get top pose from each run
+        //std::cout << "par_mc done steps: " << task_container[i].stats.done_steps << "\n";
+        //std::cout << "e: " << task_container[i].out[0].e << "\n";
+        stats.push_back(task_container[i].stats);
+    }
 }

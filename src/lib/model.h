@@ -106,6 +106,14 @@ struct model {
 		write_structure(out, remark);
 		out << "ENDMDL\n";
 	}
+	void write_model(ofile& out, sz model_number, const std::string& remark, std::vector<std::string>& more_remarks) const {
+		out << "MODEL " << model_number << '\n';
+        out << remark;
+        VINA_FOR_IN(i, more_remarks)
+            out << more_remarks[i];
+		write_structure(out);
+		out << "ENDMDL\n";
+	}
 	void seti(const conf& c);
 	void sete(const conf& c);
 	void set (const conf& c);
