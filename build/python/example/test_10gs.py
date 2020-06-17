@@ -2,23 +2,13 @@
 
 import sys
 
-from openbabel import openbabel as ob
 from vina import Vina
 
 ligand_pdbqt_filenames = ["10gs/flex-xray.pdbqt", "10gs/6gss_flex-xray.pdbqt"]
 receptor_pdbqt_filename = "10gs/protein.pdbqt"
 
-obconv = ob.OBConversion()
-obconv.SetInFormat("pdbqt")
-OBMol = ob.OBMol()
-obconv.ReadFile(OBMol, ligand_pdbqt_filenames[0])
-
 v = Vina()
 print(dir(v))
-
-v.set_obmol(OBMol)
-o = v.get_obmol()
-print(o)
 
 v.set_receptor(receptor_pdbqt_filename)
 v.set_forcefield()
