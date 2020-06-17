@@ -152,6 +152,536 @@ class SwigPyIterator(object):
 # Register SwigPyIterator in _vina:
 _vina.SwigPyIterator_swigregister(SwigPyIterator)
 
+class IntVector(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def iterator(self) -> "swig::SwigPyIterator *":
+        return _vina.IntVector_iterator(self)
+    def __iter__(self):
+        return self.iterator()
+
+    def __nonzero__(self) -> "bool":
+        return _vina.IntVector___nonzero__(self)
+
+    def __bool__(self) -> "bool":
+        return _vina.IntVector___bool__(self)
+
+    def __len__(self) -> "std::vector< int >::size_type":
+        return _vina.IntVector___len__(self)
+
+    def __getslice__(self, i: "std::vector< int >::difference_type", j: "std::vector< int >::difference_type") -> "std::vector< int,std::allocator< int > > *":
+        return _vina.IntVector___getslice__(self, i, j)
+
+    def __setslice__(self, *args) -> "void":
+        return _vina.IntVector___setslice__(self, *args)
+
+    def __delslice__(self, i: "std::vector< int >::difference_type", j: "std::vector< int >::difference_type") -> "void":
+        return _vina.IntVector___delslice__(self, i, j)
+
+    def __delitem__(self, *args) -> "void":
+        return _vina.IntVector___delitem__(self, *args)
+
+    def __getitem__(self, *args) -> "std::vector< int >::value_type const &":
+        return _vina.IntVector___getitem__(self, *args)
+
+    def __setitem__(self, *args) -> "void":
+        return _vina.IntVector___setitem__(self, *args)
+
+    def pop(self) -> "std::vector< int >::value_type":
+        return _vina.IntVector_pop(self)
+
+    def append(self, x: "std::vector< int >::value_type const &") -> "void":
+        return _vina.IntVector_append(self, x)
+
+    def empty(self) -> "bool":
+        return _vina.IntVector_empty(self)
+
+    def size(self) -> "std::vector< int >::size_type":
+        return _vina.IntVector_size(self)
+
+    def swap(self, v: "IntVector") -> "void":
+        return _vina.IntVector_swap(self, v)
+
+    def begin(self) -> "std::vector< int >::iterator":
+        return _vina.IntVector_begin(self)
+
+    def end(self) -> "std::vector< int >::iterator":
+        return _vina.IntVector_end(self)
+
+    def rbegin(self) -> "std::vector< int >::reverse_iterator":
+        return _vina.IntVector_rbegin(self)
+
+    def rend(self) -> "std::vector< int >::reverse_iterator":
+        return _vina.IntVector_rend(self)
+
+    def clear(self) -> "void":
+        return _vina.IntVector_clear(self)
+
+    def get_allocator(self) -> "std::vector< int >::allocator_type":
+        return _vina.IntVector_get_allocator(self)
+
+    def pop_back(self) -> "void":
+        return _vina.IntVector_pop_back(self)
+
+    def erase(self, *args) -> "std::vector< int >::iterator":
+        return _vina.IntVector_erase(self, *args)
+
+    def __init__(self, *args):
+        _vina.IntVector_swiginit(self, _vina.new_IntVector(*args))
+
+    def push_back(self, x: "std::vector< int >::value_type const &") -> "void":
+        return _vina.IntVector_push_back(self, x)
+
+    def front(self) -> "std::vector< int >::value_type const &":
+        return _vina.IntVector_front(self)
+
+    def back(self) -> "std::vector< int >::value_type const &":
+        return _vina.IntVector_back(self)
+
+    def assign(self, n: "std::vector< int >::size_type", x: "std::vector< int >::value_type const &") -> "void":
+        return _vina.IntVector_assign(self, n, x)
+
+    def resize(self, *args) -> "void":
+        return _vina.IntVector_resize(self, *args)
+
+    def insert(self, *args) -> "void":
+        return _vina.IntVector_insert(self, *args)
+
+    def reserve(self, n: "std::vector< int >::size_type") -> "void":
+        return _vina.IntVector_reserve(self, n)
+
+    def capacity(self) -> "std::vector< int >::size_type":
+        return _vina.IntVector_capacity(self)
+    __swig_destroy__ = _vina.delete_IntVector
+
+# Register IntVector in _vina:
+_vina.IntVector_swigregister(IntVector)
+
+class DoubleVector(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def iterator(self) -> "swig::SwigPyIterator *":
+        return _vina.DoubleVector_iterator(self)
+    def __iter__(self):
+        return self.iterator()
+
+    def __nonzero__(self) -> "bool":
+        return _vina.DoubleVector___nonzero__(self)
+
+    def __bool__(self) -> "bool":
+        return _vina.DoubleVector___bool__(self)
+
+    def __len__(self) -> "std::vector< double >::size_type":
+        return _vina.DoubleVector___len__(self)
+
+    def __getslice__(self, i: "std::vector< double >::difference_type", j: "std::vector< double >::difference_type") -> "std::vector< double,std::allocator< double > > *":
+        return _vina.DoubleVector___getslice__(self, i, j)
+
+    def __setslice__(self, *args) -> "void":
+        return _vina.DoubleVector___setslice__(self, *args)
+
+    def __delslice__(self, i: "std::vector< double >::difference_type", j: "std::vector< double >::difference_type") -> "void":
+        return _vina.DoubleVector___delslice__(self, i, j)
+
+    def __delitem__(self, *args) -> "void":
+        return _vina.DoubleVector___delitem__(self, *args)
+
+    def __getitem__(self, *args) -> "std::vector< double >::value_type const &":
+        return _vina.DoubleVector___getitem__(self, *args)
+
+    def __setitem__(self, *args) -> "void":
+        return _vina.DoubleVector___setitem__(self, *args)
+
+    def pop(self) -> "std::vector< double >::value_type":
+        return _vina.DoubleVector_pop(self)
+
+    def append(self, x: "std::vector< double >::value_type const &") -> "void":
+        return _vina.DoubleVector_append(self, x)
+
+    def empty(self) -> "bool":
+        return _vina.DoubleVector_empty(self)
+
+    def size(self) -> "std::vector< double >::size_type":
+        return _vina.DoubleVector_size(self)
+
+    def swap(self, v: "DoubleVector") -> "void":
+        return _vina.DoubleVector_swap(self, v)
+
+    def begin(self) -> "std::vector< double >::iterator":
+        return _vina.DoubleVector_begin(self)
+
+    def end(self) -> "std::vector< double >::iterator":
+        return _vina.DoubleVector_end(self)
+
+    def rbegin(self) -> "std::vector< double >::reverse_iterator":
+        return _vina.DoubleVector_rbegin(self)
+
+    def rend(self) -> "std::vector< double >::reverse_iterator":
+        return _vina.DoubleVector_rend(self)
+
+    def clear(self) -> "void":
+        return _vina.DoubleVector_clear(self)
+
+    def get_allocator(self) -> "std::vector< double >::allocator_type":
+        return _vina.DoubleVector_get_allocator(self)
+
+    def pop_back(self) -> "void":
+        return _vina.DoubleVector_pop_back(self)
+
+    def erase(self, *args) -> "std::vector< double >::iterator":
+        return _vina.DoubleVector_erase(self, *args)
+
+    def __init__(self, *args):
+        _vina.DoubleVector_swiginit(self, _vina.new_DoubleVector(*args))
+
+    def push_back(self, x: "std::vector< double >::value_type const &") -> "void":
+        return _vina.DoubleVector_push_back(self, x)
+
+    def front(self) -> "std::vector< double >::value_type const &":
+        return _vina.DoubleVector_front(self)
+
+    def back(self) -> "std::vector< double >::value_type const &":
+        return _vina.DoubleVector_back(self)
+
+    def assign(self, n: "std::vector< double >::size_type", x: "std::vector< double >::value_type const &") -> "void":
+        return _vina.DoubleVector_assign(self, n, x)
+
+    def resize(self, *args) -> "void":
+        return _vina.DoubleVector_resize(self, *args)
+
+    def insert(self, *args) -> "void":
+        return _vina.DoubleVector_insert(self, *args)
+
+    def reserve(self, n: "std::vector< double >::size_type") -> "void":
+        return _vina.DoubleVector_reserve(self, n)
+
+    def capacity(self) -> "std::vector< double >::size_type":
+        return _vina.DoubleVector_capacity(self)
+    __swig_destroy__ = _vina.delete_DoubleVector
+
+# Register DoubleVector in _vina:
+_vina.DoubleVector_swigregister(DoubleVector)
+
+class StringVector(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def iterator(self) -> "swig::SwigPyIterator *":
+        return _vina.StringVector_iterator(self)
+    def __iter__(self):
+        return self.iterator()
+
+    def __nonzero__(self) -> "bool":
+        return _vina.StringVector___nonzero__(self)
+
+    def __bool__(self) -> "bool":
+        return _vina.StringVector___bool__(self)
+
+    def __len__(self) -> "std::vector< std::string >::size_type":
+        return _vina.StringVector___len__(self)
+
+    def __getslice__(self, i: "std::vector< std::string >::difference_type", j: "std::vector< std::string >::difference_type") -> "std::vector< std::string,std::allocator< std::string > > *":
+        return _vina.StringVector___getslice__(self, i, j)
+
+    def __setslice__(self, *args) -> "void":
+        return _vina.StringVector___setslice__(self, *args)
+
+    def __delslice__(self, i: "std::vector< std::string >::difference_type", j: "std::vector< std::string >::difference_type") -> "void":
+        return _vina.StringVector___delslice__(self, i, j)
+
+    def __delitem__(self, *args) -> "void":
+        return _vina.StringVector___delitem__(self, *args)
+
+    def __getitem__(self, *args) -> "std::vector< std::string >::value_type const &":
+        return _vina.StringVector___getitem__(self, *args)
+
+    def __setitem__(self, *args) -> "void":
+        return _vina.StringVector___setitem__(self, *args)
+
+    def pop(self) -> "std::vector< std::string >::value_type":
+        return _vina.StringVector_pop(self)
+
+    def append(self, x: "std::vector< std::string >::value_type const &") -> "void":
+        return _vina.StringVector_append(self, x)
+
+    def empty(self) -> "bool":
+        return _vina.StringVector_empty(self)
+
+    def size(self) -> "std::vector< std::string >::size_type":
+        return _vina.StringVector_size(self)
+
+    def swap(self, v: "StringVector") -> "void":
+        return _vina.StringVector_swap(self, v)
+
+    def begin(self) -> "std::vector< std::string >::iterator":
+        return _vina.StringVector_begin(self)
+
+    def end(self) -> "std::vector< std::string >::iterator":
+        return _vina.StringVector_end(self)
+
+    def rbegin(self) -> "std::vector< std::string >::reverse_iterator":
+        return _vina.StringVector_rbegin(self)
+
+    def rend(self) -> "std::vector< std::string >::reverse_iterator":
+        return _vina.StringVector_rend(self)
+
+    def clear(self) -> "void":
+        return _vina.StringVector_clear(self)
+
+    def get_allocator(self) -> "std::vector< std::string >::allocator_type":
+        return _vina.StringVector_get_allocator(self)
+
+    def pop_back(self) -> "void":
+        return _vina.StringVector_pop_back(self)
+
+    def erase(self, *args) -> "std::vector< std::string >::iterator":
+        return _vina.StringVector_erase(self, *args)
+
+    def __init__(self, *args):
+        _vina.StringVector_swiginit(self, _vina.new_StringVector(*args))
+
+    def push_back(self, x: "std::vector< std::string >::value_type const &") -> "void":
+        return _vina.StringVector_push_back(self, x)
+
+    def front(self) -> "std::vector< std::string >::value_type const &":
+        return _vina.StringVector_front(self)
+
+    def back(self) -> "std::vector< std::string >::value_type const &":
+        return _vina.StringVector_back(self)
+
+    def assign(self, n: "std::vector< std::string >::size_type", x: "std::vector< std::string >::value_type const &") -> "void":
+        return _vina.StringVector_assign(self, n, x)
+
+    def resize(self, *args) -> "void":
+        return _vina.StringVector_resize(self, *args)
+
+    def insert(self, *args) -> "void":
+        return _vina.StringVector_insert(self, *args)
+
+    def reserve(self, n: "std::vector< std::string >::size_type") -> "void":
+        return _vina.StringVector_reserve(self, n)
+
+    def capacity(self) -> "std::vector< std::string >::size_type":
+        return _vina.StringVector_capacity(self)
+    __swig_destroy__ = _vina.delete_StringVector
+
+# Register StringVector in _vina:
+_vina.StringVector_swigregister(StringVector)
+
+class ConstCharVector(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def iterator(self) -> "swig::SwigPyIterator *":
+        return _vina.ConstCharVector_iterator(self)
+    def __iter__(self):
+        return self.iterator()
+
+    def __nonzero__(self) -> "bool":
+        return _vina.ConstCharVector___nonzero__(self)
+
+    def __bool__(self) -> "bool":
+        return _vina.ConstCharVector___bool__(self)
+
+    def __len__(self) -> "std::vector< char const * >::size_type":
+        return _vina.ConstCharVector___len__(self)
+
+    def __getslice__(self, i: "std::vector< char const * >::difference_type", j: "std::vector< char const * >::difference_type") -> "std::vector< char const *,std::allocator< char const * > > *":
+        return _vina.ConstCharVector___getslice__(self, i, j)
+
+    def __setslice__(self, *args) -> "void":
+        return _vina.ConstCharVector___setslice__(self, *args)
+
+    def __delslice__(self, i: "std::vector< char const * >::difference_type", j: "std::vector< char const * >::difference_type") -> "void":
+        return _vina.ConstCharVector___delslice__(self, i, j)
+
+    def __delitem__(self, *args) -> "void":
+        return _vina.ConstCharVector___delitem__(self, *args)
+
+    def __getitem__(self, *args) -> "std::vector< char const * >::value_type":
+        return _vina.ConstCharVector___getitem__(self, *args)
+
+    def __setitem__(self, *args) -> "void":
+        return _vina.ConstCharVector___setitem__(self, *args)
+
+    def pop(self) -> "std::vector< char const * >::value_type":
+        return _vina.ConstCharVector_pop(self)
+
+    def append(self, x: "std::vector< char const * >::value_type") -> "void":
+        return _vina.ConstCharVector_append(self, x)
+
+    def empty(self) -> "bool":
+        return _vina.ConstCharVector_empty(self)
+
+    def size(self) -> "std::vector< char const * >::size_type":
+        return _vina.ConstCharVector_size(self)
+
+    def swap(self, v: "ConstCharVector") -> "void":
+        return _vina.ConstCharVector_swap(self, v)
+
+    def begin(self) -> "std::vector< char const * >::iterator":
+        return _vina.ConstCharVector_begin(self)
+
+    def end(self) -> "std::vector< char const * >::iterator":
+        return _vina.ConstCharVector_end(self)
+
+    def rbegin(self) -> "std::vector< char const * >::reverse_iterator":
+        return _vina.ConstCharVector_rbegin(self)
+
+    def rend(self) -> "std::vector< char const * >::reverse_iterator":
+        return _vina.ConstCharVector_rend(self)
+
+    def clear(self) -> "void":
+        return _vina.ConstCharVector_clear(self)
+
+    def get_allocator(self) -> "std::vector< char const * >::allocator_type":
+        return _vina.ConstCharVector_get_allocator(self)
+
+    def pop_back(self) -> "void":
+        return _vina.ConstCharVector_pop_back(self)
+
+    def erase(self, *args) -> "std::vector< char const * >::iterator":
+        return _vina.ConstCharVector_erase(self, *args)
+
+    def __init__(self, *args):
+        _vina.ConstCharVector_swiginit(self, _vina.new_ConstCharVector(*args))
+
+    def push_back(self, x: "std::vector< char const * >::value_type") -> "void":
+        return _vina.ConstCharVector_push_back(self, x)
+
+    def front(self) -> "std::vector< char const * >::value_type":
+        return _vina.ConstCharVector_front(self)
+
+    def back(self) -> "std::vector< char const * >::value_type":
+        return _vina.ConstCharVector_back(self)
+
+    def assign(self, n: "std::vector< char const * >::size_type", x: "std::vector< char const * >::value_type") -> "void":
+        return _vina.ConstCharVector_assign(self, n, x)
+
+    def resize(self, *args) -> "void":
+        return _vina.ConstCharVector_resize(self, *args)
+
+    def insert(self, *args) -> "void":
+        return _vina.ConstCharVector_insert(self, *args)
+
+    def reserve(self, n: "std::vector< char const * >::size_type") -> "void":
+        return _vina.ConstCharVector_reserve(self, n)
+
+    def capacity(self) -> "std::vector< char const * >::size_type":
+        return _vina.ConstCharVector_capacity(self)
+    __swig_destroy__ = _vina.delete_ConstCharVector
+
+# Register ConstCharVector in _vina:
+_vina.ConstCharVector_swigregister(ConstCharVector)
+
+class OBMolVector(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+
+    def iterator(self) -> "swig::SwigPyIterator *":
+        return _vina.OBMolVector_iterator(self)
+    def __iter__(self):
+        return self.iterator()
+
+    def __nonzero__(self) -> "bool":
+        return _vina.OBMolVector___nonzero__(self)
+
+    def __bool__(self) -> "bool":
+        return _vina.OBMolVector___bool__(self)
+
+    def __len__(self) -> "std::vector< OpenBabel::OBMol * >::size_type":
+        return _vina.OBMolVector___len__(self)
+
+    def __getslice__(self, i: "std::vector< OpenBabel::OBMol * >::difference_type", j: "std::vector< OpenBabel::OBMol * >::difference_type") -> "std::vector< OpenBabel::OBMol *,std::allocator< OpenBabel::OBMol * > > *":
+        return _vina.OBMolVector___getslice__(self, i, j)
+
+    def __setslice__(self, *args) -> "void":
+        return _vina.OBMolVector___setslice__(self, *args)
+
+    def __delslice__(self, i: "std::vector< OpenBabel::OBMol * >::difference_type", j: "std::vector< OpenBabel::OBMol * >::difference_type") -> "void":
+        return _vina.OBMolVector___delslice__(self, i, j)
+
+    def __delitem__(self, *args) -> "void":
+        return _vina.OBMolVector___delitem__(self, *args)
+
+    def __getitem__(self, *args) -> "std::vector< OpenBabel::OBMol * >::value_type":
+        return _vina.OBMolVector___getitem__(self, *args)
+
+    def __setitem__(self, *args) -> "void":
+        return _vina.OBMolVector___setitem__(self, *args)
+
+    def pop(self) -> "std::vector< OpenBabel::OBMol * >::value_type":
+        return _vina.OBMolVector_pop(self)
+
+    def append(self, x: "std::vector< OpenBabel::OBMol * >::value_type") -> "void":
+        return _vina.OBMolVector_append(self, x)
+
+    def empty(self) -> "bool":
+        return _vina.OBMolVector_empty(self)
+
+    def size(self) -> "std::vector< OpenBabel::OBMol * >::size_type":
+        return _vina.OBMolVector_size(self)
+
+    def swap(self, v: "OBMolVector") -> "void":
+        return _vina.OBMolVector_swap(self, v)
+
+    def begin(self) -> "std::vector< OpenBabel::OBMol * >::iterator":
+        return _vina.OBMolVector_begin(self)
+
+    def end(self) -> "std::vector< OpenBabel::OBMol * >::iterator":
+        return _vina.OBMolVector_end(self)
+
+    def rbegin(self) -> "std::vector< OpenBabel::OBMol * >::reverse_iterator":
+        return _vina.OBMolVector_rbegin(self)
+
+    def rend(self) -> "std::vector< OpenBabel::OBMol * >::reverse_iterator":
+        return _vina.OBMolVector_rend(self)
+
+    def clear(self) -> "void":
+        return _vina.OBMolVector_clear(self)
+
+    def get_allocator(self) -> "std::vector< OpenBabel::OBMol * >::allocator_type":
+        return _vina.OBMolVector_get_allocator(self)
+
+    def pop_back(self) -> "void":
+        return _vina.OBMolVector_pop_back(self)
+
+    def erase(self, *args) -> "std::vector< OpenBabel::OBMol * >::iterator":
+        return _vina.OBMolVector_erase(self, *args)
+
+    def __init__(self, *args):
+        _vina.OBMolVector_swiginit(self, _vina.new_OBMolVector(*args))
+
+    def push_back(self, x: "std::vector< OpenBabel::OBMol * >::value_type") -> "void":
+        return _vina.OBMolVector_push_back(self, x)
+
+    def front(self) -> "std::vector< OpenBabel::OBMol * >::value_type":
+        return _vina.OBMolVector_front(self)
+
+    def back(self) -> "std::vector< OpenBabel::OBMol * >::value_type":
+        return _vina.OBMolVector_back(self)
+
+    def assign(self, n: "std::vector< OpenBabel::OBMol * >::size_type", x: "std::vector< OpenBabel::OBMol * >::value_type") -> "void":
+        return _vina.OBMolVector_assign(self, n, x)
+
+    def resize(self, *args) -> "void":
+        return _vina.OBMolVector_resize(self, *args)
+
+    def insert(self, *args) -> "void":
+        return _vina.OBMolVector_insert(self, *args)
+
+    def reserve(self, n: "std::vector< OpenBabel::OBMol * >::size_type") -> "void":
+        return _vina.OBMolVector_reserve(self, n)
+
+    def capacity(self) -> "std::vector< OpenBabel::OBMol * >::size_type":
+        return _vina.OBMolVector_capacity(self)
+    __swig_destroy__ = _vina.delete_OBMolVector
+
+# Register OBMolVector in _vina:
+_vina.OBMolVector_swigregister(OBMolVector)
+
 class Vina(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -201,12 +731,6 @@ class Vina(object):
 
     def write_pose(self, *args) -> "void":
         return _vina.Vina_write_pose(self, *args)
-
-    def set_obmol(self, mol: "OpenBabel::OBMol") -> "void":
-        return _vina.Vina_set_obmol(self, mol)
-
-    def get_obmol(self) -> "OpenBabel::OBMol":
-        return _vina.Vina_get_obmol(self)
 
     def test(self) -> "int":
         r"""test(Vina self) -> int"""

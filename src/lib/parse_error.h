@@ -25,13 +25,28 @@
 
 #include "common.h"
 
+
 struct parse_error {
-	path file;
-	unsigned line;
-	std::string reason;
-	parse_error(const path& file_, unsigned line_, const std::string& reason_ = "") : file(file_), line(line_), reason(reason_) {}
+    path file;
+    unsigned line;
+    std::string reason;
+    parse_error(const path& file_, unsigned line_, const std::string& reason_ = "") : file(file_), line(line_), reason(reason_) {}
 private:
-	parse_error() {}
+    parse_error() {}
+};
+
+struct stream_parse_error {
+    unsigned line;
+    std::string reason;
+    stream_parse_error(unsigned line_, const std::string& reason_) : line(line_), reason(reason_) {}
+    parse_error to_parse_error(const path& name) const {
+        return parse_error(name, line, reason);
+    }
+};
+
+struct atom_syntax_error {
+    std::string nature;
+    atom_syntax_error(const std::string& nature_) : nature(nature_) {}
 };
 
 #endif

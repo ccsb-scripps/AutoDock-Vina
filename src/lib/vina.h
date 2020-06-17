@@ -33,6 +33,7 @@
 #include <boost/filesystem/exception.hpp>
 #include <boost/filesystem/convenience.hpp> // filesystem::basename
 #include <boost/thread/thread.hpp> // hardware_concurrency // FIXME rm ?
+#include <openbabel/mol.h>
 #include "parse_pdbqt.h"
 #include "parallel_mc.h"
 #include "file.h"
@@ -50,7 +51,6 @@
 #include "tee.h"
 #include "coords.h" // add_to_output_container
 #include "utils.h"
-#include <openbabel/mol.h>
 
 class Vina {
 public:
@@ -92,6 +92,8 @@ public:
     void set_receptor(const std::string& rigid_name, const std::string& flex_name);
     void set_ligand(const std::string& ligand_name);
     void set_ligand(const std::vector<std::string>& ligand_name);
+    void set_ligand(OpenBabel::OBMol* mol);
+    void set_ligand(std::vector<OpenBabel::OBMol*> mol);
     void set_weights(const double weight_gauss1=-0.035579, const double weight_gauss2=-0.005156, 
                      const double weight_repulsion=0.840245, const double weight_hydrophobic=-0.035069, 
                      const double weight_hydrogen=-0.587439, const double weight_rot=0.05846);
@@ -106,8 +108,6 @@ public:
     void global_search(const int n_poses=20, const double min_rmsd=1.0);
     void write_results(const std::string& output_name, const int how_many=9, const double energy_range=3.0);
     void write_pose(const std::string& output_name, const std::string& remark=std::string());
-    void set_obmol(OpenBabel::OBMol mol);
-    OpenBabel::OBMol get_obmol();
 
 private:
     OpenBabel::OBMol m_mol;

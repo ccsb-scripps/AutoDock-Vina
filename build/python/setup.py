@@ -158,6 +158,7 @@ class CustomBuildExt(build_ext):
         self.include_dirs.append('../../src/lib')
         # SWIG
         # shadow, creates a pythonic wrapper around vina
+        # castmode
         self.swig_opts = ['-c++', '-small', '-naturalvar', '-fastdispatch', '-shadow', '-py3', '-threads']
         self.swig_opts += ['-I%s' % i for i in self.include_dirs]
         

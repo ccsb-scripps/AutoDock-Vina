@@ -31,6 +31,8 @@
 #include <boost/optional.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/lexical_cast.hpp>
+#include <openbabel/mol.h>
+#include <openbabel/obconversion.h>
 #include "model.h"
 #include "atom_constants.h"
 #include "file.h"
@@ -38,9 +40,10 @@
 #include "parse_error.h"
 #include "utils.h"
 
+
 model parse_receptor_pdbqt(const std::string& rigid, const std::string& flex); // can throw parse_error
 model parse_receptor_pdbqt(const std::string& rigid); // can throw parse_error
 model parse_ligand_pdbqt(const std::string& name); // can throw parse_error
-model parse_ligand_pdbqt(const std::vector<std::string>& name); // can throw parse_error
+model parse_ligand_pdbqt(OpenBabel::OBMol* mol); // can throw parse_error
  
 #endif

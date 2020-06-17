@@ -95,6 +95,15 @@ if sys.platform.find("linux") != -1:
 %include "std_vector.i"
 %include "std_string.i"
 
+// Help SWIG to understand some special types, like list of strings
+namespace std {
+    %template(IntVector) vector<int>;
+    %template(DoubleVector) vector<double>;
+    %template(StringVector) vector<string>;
+    %template(ConstCharVector) vector<const char*>;
+    %template(OBMolVector) vector<OpenBabel::OBMol*>;
+}
+
 // Add numpy
 //%include "numpy.i"
 //%init %{

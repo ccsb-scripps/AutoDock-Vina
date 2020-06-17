@@ -82,14 +82,6 @@ void Vina::set_ligand(const std::string& ligand_name) {
     m_ligand_initialized = true;
 }
 
-void Vina::set_obmol(OpenBabel::OBMol mol) {
-    m_mol = mol;
-}
-
-OpenBabel::OBMol Vina::get_obmol() {
-    return m_mol;
-}
-
 void Vina::set_ligand(const std::vector<std::string>& ligand_name) {
     // Read ligand PDBQT files and add them to the model
     VINA_CHECK(!ligand_name.empty());
@@ -101,6 +93,36 @@ void Vina::set_ligand(const std::vector<std::string>& ligand_name) {
 
     VINA_RANGE(i, 0, ligand_name.size())
         m_model.append(parse_ligand_pdbqt(ligand_name[i]));
+
+    // Store in Vina object
+    m_ligand_initialized = true;
+}
+
+void Vina::set_ligand(OpenBabel::OBMol* mol) {
+    // Read ligand PDBQT file and add it to the model
+    VINA_CHECK(m_receptor_initialized); // m_model
+    
+    // Replace current model with receptor and reinitialize poses
+    m_model = m_receptor;
+    output_container m_poses;
+
+    m_model.append(parse_ligand_pdbqt(mol));
+
+    // Store in Vina object
+    m_ligand_initialized = true;
+}
+
+void Vina::set_ligand(std::vector<OpenBabel::OBMol*> mol) {
+    // Read ligand PDBQT files and add them to the model
+    VINA_CHECK(!mol.empty());
+    VINA_CHECK(m_receptor_initialized); // m_model
+
+    // Replace current model with receptor and reinitialize poses
+    m_model = m_receptor;
+    output_container m_poses;
+
+    VINA_RANGE(i, 0, mol.size())
+        m_model.append(parse_ligand_pdbqt(mol[i]));
 
     // Store in Vina object
     m_ligand_initialized = true;
