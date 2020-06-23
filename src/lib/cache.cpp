@@ -108,6 +108,74 @@ void cache::load(Archive& ar, const unsigned version) {
 	ar & grids;
 }
 
+std::string convert_XS_to_string(sz t) {
+	switch(t) {
+		case XS_TYPE_C_H   : return "C_H";
+		case XS_TYPE_C_P   : return "C_P";
+		case XS_TYPE_N_P   : return "N_P";
+		case XS_TYPE_N_D   : return "N_D";
+		case XS_TYPE_N_A   : return "N_A";
+		case XS_TYPE_N_DA  : return "N_DA";
+		case XS_TYPE_O_P   : return "O_P";
+		case XS_TYPE_O_D   : return "O_D";
+		case XS_TYPE_O_A   : return "O_A";
+		case XS_TYPE_O_DA  : return "O_DA";
+		case XS_TYPE_S_P   : return "S_P";
+		case XS_TYPE_P_P   : return "P_P";
+		case XS_TYPE_F_H   : return "F_H";
+		case XS_TYPE_Cl_H  : return "Cl_H";
+		case XS_TYPE_Br_H  : return "Br_H";
+		case XS_TYPE_I_H   : return "I_H";
+		case XS_TYPE_Met_D : return "Met_D";
+		default: VINA_CHECK(false);
+	}
+}
+
+void cache::write(const std::string& map_prefix, const szv& atom_types_needed) {
+	sz t; // atom type index, e.g. XS_TYPE_C_H
+	std::string atom_type;
+	std::string out_name;
+	VINA_FOR_IN(i, atom_types_needed) {
+		t = atom_types_needed[i];
+		atom_type = convert_XS_to_string(t);
+		out_name = map_prefix + "." + atom_type + ".map";
+		path p(out_name);
+		ofile out(p);
+
+		// write header
+		out << "GRID_PARAMETER_FILE NULL\n";
+		out << "GRID_DATA_FILE NULL\n";
+		out << "MACROMOLECULE NULL\n";
+
+		// m_factor_inv is spacing
+		// check that it's the same in every dimension (it must be)
+		// check that == operator is OK
+		if ((grids[t].m_factor_inv[0] != grids[t].m_factor_inv[1]) & (grids[t].m_factor_inv[0] != grids[t].m_factor_inv[2])) {
+			printf("m_factor_inv x=%f, y=%f, z=%f\n", grids[t].m_factor_inv[0], grids[t].m_factor_inv[1], grids[t].m_factor_inv[2]);
+			return;
+		}
+
+		out << "SPACING " << grids[t].m_factor_inv[0] << "\n";
+		out << "NELEMENTS " << grids[t].m_data.dim0() << " " << grids[t].m_data.dim1() << " " << grids[t].m_data.dim2() << "\n";
+
+		// center
+		fl cx = grids[t].m_init[0] + grids[t].m_range[0] * 0.5;
+		fl cy = grids[t].m_init[1] + grids[t].m_range[1] * 0.5;
+		fl cz = grids[t].m_init[2] + grids[t].m_range[2] * 0.5;
+		out << "CENTER " << cx << " " << cy << " " << cz << "\n";
+
+		// write data
+		VINA_FOR(z, grids[t].m_data.dim2()) {
+			VINA_FOR(y, grids[t].m_data.dim1()) {
+				VINA_FOR(x, grids[t].m_data.dim0()) {
+					out << std::setprecision(4) << grids[t].m_data(x, y, z) << "\n"; // slow?
+				} // x
+			} // y
+		} // z
+	} // map atom type
+} // cache::write
+
+
 void cache::populate(const model& m, const precalculate& p, const szv& atom_types_needed, bool display_progress) {
 	szv needed;
 	VINA_FOR_IN(i, atom_types_needed) {

@@ -41,6 +41,7 @@ struct cache : public igrid {
 	void read(const path& name); // can throw cache_mismatch
 	void write(const path& name) const;
 #endif
+	void write(const std::string& map_prefix, const szv& atom_types_needed);
 	void populate(const model& m, const precalculate& p, const szv& atom_types_needed, bool display_progress = true);
 private:
 	std::string scoring_function_version;

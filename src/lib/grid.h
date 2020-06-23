@@ -33,8 +33,9 @@ class grid { // FIXME rm 'm_', consistent with my new style
     vec m_factor;
     vec m_dim_fl_minus_1;
 	vec m_factor_inv;
+	array3d<fl> m_data;
 public:
-	array3d<fl> m_data; // FIXME? - make cache a friend, and convert this back to private?
+	friend struct cache;
 	grid() : m_init(0, 0, 0), m_range(1, 1, 1), m_factor(1, 1, 1), m_dim_fl_minus_1(-1, -1, -1), m_factor_inv(1, 1, 1) {} // not private
 	grid(const grid_dims& gd) { init(gd); }
     void init(const grid_dims& gd);

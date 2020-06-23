@@ -277,6 +277,7 @@ void main_procedure(model& m, const boost::optional<model>& ref, // m is non-con
 				 bool score_only, bool local_only, bool randomize_only, bool no_cache,
 				 const grid_dims& gd, int exhaustiveness,
 				 const flv& weights,
+				 bool write_maps, bool all_maps, std::string& write_maps_prefix,
 				 int cpu, int seed, int verbosity, sz num_modes, fl energy_range, tee& log) {
 
 	doing(verbosity, "Setting up the scoring function", log);
@@ -289,6 +290,7 @@ void main_procedure(model& m, const boost::optional<model>& ref, // m is non-con
 	const fl left  = 0.25; 
 	const fl right = 0.25;
 	precalculate prec_widened(prec); prec_widened.widen(left, right);
+	szv atom_types_needed;
 
 	done(verbosity, log);
 
@@ -325,8 +327,16 @@ void main_procedure(model& m, const boost::optional<model>& ref, // m is non-con
 			bool cache_needed = !(score_only || randomize_only || local_only);
 			if(cache_needed) doing(verbosity, "Analyzing the binding site", log);
 			cache c("scoring_function_version001", gd, slope, atom_type::XS);
-			if(cache_needed) c.populate(m, prec, m.get_movable_atom_types(prec.atom_typing_used()));
+			if (all_maps) {
+				VINA_FOR(i, num_atom_types(prec.atom_typing_used())) {
+					atom_types_needed.push_back(i);
+				}
+			} else {
+				atom_types_needed = m.get_movable_atom_types(prec.atom_typing_used());
+			}
+			if(cache_needed) c.populate(m, prec, atom_types_needed);
 			if(cache_needed) done(verbosity, log);
+			if(write_maps)  c.write(write_maps_prefix, atom_types_needed);
 			do_search(m, ref, wt, prec, c, prec, c, nc,
 					  out_name,
 					  corner1, corner2,
@@ -443,6 +453,8 @@ Thank you!\n";
 		fl weight_hydrogen    = -0.587439;
 		fl weight_rot         =  0.05846;
 		bool score_only = false, local_only = false, randomize_only = false, help = false, help_advanced = false, version = false; // FIXME
+		bool all_maps = false, write_maps = false;
+		std::string write_maps_prefix;
 
 		positional_options_description positional; // remains empty
 
@@ -479,6 +491,8 @@ Thank you!\n";
 			("weight_hydrophobic", value<fl>(&weight_hydrophobic)->default_value(weight_hydrophobic), "hydrophobic weight")
 			("weight_hydrogen", value<fl>(&weight_hydrogen)->default_value(weight_hydrogen),          "Hydrogen bond weight")
 			("weight_rot", value<fl>(&weight_rot)->default_value(weight_rot),                         "N_rot weight")
+			("write_maps_prefix", value<std::string>(&write_maps_prefix),                             "basename for writing grid maps")
+			("all_maps", bool_switch(&all_maps), "compute maps for all atom types")
 		;
 		options_description misc("Misc (optional)");
 		misc.add_options()
@@ -606,6 +620,9 @@ Thank you!\n";
 			}
 		}
 
+		if(vm.count("write_maps_prefix") > 0)
+			write_maps = true;
+
 		grid_dims gd; // n's = 0 via default c'tor
 
 		flv weights;
@@ -657,6 +674,7 @@ Thank you!\n";
 					score_only, local_only, randomize_only, false, // no_cache == false
 					gd, exhaustiveness,
 					weights,
+					write_maps, all_maps, write_maps_prefix,
 					cpu, seed, verbosity, max_modes_sz, energy_range, log);
 	}
 	catch(file_error& e) {
