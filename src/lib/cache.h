@@ -44,7 +44,7 @@ struct cache : public igrid {
 	void read(const path& name); // can throw cache_mismatch
 	void write(const path& name) const;
 #endif
-    void write(const std::string& str, const szv& atom_types_needed, const std::string& gpf_filename="NULL",
+    void write(const std::string& map_prefix, const szv& atom_types_needed, const std::string& gpf_filename="NULL",
                const std::string& fld_filename="NULL", const std::string& receptor_filename="NULL");
 	void populate(const model& m, const precalculate& p, const szv& atom_types_needed);
 private:
