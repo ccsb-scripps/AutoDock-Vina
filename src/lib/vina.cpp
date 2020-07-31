@@ -224,6 +224,14 @@ void Vina::compute_vina_grid() {
     m_grid_initialized = true;
 }
 
+void Vina::write_maps(const std::string& out_prefix, const std::string& gpf_filename,
+                      const std::string& fld_filename, const std::string& receptor_filename) {
+    VINA_CHECK(m_grid_initialized); // m_grid
+
+    const szv atom_types = m_model.get_movable_atom_types(m_precalculated_sf.atom_typing_used());
+    m_grid.write(out_prefix, atom_types, gpf_filename, fld_filename, receptor_filename);
+}
+
 void Vina::write_pose(const std::string& output_name, const std::string& remark) {
     std::ostringstream format_remark;
     format_remark.setf(std::ios::fixed, std::ios::floatfield);
@@ -500,7 +508,6 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
     // Check if ff, box and ligand were initialized
     VINA_CHECK(m_ligand_initialized); // m_model
     VINA_CHECK(m_grid_initialized); // m_grid
-    VINA_CHECK(m_ff_initialized); // m_precalculated
 
     int seed = generate_seed();
     double e = 0;

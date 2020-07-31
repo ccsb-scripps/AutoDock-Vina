@@ -128,6 +128,8 @@ public:
     void global_search(const int n_poses=20, const double min_rmsd=1.0);
     void write_results(const std::string& output_name, int how_many=9, double energy_range=3.0);
     void write_pose(const std::string& output_name, const std::string& remark=std::string());
+    void write_maps(const std::string& out_prefix="receptor", const std::string& gpf_filename="NULL",
+                    const std::string& fld_filename="NULL", const std::string& receptor_filename="NULL");
 
 private:
     //OpenBabel::OBMol m_mol;

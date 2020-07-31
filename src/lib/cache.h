@@ -27,6 +27,8 @@
 #include "igrid.h"
 #include "grid.h"
 #include "model.h"
+#include "file.h"
+
 
 struct cache_mismatch {};
 struct rigid_mismatch : public cache_mismatch {};
@@ -42,7 +44,9 @@ struct cache : public igrid {
 	void read(const path& name); // can throw cache_mismatch
 	void write(const path& name) const;
 #endif
-	void populate(const model& m, const precalculate& p, const szv& atom_types_needed, bool display_progress = true);
+    void write(const std::string& str, const szv& atom_types_needed, const std::string& gpf_filename="NULL",
+               const std::string& fld_filename="NULL", const std::string& receptor_filename="NULL");
+	void populate(const model& m, const precalculate& p, const szv& atom_types_needed);
 private:
 	std::string scoring_function_version;
 	atomv atoms; // for verification

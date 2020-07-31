@@ -42,6 +42,7 @@
 #include "file.h"
 #include "szv_grid.h"
 
+
 cache::cache(const std::string& scoring_function_version_, const grid_dims& gd_, fl slope_, atom_type::t atom_typing_used_) 
 : scoring_function_version(scoring_function_version_), gd(gd_), slope(slope_), atu(atom_typing_used_), grids(num_atom_types(atom_typing_used_)) {}
 
@@ -108,7 +109,60 @@ void cache::load(Archive& ar, const unsigned version) {
 	ar & grids;
 }
 
-void cache::populate(const model& m, const precalculate& p, const szv& atom_types_needed, bool display_progress) {
+void cache::write(const std::string& out_prefix, const szv& atom_types_needed, const std::string& gpf_filename,
+                  const std::string& fld_filename, const std::string& receptor_filename) {
+    
+    VINA_FOR_IN(i, atom_types_needed) {
+		sz t = atom_types_needed[i];
+        std::string out_name;
+        out_name = out_prefix + "." + std::to_string(t) + ".map"; // DSM: use XS_TYPE instead of integers?
+        //printf("main: write_grids(), %lu,", t);
+        //printf("%s", out_name.c_str());
+        //printf("\n");
+        path p{out_name};
+        ofile out(p);
+
+        // write header
+        out << "GRID_PARAMETER_FILE " << gpf_filename << "\n";
+        out << "GRID_DATA_FILE " << fld_filename << "\n";
+        out << "MACROMOLECULE " << receptor_filename << "\n";
+
+        // m_factor_inv is spacing
+        // check that it's the same in every dimension (it must be)
+        // check that == operator is OK
+        if ((grids[t].m_factor_inv[0] != grids[t].m_factor_inv[1]) & (grids[t].m_factor_inv[0] != grids[t].m_factor_inv[2])) {
+            printf("m_factor_inv x=%f, y=%f, z=%f\n", grids[t].m_factor_inv[0], grids[t].m_factor_inv[1], grids[t].m_factor_inv[2]);
+            return;
+        }
+
+        out << "SPACING " << grids[t].m_factor_inv[0] << "\n";
+
+        // The number of elements has to be an odd number. Who said AD was not odd?
+        int size_x = (grids[t].m_data.dim0() % 2 == 0) ?  grids[t].m_data.dim0() - 1 : grids[t].m_data.dim0();
+        int size_y = (grids[t].m_data.dim1() % 2 == 0) ?  grids[t].m_data.dim1() - 1 : grids[t].m_data.dim1();
+        int size_z = (grids[t].m_data.dim2() % 2 == 0) ?  grids[t].m_data.dim2() - 1 : grids[t].m_data.dim2();
+        out << "NELEMENTS " << size_x << " " << size_y  << " " << size_z << "\n";
+
+        // center
+        fl cx = grids[t].m_init[0] + grids[t].m_range[0] * 0.5;
+        fl cy = grids[t].m_init[1] + grids[t].m_range[1] * 0.5;
+        fl cz = grids[t].m_init[2] + grids[t].m_range[2] * 0.5;
+        //printf("m_init %f\n", grids[t].m_init[0]);
+        //printf("m_range %f\n", grids[t].m_range[0]);
+        out << "CENTER " << cx << " " << cy << " " << cz << "\n";
+    
+        // write data
+        VINA_FOR(z, grids[t].m_data.dim2()) {
+            VINA_FOR(y, grids[t].m_data.dim1()) {
+                VINA_FOR(x, grids[t].m_data.dim0()) {
+                    out << std::setprecision(4) << grids[t].m_data(x, y, z) << "\n"; // slow?
+                } // x
+            } // y
+        } // z
+    } // map atom type
+} // cache::write
+
+void cache::populate(const model& m, const precalculate& p, const szv& atom_types_needed) {
 	szv needed;
 	VINA_FOR_IN(i, atom_types_needed) {
 		sz t = atom_types_needed[i];

@@ -26,14 +26,14 @@
 #include "array3d.h"
 #include "grid_dim.h"
 #include "curl.h"
+#include "file.h"
+
 
 class grid { // FIXME rm 'm_', consistent with my new style
-    vec m_init;
-    vec m_range;
-    vec m_factor;
-    vec m_dim_fl_minus_1;
-	vec m_factor_inv;
 public:
+    vec m_init; // DSM was private
+    vec m_range; // DSM was private
+    vec m_factor_inv; // DSM was private
 	array3d<fl> m_data; // FIXME? - make cache a friend, and convert this back to private?
 	grid() : m_init(0, 0, 0), m_range(1, 1, 1), m_factor(1, 1, 1), m_dim_fl_minus_1(-1, -1, -1), m_factor_inv(1, 1, 1) {} // not private
 	grid(const grid_dims& gd) { init(gd); }
@@ -49,6 +49,9 @@ public:
 	fl evaluate(const vec& location, fl slope, fl c)             const { return evaluate_aux(location, slope, c, NULL);   }
 	fl evaluate(const vec& location, fl slope, fl c, vec& deriv) const { return evaluate_aux(location, slope, c, &deriv); } // sets deriv
 private:
+    vec m_factor;
+    vec m_dim_fl_minus_1;
+
 	fl evaluate_aux(const vec& location, fl slope, fl v, vec* deriv) const; // sets *deriv if not NULL
 	friend class boost::serialization::access;
 	template<class Archive>
