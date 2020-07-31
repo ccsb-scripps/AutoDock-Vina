@@ -161,9 +161,9 @@ void cache::write(const std::string& map_prefix, const szv& atom_types_needed, c
 		out << "SPACING " << grids[t].m_factor_inv[0] << "\n";
 
 		// The number of elements has to be an odd number. Who said AD was not odd?
-        int size_x = grids[t].m_data.dim0() + sz(grids[t].m_data.dim0() % 2 == 0) - 1;
-        int size_y = grids[t].m_data.dim1() + sz(grids[t].m_data.dim1() % 2 == 0) - 1;
-        int size_z = grids[t].m_data.dim2() + sz(grids[t].m_data.dim2() % 2 == 0) - 1;
+        int size_x = (grids[t].m_data.dim0() % 2 == 0) ?  grids[t].m_data.dim0() - 1 : grids[t].m_data.dim0();
+        int size_y = (grids[t].m_data.dim1() % 2 == 0) ?  grids[t].m_data.dim1() - 1 : grids[t].m_data.dim1();
+        int size_z = (grids[t].m_data.dim2() % 2 == 0) ?  grids[t].m_data.dim2() - 1 : grids[t].m_data.dim2();
         out << "NELEMENTS " << size_x << " " << size_y  << " " << size_z << "\n";
 
 		// center
