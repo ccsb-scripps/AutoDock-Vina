@@ -176,8 +176,8 @@ void Vina::set_box(double center_x, double center_y, double center_z, int size_x
     m_box_initialized = true;
 }
 
-void Vina::set_vina_weights(const double weight_gauss1, const double weight_gauss2, const double weight_repulsion, 
-                            const double weight_hydrophobic, const double weight_hydrogen, const double weight_rot) {
+void Vina::set_weights(const double weight_gauss1, const double weight_gauss2, const double weight_repulsion, 
+                       const double weight_hydrophobic, const double weight_hydrogen, const double weight_rot) {
     flv weights;
     weights.push_back(weight_gauss1);
     weights.push_back(weight_gauss2);
@@ -191,12 +191,24 @@ void Vina::set_vina_weights(const double weight_gauss1, const double weight_gaus
     m_weights = weights;
 }
 
+void Vina::set_forcefield() {
+    everything t;
+    weighted_terms scoring_function(&t, m_weights);
+    precalculate precalculated_sf(scoring_function);
+
+    // Store in Vina object
+    m_scoring_function = scoring_function;
+    m_precalculated_sf = precalculated_sf;
+    m_ff_initialized = true;
+}
+
 void Vina::compute_vina_grid() {
     // Setup the search box
     // Check first that the receptor was added
     // And the box and the ff were defined
     VINA_CHECK(m_receptor_initialized); // m_model
     VINA_CHECK(m_box_initialized); // m_gd
+    VINA_CHECK(m_ff_initialized); // m_precalculated
 
     const fl slope = 1e6; // FIXME: too large? used to be 100
     const szv atom_types_needed = m_model.get_movable_atom_types(m_precalculated_sf.atom_typing_used());
@@ -340,6 +352,7 @@ void Vina::score_robust() {
     // Check first that the receptor was added
     // And the box and the ff were defined
     VINA_CHECK(m_ligand_initialized); // m_model
+    VINA_CHECK(m_ff_initialized); // m_precalculated
 
     flv term_values;
     double e = 0;
@@ -348,14 +361,18 @@ void Vina::score_robust() {
     const vec authentic_v(1000, 1000, 1000);
     naive_non_cache nnc(&m_precalculated_sf); // for out of grid issues
 
+    // We have to fix scoring function mess by declaring it in the Vina object
+    everything t;
+    weighted_terms scoring_function(&t, m_weights);
+
     intramolecular_energy = m_model.eval_intramolecular(m_precalculated_sf, authentic_v);
-    e = m_model.eval_adjusted(m_scoring_function, m_precalculated_sf, nnc, authentic_v, intramolecular_energy);
+    e = m_model.eval_adjusted(scoring_function, m_precalculated_sf, nnc, authentic_v, intramolecular_energy);
     m_log << "Intramolecular: " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
     m_log.endl();
     m_log << "Affinity: " << std::fixed << std::setprecision(5) << e << " (kcal/mol)";
     m_log.endl();
 
-    term_values = m_t.evale_robust(m_model);
+    term_values = t.evale_robust(m_model);
     VINA_CHECK(term_values.size() == 5);
     
     m_log << "Intermolecular contributions to the terms, before weighting:\n";
@@ -371,7 +388,7 @@ void Vina::score_robust() {
     VINA_FOR_IN(i, term_values)
         e2 += term_values[i] * m_weights[i];
 
-    e2 = m_scoring_function.conf_independent(m_model, e2);
+    e2 = scoring_function.conf_independent(m_model, e2);
 
     m_log << "Affinity: " << std::fixed << std::setprecision(5) << e2 << " (kcal/mol)";
     m_log.endl();
@@ -387,6 +404,7 @@ double Vina::score() {
     // Score the current conf in the model
     // Check if ff and ligand were initialized
     VINA_CHECK(m_ligand_initialized); // m_model
+    VINA_CHECK(m_ff_initialized); // m_precalculated
 
     double e = 0;
     double intramolecular_energy = 0;
@@ -394,8 +412,12 @@ double Vina::score() {
     const vec authentic_v(1000, 1000, 1000);
     naive_non_cache nnc(&m_precalculated_sf); // for out of grid issues
 
+    // We have to fix scoring function mess by declaring it in the Vina object
+    everything t;
+    weighted_terms scoring_function(&t, m_weights);
+
     intramolecular_energy = m_model.eval_intramolecular(m_precalculated_sf, authentic_v);
-    e = m_model.eval_adjusted(m_scoring_function, m_precalculated_sf, nnc, authentic_v, intramolecular_energy);
+    e = m_model.eval_adjusted(scoring_function, m_precalculated_sf, nnc, authentic_v, intramolecular_energy);
     
     if (m_verbosity > 1) {
         m_log << "Intramolecular (eval_intramolecular): " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
@@ -412,6 +434,7 @@ void Vina::optimize(output_type& out, int max_steps) {
     // Check if ff, box and ligand were initialized
     VINA_CHECK(m_ligand_initialized); // m_model
     VINA_CHECK(m_box_initialized); // m_gd
+    VINA_CHECK(m_ff_initialized); // m_precalculated
 
     change g(m_model.get_size());
     quasi_newton quasi_newton_par;
@@ -461,6 +484,7 @@ void Vina::optimize(int max_steps) {
     // Check if ff, box and ligand were initialized
     VINA_CHECK(m_ligand_initialized); // m_model
     VINA_CHECK(m_box_initialized); // m_gd
+    VINA_CHECK(m_ff_initialized); // m_precalculated
 
     // We have to find a way to get rid of this out thing...
     // And also get the current conf and not the initial conf
@@ -476,6 +500,7 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
     // Check if ff, box and ligand were initialized
     VINA_CHECK(m_ligand_initialized); // m_model
     VINA_CHECK(m_grid_initialized); // m_grid
+    VINA_CHECK(m_ff_initialized); // m_precalculated
 
     int seed = generate_seed();
     double e = 0;
@@ -550,11 +575,11 @@ Vina::~Vina() {
     bool m_receptor_initialized;
     bool m_ligand_initialized;
     // scoring function
-    everything m_t;
     flv m_weights;
     non_cache m_nc;
     weighted_terms m_scoring_function;
     precalculate m_precalculated_sf;
+    bool m_ff_initialized;
     // maps
     grid_dims m_gd;
     vec m_corner1;

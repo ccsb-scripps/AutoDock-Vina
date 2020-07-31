@@ -62,8 +62,7 @@
 class Vina {
 public:
     // Constructor
-    Vina(int exhaustiveness=8, const std::string& forcefield="vina", int cpu=0, int seed=0, 
-         bool no_cache=false, int verbosity=2) {
+    Vina(int exhaustiveness=8, int cpu=0, int seed=0, bool no_cache=false, int verbosity=2) {
         m_exhaustiveness = exhaustiveness;
         m_no_cache = no_cache;
         m_verbosity = verbosity;
@@ -71,22 +70,8 @@ public:
         m_ligand_initialized = false;
         m_box_initialized = false;
         m_grid_initialized = false;
+        m_ff_initialized = false;
         m_seed = generate_seed(seed);
-
-        if (forcefield == "vina") {
-            // Set default vina weights
-            set_vina_weights();
-            everything m_t;
-            weighted_terms m_scoring_function(&m_t, m_weights);
-            precalculate m_precalculated_sf(m_scoring_function);
-        } else if (forcefield == "ad4") {
-            // Set default AD4 weights
-            //set_ad4_weights();
-            std::cout << "Not implemented yet. \n";
-            exit (EXIT_FAILURE);
-        } else {
-            std::cout << "Forcefield " << forcefield << " not recognized. Available: vina or ad4.\n";
-        }
 
         try {
             if (m_exhaustiveness < 1) {
@@ -117,6 +102,8 @@ public:
         if(verbosity > 1 && exhaustiveness < cpu) {
             m_log << "WARNING: at low exhaustiveness, it may be impossible to utilize all CPUs.\n";
         }
+
+        set_weights();
     }
     // Destructor
     virtual ~Vina();
@@ -128,9 +115,10 @@ public:
     void set_ligand(const std::vector<std::string>& ligand_name);
     //void set_ligand(OpenBabel::OBMol* mol);
     //void set_ligand(std::vector<OpenBabel::OBMol*> mol);
-    void set_vina_weights(const double weight_gauss1=-0.035579, const double weight_gauss2=-0.005156, 
-                          const double weight_repulsion=0.840245, const double weight_hydrophobic=-0.035069, 
-                          const double weight_hydrogen=-0.587439, const double weight_rot=0.05846);
+    void set_weights(const double weight_gauss1=-0.035579, const double weight_gauss2=-0.005156, 
+                     const double weight_repulsion=0.840245, const double weight_hydrophobic=-0.035069, 
+                     const double weight_hydrogen=-0.587439, const double weight_rot=0.05846);
+    void set_forcefield();
     void set_box(double center_x, double center_y, double center_z, int size_x, int size_y, int size_z, double granularity=0.375);
     void compute_vina_grid();
     void randomize(const int max_steps=10000);
@@ -151,11 +139,11 @@ private:
     bool m_receptor_initialized;
     bool m_ligand_initialized;
     // scoring function
-    everything m_t;
     flv m_weights;
     non_cache m_nc;
     weighted_terms m_scoring_function;
     precalculate m_precalculated_sf;
+    bool m_ff_initialized;
     // maps
     grid_dims m_gd;
     vec m_corner1;

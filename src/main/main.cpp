@@ -235,6 +235,7 @@ Thank you!\n";
 		}
 		if(vm.count("flex") && !vm.count("receptor"))
 			throw usage_error("Flexible side chains are not allowed without the rest of the receptor"); // that's the only way parsing works, actually
+
 		if(vm.count("log") > 0)
 			log.init(log_name);
 
@@ -262,9 +263,10 @@ Thank you!\n";
 		log << "Grid space: " << granularity << "\n";
 		log.endl();
 
-		Vina v(exhaustiveness, "vina", cpu, seed, no_cache, verbosity);
+		Vina v(exhaustiveness, cpu, seed, no_cache, verbosity);
 		v.set_receptor(rigid_name, flex_name);
 		v.set_ligand(ligand_name);
+		v.set_forcefield();
 
 		if (score_only) {
 			v.score();
