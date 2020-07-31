@@ -22,7 +22,7 @@
 
 #include "quasi_newton.h"
 #include "bfgs.h"
-#include <iostream>
+
 
 struct quasi_newton_aux {
     model* m;
@@ -44,9 +44,8 @@ void quasi_newton::operator()(model& m, const precalculate& p, const igrid& ig, 
     quasi_newton_aux aux(&m, &p, &ig, v);
 
     fl res = bfgs(aux, out.c, g, max_steps, average_required_improvement, 10);
-    
+
     // Update model a last time after optimization
     m.set(out.c);
     out.e = res;
 }
-

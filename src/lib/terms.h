@@ -25,6 +25,9 @@
 
 #include <boost/ptr_container/ptr_vector.hpp> 
 #include "model.h"
+#include "brick.h"
+
+struct model; // forward declaration for line 57
 
 struct term {
 	std::string name;

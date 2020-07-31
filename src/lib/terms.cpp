@@ -21,7 +21,8 @@
 */
 
 #include "terms.h"
-#include "brick.h"
+#include <stdlib.h>
+
 
 conf_independent_inputs::operator flv() const {
 	flv tmp;
@@ -304,6 +305,8 @@ fl terms::eval_conf_independent(const conf_independent_inputs& in, fl x, flv::co
 	VINA_FOR_IN(i, conf_independent_terms) 
 		if(conf_independent_terms.enabled[i]) 
 			x = conf_independent_terms[i].eval(in, x, it);
+			std::cout << "terms::eval_conf_independent: " << x << "\n";
+		std::cout << x << "HERE\n";
 	return x;
 }
 

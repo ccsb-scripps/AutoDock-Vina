@@ -220,7 +220,6 @@ Thank you!\n";
 			return 0;
 		}
 
-		bool search_box_needed = !score_only; // randomize_only and local_only still need the search space
 		bool output_produced   = !score_only; 
 		bool receptor_needed   = !randomize_only;
 
@@ -234,46 +233,12 @@ Thank you!\n";
 			std::cerr << "Missing ligand.\n" << "\nCorrect usage:\n" << desc_simple << '\n';
 			return 1;
 		}
-		if(cpu < 1) 
-			cpu = 1;
-		if(vm.count("seed") == 0) 
-			seed = auto_seed();
-		if(exhaustiveness < 1)
-			throw usage_error("exhaustiveness must be 1 or greater");
-		if(num_modes < 1)
-			throw usage_error("num_modes must be 1 or greater");
-		sz max_modes_sz = static_cast<sz>(num_modes);
-		
-		boost::optional<std::string> rigid_name_opt;
-		if(vm.count("receptor"))
-			rigid_name_opt = rigid_name;
-
-		boost::optional<std::string> flex_name_opt;
-		if(vm.count("flex"))
-			flex_name_opt = flex_name;
-
 		if(vm.count("flex") && !vm.count("receptor"))
 			throw usage_error("Flexible side chains are not allowed without the rest of the receptor"); // that's the only way parsing works, actually
-
 		if(vm.count("log") > 0)
 			log.init(log_name);
 
-		if(search_box_needed) { 
-			options_occurrence oo = get_occurrence(vm, search_area);
-			if(!oo.all) {
-				check_occurrence(vm, search_area);
-				std::cerr << "\nCorrect usage:\n" << desc_simple << std::endl;
-				return 1;
-			}
-			if(size_x <= 0 || size_y <= 0 || size_z <= 0)
-				throw usage_error("Search space dimensions should be positive");
-		}
-
 		log << cite_message << '\n';
-
-		if(search_box_needed && size_x * size_y * size_z > 27e3) {
-			log << "WARNING: The search space volume > 27000 Angstrom^3 (See FAQ)\n";
-		}
 
 		if(output_produced) { // FIXME
 			if(!vm.count("out")) {
@@ -282,35 +247,38 @@ Thank you!\n";
 			}
 		}
 
-		if(vm.count("cpu") == 0) {
-			unsigned num_cpus = boost::thread::hardware_concurrency();
-			if(verbosity > 1) {
-				if(num_cpus > 0)
-					log << "Detected " << num_cpus << " CPU" << ((num_cpus > 1) ? "s" : "") << '\n';
-				else
-					log << "Could not detect the number of CPUs, using 1\n";
-			}
-			if(num_cpus > 0)
-				cpu = num_cpus;
-			else
-				cpu = 1;
-		}
-		if(cpu < 1) 
-			cpu = 1;
-		if(verbosity > 1 && exhaustiveness < cpu)
-			log << "WARNING: at low exhaustiveness, it may be impossible to utilize all CPUs\n";
-
 		doing(verbosity, "Reading input", log);
 		done(verbosity, log);
 
-		Vina v(exhaustiveness, cpu, seed, no_cache, verbosity);
+		log << "Exhaustiveness: " << exhaustiveness << "\n";
+		log << "CPU: " << cpu << "\n";
+		log << "Seed: " << seed << "\n";
+		log << "Verbosity: " << verbosity << "\n";
+		log << "Rigid receptor: " << rigid_name << "\n";
+		log << "Flex receptor: " << flex_name << "\n";
+		log << "Ligand: " << ligand_name << "\n";
+		log << "Size: X " << size_x << " Y " << size_y << " Z " << size_z << "\n";
+		log << "Center: X " << center_x << " Y " << center_y << " Z " << center_z << "\n";
+		log << "Grid space: " << granularity << "\n";
+		log.endl();
+
+		Vina v(exhaustiveness, "vina", cpu, seed, no_cache, verbosity);
 		v.set_receptor(rigid_name, flex_name);
 		v.set_ligand(ligand_name);
-		v.set_box(size_x, size_y, size_z, center_x, center_y, center_z, granularity);
-		v.compute_vina_grid();
-		v.set_weights(weight_gauss1, weight_gauss2, weight_repulsion, weight_hydrophobic, weight_hydrogen, weight_rot);
-		v.global_search();
-		v.write_results(out_name, num_modes, energy_range);
+
+		if (score_only) {
+			v.score();
+		} else if(local_only) {
+			v.set_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
+			v.compute_vina_grid();
+			v.optimize();
+			v.write_pose(out_name);
+		} else {
+			v.set_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
+			v.compute_vina_grid();
+			v.global_search();
+			v.write_results(out_name, num_modes, energy_range);
+		}
 
 	}
 	catch(file_error& e) {

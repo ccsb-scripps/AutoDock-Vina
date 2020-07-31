@@ -576,112 +576,6 @@ class ConstCharVector(object):
 # Register ConstCharVector in _vina:
 _vina.ConstCharVector_swigregister(ConstCharVector)
 
-class OBMolVector(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-
-    def iterator(self) -> "swig::SwigPyIterator *":
-        return _vina.OBMolVector_iterator(self)
-    def __iter__(self):
-        return self.iterator()
-
-    def __nonzero__(self) -> "bool":
-        return _vina.OBMolVector___nonzero__(self)
-
-    def __bool__(self) -> "bool":
-        return _vina.OBMolVector___bool__(self)
-
-    def __len__(self) -> "std::vector< OpenBabel::OBMol * >::size_type":
-        return _vina.OBMolVector___len__(self)
-
-    def __getslice__(self, i: "std::vector< OpenBabel::OBMol * >::difference_type", j: "std::vector< OpenBabel::OBMol * >::difference_type") -> "std::vector< OpenBabel::OBMol *,std::allocator< OpenBabel::OBMol * > > *":
-        return _vina.OBMolVector___getslice__(self, i, j)
-
-    def __setslice__(self, *args) -> "void":
-        return _vina.OBMolVector___setslice__(self, *args)
-
-    def __delslice__(self, i: "std::vector< OpenBabel::OBMol * >::difference_type", j: "std::vector< OpenBabel::OBMol * >::difference_type") -> "void":
-        return _vina.OBMolVector___delslice__(self, i, j)
-
-    def __delitem__(self, *args) -> "void":
-        return _vina.OBMolVector___delitem__(self, *args)
-
-    def __getitem__(self, *args) -> "std::vector< OpenBabel::OBMol * >::value_type":
-        return _vina.OBMolVector___getitem__(self, *args)
-
-    def __setitem__(self, *args) -> "void":
-        return _vina.OBMolVector___setitem__(self, *args)
-
-    def pop(self) -> "std::vector< OpenBabel::OBMol * >::value_type":
-        return _vina.OBMolVector_pop(self)
-
-    def append(self, x: "std::vector< OpenBabel::OBMol * >::value_type") -> "void":
-        return _vina.OBMolVector_append(self, x)
-
-    def empty(self) -> "bool":
-        return _vina.OBMolVector_empty(self)
-
-    def size(self) -> "std::vector< OpenBabel::OBMol * >::size_type":
-        return _vina.OBMolVector_size(self)
-
-    def swap(self, v: "OBMolVector") -> "void":
-        return _vina.OBMolVector_swap(self, v)
-
-    def begin(self) -> "std::vector< OpenBabel::OBMol * >::iterator":
-        return _vina.OBMolVector_begin(self)
-
-    def end(self) -> "std::vector< OpenBabel::OBMol * >::iterator":
-        return _vina.OBMolVector_end(self)
-
-    def rbegin(self) -> "std::vector< OpenBabel::OBMol * >::reverse_iterator":
-        return _vina.OBMolVector_rbegin(self)
-
-    def rend(self) -> "std::vector< OpenBabel::OBMol * >::reverse_iterator":
-        return _vina.OBMolVector_rend(self)
-
-    def clear(self) -> "void":
-        return _vina.OBMolVector_clear(self)
-
-    def get_allocator(self) -> "std::vector< OpenBabel::OBMol * >::allocator_type":
-        return _vina.OBMolVector_get_allocator(self)
-
-    def pop_back(self) -> "void":
-        return _vina.OBMolVector_pop_back(self)
-
-    def erase(self, *args) -> "std::vector< OpenBabel::OBMol * >::iterator":
-        return _vina.OBMolVector_erase(self, *args)
-
-    def __init__(self, *args):
-        _vina.OBMolVector_swiginit(self, _vina.new_OBMolVector(*args))
-
-    def push_back(self, x: "std::vector< OpenBabel::OBMol * >::value_type") -> "void":
-        return _vina.OBMolVector_push_back(self, x)
-
-    def front(self) -> "std::vector< OpenBabel::OBMol * >::value_type":
-        return _vina.OBMolVector_front(self)
-
-    def back(self) -> "std::vector< OpenBabel::OBMol * >::value_type":
-        return _vina.OBMolVector_back(self)
-
-    def assign(self, n: "std::vector< OpenBabel::OBMol * >::size_type", x: "std::vector< OpenBabel::OBMol * >::value_type") -> "void":
-        return _vina.OBMolVector_assign(self, n, x)
-
-    def resize(self, *args) -> "void":
-        return _vina.OBMolVector_resize(self, *args)
-
-    def insert(self, *args) -> "void":
-        return _vina.OBMolVector_insert(self, *args)
-
-    def reserve(self, n: "std::vector< OpenBabel::OBMol * >::size_type") -> "void":
-        return _vina.OBMolVector_reserve(self, n)
-
-    def capacity(self) -> "std::vector< OpenBabel::OBMol * >::size_type":
-        return _vina.OBMolVector_capacity(self)
-    __swig_destroy__ = _vina.delete_OBMolVector
-
-# Register OBMolVector in _vina:
-_vina.OBMolVector_swigregister(OBMolVector)
-
 class Vina(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -720,13 +614,10 @@ class Vina(object):
     def optimize(self, max_steps: "int const"=0) -> "void":
         return _vina.Vina_optimize(self, max_steps)
 
-    def refine_structure(self, out: "output_type &", max_steps: "int const"=0) -> "void":
-        return _vina.Vina_refine_structure(self, out, max_steps)
-
     def global_search(self, n_poses: "int const"=20, min_rmsd: "double const"=1.0) -> "void":
         return _vina.Vina_global_search(self, n_poses, min_rmsd)
 
-    def write_results(self, output_name: "std::string const &", how_many: "int const"=9, energy_range: "double const"=3.0) -> "void":
+    def write_results(self, output_name: "std::string const &", how_many: "int"=9, energy_range: "double"=3.0) -> "void":
         return _vina.Vina_write_results(self, output_name, how_many, energy_range)
 
     def write_pose(self, *args) -> "void":

@@ -101,7 +101,7 @@ namespace std {
     %template(DoubleVector) vector<double>;
     %template(StringVector) vector<string>;
     %template(ConstCharVector) vector<const char*>;
-    %template(OBMolVector) vector<OpenBabel::OBMol*>;
+    //%template(OBMolVector) vector<OpenBabel::OBMol*>;
 }
 
 // Add numpy

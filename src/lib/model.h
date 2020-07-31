@@ -167,7 +167,7 @@ struct model {
 		return tmp;
 	}
 	void check_internal_pairs() const;
-	void print_stuff() const; // FIXME rm
+	void print_stuff(bool show_coords=true, bool show_internal=true, bool show_atoms=true, bool show_grid=true, bool show_about=true) const; // FIXME rm
 
 	fl clash_penalty() const;
 

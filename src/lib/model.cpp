@@ -825,29 +825,41 @@ void model::about() const {
 	VINA_SHOW(num_flex());
 }
 
-void model::print_stuff() const {
-	std::cout << "coords:\n";
-	VINA_FOR_IN(i, coords)
-		printnl(coords[i]);
-
-	std::cout << "internal_coords:\n";
-	VINA_FOR_IN(i, internal_coords)
-		printnl(internal_coords[i]);
-
-	std::cout << "atoms:\n";
-	VINA_FOR_IN(i, atoms) {
-		const atom& a = atoms[i];
-		std::cout << a.el << " " << a.ad << " " << a.xs << " " << a.sy << "    " << a.charge << '\n';
-		std::cout << a.bonds.size() << "  "; printnl(a.coords);
+void model::print_stuff(bool show_coords, bool show_internal, bool show_atoms, bool show_grid, bool show_about) const {
+	
+	if (show_coords) {
+		std::cout << "coords:\n";
+		VINA_FOR_IN(i, coords)
+			printnl(coords[i]);
 	}
 
-	/*std::cout << "grid_atoms:\n";
-	VINA_FOR_IN(i, grid_atoms) {
-		const atom& a = grid_atoms[i];
-		std::cout << a.el << " " << a.ad << " " << a.xs << " " << a.sy << "    " << a.charge << '\n';
-		std::cout << a.bonds.size() << "  "; printnl(a.coords);
-	}*/
-	about();
+	if (show_internal) {
+		std::cout << "internal_coords:\n";
+		VINA_FOR_IN(i, internal_coords)
+			printnl(internal_coords[i]);
+	}
+
+	if (show_atoms) {
+		std::cout << "atoms:\n";
+		VINA_FOR_IN(i, atoms) {
+			const atom& a = atoms[i];
+			std::cout << a.el << " " << a.ad << " " << a.xs << " " << a.sy << "    " << a.charge << '\n';
+			std::cout << a.bonds.size() << "  "; printnl(a.coords);
+		}
+	}
+
+	if (show_grid) {
+		std::cout << "grid_atoms:\n";
+		VINA_FOR_IN(i, grid_atoms) {
+			const atom& a = grid_atoms[i];
+			std::cout << a.el << " " << a.ad << " " << a.xs << " " << a.sy << "    " << a.charge << '\n';
+			std::cout << a.bonds.size() << "  "; printnl(a.coords);
+		}
+	}
+
+	if (show_about) {
+		about();
+	}
 }
 
 fl pairwise_clash_penalty(fl r, fl covalent_r) {

@@ -624,6 +624,7 @@ model parse_ligand_pdbqt(const std::string& name) { // can throw parse_error
     return tmp.m;
 }
 
+/*
 model parse_ligand_pdbqt(OpenBabel::OBMol* mol) { // can throw parse_error
     non_rigid_parsed nrp;
     context c;
@@ -642,11 +643,13 @@ model parse_ligand_pdbqt(OpenBabel::OBMol* mol) { // can throw parse_error
     tmp.initialize(nrp.mobility_matrix());
     return tmp.m;
 }
+*/
 
 model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& flex_name) { // can throw parse_error
     rigid r;
     non_rigid_parsed nrp;
     context c;
+
     parse_pdbqt_rigid(make_path(rigid_name), r);
     parse_pdbqt_flex(make_path(flex_name), nrp, c);
 
@@ -654,16 +657,19 @@ model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& fle
     tmp.initialize_from_rigid(r);
     tmp.initialize_from_nrp(nrp, c, false);
     tmp.initialize(nrp.mobility_matrix());
+
     return tmp.m;
 }
 
 model parse_receptor_pdbqt(const std::string& rigid_name) { // can throw parse_error
     rigid r;
+
     parse_pdbqt_rigid(make_path(rigid_name), r);
 
     pdbqt_initializer tmp;
     tmp.initialize_from_rigid(r);
     distance_type_matrix mobility_matrix;
     tmp.initialize(mobility_matrix);
+
     return tmp.m;
 }
