@@ -23,7 +23,6 @@
 #include <ctime> // for time (for seeding)
 
 #include "random.h"
-#include "my_pid.h"
 
 fl random_fl(fl a, fl b, rng& generator) { // expects a < b, returns rand in [a, b]
 	assert(a < b); // BOOST also asserts a < b
