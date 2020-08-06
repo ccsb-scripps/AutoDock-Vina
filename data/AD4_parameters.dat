@@ -1,0 +1,121 @@
+# $Id: AD4.1_bound.dat,v 1.5 2009/03/25 23:50:14 rhuey Exp $
+# 
+# AutoDock 
+# 
+# Copyright (C) 1989-2007,  Garrett M. Morris, David S. Goodsell, Ruth Huey, Arthur J. Olson, 
+# All Rights Reserved.
+# 
+# AutoDock is a Trade Mark of The Scripps Research Institute.
+# 
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+# AutoDock Linear Free Energy Model Coefficients and Energetic Parameters
+#                   Version 4.1 Bound
+#                    $Revision: 1.5 $
+
+# FE_unbound_model is used to specify how the internal energy of the
+# ligand should be treated when estimating the free energy of binding,
+# and can be set to one of the following strings:
+#   unbound_same_as_bound, extended, or compact
+# unbound_same_as_bound -- this assumes the internal energy of the ligand is the
+#                          same before and after binding.
+# extended -- this assumes the internal energy of the ligand is that of an 
+#             extended conformation when unbound.
+# compact -- this assumes the internal energy of the ligand is that of a 
+#            compact conformation when unbound.
+#FE_unbound_model unbound_same_as_bound
+
+# AutoDock 4 free energy coefficients with respect to original (AD2) energetic parameters
+#  This model assumes that the bound and unbound conformations are the same.
+#  See Table 3 in Huey,Morris,Olson&Goodsell (2007) J Comput Chem 28: 1145-1152.
+#
+#               Free Energy Coefficient
+#               ------
+FE_coeff_vdW    0.1662
+FE_coeff_hbond  0.1209
+FE_coeff_estat  0.1406
+FE_coeff_desolv 0.1322
+FE_coeff_tors   0.2983
+
+# AutoDock 4 Energy Parameters
+
+# - Atomic solvation volumes and parameters
+# - Unweighted vdW and Unweighted H-bond Well Depths
+#
+# - Atom Types
+# - Rii = sum of vdW radii of two like atoms (in Angstrom)
+# - epsii = vdW well depth (in Kcal/mol)
+# - vol = atomic solvation volume (in Angstrom^3)
+# - solpar = atomic solvation parameter
+# - Rij_hb = H-bond radius of the heteroatom in contact with a hydrogen (in Angstrom)
+# - epsij_hb = well depth of H-bond (in Kcal/mol)
+# - hbond = integer indicating type of H-bonding atom (0=no H-bond)
+# - rec_index = initialised to -1, but later on holds count of how many of this atom type are in receptor
+# - map_index = initialised to -1, but later on holds the index of the AutoGrid map
+# - bond_index = used in AutoDock to detect bonds; see "mdist.h", enum {C,N,O,H,XX,P,S}
+#
+# - To obtain the Rij value for non H-bonding atoms, calculate the 
+#        arithmetic mean of the Rii values for the two atom types.
+#        Rij = (Rii + Rjj) / 2
+#
+# - To obtain the epsij value for non H-bonding atoms, calculate the 
+#        geometric mean of the epsii values for the two atom types.
+#        epsij = sqrt( epsii * epsjj )
+#
+# - Note that the Rij_hb value is non-zero for heteroatoms only, and zero for H atoms;
+#        to obtain the length of an H-bond, look up Rij_hb for the heteroatom only; 
+#        this is combined with the Rii value for H in the receptor, in AutoGrid.
+#        For example, the Rij_hb for OA-HD H-bonds will be (1.9 + 1.0) Angstrom, 
+#        and the weighted epsij_hb will be 5.0 kcal/mol * FE_coeff_hbond.
+#
+#        Atom   Rii                             Rij_hb       rec_index  element
+#        Type         epsii           solpar         epsij_hb    map_index
+#                            vol                          hbond     bond_index
+#        --     ----  -----  -------  --------  ---  ---  -  --  -- --  --
+atom_par H      2.00  0.020   0.0000   0.00051  0.0  0.0  0  -1  -1  3	H   # Non H-bonding Hydrogen
+atom_par HD     2.00  0.020   0.0000   0.00051  0.0  0.0  2  -1  -1  3	H   # Donor 1 H-bond Hydrogen
+atom_par HS     2.00  0.020   0.0000   0.00051  0.0  0.0  1  -1  -1  3	H   # Donor S Spherical Hydrogen
+atom_par C      4.00  0.150  33.5103  -0.00143  0.0  0.0  0  -1  -1  0	C   # Non H-bonding Aliphatic Carbon
+atom_par A      4.00  0.150  33.5103  -0.00052  0.0  0.0  0  -1  -1  0	C   # Non H-bonding Aromatic Carbon
+atom_par N      3.50  0.160  22.4493  -0.00162  0.0  0.0  0  -1  -1  1	N   # Non H-bonding Nitrogen
+atom_par NA     3.50  0.160  22.4493  -0.00162  1.9  5.0  4  -1  -1  1	N   # Acceptor 1 H-bond Nitrogen
+atom_par NS     3.50  0.160  22.4493  -0.00162  1.9  5.0  3  -1  -1  1	N   # Acceptor S Spherical Nitrogen
+atom_par OA     3.20  0.200  17.1573  -0.00251  1.9  5.0  5  -1  -1  2	O   # Acceptor 2 H-bonds Oxygen
+atom_par OS     3.20  0.200  17.1573  -0.00251  1.9  5.0  3  -1  -1  2	O   # Acceptor S Spherical Oxygen
+atom_par F      3.09  0.080  15.4480  -0.00110  0.0  0.0  0  -1  -1  4	F   # Non H-bonding Fluorine
+atom_par Mg     1.30  0.875   1.5600  -0.00110  0.0  0.0  0  -1  -1  4	Mg  # Non H-bonding Magnesium
+atom_par MG     1.30  0.875   1.5600  -0.00110  0.0  0.0  0  -1  -1  4	Mg  # Non H-bonding Magnesium
+atom_par P      4.20  0.200  38.7924  -0.00110  0.0  0.0  0  -1  -1  5	P   # Non H-bonding Phosphorus
+atom_par SA     4.00  0.200  33.5103  -0.00214  2.5  1.0  5  -1  -1  6	S   # Acceptor 2 H-bonds Sulphur
+atom_par S      4.00  0.200  33.5103  -0.00214  0.0  0.0  0  -1  -1  6	S   # Non H-bonding Sulphur
+atom_par Cl     4.09  0.276  35.8235  -0.00110  0.0  0.0  0  -1  -1  4	Cl  # Non H-bonding Chlorine
+atom_par CL     4.09  0.276  35.8235  -0.00110  0.0  0.0  0  -1  -1  4	Cl  # Non H-bonding Chlorine
+atom_par Ca     1.98  0.550   2.7700  -0.00110  0.0  0.0  0  -1  -1  4	Ca  # Non H-bonding Calcium
+atom_par CA     1.98  0.550   2.7700  -0.00110  0.0  0.0  0  -1  -1  4	Ca  # Non H-bonding Calcium
+atom_par Mn     1.30  0.875   2.1400  -0.00110  0.0  0.0  0  -1  -1  4	Mn  # Non H-bonding Manganese
+atom_par MN     1.30  0.875   2.1400  -0.00110  0.0  0.0  0  -1  -1  4	Mn  # Non H-bonding Manganese
+atom_par Fe     1.30  0.010   1.8400  -0.00110  0.0  0.0  0  -1  -1  4	Fe  # Non H-bonding Iron
+atom_par FE     1.30  0.010   1.8400  -0.00110  0.0  0.0  0  -1  -1  4	Fe  # Non H-bonding Iron
+atom_par Zn     1.48  0.550   1.7000  -0.00110  0.0  0.0  0  -1  -1  4	Zn  # Non H-bonding Zinc
+atom_par ZN     1.48  0.550   1.7000  -0.00110  0.0  0.0  0  -1  -1  4	Zn  # Non H-bonding Zinc
+atom_par Br     4.33  0.389  42.5661  -0.00110  0.0  0.0  0  -1  -1  4	Br  # Non H-bonding Bromine
+atom_par BR     4.33  0.389  42.5661  -0.00110  0.0  0.0  0  -1  -1  4	Br  # Non H-bonding Bromine
+atom_par I      4.72  0.550  55.0585  -0.00110  0.0  0.0  0  -1  -1  4	I   # Non H-bonding Iodine
+atom_par Z      4.00  0.150  33.5103  -0.00143  0.0  0.0  0  -1  -1  0  D   # Non H-bonding covalent map
+atom_par G      4.00  0.150  33.5103  -0.00143  0.0  0.0  0  -1  -1  0	D   # Ring closure Glue Aliphatic Carbon  # SF
+atom_par GA     4.00  0.150  33.5103  -0.00052  0.0  0.0  0  -1  -1  0	D   # Ring closure Glue Aromatic Carbon   # SF
+atom_par J      4.00  0.150  33.5103  -0.00143  0.0  0.0  0  -1  -1  0	D   # Ring closure Glue Aliphatic Carbon  # SF
+atom_par Q      4.00  0.150  33.5103  -0.00143  0.0  0.0  0  -1  -1  0	D   # Ring closure Glue Aliphatic Carbon  # SF
+atom_par W      0.00  0.200  00.0000  -0.00000  0.0  0.0  0  -1  -1  2	O   # Acceptor 2 H-bonds Oxygen
