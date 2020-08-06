@@ -62,19 +62,63 @@ int ForceField::atom_type(const std::string& atom_type, const int hbond, const i
             }
         }
     } catch (std::out_of_range& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Error: Atom type " << atom_type << " is not defined." << std::endl;
     }
 }
 
 double ForceField::weight(const std::string& weight_name) {
-    return m_weights.at(weight_name);
+    try {
+        return m_weights.at(weight_name);
+    } catch (std::out_of_range& e) {
+        std::cerr << "Error: Weight parameter " << weight_name << " is not defined." << std::endl;
+    }
 }
 
-const std::string ForceField::element(const int atom_type) {
+double ForceField::rii_vdw(const int atom_type) {
     try {
-        return m_element.at(atom_type);
+        return m_rii_vdw.at(atom_type);
     } catch (std::out_of_range& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Error: rii vdW for atom type " << atom_type << " is not defined." << std::endl;
+    }
+}
+
+double ForceField::epsii_vdw(const int atom_type) {
+    try {
+        return m_epsii_vdw.at(atom_type);
+    } catch (std::out_of_range& e) {
+        std::cerr << "Error: epsii vdW for atom type " << atom_type << " is not defined." << std::endl;
+    }
+}
+
+double ForceField::sol_par(const int atom_type) {
+    try {
+        return m_sol_par.at(atom_type);
+    } catch (std::out_of_range& e) {
+        std::cerr << "Error: solvation parameter for atom type " << atom_type << " is not defined." << std::endl;
+    }
+}
+
+double ForceField::vol(const int atom_type) {
+    try {
+        return m_vol.at(atom_type);
+    } catch (std::out_of_range& e) {
+        std::cerr << "Error: volume for atom type " << atom_type << " is not defined." << std::endl;
+    }
+}
+
+double ForceField::rij_hb(const int atom_type) {
+    try {
+        return m_rij_hb.at(atom_type);
+    } catch (std::out_of_range& e) {
+        std::cerr << "Error: rij hb for atom type " << atom_type << " is not defined." << std::endl;
+    }
+}
+
+double ForceField::epsij_hb(const int atom_type) {
+    try {
+        return m_epsij_hb.at(atom_type);
+    } catch (std::out_of_range& e) {
+        std::cerr << "Error: epsij hb for atom type " << atom_type << " is not defined." << std::endl;
     }
 }
 
@@ -84,12 +128,16 @@ double ForceField::covalent_radius(const int atom_type) {
     try {
         return m_covalent_radius.at(current_element);
     } catch (std::out_of_range& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Error: covalent radius for element " << current_element << " is not defined." << std::endl;
     }
 }
 
-double ForceField::optimal_covalent_bond_length(const int atom_type1, const int atom_type2) {
-    return covalent_radius(atom_type1) + covalent_radius(atom_type2);
+const std::string ForceField::element(const int atom_type) {
+    try {
+        return m_element.at(atom_type);
+    } catch (std::out_of_range& e) {
+        std::cerr << "Error: element for atom type " << atom_type << " is not defined." << std::endl;
+    }
 }
 
 bool ForceField::is_atom_type_defined(const std::string& atom_type) {
@@ -116,7 +164,7 @@ bool ForceField::is_hydrophobic(const int atom_type) {
             return false;
         }
     } catch (std::out_of_range& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Error: hydrophobicity (m_hbond) for atom type " << atom_type << " is not defined." << std::endl;
     }
 
     return false;
@@ -130,7 +178,7 @@ bool ForceField::is_donor(const int atom_type) {
             return false;
         }
     } catch (std::out_of_range& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Error: m_hbond for atom type " << atom_type << " is not defined." << std::endl;
     }
 
     return false;
@@ -144,24 +192,18 @@ bool ForceField::is_acceptor(const int atom_type) {
             return false;
         }
     } catch (std::out_of_range& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Error: m_hbond for atom type " << atom_type << " is not defined." << std::endl;
     }
 
     return false;
 }
 
 bool ForceField::is_donor_acceptor(const int atom_type) {
-    try {
-        if (is_donor(atom_type) && is_acceptor(atom_type)) {
-            return true;
-        } else {
-            return false;
-        }
-    } catch (std::out_of_range& e) {
-        std::cerr << e.what() << std::endl;
+    if (is_donor(atom_type) && is_acceptor(atom_type)) {
+        return true;
+    } else {
+        return false;
     }
-
-    return false;
 }
 
 bool ForceField::is_hbond_possible(const int atom_type1, const int atom_type2) {
@@ -193,6 +235,10 @@ bool ForceField::is_metal(const int atom_type) {
     } else {
         return false;
     }
+}
+
+double ForceField::optimal_covalent_bond_length(const int atom_type1, const int atom_type2) {
+    return covalent_radius(atom_type1) + covalent_radius(atom_type2);
 }
 
 void ForceField::read_autodock_forcefield(const std::string& forcefield_filename) {
@@ -234,7 +280,7 @@ void ForceField::read_autodock_forcefield(const std::string& forcefield_filename
                 m_bond_index[i] = std::stoi(results[11]);
                 m_element[i] = results[12];
                 
-                //std::cout << i << " " << results[1] << " " << results[2] << " " << results[3] << "\n";
+                std::cout << i << " " << results[1] << " " << results[2] << " " << results[3] << "\n";
 
                 i++;
             }
@@ -282,7 +328,7 @@ void ForceField::read_vina_forcefield(const std::string& forcefield_filename) {
                 m_bonded[i] = std::stoi(results[5]);
                 m_element[i] = results[6];
 
-                //std::cout << i << " " << results[1] << " " << results[3] << " " << results[4] << "\n";
+                std::cout << i << " " << results[1] << " " << results[3] << " " << results[4] << " " << results[5] << " " << results[6] << "\n";
 
                 i++;
             }

@@ -34,14 +34,14 @@
 
 class ForceField {
 public:
-    ForceField(const std::string& forcefield_filename, const std::string& forcefield_type="vina") {
-        if (forcefield_type == "vina") {
+    ForceField(const std::string& forcefield_filename=std::string(), const std::string& forcefield_type="vina") {
+        if (!forcefield_filename.empty() && forcefield_type == "vina") {
             read_vina_forcefield(forcefield_filename);
             m_is_vina = true;
-        } else if (forcefield_type == "AD4") {
+        } else if (!forcefield_filename.empty() && forcefield_type == "AD4") {
             read_autodock_forcefield(forcefield_filename);
             m_is_autodock = true;
-        } else {
+        } else if (!forcefield_filename.empty()) {
             std::cout << "Error: forcefield " << forcefield_type << " type not recognized. \n";
             std::cout << "ForceField available: vina or AD4\n";
             exit (EXIT_FAILURE);
@@ -62,20 +62,26 @@ public:
     bool is_autodock4();
 
     int atom_type(const std::string& atom_type, const int hbond=0, const int bonded=0);
-    double covalent_radius(const int atom_type);
-    double optimal_covalent_bond_length(const int atom_type1, const int atom_type2);
     double weight(const std::string& weight_name);
+    double rii_vdw(const int atom_type);
+    double epsii_vdw(const int atom_type);
+    double sol_par(const int atom_type);
+    double vol(const int atom_type);
+    double rij_hb(const int atom_type);
+    double epsij_hb(const int atom_type);
+    double covalent_radius(const int atom_type);
     const std::string element(const int atom_type);
-    bool is_hbond_possible(const int atom_type1, const int atom_type2);
+    bool is_atom_type_defined(const std::string& atom_type);
+    bool is_atom_type_defined(const int atom_type);
     bool is_hydrogen(const int atom_type);
     bool is_hydrophobic(const int atom_type);
     bool is_heteroatom(const int atom_type);
     bool is_metal(const int atom_type);
-    bool is_atom_type_defined(const std::string& atom_type);
-    bool is_atom_type_defined(const int atom_type);
     bool is_donor(const int atom_type);
     bool is_acceptor(const int atom_type);
     bool is_donor_acceptor(const int atom_type);
+    bool is_hbond_possible(const int atom_type1, const int atom_type2);
+    double optimal_covalent_bond_length(const int atom_type1, const int atom_type2);
 
 private:
     bool m_is_vina = false;
