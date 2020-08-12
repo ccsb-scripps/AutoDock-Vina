@@ -28,10 +28,10 @@ weighted_terms::weighted_terms(const terms* t, const flv& weights) : t(t), weigh
 	VINA_CHECK(t->   intermolecular_terms.num_enabled() == 0);
 	VINA_FOR_IN(i, t->usable_terms)
 		if(t->usable_terms.enabled[i]) {
-			if(enabled_usable_terms.empty())
-				atom_typing_used_ = t->usable_terms[i].atom_typing_used;
-			else
-				VINA_CHECK(atom_typing_used_ == t->usable_terms[i].atom_typing_used);
+			//if(enabled_usable_terms.empty())
+			//	atom_typing_used_ = t->usable_terms[i].atom_typing_used;
+			//else
+			//	VINA_CHECK(atom_typing_used_ == t->usable_terms[i].atom_typing_used);
 
 			enabled_usable_terms.push_back(i);
 			cutoff_ = (std::max)(cutoff_, t->usable_terms[i].cutoff);
@@ -42,6 +42,12 @@ fl weighted_terms::eval(sz t1, sz t2, fl r) const { // intentionally not checkin
 	fl acc = 0;
 	VINA_FOR_IN(i, enabled_usable_terms) 
 		acc += weights[i] * t->usable_terms[enabled_usable_terms[i]].eval(t1, t2, r);
+	return acc;
+}
+fl weighted_terms::eval(atom& a, atom& b, fl r) const { // intentionally not checking for cutoff
+	fl acc = 0;
+	VINA_FOR_IN(i, enabled_usable_terms) 
+		acc += weights[i] * t->usable_terms[enabled_usable_terms[i]].eval(a, b, r);
 	return acc;
 }
 fl weighted_terms::conf_independent(const model& m, fl e) const {

@@ -145,6 +145,7 @@ private:
     non_cache m_nc;
     weighted_terms m_scoring_function;
     precalculate m_precalculated_sf;
+    precalculate_byatom m_precalculated_byatom;
     bool m_ff_initialized;
     // maps
     grid_dims m_gd;

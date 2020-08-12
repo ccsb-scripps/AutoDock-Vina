@@ -30,6 +30,7 @@ struct model; // forward declaration
 struct scoring_function {
 	virtual atom_type::t atom_typing_used() const = 0;
 	virtual fl cutoff() const = 0;
+	virtual fl eval(atom& a, atom& b, fl r) const = 0;
 	virtual fl eval(sz t1, sz t2, fl r) const = 0;
 	virtual fl conf_independent(const model& m, fl e) const = 0;
 };

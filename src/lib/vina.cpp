@@ -192,13 +192,23 @@ void Vina::set_weights(const double weight_gauss1, const double weight_gauss2, c
 }
 
 void Vina::set_forcefield() {
-    everything t;
+    std::cout << "---- DEBUG Vina::set_forcefield() everything t\n";
+    everything t(scoring_function_choice::SF_VINA);
+    std::cout << "---- DEBUG Vina::set_forcefield() weighted_terms\n";
     weighted_terms scoring_function(&t, m_weights);
+    std::cout << "---- DEBUG Vina::set_forcefield() precalculate\n";
     precalculate precalculated_sf(scoring_function);
+    std::cout << "---- DEBUG Vina::set_forcefield() get num_atoms\n";
+    sz n_atoms = m_model.num_movable_atoms();
+    std::cout << "---- DEBUG Vina::set_forcefield() get atoms\n";
+    atomv atoms = m_model.get_atoms();
+    std::cout << "---- DEBUG Vina::set_forcefield() precalculate_byatom\n";
+	precalculate_byatom precalculated_byatom(scoring_function, n_atoms, atoms);
 
     // Store in Vina object
     m_scoring_function = scoring_function;
     m_precalculated_sf = precalculated_sf;
+    m_precalculated_byatom = precalculated_byatom;
     m_ff_initialized = true;
 }
 
@@ -211,7 +221,7 @@ void Vina::compute_vina_grid() {
     VINA_CHECK(m_ff_initialized); // m_precalculated
 
     const fl slope = 1e6; // FIXME: too large? used to be 100
-    const szv atom_types_needed = m_model.get_movable_atom_types(m_precalculated_sf.atom_typing_used());
+    const szv atom_types_needed = m_model.get_movable_atom_types(atom_type::XS);
 
     cache grid("scoring_function_version001", m_gd, slope, atom_type::XS);
 
@@ -356,86 +366,86 @@ void Vina::randomize(const int max_steps) {
     }
 }
 
-void Vina::score_robust() {
-    // Check first that the receptor was added
-    // And the box and the ff were defined
-    VINA_CHECK(m_ligand_initialized); // m_model
-    VINA_CHECK(m_ff_initialized); // m_precalculated
+//void Vina::score_robust() {
+//    // Check first that the receptor was added
+//    // And the box and the ff were defined
+//    VINA_CHECK(m_ligand_initialized); // m_model
+//    VINA_CHECK(m_ff_initialized); // m_precalculated
+//
+//    flv term_values;
+//    double e = 0;
+//    double e2 = 0;
+//    double intramolecular_energy = 0;
+//    const vec authentic_v(1000, 1000, 1000);
+//    naive_non_cache nnc(&m_precalculated_sf); // for out of grid issues
+//
+//    // We have to fix scoring function mess by declaring it in the Vina object
+//    everything t(scoring_function_choice::SF_VINA);
+//    weighted_terms scoring_function(&t, m_weights);
+//
+//    intramolecular_energy = m_model.eval_intramolecular(m_precalculated_sf, authentic_v);
+//    e = m_model.eval_adjusted(scoring_function, m_precalculated_sf, nnc, authentic_v, intramolecular_energy);
+//    m_log << "Intramolecular: " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
+//    m_log.endl();
+//    m_log << "Affinity: " << std::fixed << std::setprecision(5) << e << " (kcal/mol)";
+//    m_log.endl();
+//
+//    term_values = t.evale_robust(m_model);
+//    VINA_CHECK(term_values.size() == 5);
+//    
+//    m_log << "Intermolecular contributions to the terms, before weighting:\n";
+//    m_log << std::setprecision(5);
+//    m_log << "    gauss 1     : " << term_values[0] << '\n';
+//    m_log << "    gauss 2     : " << term_values[1] << '\n';
+//    m_log << "    repulsion   : " << term_values[2] << '\n';
+//    m_log << "    hydrophobic : " << term_values[3] << '\n';
+//    m_log << "    Hydrogen    : " << term_values[4] << '\n';
+//
+//    VINA_CHECK(m_weights.size() == term_values.size() + 1);
+//    
+//    VINA_FOR_IN(i, term_values)
+//        e2 += term_values[i] * m_weights[i];
+//
+//    e2 = scoring_function.conf_independent(m_model, e2);
+//
+//    m_log << "Affinity: " << std::fixed << std::setprecision(5) << e2 << " (kcal/mol)";
+//    m_log.endl();
+//    
+//    if(e < 100 && std::abs(e2 - e) > 0.05) {
+//        m_log << "WARNING: the individual terms are inconsisent with the\n";
+//        m_log << "WARNING: affinity. Consider reporting this as a bug:\n";
+//        m_log << "WARNING: http://vina.scripps.edu/manual.html#bugs\n";
+//    }
+//}
 
-    flv term_values;
-    double e = 0;
-    double e2 = 0;
-    double intramolecular_energy = 0;
-    const vec authentic_v(1000, 1000, 1000);
-    naive_non_cache nnc(&m_precalculated_sf); // for out of grid issues
-
-    // We have to fix scoring function mess by declaring it in the Vina object
-    everything t;
-    weighted_terms scoring_function(&t, m_weights);
-
-    intramolecular_energy = m_model.eval_intramolecular(m_precalculated_sf, authentic_v);
-    e = m_model.eval_adjusted(scoring_function, m_precalculated_sf, nnc, authentic_v, intramolecular_energy);
-    m_log << "Intramolecular: " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
-    m_log.endl();
-    m_log << "Affinity: " << std::fixed << std::setprecision(5) << e << " (kcal/mol)";
-    m_log.endl();
-
-    term_values = t.evale_robust(m_model);
-    VINA_CHECK(term_values.size() == 5);
-    
-    m_log << "Intermolecular contributions to the terms, before weighting:\n";
-    m_log << std::setprecision(5);
-    m_log << "    gauss 1     : " << term_values[0] << '\n';
-    m_log << "    gauss 2     : " << term_values[1] << '\n';
-    m_log << "    repulsion   : " << term_values[2] << '\n';
-    m_log << "    hydrophobic : " << term_values[3] << '\n';
-    m_log << "    Hydrogen    : " << term_values[4] << '\n';
-
-    VINA_CHECK(m_weights.size() == term_values.size() + 1);
-    
-    VINA_FOR_IN(i, term_values)
-        e2 += term_values[i] * m_weights[i];
-
-    e2 = scoring_function.conf_independent(m_model, e2);
-
-    m_log << "Affinity: " << std::fixed << std::setprecision(5) << e2 << " (kcal/mol)";
-    m_log.endl();
-    
-    if(e < 100 && std::abs(e2 - e) > 0.05) {
-        m_log << "WARNING: the individual terms are inconsisent with the\n";
-        m_log << "WARNING: affinity. Consider reporting this as a bug:\n";
-        m_log << "WARNING: http://vina.scripps.edu/manual.html#bugs\n";
-    }
-}
-
-double Vina::score() {
-    // Score the current conf in the model
-    // Check if ff and ligand were initialized
-    VINA_CHECK(m_ligand_initialized); // m_model
-    VINA_CHECK(m_ff_initialized); // m_precalculated
-
-    double e = 0;
-    double intramolecular_energy = 0;
-    double intermolecular_energy = 0;
-    const vec authentic_v(1000, 1000, 1000);
-    naive_non_cache nnc(&m_precalculated_sf); // for out of grid issues
-
-    // We have to fix scoring function mess by declaring it in the Vina object
-    everything t;
-    weighted_terms scoring_function(&t, m_weights);
-
-    intramolecular_energy = m_model.eval_intramolecular(m_precalculated_sf, authentic_v);
-    e = m_model.eval_adjusted(scoring_function, m_precalculated_sf, nnc, authentic_v, intramolecular_energy);
-    
-    if (m_verbosity > 1) {
-        m_log << "Intramolecular (eval_intramolecular): " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
-        m_log.endl();
-        m_log << "Energy (eval_adjusted): " << std::fixed << std::setprecision(5) << e << " (kcal/mol)";
-        m_log.endl();
-    }
-
-    return e;
-}
+//double Vina::score() {
+//    // Score the current conf in the model
+//    // Check if ff and ligand were initialized
+//    VINA_CHECK(m_ligand_initialized); // m_model
+//    VINA_CHECK(m_ff_initialized); // m_precalculated
+//
+//    double e = 0;
+//    double intramolecular_energy = 0;
+//    double intermolecular_energy = 0;
+//    const vec authentic_v(1000, 1000, 1000);
+//    naive_non_cache nnc(&m_precalculated_sf); // for out of grid issues
+//
+//    // We have to fix scoring function mess by declaring it in the Vina object
+//    everything t(scoring_function_choice::SF_VINA);
+//    weighted_terms scoring_function(&t, m_weights);
+//
+//    intramolecular_energy = m_model.eval_intramolecular(m_precalculated_sf, authentic_v);
+//    e = m_model.eval_adjusted(scoring_function, m_precalculated_sf, nnc, authentic_v, intramolecular_energy);
+//    
+//    if (m_verbosity > 1) {
+//        m_log << "Intramolecular (eval_intramolecular): " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
+//        m_log.endl();
+//        m_log << "Energy (eval_adjusted): " << std::fixed << std::setprecision(5) << e << " (kcal/mol)";
+//        m_log.endl();
+//    }
+//
+//    return e;
+//}
 
 void Vina::optimize(output_type& out, int max_steps) {
     // Local optimization of the ligand conf
@@ -459,13 +469,13 @@ void Vina::optimize(output_type& out, int max_steps) {
     if (m_verbosity > 1) {
         m_log << "Before local optimization:";
         m_log.endl();
-        score();
+        //score(); TODO
     }
 
     doing(m_verbosity, "Performing local search", m_log);
     VINA_FOR(p, 5) {
         nc.slope = 100 * std::pow(10.0, 2.0 * p);
-        quasi_newton_par(m_model, m_precalculated_sf, nc, out, g, authentic_v);
+        quasi_newton_par(m_model, m_precalculated_byatom, nc, out, g, authentic_v);
         
         if(nc.within(m_model))
             break;
@@ -483,7 +493,7 @@ void Vina::optimize(output_type& out, int max_steps) {
         // Get energy of the new pose
         m_log << "After local optimization:";
         m_log.endl();
-        score();
+        //score(); TODO
     }
 }
 
@@ -519,14 +529,15 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
     rng generator(static_cast<rng::result_type>(seed));
 
     // We have to fix scoring function mess by declaring it in the Vina object
-    everything t;
+    // Only precalculate and grid should be necessary. -DSM
+    everything t(scoring_function_choice::SF_VINA);
     weighted_terms scoring_function(&t, m_weights);
 
     // Setup Monte-Carlo search
     parallel_mc m_parallelmc;
     sz heuristic = m_model.num_movable_atoms() + 10 * m_model.get_size().num_degrees_of_freedom();
     m_parallelmc.mc.num_steps = unsigned(70 * 3 * (50 + heuristic) / 2); // 2 * 70 -> 8 * 20 // FIXME
-    m_parallelmc.mc.ssd_par.evals = unsigned((25 + m_model.num_movable_atoms()) / 3);
+    m_parallelmc.mc.local_steps = unsigned((25 + m_model.num_movable_atoms()) / 3);
     m_parallelmc.mc.min_rmsd = min_rmsd;
     m_parallelmc.mc.num_saved_mins = n_poses;
     m_parallelmc.mc.hunt_cap = vec(10, 10, 10);
@@ -536,24 +547,24 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
 
     sstm << "Performing search (random seed: " << seed << ")";
     doing(m_verbosity, sstm.str(), m_log);
-    m_parallelmc(m_model, poses, m_precalculated_sf, m_grid, m_precalculated_sf, m_grid, m_corner1, m_corner2, generator);
+    m_parallelmc(m_model, poses, m_precalculated_byatom, m_grid, m_precalculated_sf, m_grid, m_corner1, m_corner2, generator); // TODO get rid of widened prec and grid
     done(m_verbosity, m_log);
 
-    doing(m_verbosity, "Refining results", m_log);
-    VINA_FOR_IN(i, poses) {
-        optimize(poses[i], m_parallelmc.mc.ssd_par.evals);
-    }
-    done(m_verbosity, m_log);
+    // doing(m_verbosity, "Refining results", m_log);
+    // VINA_FOR_IN(i, poses) {
+    //     optimize(poses[i], m_parallelmc.mc.local_steps);
+    // }
+    // done(m_verbosity, m_log);
 
-    doing(m_verbosity, "Removing duplicates", m_log);
-    m_poses = remove_redundant(poses, min_rmsd);
-    done(m_verbosity, m_log);
+    // doing(m_verbosity, "Removing duplicates", m_log);
+    // m_poses = remove_redundant(poses, min_rmsd);
+    // done(m_verbosity, m_log);
 
     if(!poses.empty()) {        
-        VINA_FOR_IN(i, poses) {
-            m_model.set(poses[i].c);
-            poses[i].e = score();
-        }
+        //VINA_FOR_IN(i, poses) {
+        //    m_model.set(poses[i].c);
+        //    poses[i].e = score();
+        //}
         
         // the order must not change because of non-decreasing g (see paper), but we'll re-sort in case g is non strictly increasing
         poses.sort();
@@ -586,6 +597,7 @@ Vina::~Vina() {
     non_cache m_nc;
     weighted_terms m_scoring_function;
     precalculate m_precalculated_sf;
+    precalculate_byatom m_precalculated_byatom;
     bool m_ff_initialized;
     // maps
     grid_dims m_gd;

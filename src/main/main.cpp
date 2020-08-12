@@ -264,19 +264,25 @@ Thank you!\n";
 		log.endl();
 
 		Vina v(exhaustiveness, cpu, seed, no_cache, verbosity);
+        std::cout << "---- DEBUG ---- set_receptor\n";
 		v.set_receptor(rigid_name, flex_name);
+        std::cout << "---- DEBUG ---- set_ligand\n";
 		v.set_ligand(ligand_name);
+        std::cout << "---- DEBUG ---- set_forcefield\n";
 		v.set_forcefield();
 
-		if (score_only) {
-			v.score();
-		} else if(local_only) {
+		//if (score_only) {
+			//v.score();
+		//} else
+        if(local_only) {
 			v.set_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
 			v.compute_vina_grid();
 			v.optimize();
 			v.write_pose(out_name);
 		} else {
+            std::cout << "---- DEBUG ---- set_box\n";
 			v.set_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
+            std::cout << "---- DEBUG ---- compute_vina_grid\n";
 			v.compute_vina_grid();
 			v.global_search();
 			v.write_results(out_name, num_modes, energy_range);

@@ -37,17 +37,13 @@ struct term {
 struct distance_additive : public term {
 	fl cutoff;
 	distance_additive(fl cutoff_) : cutoff(cutoff_) {}
-	virtual fl eval(const atom_base& a, const atom_base& b, fl r) const = 0;
+	virtual fl eval(const atom& a, const atom& b, fl r) const = 0;
+	virtual fl eval(sz t1, sz t2, fl r) const = 0;
 	virtual ~distance_additive() {}
 };
 
 struct usable : public distance_additive {
-	atom_type::t atom_typing_used;
-	usable(fl cutoff_) : distance_additive(cutoff_), atom_typing_used(atom_type::XS) {}
-	fl eval(const atom_base& a, const atom_base& b, fl r) const { // should not be overriden
-		return eval(a.get(atom_typing_used), b.get(atom_typing_used), r);
-	}
-	virtual fl eval(sz t1, sz t2, fl r) const { return 0; } 
+	usable(fl cutoff_) : distance_additive(cutoff_) {}
 	virtual ~usable() {}
 };
 

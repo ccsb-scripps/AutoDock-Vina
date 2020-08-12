@@ -31,6 +31,7 @@ struct weighted_terms : public scoring_function {
 	atom_type::t atom_typing_used() const { return atom_typing_used_; }
 	fl cutoff() const { return cutoff_; }
 	fl eval(sz t1, sz t2, fl r) const; // intentionally not checking for cutoff
+	fl eval(atom& a, atom& b, fl r) const; // intentionally not checking for cutoff
 	fl conf_independent(const model& m, fl e) const;
 private:
 	const terms* t;
