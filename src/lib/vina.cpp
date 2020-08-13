@@ -418,34 +418,60 @@ void Vina::randomize(const int max_steps) {
 //    }
 //}
 
-//double Vina::score() {
-//    // Score the current conf in the model
-//    // Check if ff and ligand were initialized
-//    VINA_CHECK(m_ligand_initialized); // m_model
-//    VINA_CHECK(m_ff_initialized); // m_precalculated
-//
-//    double e = 0;
-//    double intramolecular_energy = 0;
-//    double intermolecular_energy = 0;
-//    const vec authentic_v(1000, 1000, 1000);
-//    naive_non_cache nnc(&m_precalculated_sf); // for out of grid issues
-//
-//    // We have to fix scoring function mess by declaring it in the Vina object
-//    everything t(scoring_function_choice::SF_VINA);
-//    weighted_terms scoring_function(&t, m_weights);
-//
-//    intramolecular_energy = m_model.eval_intramolecular(m_precalculated_sf, authentic_v);
-//    e = m_model.eval_adjusted(scoring_function, m_precalculated_sf, nnc, authentic_v, intramolecular_energy);
-//    
-//    if (m_verbosity > 1) {
-//        m_log << "Intramolecular (eval_intramolecular): " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
-//        m_log.endl();
-//        m_log << "Energy (eval_adjusted): " << std::fixed << std::setprecision(5) << e << " (kcal/mol)";
-//        m_log.endl();
-//    }
-//
-//    return e;
-//}
+double Vina::score() {
+    // Score the current conf in the model
+    // Check if ff and ligand were initialized
+    VINA_CHECK(m_ligand_initialized); // m_model
+    VINA_CHECK(m_ff_initialized); // m_precalculated
+
+    double e = 0;
+    double intramolecular_energy = 0;
+    double intermolecular_energy = 0;
+    const vec authentic_v(1000, 1000, 1000);
+    //naive_non_cache nnc(&m_precalculated_sf); // for out of grid issues
+
+    // We have to fix scoring function mess by declaring it in the Vina object
+    everything t(scoring_function_choice::SF_VINA);
+    weighted_terms scoring_function(&t, m_weights);
+
+    intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid, authentic_v);
+    e = m_model.eval_adjusted(scoring_function, m_precalculated_byatom, m_grid, authentic_v, intramolecular_energy);
+    
+    if (m_verbosity > 1) {
+        m_log << "Intramolecular (eval_intramolecular): " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
+        m_log.endl();
+        m_log << "Energy (eval_adjusted): " << std::fixed << std::setprecision(5) << e << " (kcal/mol)";
+        m_log.endl();
+    }
+
+    return e;
+}
+
+double Vina::score(double intramolecular_energy) {
+    // Score the current conf in the model
+    // Check if ff and ligand were initialized
+    VINA_CHECK(m_ligand_initialized); // m_model
+    VINA_CHECK(m_ff_initialized); // m_precalculated
+
+    double e = 0;
+    double intermolecular_energy = 0;
+    const vec authentic_v(1000, 1000, 1000);
+
+    // We have to fix scoring function mess by declaring it in the Vina object
+    everything t(scoring_function_choice::SF_VINA);
+    weighted_terms scoring_function(&t, m_weights); // used only for the torsion penalty
+
+    e = m_model.eval_adjusted(scoring_function, m_precalculated_byatom, m_grid, authentic_v, intramolecular_energy);
+    
+    if (m_verbosity > 1) {
+        m_log << "Intramolecular (eval_intramolecular): " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
+        m_log.endl();
+        m_log << "Energy (eval_adjusted): " << std::fixed << std::setprecision(5) << e << " (kcal/mol)";
+        m_log.endl();
+    }
+
+    return e;
+}
 
 void Vina::optimize(output_type& out, int max_steps) {
     // Local optimization of the ligand conf
@@ -458,7 +484,7 @@ void Vina::optimize(output_type& out, int max_steps) {
     quasi_newton quasi_newton_par;
     const fl slope = 1e6;
     const vec authentic_v(1000, 1000, 1000);
-    non_cache nc(m_model, m_gd, &m_precalculated_sf, slope);
+    //non_cache nc(m_model, m_gd, &m_precalculated_sf, slope);
 
     // Define the number minimization steps based on the number moving atoms
     if(max_steps == 0) {
@@ -469,31 +495,31 @@ void Vina::optimize(output_type& out, int max_steps) {
     if (m_verbosity > 1) {
         m_log << "Before local optimization:";
         m_log.endl();
-        //score(); TODO
+        score();
     }
 
     doing(m_verbosity, "Performing local search", m_log);
     VINA_FOR(p, 5) {
-        nc.slope = 100 * std::pow(10.0, 2.0 * p);
-        quasi_newton_par(m_model, m_precalculated_byatom, nc, out, g, authentic_v);
+        //nc.slope = 100 * std::pow(10.0, 2.0 * p);
+        quasi_newton_par(m_model, m_precalculated_byatom, m_grid, out, g, authentic_v);
         
-        if(nc.within(m_model))
-            break;
+        //if(nc.within(m_model))
+        //    break; TODO?
     }
     done(m_verbosity, m_log);
 
     out.coords = m_model.get_heavy_atom_movable_coords();
 
-    if(!nc.within(m_model)) {
-        m_log << "WARNING: not all movable atoms are within the search space\n";
-        out.e = max_fl;
-    }
+    //if(!nc.within(m_model)) {
+    //    m_log << "WARNING: not all movable atoms are within the search space\n";
+    //    out.e = max_fl;
+    //}
 
     if (m_verbosity > 1) {
         // Get energy of the new pose
         m_log << "After local optimization:";
         m_log.endl();
-        //score(); TODO
+        score();
     }
 }
 
@@ -556,15 +582,16 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
     // }
     // done(m_verbosity, m_log);
 
-    // doing(m_verbosity, "Removing duplicates", m_log);
-    // m_poses = remove_redundant(poses, min_rmsd);
-    // done(m_verbosity, m_log);
+    doing(m_verbosity, "Removing duplicates", m_log);
+    m_poses = remove_redundant(poses, min_rmsd);
+    done(m_verbosity, m_log);
 
     if(!poses.empty()) {        
-        //VINA_FOR_IN(i, poses) {
-        //    m_model.set(poses[i].c);
-        //    poses[i].e = score();
-        //}
+        double intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid, authentic_v);
+        VINA_FOR_IN(i, poses) {
+            m_model.set(poses[i].c);
+            poses[i].e = score(intramolecular_energy);
+        }
         
         // the order must not change because of non-decreasing g (see paper), but we'll re-sort in case g is non strictly increasing
         poses.sort();
@@ -594,7 +621,7 @@ Vina::~Vina() {
     bool m_ligand_initialized;
     // scoring function
     flv m_weights;
-    non_cache m_nc;
+    //non_cache m_nc;
     weighted_terms m_scoring_function;
     precalculate m_precalculated_sf;
     precalculate_byatom m_precalculated_byatom;

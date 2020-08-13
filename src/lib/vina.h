@@ -46,8 +46,6 @@
 #include "model.h"
 #include "common.h"
 #include "cache.h"
-#include "non_cache.h"
-#include "naive_non_cache.h"
 #include "parse_error.h"
 #include "everything.h"
 #include "terms.h"
@@ -124,6 +122,7 @@ public:
     void randomize(const int max_steps=10000);
     void score_robust();
     double score();
+    double score(double intramolecular_energy);
     void optimize(const int max_steps=0);
     void global_search(const int n_poses=20, const double min_rmsd=1.0);
     void write_results(const std::string& output_name, int how_many=9, double energy_range=3.0);
@@ -142,7 +141,6 @@ private:
     bool m_ligand_initialized;
     // scoring function
     flv m_weights;
-    non_cache m_nc;
     weighted_terms m_scoring_function;
     precalculate m_precalculated_sf;
     precalculate_byatom m_precalculated_byatom;

@@ -666,35 +666,36 @@ fl model::eval_deriv  (const precalculate_byatom& p, const igrid& ig, const vec&
 	return e;
 }
 
-fl model::eval_intramolecular(const precalculate& p, const vec& v) {
+fl model::eval_intramolecular(const precalculate_byatom& p, const igrid& ig, const vec& v) {
 	fl e = 0;
 	sz nat = num_atom_types(atom_typing_used());
 	const fl cutoff_sqr = p.cutoff_sqr();
 
-	/// // internal for each ligand
-	/// VINA_FOR_IN(i, ligands)
-	/// 	e += eval_interacting_pairs(p, v[0], ligands[i].pairs, coords); // coords instead of internal coords
-    assert(false);
+	// internal for each ligand
+	VINA_FOR_IN(i, ligands)
+		e += eval_interacting_pairs(p, v[0], ligands[i].pairs, coords); // coords instead of internal coords
 
 	// flex-rigid
-	VINA_FOR(i, num_movable_atoms()) {
-		if(find_ligand(i) < ligands.size()) continue; // we only want flex-rigid interaction
-		const atom& a = atoms[i];
-		sz t1 = a.get(atom_typing_used());
-		if(t1 >= nat) continue;
-		VINA_FOR_IN(j, grid_atoms) {
-			const atom& b = grid_atoms[j];
-			sz t2 = b.get(atom_typing_used());
-			if(t2 >= nat) continue;
-			fl r2 = vec_distance_sqr(coords[i], b.coords);
-			if(r2 < cutoff_sqr) {
-				sz type_pair_index = triangular_matrix_index_permissive(nat, t1, t2);
-				fl this_e = p.eval_fast(type_pair_index, r2);
-				curl(this_e, v[1]);
-				e += this_e;
-			}
-		}
-	}
+    e += ig.eval_intra(*this, v[1]);
+
+	// VINA_FOR(i, num_movable_atoms()) {
+	// 	if(find_ligand(i) < ligands.size()) continue; // we only want flex-rigid interaction
+	// 	const atom& a = atoms[i];
+	// 	sz t1 = a.get(atom_typing_used());
+	// 	if(t1 >= nat) continue;
+	// 	VINA_FOR_IN(j, grid_atoms) {
+	// 		const atom& b = grid_atoms[j];
+	// 		sz t2 = b.get(atom_typing_used());
+	// 		if(t2 >= nat) continue;
+	// 		fl r2 = vec_distance_sqr(coords[i], b.coords);
+	// 		if(r2 < cutoff_sqr) {
+	// 			sz type_pair_index = triangular_matrix_index_permissive(nat, t1, t2);
+	// 			fl this_e = p.eval_fast(type_pair_index, r2);
+	// 			curl(this_e, v[1]);
+	// 			e += this_e;
+	// 		}
+	// 	}
+	// }
 
 	// flex-flex
 	VINA_FOR_IN(i, other_pairs) {
@@ -702,7 +703,7 @@ fl model::eval_intramolecular(const precalculate& p, const vec& v) {
 		if(find_ligand(pair.a) < ligands.size() || find_ligand(pair.b) < ligands.size()) continue; // we only need flex-flex
 		fl r2 = vec_distance_sqr(coords[pair.a], coords[pair.b]);
 		if(r2 < cutoff_sqr) {
-			fl this_e = p.eval_fast(pair.type_pair_index, r2);
+			fl this_e = p.eval_fast(pair.a, pair.b, r2);
 			curl(this_e, v[2]);
 			e += this_e;
 		}
