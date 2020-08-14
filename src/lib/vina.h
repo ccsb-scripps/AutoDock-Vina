@@ -46,6 +46,7 @@
 #include "model.h"
 #include "common.h"
 #include "cache.h"
+#include "ad4cache.h"
 #include "parse_error.h"
 #include "everything.h"
 #include "terms.h"
@@ -60,7 +61,7 @@
 class Vina {
 public:
     // Constructor
-    Vina(int exhaustiveness=8, int cpu=0, int seed=0, bool no_cache=false, int verbosity=2) {
+    Vina(int exhaustiveness=8, int cpu=0, int seed=0, bool no_cache=false, int verbosity=2, scoring_function_choice sf_choice=scoring_function_choice::SF_AD42) {
         m_exhaustiveness = exhaustiveness;
         m_no_cache = no_cache;
         m_verbosity = verbosity;
@@ -101,7 +102,8 @@ public:
             m_log << "WARNING: at low exhaustiveness, it may be impossible to utilize all CPUs.\n";
         }
 
-        set_weights();
+        //set_weights();
+        m_sf_choice = sf_choice;
     }
     // Destructor
     virtual ~Vina();
@@ -113,12 +115,17 @@ public:
     void set_ligand(const std::vector<std::string>& ligand_name);
     //void set_ligand(OpenBabel::OBMol* mol);
     //void set_ligand(std::vector<OpenBabel::OBMol*> mol);
-    void set_weights(const double weight_gauss1=-0.035579, const double weight_gauss2=-0.005156, 
-                     const double weight_repulsion=0.840245, const double weight_hydrophobic=-0.035069, 
-                     const double weight_hydrogen=-0.587439, const double weight_rot=0.05846);
+    void set_weights(double weight_gauss1=-0.035579,  double weight_gauss2=-0.005156, 
+                     double weight_repulsion=0.840245, double weight_hydrophobic=-0.035069, 
+                     double weight_hydrogen=-0.587439, double weight_rot=0.05846);
+
+    void set_ad4_weights(double weight_ad4_vdw =0.1662, double weight_ad4_hb=0.1209, 
+                         double weight_ad4_elec=0.1406, double weight_ad4_dsolv=0.1322, 
+                         double weight_ad4_rot =0.2983);
     void set_forcefield();
     void set_box(double center_x, double center_y, double center_z, int size_x, int size_y, int size_z, double granularity=0.375);
     void compute_vina_grid();
+    void load_ad4_maps(std::string ad4_maps);
     void randomize(const int max_steps=10000);
     void score_robust();
     double score();
@@ -133,9 +140,11 @@ public:
 private:
     //OpenBabel::OBMol m_mol;
     // model and poses
+    scoring_function_choice m_sf_choice;
     model m_receptor;
     model m_model;
     cache m_grid;
+    ad4cache m_ad4grid;
     output_container m_poses;
     bool m_receptor_initialized;
     bool m_ligand_initialized;
@@ -152,6 +161,7 @@ private:
     bool m_no_cache;
     bool m_box_initialized;
     bool m_grid_initialized;
+    bool m_ad4grid_initialized;
     // global search
     parallel_mc m_parallelmc;
     int m_cpu;
