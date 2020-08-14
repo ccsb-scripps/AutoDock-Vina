@@ -107,7 +107,7 @@ Thank you!\n";
 		std::string rigid_name, ligand_name, flex_name, config_name, out_name, log_name;
         std::string vina_maps, ad4_maps, scoring_function;
 		double center_x, center_y, center_z; 
-		int size_x, size_y, size_z;
+		double size_x, size_y, size_z;
 		int cpu = 0, seed, exhaustiveness = 8, verbosity = 2, num_modes = 9;
 		double energy_range = 2.0;
 		double granularity = 0.375;
@@ -146,9 +146,9 @@ Thank you!\n";
 			("center_x", value<double>(&center_x), "X coordinate of the center")
 			("center_y", value<double>(&center_y), "Y coordinate of the center")
 			("center_z", value<double>(&center_z), "Z coordinate of the center")
-			("size_x", value<int>(&size_x), "size in the X dimension (Angstroms)")
-			("size_y", value<int>(&size_y), "size in the Y dimension (Angstroms)")
-			("size_z", value<int>(&size_z), "size in the Z dimension (Angstroms)")
+			("size_x", value<double>(&size_x), "size in the X dimension (Angstroms)")
+			("size_y", value<double>(&size_y), "size in the Y dimension (Angstroms)")
+			("size_z", value<double>(&size_z), "size in the Z dimension (Angstroms)")
 		;
 		//options_description outputs("Output prefixes (optional - by default, input names are stripped of .pdbqt\nare used as prefixes. _001.pdbqt, _002.pdbqt, etc. are appended to the prefixes to produce the output names");
 		options_description outputs("Output (optional)");
@@ -303,7 +303,7 @@ Thank you!\n";
 		log << "Size: X " << size_x << " Y " << size_y << " Z " << size_z << "\n";
 		log << "Center: X " << center_x << " Y " << center_y << " Z " << center_z << "\n";
 		log << "Grid space: " << granularity << "\n";
-		log << "Scoring function: " << sfchoice << "\n";
+		log << "Scoring function (0=vina, 1=ad4): " << sfchoice << "\n";
 		log.endl();
 
 		Vina v(exhaustiveness, cpu, seed, no_cache, verbosity, sfchoice);

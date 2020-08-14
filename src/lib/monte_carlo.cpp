@@ -45,7 +45,6 @@ void monte_carlo::single_run(model& m, output_type& out, const precalculate_byat
 	out.e = max_fl;
 	output_type current(out);
 	quasi_newton quasi_newton_par; quasi_newton_par.max_steps = local_steps;
-    std::cout << "---- DEBUG ---- monte_carlo::single_run() ---- START\n";
 	VINA_U_FOR(step, num_steps) {
 		output_type candidate(current.c, max_fl);
 		mutate_conf(candidate.c, m, mutation_amplitude, generator);

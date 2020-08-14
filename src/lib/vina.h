@@ -123,7 +123,7 @@ public:
                          double weight_ad4_elec=0.1406, double weight_ad4_dsolv=0.1322, 
                          double weight_ad4_rot =0.2983);
     void set_forcefield();
-    void set_box(double center_x, double center_y, double center_z, int size_x, int size_y, int size_z, double granularity=0.375);
+    void set_box(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.375);
     void compute_vina_grid();
     void load_ad4_maps(std::string ad4_maps);
     void randomize(const int max_steps=10000);

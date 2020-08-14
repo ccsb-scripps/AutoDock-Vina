@@ -352,8 +352,8 @@ struct num_tors_add : public conf_independent {
 	sz size() const { return 1; }
 	fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i) const {
 		//fl w = 0.1 * read_iterator(i); // [-1 .. 1]
-		fl w = read_iterator(i); // FIXME?
-		return x + w * in.num_tors;
+		fl w = 0.1 * (read_iterator(i) + 1); // FIXME?
+		return x + 1 + w * in.num_tors/5.0;
 	}
 };
 
@@ -449,9 +449,8 @@ everything::everything(scoring_function_choice sfchoice) { // enabled according 
 	        add(1, new ad4_hb(  0.5, 100000, 8.0)); // smoothing, cap, cutoff
 	        add(1, new electrostatic<1>(100, 20.48)); // exponent, cap, cutoff
 	        add(1, new ad4_solvation(3.6, 0.01097,  true, 20.48)); // desolvation_sigma, solvation_q, charge_dependent, cutoff
-	        //add(1, new num_tors_add());
+	        add(1, new num_tors_add());
 
-            std::cout << "INSIDE everything::everything()   sfchoice = " << sfchoice << "\n";
             break;
         default:
             std::cout << "INSIDE everything::everything()   sfchoice = " << sfchoice << "\n";

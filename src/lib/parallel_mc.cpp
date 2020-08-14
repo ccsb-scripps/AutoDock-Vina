@@ -66,13 +66,11 @@ void parallel_mc::operator()(const model& m, output_container& out, const precal
 	parallel_progress pp;
 	parallel_mc_aux parallel_mc_aux_instance(&mc, &p, &ig, &p_widened, &ig_widened, &corner1, &corner2, (display_progress ? (&pp) : NULL));
 	parallel_mc_task_container task_container;
-    std::cout << "---- DEBUG parallel_mc setting up tasks\n";
 	VINA_FOR(i, num_tasks)
 		task_container.push_back(new parallel_mc_task(m, random_int(0, 1000000, generator)));
 	if(display_progress) 
 		pp.init(num_tasks * mc.num_steps);
 	parallel_iter<parallel_mc_aux, parallel_mc_task_container, parallel_mc_task, true> parallel_iter_instance(&parallel_mc_aux_instance, num_threads);
-    std::cout << "---- DEBUG parallel_mc RUN tasks\n";
 	parallel_iter_instance.run(task_container);
 	merge_output_containers(task_container, out, mc.min_rmsd, mc.num_saved_mins);
 }

@@ -48,6 +48,17 @@ fl ad4cache::eval(const model& m, fl v) const {
 		const grid& g = rawgrids[t];
 		assert(g.initialized());
 		e += g.evaluate(m.coords[i], slope, v);
+
+        // elec
+		const grid& ge = rawgrids[AD_TYPE_SIZE];
+		assert(ge.initialized());
+		e += ge.evaluate(m.coords[i], slope, v) * a.charge;
+
+        // desolv
+		const grid& gd = rawgrids[AD_TYPE_SIZE + 1];
+		assert(gd.initialized());
+		e += gd.evaluate(m.coords[i], slope, v) * std::abs(a.charge);
+
 	}
 	return e;
 }

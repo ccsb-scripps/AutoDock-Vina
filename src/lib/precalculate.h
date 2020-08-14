@@ -117,17 +117,13 @@ struct precalculate {
 		data(num_atom_types(atom_type::XS), precalculate_element(n, factor_)),
 		m_atom_typing_used(sf.atom_typing_used()) {
 
-        std::cout << "---- DEBUG precalculate.h sf.atom_typing_used" << sf.atom_typing_used() << "\n";
-
 		VINA_CHECK(factor > epsilon_fl);
 		VINA_CHECK(sz(m_cutoff_sqr*factor) + 1 < n); // cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
 		VINA_CHECK(m_cutoff_sqr*factor + 1 < n);
 
 		flv rs = calculate_rs();
 
-        std::cout << "---- DEBUG precalculate.h starting loop\n";
 		VINA_FOR(t1, data.dim()) {
-            std::cout << "---- DEBUG precalculate.h OUTER loop, t1=" << t1 << "\n";
 			VINA_RANGE(t2, t1, data.dim()) {
 				precalculate_element& p = data(t1, t2);
 				// init smooth[].first
@@ -157,6 +153,7 @@ struct precalculate {
 			VINA_RANGE(t2, t1, data.dim())
 				data(t1, t2).widen(rs, left, right);
 	}
+	atom_type::t m_atom_typing_used;
 private:
 	flv calculate_rs() const {
 		flv tmp(n, 0);
@@ -167,7 +164,6 @@ private:
 	fl m_cutoff_sqr;
 	sz n;
 	fl factor;
-	atom_type::t m_atom_typing_used;
 
 	triangular_matrix<precalculate_element> data;
 };
@@ -178,9 +174,10 @@ struct precalculate_byatom {
 		m_cutoff_sqr(sqr(sf.cutoff())),
 		n(sz(factor_ * m_cutoff_sqr) + 3),  // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
 		factor(factor_),
-
 		data(n_atoms, precalculate_element(n, factor_)),
 		m_atom_typing_used(sf.atom_typing_used()) {
+
+        std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate_byatom = " << m_cutoff_sqr << "\n";
 
 		VINA_CHECK(factor > epsilon_fl);
 		VINA_CHECK(sz(m_cutoff_sqr*factor) + 1 < n); // cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
@@ -216,6 +213,7 @@ struct precalculate_byatom {
 			VINA_RANGE(t2, t1, data.dim())
 				data(t1, t2).widen(rs, left, right);
 	}
+	atom_type::t m_atom_typing_used;
 private:
 	flv calculate_rs() const {
 		flv tmp(n, 0);
@@ -226,7 +224,6 @@ private:
 	fl m_cutoff_sqr;
 	sz n;
 	fl factor;
-	atom_type::t m_atom_typing_used;
 
 	triangular_matrix<precalculate_element> data;
 };

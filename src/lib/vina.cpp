@@ -140,7 +140,7 @@ void Vina::set_ligand(std::vector<OpenBabel::OBMol*> mol) {
 }
 */
 
-void Vina::set_box(double center_x, double center_y, double center_z, int size_x, int size_y, int size_z, double granularity) {
+void Vina::set_box(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity) {
     // Setup the search box
     try {
         if (size_x <= 0 || size_y <= 0 || size_z <= 0) {
@@ -205,15 +205,12 @@ void Vina::set_ad4_weights(double weight_ad4_vdw , double weight_ad4_hb,
 
 void Vina::set_forcefield() {
     everything t(m_sf_choice);
-    std::cout << "---- DEBUG Vina::set_forcefield() weighted_terms\n";
     weighted_terms scoring_function(&t, m_weights);
-    std::cout << "---- DEBUG Vina::set_forcefield() precalculate\n";
     precalculate precalculated_sf(scoring_function);
-    std::cout << "---- DEBUG Vina::set_forcefield() get num_atoms\n";
     sz n_atoms = m_model.num_movable_atoms();
-    std::cout << "---- DEBUG Vina::set_forcefield() get atoms\n";
     atomv atoms = m_model.get_atoms();
-    std::cout << "---- DEBUG Vina::set_forcefield() precalculate_byatom\n";
+    if(m_sf_choice==SF_AD42) scoring_function.atom_typing_used_=atom_type::AD;
+    if(m_sf_choice==SF_VINA) scoring_function.atom_typing_used_=atom_type::XS;
 	precalculate_byatom precalculated_byatom(scoring_function, n_atoms, atoms);
 
     // Store in Vina object
@@ -249,10 +246,10 @@ void Vina::load_ad4_maps(std::string ad4_maps) {
     const fl slope = 1e6; // FIXME: too large? used to be 100
     grid_dims gd;
 
-    doing(m_verbosity, "Reading ad4 maps", m_log);
+    //doing(m_verbosity, "Reading ad4 maps", m_log);
     ad4cache grid(slope);
     gd = grid.read(ad4_maps);
-    done(m_verbosity, m_log);
+    //done(m_verbosity, m_log);
 
     // Store in Vina object
     const vec corner1(gd[0].begin, gd[1].begin, gd[2].begin);
@@ -465,8 +462,13 @@ double Vina::score() {
     everything t(m_sf_choice);
     weighted_terms scoring_function(&t, m_weights);
 
-    intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_ad4grid, authentic_v);
-    e = m_model.eval_adjusted(scoring_function, m_precalculated_byatom, m_ad4grid, authentic_v, intramolecular_energy);
+    if(m_sf_choice==SF_AD42) {
+        intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_ad4grid, authentic_v);
+        e = m_model.eval_adjusted(scoring_function, m_precalculated_byatom, m_ad4grid, authentic_v, intramolecular_energy);
+    } else if(m_sf_choice==SF_VINA) {
+        intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid, authentic_v);
+        e = m_model.eval_adjusted(scoring_function, m_precalculated_byatom, m_grid, authentic_v, intramolecular_energy);
+    }
     
     if (m_verbosity > 1) {
         m_log << "Intramolecular (eval_intramolecular): " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
@@ -485,16 +487,25 @@ double Vina::score(double intramolecular_energy) {
     VINA_CHECK(m_ff_initialized); // m_precalculated
 
     double e = 0;
-    double intermolecular_energy = 0;
+    double total = 0;
     const vec authentic_v(1000, 1000, 1000);
 
     // We have to fix scoring function mess by declaring it in the Vina object
     everything t(m_sf_choice);
     weighted_terms scoring_function(&t, m_weights); // used only for the torsion penalty
 
-    e = m_model.eval_adjusted(scoring_function, m_precalculated_byatom, m_ad4grid, authentic_v, intramolecular_energy);
+    if(m_sf_choice==SF_AD42) {
+        total = m_model.eval(m_precalculated_byatom, m_ad4grid, authentic_v);
+        e = m_model.eval_adjusted(scoring_function, m_precalculated_byatom, m_ad4grid, authentic_v, intramolecular_energy);
+    }
+    else if(m_sf_choice==SF_VINA) {
+        total = m_model.eval(m_precalculated_byatom, m_grid, authentic_v);
+        e = m_model.eval_adjusted(scoring_function, m_precalculated_byatom, m_grid, authentic_v, intramolecular_energy);
+    }
     
     if (m_verbosity > 1) {
+        m_log << "Total score (inter + intra): "          << std::fixed << std::setprecision(5) << total << " (kcal/mol)";
+        m_log.endl();
         m_log << "Intramolecular (eval_intramolecular): " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
         m_log.endl();
         m_log << "Energy (eval_adjusted): " << std::fixed << std::setprecision(5) << e << " (kcal/mol)";
@@ -532,7 +543,8 @@ void Vina::optimize(output_type& out, int max_steps) {
     doing(m_verbosity, "Performing local search", m_log);
     VINA_FOR(p, 5) {
         //nc.slope = 100 * std::pow(10.0, 2.0 * p);
-        quasi_newton_par(m_model, m_precalculated_byatom, m_ad4grid, out, g, authentic_v);
+        if(m_sf_choice==SF_VINA) quasi_newton_par(m_model, m_precalculated_byatom, m_grid,    out, g, authentic_v);
+        if(m_sf_choice==SF_AD42) quasi_newton_par(m_model, m_precalculated_byatom, m_ad4grid, out, g, authentic_v);
         
         //if(nc.within(m_model))
         //    break; TODO?
@@ -577,6 +589,8 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
     if(m_sf_choice==SF_VINA) VINA_CHECK(m_grid_initialized);    // m_grid
     if(m_sf_choice==SF_AD42) VINA_CHECK(m_ad4grid_initialized); // m_ad4grid
 
+    std::cout << "precalculated_byatom atom_typing_used (1=AD, 2=XS): " << m_precalculated_byatom.atom_typing_used() << "\n";
+
     int seed = generate_seed();
     double e = 0;
     double intramolecular_energy = 0;
@@ -606,7 +620,8 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
 
     sstm << "Performing search (random seed: " << seed << ")";
     doing(m_verbosity, sstm.str(), m_log);
-    m_parallelmc(m_model, poses, m_precalculated_byatom, m_ad4grid, m_precalculated_sf, m_ad4grid, m_corner1, m_corner2, generator); // TODO get rid of widened prec and grid
+    if(m_sf_choice==SF_AD42) m_parallelmc(m_model, poses, m_precalculated_byatom, m_ad4grid, m_precalculated_sf, m_ad4grid, m_corner1, m_corner2, generator); // TODO get rid of widened prec and grid
+    if(m_sf_choice==SF_VINA) m_parallelmc(m_model, poses, m_precalculated_byatom,    m_grid, m_precalculated_sf,    m_grid, m_corner1, m_corner2, generator); // TODO get rid of widened prec and grid
     done(m_verbosity, m_log);
 
     // doing(m_verbosity, "Refining results", m_log);
@@ -620,16 +635,19 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
     done(m_verbosity, m_log);
 
     if(!poses.empty()) {        
-        double intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid, authentic_v);
-        VINA_FOR_IN(i, poses) {
-            m_model.set(poses[i].c);
-            poses[i].e = score(intramolecular_energy);
-        }
-        
         // the order must not change because of non-decreasing g (see paper), but we'll re-sort in case g is non strictly increasing
         poses.sort();
         // we update model with the best conf
         m_model.set(poses[0].c);
+        if(m_sf_choice==SF_VINA) intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid,    authentic_v);
+        if(m_sf_choice==SF_AD42) intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_ad4grid, authentic_v);
+        std::cout << "INTRA: " << intramolecular_energy << "\n";
+        VINA_FOR_IN(i, poses) {
+            std::cout << "ENERGY FROM SEARCH: " << poses[i].e << "\n";
+            m_model.set(poses[i].c);
+            poses[i].e = score(intramolecular_energy);
+        }
+        
     } else {
         if (m_verbosity > 1) {
             m_log << "WARNING: Could not find any conformations completely within the search space.\n"
