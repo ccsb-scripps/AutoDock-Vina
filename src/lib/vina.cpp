@@ -60,7 +60,7 @@ void Vina::set_receptor(const std::string& rigid_name) {
     // Read the receptor PDBQT file
     VINA_CHECK(!rigid_name.empty());
 
-    m_receptor = parse_receptor_pdbqt(rigid_name);
+    m_receptor = parse_receptor_pdbqt(rigid_name, m_atom_typing_used);
     m_receptor_initialized = true;
 }
 
@@ -69,9 +69,9 @@ void Vina::set_receptor(const std::string& rigid_name, const std::string& flex_n
     VINA_CHECK(!rigid_name.empty());
 
     if (!flex_name.empty()) {
-        m_receptor = parse_receptor_pdbqt(rigid_name, flex_name);
+        m_receptor = parse_receptor_pdbqt(rigid_name, flex_name, m_atom_typing_used);
     } else {
-        m_receptor = parse_receptor_pdbqt(rigid_name);
+        m_receptor = parse_receptor_pdbqt(rigid_name, m_atom_typing_used);
     }
     m_receptor_initialized = true;
 }
@@ -84,7 +84,8 @@ void Vina::set_ligand(const std::string& ligand_name) {
     m_model = m_receptor;
     output_container m_poses;
 
-    m_model.append(parse_ligand_pdbqt(ligand_name));
+    m_model.append(parse_ligand_pdbqt(ligand_name, m_atom_typing_used));
+    m_model.about();
 
     // Store in Vina object
     m_ligand_initialized = true;
@@ -100,7 +101,7 @@ void Vina::set_ligand(const std::vector<std::string>& ligand_name) {
     output_container m_poses;
 
     VINA_RANGE(i, 0, ligand_name.size())
-        m_model.append(parse_ligand_pdbqt(ligand_name[i]));
+        m_model.append(parse_ligand_pdbqt(ligand_name[i], m_atom_typing_used));
 
     // Store in Vina object
     m_ligand_initialized = true;
@@ -664,6 +665,7 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
 Vina::~Vina() {
     //OpenBabel::OBMol m_mol;
     // model and poses
+    atom_type::t m_atom_typing_used;
     scoring_function_choice m_sf_choice;
     model m_receptor;
     model m_model;

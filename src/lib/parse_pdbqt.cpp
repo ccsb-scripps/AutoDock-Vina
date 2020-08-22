@@ -561,7 +561,11 @@ void parse_pdbqt_branch(std::istream& in, unsigned& count, parsing_struct& p, co
 
 
 struct pdbqt_initializer {
+
+    atom_type::t atom_typing_used;
     model m;
+    //pdbqt_initializer(): atom_typing_used(atom_type::XS), m(atom_type::XS) {}
+    pdbqt_initializer(atom_type::t atype): atom_typing_used(atype), m(atype) {}
     void initialize_from_rigid(const rigid& r) { // static really
         VINA_CHECK(m.grid_atoms.empty());
         m.grid_atoms = r.atoms;
@@ -613,12 +617,13 @@ struct pdbqt_initializer {
     }
 };
 
-model parse_ligand_pdbqt(const std::string& name) { // can throw parse_error
+
+model parse_ligand_pdbqt(const std::string& name, atom_type::t atype) { // can throw parse_error
     non_rigid_parsed nrp;
     context c;
     parse_pdbqt_ligand(make_path(name), nrp, c);
 
-    pdbqt_initializer tmp;
+    pdbqt_initializer tmp(atype);
     tmp.initialize_from_nrp(nrp, c, true);
     tmp.initialize(nrp.mobility_matrix());
     return tmp.m;
@@ -638,14 +643,14 @@ model parse_ligand_pdbqt(OpenBabel::OBMol* mol) { // can throw parse_error
 
     parse_pdbqt_ligand(molstream, nrp, c);
 
-    pdbqt_initializer tmp;
+    pdbqt_initializer tmp; // missing atype
     tmp.initialize_from_nrp(nrp, c, true);
     tmp.initialize(nrp.mobility_matrix());
     return tmp.m;
 }
 */
 
-model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& flex_name) { // can throw parse_error
+model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& flex_name, atom_type::t atype) { // can throw parse_error
     rigid r;
     non_rigid_parsed nrp;
     context c;
@@ -653,7 +658,7 @@ model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& fle
     parse_pdbqt_rigid(make_path(rigid_name), r);
     parse_pdbqt_flex(make_path(flex_name), nrp, c);
 
-    pdbqt_initializer tmp;
+    pdbqt_initializer tmp(atype);
     tmp.initialize_from_rigid(r);
     tmp.initialize_from_nrp(nrp, c, false);
     tmp.initialize(nrp.mobility_matrix());
@@ -661,12 +666,12 @@ model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& fle
     return tmp.m;
 }
 
-model parse_receptor_pdbqt(const std::string& rigid_name) { // can throw parse_error
+model parse_receptor_pdbqt(const std::string& rigid_name, atom_type::t atype) { // can throw parse_error
     rigid r;
 
     parse_pdbqt_rigid(make_path(rigid_name), r);
 
-    pdbqt_initializer tmp;
+    pdbqt_initializer tmp(atype);
     tmp.initialize_from_rigid(r);
     distance_type_matrix mobility_matrix;
     tmp.initialize(mobility_matrix);

@@ -104,6 +104,8 @@ public:
 
         //set_weights();
         m_sf_choice = sf_choice;
+        if(sf_choice==scoring_function_choice::SF_VINA) m_atom_typing_used = atom_type::XS;
+        if(sf_choice==scoring_function_choice::SF_AD42) m_atom_typing_used = atom_type::AD;
     }
     // Destructor
     virtual ~Vina();
@@ -140,6 +142,7 @@ public:
 private:
     //OpenBabel::OBMol m_mol;
     // model and poses
+    atom_type::t m_atom_typing_used;
     scoring_function_choice m_sf_choice;
     model m_receptor;
     model m_model;

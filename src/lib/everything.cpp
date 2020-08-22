@@ -353,6 +353,7 @@ struct num_tors_add : public conf_independent {
 	fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i) const {
 		//fl w = 0.1 * read_iterator(i); // [-1 .. 1]
 		fl w = 0.1 * (read_iterator(i) + 1); // FIXME?
+        std::cout << "TORS ADD, w=" << w << " num_tors=" << in.num_tors << "\n";
 		return x + 1 + w * in.num_tors/5.0;
 	}
 };

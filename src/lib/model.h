@@ -72,6 +72,7 @@ struct model {
 	// Had to move it from private to public to make it work. 
 	// So we might have to fix that later
 	model() : m_num_movable_atoms(0), m_atom_typing_used(atom_type::XS) {}
+	model(atom_type::t atype) : m_num_movable_atoms(0), m_atom_typing_used(atype) {}
 
     atomv get_atoms() const { return atoms; } // for precalculate_byatom
 	
