@@ -347,14 +347,12 @@ fl smooth_div(fl x, fl y) {
 	return x / y;
 }
 
-struct num_tors_add : public conf_independent {
-	num_tors_add() { name = "num_tors_add"; }
+struct ad4_tors_add : public conf_independent {
+	ad4_tors_add() { name = "ad4_tors_add"; }
 	sz size() const { return 1; }
 	fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i) const {
-		//fl w = 0.1 * read_iterator(i); // [-1 .. 1]
-		fl w = 0.1 * (read_iterator(i) + 1); // FIXME?
-        std::cout << "TORS ADD, w=" << w << " num_tors=" << in.num_tors << "\n";
-		return x + 1 + w * in.num_tors/5.0;
+        fl weight = read_iterator(i);
+		return x + weight * in.torsdof;
 	}
 };
 
@@ -450,7 +448,7 @@ everything::everything(scoring_function_choice sfchoice) { // enabled according 
 	        add(1, new ad4_hb(  0.5, 100000, 8.0)); // smoothing, cap, cutoff
 	        add(1, new electrostatic<1>(100, 20.48)); // exponent, cap, cutoff
 	        add(1, new ad4_solvation(3.6, 0.01097,  true, 20.48)); // desolvation_sigma, solvation_q, charge_dependent, cutoff
-	        add(1, new num_tors_add());
+	        add(1, new ad4_tors_add());
 
             break;
         default:

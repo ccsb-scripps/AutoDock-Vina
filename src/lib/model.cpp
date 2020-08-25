@@ -634,10 +634,15 @@ fl eval_interacting_pairs_deriv(const precalculate_byatom& p, fl v, const intera
 	return e;
 }
 
+fl model::evalo(const precalculate_byatom& p,  const vec& v) const { // clean up
+	fl e = eval_interacting_pairs(p, v[0], other_pairs, internal_coords);
+	return e;
+}
+
 fl model::evali(const precalculate_byatom& p,                                  const vec& v                          ) const { // clean up
 	fl e = 0;
 	VINA_FOR_IN(i, ligands) 
-		e += eval_interacting_pairs(p, v[0], ligands[i].pairs, internal_coords); // probably might was well use coords here
+		e += eval_interacting_pairs(p, v[0], ligands[i].pairs, coords); // probably might was well use coords here
 	return e;
 }
 
@@ -649,7 +654,6 @@ fl model::evale(const precalculate_byatom& p, const igrid& ig, const vec& v     
 
 fl model::eval(const precalculate_byatom& p, const igrid& ig, const vec& v) { // clean up
 	fl e = evale(p, ig, v);
-    std::cout << "INTER = " << e << "\n";
 	e += eval_interacting_pairs(p, v[0], other_pairs, coords); // coords instead of internal coords
 	VINA_FOR_IN(i, ligands) 
 		e += eval_interacting_pairs(p, v[0], ligands[i].pairs, coords); // coords instead of internal coords

@@ -59,6 +59,7 @@ struct intermolecular : public term {
 };
 
 struct conf_independent_inputs {
+	fl torsdof; // from TORSDOF keyword in pdbqt file
 	fl num_tors;
 	fl num_rotors;
 	fl num_heavy_atoms;

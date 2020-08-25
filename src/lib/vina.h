@@ -129,8 +129,8 @@ public:
     void compute_vina_grid();
     void load_ad4_maps(std::string ad4_maps);
     void randomize(const int max_steps=10000);
-    void score_robust();
     double score();
+    void score(output_type& pose);
     double score(double intramolecular_energy);
     void optimize(const int max_steps=0);
     void global_search(const int n_poses=20, const double min_rmsd=1.0);
@@ -175,6 +175,7 @@ private:
     tee m_log;
 
     std::string vina_remark(fl e, fl lb, fl ub);
+    std::string vina_remarks(output_type& pose, fl lb, fl ub);
     output_container remove_redundant(const output_container& in, fl min_rmsd);
 
     void optimize(output_type& out, const int max_steps=0);

@@ -107,12 +107,18 @@ struct model {
 		out << remark;
 		write_structure(out);
 	}
+	void write_structure(ofile& out, std::vector<std::string>& remarks) const {
+		VINA_FOR_IN(i, remarks) out << remarks[i];
+		write_structure(out);
+	}
+
 	void write_structure(const path& name) const { ofile out(name); write_structure(out); }
 	void write_model(ofile& out, sz model_number, const std::string& remark) const {
 		out << "MODEL " << model_number << '\n';
 		write_structure(out, remark);
 		out << "ENDMDL\n";
 	}
+
 	void seti(const conf& c);
 	void sete(const conf& c);
 	void set (const conf& c);
@@ -129,6 +135,7 @@ struct model {
 	distance_type distance_type_between(const distance_type_matrix& mobility, const atom_index& i, const atom_index& j) const;
 
 	// clean up
+	fl evalo     (const precalculate_byatom& p,                  const vec& v           ) const;
 	fl evali     (const precalculate_byatom& p,                  const vec& v           ) const;
 	fl evale     (const precalculate_byatom& p, const igrid& ig, const vec& v           ) const;
 	fl eval      (const precalculate_byatom& p, const igrid& ig, const vec& v           );

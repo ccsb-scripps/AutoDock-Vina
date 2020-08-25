@@ -55,14 +55,16 @@ unsigned conf_independent_inputs::atom_rotors(const model& m, const atom_index& 
 	VINA_FOR_IN(j, bonds) {
 		const bond& b = bonds[j];
 		const atom& a = m.get_atom(b.connected_atom_index);
-		if(b.rotatable && !a.is_hydrogen() && num_bonded_heavy_atoms(m, b.connected_atom_index) > 1) // not counting CH_3, etc
+		if(b.rotatable && !a.is_hydrogen() && num_bonded_heavy_atoms(m, b.connected_atom_index) > 1) { // not counting CH_3, etc
 			++acc;
+        }
 	}
 	return acc;
 }
 
 
 conf_independent_inputs::conf_independent_inputs(const model& m) {
+    torsdof = 0;
 	num_tors = 0;
 	num_rotors = 0;
 	num_heavy_atoms = 0;
@@ -74,6 +76,7 @@ conf_independent_inputs::conf_independent_inputs(const model& m) {
 	VINA_FOR_IN(ligand_i, m.ligands) {
 		const ligand& lig = m.ligands[ligand_i];
 		ligand_lengths_sum += m.ligand_length(ligand_i);
+        torsdof += lig.degrees_of_freedom;
 		VINA_RANGE(i, lig.begin, lig.end) {
 			const atom& a = m.atoms[i];
 			if(a.el != EL_TYPE_H) {
@@ -83,6 +86,7 @@ conf_independent_inputs::conf_independent_inputs(const model& m) {
 
 				if(ar > 2) num_rotors += 0.5;
 				else num_rotors += 0.5 * ar;
+
 
 				++num_heavy_atoms;
 				if(xs_is_hydrophobic(a.xs))
