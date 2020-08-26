@@ -46,11 +46,11 @@ std::string Vina::vina_remarks(output_type& pose, fl lb, fl ub) {
            << "  " << std::setw(9) << std::setprecision(3) << ub
            << '\n';
     
-    remark << "REMARK OPTIMIZED SCORE: "  << std::setw(12) << std::setprecision(4) << pose.total << "\n";
-    remark << "REMARK INTER: "            << std::setw(12) << std::setprecision(4) << pose.inter << "\n";
-    remark << "REMARK INTRA: "            << std::setw(12) << std::setprecision(4) << pose.intra << "\n";
-    remark << "REMARK CONF_INDEPENDENT: " << std::setw(12) << std::setprecision(4) << pose.conf_independent << "\n";
-    remark << "REMARK UNBOUND: "          << std::setw(12) << std::setprecision(4) << pose.unbound << "\n";
+    remark << "REMARK ITER + INTRA:     " << std::setw(12) << std::setprecision(4) << pose.total << "\n";
+    remark << "REMARK INTER:            " << std::setw(12) << std::setprecision(4) << pose.inter << "\n";
+    remark << "REMARK INTRA:            " << std::setw(12) << std::setprecision(4) << pose.intra << "\n";
+    if(m_sf_choice==SF_AD42) remark << "REMARK CONF_INDEPENDENT: " << std::setw(12) << std::setprecision(4) << pose.conf_independent << "\n";
+    remark << "REMARK UNBOUND:          " << std::setw(12) << std::setprecision(4) << pose.unbound << "\n";
 
     return remark.str();
 }
@@ -106,7 +106,7 @@ void Vina::set_ligand(const std::string& ligand_name) {
     output_container m_poses;
 
     m_model.append(parse_ligand_pdbqt(ligand_name, m_atom_typing_used));
-    //m_model.about();
+    m_model.about();
 
     // Store in Vina object
     m_ligand_initialized = true;
@@ -289,7 +289,8 @@ void Vina::write_maps(const std::string& map_prefix, const std::string& gpf_file
     VINA_CHECK(m_grid_initialized); // m_grid
 
     const szv atom_types = m_model.get_movable_atom_types(m_precalculated_sf.atom_typing_used());
-    m_grid.write(map_prefix, atom_types, gpf_filename, fld_filename, receptor_filename);
+    if(m_sf_choice==SF_VINA) m_grid.write(map_prefix, atom_types, gpf_filename, fld_filename, receptor_filename);
+    else if(m_sf_choice==SF_AD42) m_ad4grid.write(map_prefix);
 }
 
 void Vina::write_pose(const std::string& output_name, const std::string& remark) {
@@ -457,12 +458,12 @@ void Vina::score(output_type& pose) {
     VINA_CHECK(m_ff_initialized); // m_precalculated
 
     double e = 0;
-    double total = 0;
     double lig_grids = 0;
     double flex_grids = 0;
     double lig_intra = 0;
     double conf_independent = 0;
     double other_pairs = 0; // TODO
+    double unbound = 0;
     const vec authentic_v(1000, 1000, 1000);
 
     // We have to fix scoring function mess by declaring it in the Vina object
@@ -474,39 +475,83 @@ void Vina::score(output_type& pose) {
         flex_grids = m_ad4grid.eval_intra(m_model, authentic_v[1]);
         lig_intra = m_model.evali(m_precalculated_byatom, authentic_v);
         conf_independent = scoring_function.conf_independent(m_model, 0); // we can pass e=0 because we do not modify the energy like in vina
-
-        total = lig_grids + flex_grids + lig_intra; // cost function for optimization
-        e = total - lig_intra + conf_independent; // TODO replace intra by unbound
-
-        pose.e = e;
-        pose.inter = lig_grids;
-        pose.intra = lig_intra;
-        pose.total = total;
-        pose.conf_independent = conf_independent;
-
-        // TODO missing other pairs
         other_pairs = m_model.evalo(m_precalculated_byatom, authentic_v);
-
-        std::cout << "in new SCORE:   other_pairs = " << other_pairs << ", flex_grids = " << flex_grids << "\n";
-
+        e = lig_grids + flex_grids + conf_independent + other_pairs; // TODO verify that all contributions from other_pairs are valid, got to remove flex-flex
+        std::cout << "DEBUG: other_pairs = " << other_pairs << ", flex_grids = " << flex_grids << "\n";
         //total = m_model.eval(m_precalculated_byatom, m_ad4grid, authentic_v);
         //e = m_model.eval_adjusted(scoring_function, m_precalculated_byatom, m_ad4grid, authentic_v, intramolecular_energy);
     }
-    //else if(m_sf_choice==SF_VINA) {
-    //    total = m_model.eval(m_precalculated_byatom, m_grid, authentic_v);
-    //    e = m_model.eval_adjusted(scoring_function, m_precalculated_byatom, m_grid, authentic_v, intramolecular_energy);
-    //}
-    
-    if (m_verbosity > 1) {
-        m_log << "Total score (inter + intra): "          << std::fixed << std::setprecision(5) << total << " (kcal/mol)";
-        m_log.endl();
-    //    m_log << "Intramolecular (eval_intramolecular): " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
-     //   m_log.endl();
-        m_log << "Energy (eval_adjusted): " << std::fixed << std::setprecision(5) << e << " (kcal/mol)";
-        m_log.endl();
+    else if(m_sf_choice==SF_VINA) { // We are never here, but still...
+        lig_grids = m_ad4grid.eval(m_model, authentic_v[1]);
+        flex_grids = m_ad4grid.eval_intra(m_model, authentic_v[1]);
+        lig_intra = m_model.evali(m_precalculated_byatom, authentic_v);
+        other_pairs = m_model.evalo(m_precalculated_byatom, authentic_v);// TODO missing other pairs
+        e = scoring_function.conf_independent(m_model, lig_grids+flex_grids+other_pairs); // we pass intermolecular energy, got to remove flex-flex
+        std::cout << "DEBUG: other_pairs = " << other_pairs << ", flex_grids = " << flex_grids << "\n";
     }
-
+    //
+    pose.e = e;
+    pose.inter = lig_grids;
+    pose.intra = lig_intra;
+    pose.total = lig_grids + flex_grids + lig_intra + other_pairs; // cost function for optimization
+    pose.conf_independent = conf_independent;
+    pose.unbound = unbound;
 }
+
+void Vina::score(output_type& pose, double intramolecular_energy) {
+    // Score the current conf in the model
+    // Check if ff and ligand were initialized
+    VINA_CHECK(m_ligand_initialized); // m_model
+    VINA_CHECK(m_ff_initialized); // m_precalculated
+
+    double e = 0;
+    double lig_grids = 0;
+    double flex_grids = 0;
+    double lig_intra = 0;
+    double conf_independent = 0;
+    double other_pairs = 0; // TODO
+    double unbound = 0;
+    const vec authentic_v(1000, 1000, 1000);
+
+    // We have to fix scoring function mess by declaring it in the Vina object
+    everything t(m_sf_choice);
+    weighted_terms scoring_function(&t, m_weights); // used only for the torsion penalty
+
+    if(m_sf_choice==SF_AD42) { // we should never be here because in AD42 each pose subtracts its own intra energy
+        lig_grids = m_ad4grid.eval(m_model, authentic_v[1]);
+        flex_grids = m_ad4grid.eval_intra(m_model, authentic_v[1]);
+        lig_intra = m_model.evali(m_precalculated_byatom, authentic_v);
+        conf_independent = scoring_function.conf_independent(m_model, 0); // we can pass e=0 because we do not modify the energy like in vina
+        other_pairs = m_model.evalo(m_precalculated_byatom, authentic_v);
+        e = lig_grids + flex_grids + conf_independent + other_pairs + lig_intra - intramolecular_energy; // TODO verify that all contributions from other_pairs are valid, got to remove flex-flex
+        std::cout << "DEBUG: other_pairs = " << other_pairs << ", flex_grids = " << flex_grids << "\n";
+        //total = m_model.eval(m_precalculated_byatom, m_ad4grid, authentic_v);
+        //e = m_model.eval_adjusted(scoring_function, m_precalculated_byatom, m_ad4grid, authentic_v, intramolecular_energy);
+    }
+    else if(m_sf_choice==SF_VINA) {
+        lig_grids = m_ad4grid.eval(m_model, authentic_v[1]);
+        flex_grids = m_ad4grid.eval_intra(m_model, authentic_v[1]);
+        lig_intra = m_model.evali(m_precalculated_byatom, authentic_v);
+        other_pairs = m_model.evalo(m_precalculated_byatom, authentic_v);// TODO missing other pairs
+        e = scoring_function.conf_independent(m_model, lig_grids+flex_grids+other_pairs+lig_intra-intramolecular_energy); // we pass intermolecular energy, got to remove flex-flex
+        std::cout << "DEBUG: other_pairs = " << other_pairs << ", flex_grids = " << flex_grids << "\n";
+    }
+    //
+    pose.e = e;
+    pose.inter = lig_grids;
+    pose.intra = lig_intra;
+    pose.total = lig_grids + flex_grids + lig_intra + other_pairs; // cost function for optimization
+    pose.conf_independent = conf_independent;
+    pose.unbound = unbound;
+}   
+    //if (m_verbosity > 1) {
+    //    m_log << "Total score (inter + intra): "          << std::fixed << std::setprecision(5) << total << " (kcal/mol)";
+    //    m_log.endl();
+    //    m_log << "Intramolecular (eval_intramolecular): " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
+    //   m_log.endl();
+    //    m_log << "Energy (eval_adjusted): " << std::fixed << std::setprecision(5) << e << " (kcal/mol)";
+    //    m_log.endl();
+    // }
 
 double Vina::score(double intramolecular_energy) {
     // Score the current conf in the model
@@ -580,11 +625,6 @@ void Vina::optimize(output_type& out, int max_steps) {
     done(m_verbosity, m_log);
 
     out.coords = m_model.get_heavy_atom_movable_coords();
-
-    //if(!nc.within(m_model)) {
-    //    m_log << "WARNING: not all movable atoms are within the search space\n";
-    //    out.e = max_fl;
-    //}
 
     if (m_verbosity > 1) {
         // Get energy of the new pose
@@ -661,15 +701,12 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
         poses.sort();
         // we update model with the best conf
         m_model.set(poses[0].c);
-        if(m_sf_choice==SF_VINA) intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid,    authentic_v);
-        //if(m_sf_choice==SF_AD42) intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_ad4grid, authentic_v);
-        //std::cout << "INTRA: " << intramolecular_energy << "\n";
+        if(m_sf_choice==SF_VINA) intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid, authentic_v);
         VINA_FOR_IN(i, poses) {
             std::cout << "ENERGY FROM SEARCH: " << poses[i].e << "\n";
             m_model.set(poses[i].c);
-            score(poses[i]);
-            //poses[i].e = m_sf_choice==SF_VINA ? score(intramolecular_energy) : score();
-            //poses[i].intra;
+            if(m_sf_choice==SF_AD42) score(poses[i]);
+            else if(m_sf_choice==SF_VINA) score(poses[i], intramolecular_energy);
         }
         
     } else {

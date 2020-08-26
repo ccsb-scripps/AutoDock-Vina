@@ -105,7 +105,7 @@ Thank you!\n";
 	try {
 		tee log;
 		std::string rigid_name, ligand_name, flex_name, config_name, out_name, log_name;
-        std::string vina_maps, ad4_maps, scoring_function;
+        std::string ad4_maps, scoring_function;
 		double center_x, center_y, center_z; 
 		double size_x, size_y, size_z;
 		int cpu = 0, seed, exhaustiveness = 8, verbosity = 2, num_modes = 9;
@@ -137,7 +137,7 @@ Thank you!\n";
 			("flex", value<std::string>(&flex_name), "flexible side chains, if any (PDBQT)")
 			("ligand", value<std::string>(&ligand_name), "ligand (PDBQT)")
 			("ad4_maps", value<std::string>(&ad4_maps), "maps for the autodock4.2 (ad4) scoring function")
-			("vina_maps", value<std::string>(&vina_maps), "maps for vina scoring function")
+			//("vina_maps", value<std::string>(&vina_maps), "maps for vina scoring function")
 			("scoring_function", value<std::string>(&scoring_function), "vina or ad4")
 		;
 		//options_description search_area("Search area (required, except with --score_only)");
@@ -243,7 +243,7 @@ Thank you!\n";
         scoring_function_choice sfchoice=SF_VINA;
 
 		if(receptor_needed) {
-			if((vm.count("receptor") <= 0) & (vm.count("vina_maps") <= 0)){
+			if((vm.count("receptor") <= 0)){// & (vm.count("vina_maps") <= 0)){
 				std::cerr << desc_simple << "\n\nMissing either receptor or vina_maps.\n";
 				return 1;
 			}
@@ -251,10 +251,11 @@ Thank you!\n";
         if(scoring_function.compare("ad4") == 0) {
             sfchoice = SF_AD42;
             //if((vm.count("receptor") > 0) | (vm.count("vina_maps") > 0) | (vm.count("ad4_maps") <= 0)) {
-            if(                               (vm.count("vina_maps") > 0) | (vm.count("ad4_maps") <= 0)) {
+            //if(                               (vm.count("vina_maps") > 0) | (vm.count("ad4_maps") <= 0)) {
+            if((vm.count("ad4_maps") <= 0)) {
 				std::cerr << "When using AutoDock4.2 scoring function (--scoring_function ad4):\n";
 				std::cerr << "  --ad4_maps  is required\n";
-				std::cerr << "  --vina_maps not accepted\n";
+				//std::cerr << "  --vina_maps not accepted\n";
 				//std::cerr << "  --receptor  not accepted\n";
 				return 1;
             }
@@ -266,10 +267,10 @@ Thank you!\n";
 				return 1;
             }
         }
-        if((vm.count("vina_maps") > 0) & (vm.count("receptor") > 0)){
-			std::cerr << desc_simple << "\n\nMust provide either --receptor or --vina_maps, not both.\n";
-			return 1;
-		}
+        //if((vm.count("vina_maps") > 0) & (vm.count("receptor") > 0)){
+		//	std::cerr << desc_simple << "\n\nMust provide either --receptor or --vina_maps, not both.\n";
+		//	return 1;
+		//}
 		if(vm.count("ligand") <= 0) {
 			std::cerr << "Missing ligand.\n" << "\nCorrect usage:\n" << desc_simple << '\n';
 			return 1;
@@ -327,23 +328,22 @@ Thank you!\n";
 		v.set_ligand(ligand_name);
 		v.set_forcefield();
 
+		if(sfchoice==SF_VINA) {
+			v.set_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
+			v.compute_vina_grid();
+		}
+		else if(sfchoice==SF_AD42) v.load_ad4_maps(ad4_maps);
+        else assert(false);
+
+
 		if (score_only) {
 			v.score();
+            // TODO write contributions
 		} else
         if(local_only) {
-			if(sfchoice==SF_VINA) {
-				v.set_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
-				v.compute_vina_grid();
-			}
-			else if(sfchoice==SF_AD42) v.load_ad4_maps(ad4_maps);
 			v.optimize();
 			v.write_pose(out_name);
 		} else {
-			if (sfchoice==SF_VINA) {
-				v.set_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
-				v.compute_vina_grid();
-			}
-			else if(sfchoice==SF_AD42) v.load_ad4_maps(ad4_maps);
 			v.global_search();
 			v.write_results(out_name, num_modes, energy_range);
 		}

@@ -131,6 +131,7 @@ public:
     void randomize(const int max_steps=10000);
     double score();
     void score(output_type& pose);
+    void score(output_type& pose, double intramolecular_energy);
     double score(double intramolecular_energy);
     void optimize(const int max_steps=0);
     void global_search(const int n_poses=20, const double min_rmsd=1.0);

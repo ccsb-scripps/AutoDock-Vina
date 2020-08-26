@@ -607,6 +607,7 @@ fl eval_interacting_pairs(const precalculate_byatom& p, fl v, const interacting_
 		fl r2 = vec_distance_sqr(coords[ip.a], coords[ip.b]);
 		if(r2 < cutoff_sqr) {
 			fl tmp = p.eval_fast(ip.a, ip.b, r2);
+            std::cout << "pair=" << i << ", ip.a=" << ip.a << ", ip.b=" << ip.b << ", dist=" << sqrt(r2) << ", e=" << tmp << "\n";
 			curl(tmp, v);
 			e += tmp;
 		}
