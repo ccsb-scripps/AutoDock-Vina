@@ -55,14 +55,16 @@ unsigned conf_independent_inputs::atom_rotors(const model& m, const atom_index& 
 	VINA_FOR_IN(j, bonds) {
 		const bond& b = bonds[j];
 		const atom& a = m.get_atom(b.connected_atom_index);
-		if(b.rotatable && !a.is_hydrogen() && num_bonded_heavy_atoms(m, b.connected_atom_index) > 1) // not counting CH_3, etc
+		if(b.rotatable && !a.is_hydrogen() && num_bonded_heavy_atoms(m, b.connected_atom_index) > 1) { // not counting CH_3, etc
 			++acc;
+        }
 	}
 	return acc;
 }
 
 
 conf_independent_inputs::conf_independent_inputs(const model& m) {
+    torsdof = 0;
 	num_tors = 0;
 	num_rotors = 0;
 	num_heavy_atoms = 0;
@@ -74,6 +76,7 @@ conf_independent_inputs::conf_independent_inputs(const model& m) {
 	VINA_FOR_IN(ligand_i, m.ligands) {
 		const ligand& lig = m.ligands[ligand_i];
 		ligand_lengths_sum += m.ligand_length(ligand_i);
+        torsdof += lig.degrees_of_freedom;
 		VINA_RANGE(i, lig.begin, lig.end) {
 			const atom& a = m.atoms[i];
 			if(a.el != EL_TYPE_H) {
@@ -83,6 +86,7 @@ conf_independent_inputs::conf_independent_inputs(const model& m) {
 
 				if(ar > 2) num_rotors += 0.5;
 				else num_rotors += 0.5 * ar;
+
 
 				++num_heavy_atoms;
 				if(xs_is_hydrophobic(a.xs))
@@ -234,63 +238,6 @@ flv terms::evali(const model& m) const {
 		fl d = std::sqrt(d2);
 		eval_additive_aux(m, atom_index(ip.a, false), atom_index(ip.b, false), d, tmp);
 	}
-	return tmp;
-}
-
-flv terms::evale_robust(const model& m) const {
-	VINA_CHECK(m.ligands.size() == 1); // only single-ligand systems are supported by this procedure
-
-	flv tmp(size(), 0);
-
-	fl max_r_cutoff_sqr = sqr(max_r_cutoff());
-
-	grid_dims box = m.movable_atoms_box(0); // add nothing
-	vec box_begin = grid_dims_begin(box);
-	vec box_end   = grid_dims_end  (box);
-
-	const sz n  = num_atom_types(m.atom_typing_used());
-
-	std::vector<atom_index> relevant_atoms;
-
-	VINA_FOR_IN(j, m.grid_atoms) {
-		const atom& a = m.grid_atoms[j];
-		const sz t = a.get(m.atom_typing_used());
-		if(brick_distance_sqr(box_begin, box_end, a.coords) < max_r_cutoff_sqr && t < n) // exclude, say, Hydrogens
-			relevant_atoms.push_back(atom_index(j, true));
-	}
-
-	VINA_FOR_IN(j, m.atoms) {
-		const atom& a = m.atoms[j];
-		const vec& a_coords = m.coords[j];
-		if(m.find_ligand(j) < m.ligands.size()) continue; // skip ligand atoms, add only flex/inflex
-		const sz t = a.get(m.atom_typing_used());
-		if(brick_distance_sqr(box_begin, box_end, a_coords) < max_r_cutoff_sqr && t < n) // exclude, say, Hydrogens
-			relevant_atoms.push_back(atom_index(j, false));
-	}
-
-	VINA_FOR_IN(lig_i, m.ligands) {
-		const ligand& lig = m.ligands[lig_i];
-		VINA_RANGE(i, lig.begin, lig.end) {
-			const vec& coords = m.coords[i];
-			const atom& a = m.atoms[i];
-			const sz t = a.get(m.atom_typing_used());
-
-			if(t < n) { // exclude, say, Hydrogens
-				VINA_FOR_IN(relevant_j, relevant_atoms) {
-					const atom_index& j = relevant_atoms[relevant_j];
-					fl d2 = vec_distance_sqr(coords, m.atom_coords(j));
-					if(d2 > max_r_cutoff_sqr) continue; // most likely scenario
-					fl d = std::sqrt(d2);
-					eval_additive_aux(m, atom_index(i, false), j, d, tmp);
-				}
-			}
-		}
-	}
-
-	sz offset = size_internal();
-	VINA_CHECK(intermolecular_terms.size() == 0);
-	VINA_CHECK(offset + intermolecular_terms.size() == tmp.size());
-
 	return tmp;
 }
 

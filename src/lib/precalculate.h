@@ -114,8 +114,7 @@ struct precalculate {
 		m_cutoff_sqr(sqr(sf.cutoff())),
 		n(sz(factor_ * m_cutoff_sqr) + 3),  // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
 		factor(factor_),
-
-		data(num_atom_types(sf.atom_typing_used()), precalculate_element(n, factor_)),
+		data(num_atom_types(atom_type::XS), precalculate_element(n, factor_)),
 		m_atom_typing_used(sf.atom_typing_used()) {
 
 		VINA_CHECK(factor > epsilon_fl);
@@ -124,16 +123,18 @@ struct precalculate {
 
 		flv rs = calculate_rs();
 
-		VINA_FOR(t1, data.dim())
+		VINA_FOR(t1, data.dim()) {
 			VINA_RANGE(t2, t1, data.dim()) {
 				precalculate_element& p = data(t1, t2);
 				// init smooth[].first
-				VINA_FOR_IN(i, p.smooth)
+				VINA_FOR_IN(i, p.smooth) {
 					p.smooth[i].first = (std::min)(v, sf.eval(t1, t2, rs[i]));
+                }
 
 				// init the rest
 				p.init_from_smooth_fst(rs);
 			}
+        }
 	}
 	fl eval_fast(sz type_pair_index, fl r2) const {
 		assert(r2 <= m_cutoff_sqr);
@@ -152,6 +153,7 @@ struct precalculate {
 			VINA_RANGE(t2, t1, data.dim())
 				data(t1, t2).widen(rs, left, right);
 	}
+	atom_type::t m_atom_typing_used;
 private:
 	flv calculate_rs() const {
 		flv tmp(n, 0);
@@ -162,7 +164,66 @@ private:
 	fl m_cutoff_sqr;
 	sz n;
 	fl factor;
+
+	triangular_matrix<precalculate_element> data;
+};
+
+struct precalculate_byatom {
+	precalculate_byatom() {}
+	precalculate_byatom(const scoring_function& sf, sz n_atoms, atomv& atoms, fl v = max_fl, fl factor_ = 32) : // sf should not be discontinuous, even near cutoff, for the sake of the derivatives
+		m_cutoff_sqr(sqr(sf.cutoff())),
+		n(sz(factor_ * m_cutoff_sqr) + 3),  // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
+		factor(factor_),
+		data(n_atoms, precalculate_element(n, factor_)),
+		m_atom_typing_used(sf.atom_typing_used()) {
+
+        std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate_byatom = " << m_cutoff_sqr << "\n";
+
+		VINA_CHECK(factor > epsilon_fl);
+		VINA_CHECK(sz(m_cutoff_sqr*factor) + 1 < n); // cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
+		VINA_CHECK(m_cutoff_sqr*factor + 1 < n);
+
+		flv rs = calculate_rs();
+
+		VINA_FOR(i, data.dim())
+			VINA_RANGE(j, i, data.dim()) {
+				precalculate_element& p = data(i, j);
+				// init smooth[].first
+				VINA_FOR_IN(k, p.smooth)
+					p.smooth[k].first = (std::min)(v, sf.eval(atoms[i], atoms[j], rs[k]));
+
+				// init the rest
+				p.init_from_smooth_fst(rs);
+			}
+	}
+	fl eval_fast(sz i, sz j, fl r2) const {
+		assert(r2 <= m_cutoff_sqr);
+		return data(i, j).eval_fast(r2);
+	}
+	pr eval_deriv(sz i, sz j, fl r2) const {
+		assert(r2 <= m_cutoff_sqr);
+		return data(i, j).eval_deriv(r2);
+	}
+	sz index_permissive(sz t1, sz t2) const { return data.index_permissive(t1, t2); }
+	atom_type::t atom_typing_used() const { return m_atom_typing_used; }
+	fl cutoff_sqr() const { return m_cutoff_sqr; }
+	void widen(fl left, fl right) {
+		flv rs = calculate_rs();
+		VINA_FOR(t1, data.dim())
+			VINA_RANGE(t2, t1, data.dim())
+				data(t1, t2).widen(rs, left, right);
+	}
 	atom_type::t m_atom_typing_used;
+private:
+	flv calculate_rs() const {
+		flv tmp(n, 0);
+		VINA_FOR(i, n)
+			tmp[i] = std::sqrt(i / factor);
+		return tmp;
+	}
+	fl m_cutoff_sqr;
+	sz n;
+	fl factor;
 
 	triangular_matrix<precalculate_element> data;
 };

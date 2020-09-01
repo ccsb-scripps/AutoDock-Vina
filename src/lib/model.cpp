@@ -599,14 +599,15 @@ fl model::gyration_radius(sz ligand_number) const {
 }
 
 
-fl eval_interacting_pairs(const precalculate& p, fl v, const interacting_pairs& pairs, const vecv& coords) { // clean up
+fl eval_interacting_pairs(const precalculate_byatom& p, fl v, const interacting_pairs& pairs, const vecv& coords) { // clean up
 	const fl cutoff_sqr = p.cutoff_sqr();
 	fl e = 0;
 	VINA_FOR_IN(i, pairs) {
 		const interacting_pair& ip = pairs[i];
 		fl r2 = vec_distance_sqr(coords[ip.a], coords[ip.b]);
 		if(r2 < cutoff_sqr) {
-			fl tmp = p.eval_fast(ip.type_pair_index, r2);
+			fl tmp = p.eval_fast(ip.a, ip.b, r2);
+            std::cout << "pair=" << i << ", ip.a=" << ip.a << ", ip.b=" << ip.b << ", dist=" << sqrt(r2) << ", e=" << tmp << "\n";
 			curl(tmp, v);
 			e += tmp;
 		}
@@ -614,7 +615,7 @@ fl eval_interacting_pairs(const precalculate& p, fl v, const interacting_pairs& 
 	return e;
 }
 
-fl eval_interacting_pairs_deriv(const precalculate& p, fl v, const interacting_pairs& pairs, const vecv& coords, vecv& forces) { // adds to forces  // clean up
+fl eval_interacting_pairs_deriv(const precalculate_byatom& p, fl v, const interacting_pairs& pairs, const vecv& coords, vecv& forces) { // adds to forces  // clean up
 	const fl cutoff_sqr = p.cutoff_sqr();
 	fl e = 0;
 	VINA_FOR_IN(i, pairs) {
@@ -622,7 +623,7 @@ fl eval_interacting_pairs_deriv(const precalculate& p, fl v, const interacting_p
 		vec r; r = coords[ip.b] - coords[ip.a]; // a -> b
 		fl r2 = sqr(r);
 		if(r2 < cutoff_sqr) {
-			pr tmp = p.eval_deriv(ip.type_pair_index, r2);
+			pr tmp = p.eval_deriv(ip.a, ip.b, r2);
 			vec force; force = tmp.second * r;
 			curl(tmp.first, force, v);
 			e += tmp.first;
@@ -634,27 +635,33 @@ fl eval_interacting_pairs_deriv(const precalculate& p, fl v, const interacting_p
 	return e;
 }
 
-fl model::evali(const precalculate& p,                                  const vec& v                          ) const { // clean up
-	fl e = 0;
-	VINA_FOR_IN(i, ligands) 
-		e += eval_interacting_pairs(p, v[0], ligands[i].pairs, internal_coords); // probably might was well use coords here
+fl model::evalo(const precalculate_byatom& p,  const vec& v) const { // clean up
+	fl e = eval_interacting_pairs(p, v[0], other_pairs, internal_coords);
 	return e;
 }
 
-fl model::evale(const precalculate& p, const igrid& ig, const vec& v                          ) const { // clean up
+fl model::evali(const precalculate_byatom& p,                                  const vec& v                          ) const { // clean up
+	fl e = 0;
+	VINA_FOR_IN(i, ligands) 
+		e += eval_interacting_pairs(p, v[0], ligands[i].pairs, coords); // probably might was well use coords here
+	return e;
+}
+
+fl model::evale(const precalculate_byatom& p, const igrid& ig, const vec& v                          ) const { // clean up
 	fl e = ig.eval(*this, v[1]);
 	e += eval_interacting_pairs(p, v[2], other_pairs, coords);
 	return e;
 }
 
-fl model::eval(const precalculate& p, const igrid& ig, const vec& v) { // clean up
+fl model::eval(const precalculate_byatom& p, const igrid& ig, const vec& v) { // clean up
 	fl e = evale(p, ig, v);
+	e += eval_interacting_pairs(p, v[0], other_pairs, coords); // coords instead of internal coords
 	VINA_FOR_IN(i, ligands) 
 		e += eval_interacting_pairs(p, v[0], ligands[i].pairs, coords); // coords instead of internal coords
 	return e;
 }
 
-fl model::eval_deriv  (const precalculate& p, const igrid& ig, const vec& v, change& g) { // clean up
+fl model::eval_deriv  (const precalculate_byatom& p, const igrid& ig, const vec& v, change& g) { // clean up
 	fl e = ig.eval_deriv(*this, v[1]); // sets minus_forces, except inflex
 
 	e += eval_interacting_pairs_deriv(p, v[2], other_pairs, coords, minus_forces); // adds to minus_forces
@@ -666,9 +673,8 @@ fl model::eval_deriv  (const precalculate& p, const igrid& ig, const vec& v, cha
 	return e;
 }
 
-fl model::eval_intramolecular(const precalculate& p, const vec& v) {
+fl model::eval_intramolecular(const precalculate_byatom& p, const igrid& ig, const vec& v) {
 	fl e = 0;
-	sz nat = num_atom_types(atom_typing_used());
 	const fl cutoff_sqr = p.cutoff_sqr();
 
 	// internal for each ligand
@@ -676,24 +682,7 @@ fl model::eval_intramolecular(const precalculate& p, const vec& v) {
 		e += eval_interacting_pairs(p, v[0], ligands[i].pairs, coords); // coords instead of internal coords
 
 	// flex-rigid
-	VINA_FOR(i, num_movable_atoms()) {
-		if(find_ligand(i) < ligands.size()) continue; // we only want flex-rigid interaction
-		const atom& a = atoms[i];
-		sz t1 = a.get(atom_typing_used());
-		if(t1 >= nat) continue;
-		VINA_FOR_IN(j, grid_atoms) {
-			const atom& b = grid_atoms[j];
-			sz t2 = b.get(atom_typing_used());
-			if(t2 >= nat) continue;
-			fl r2 = vec_distance_sqr(coords[i], b.coords);
-			if(r2 < cutoff_sqr) {
-				sz type_pair_index = triangular_matrix_index_permissive(nat, t1, t2);
-				fl this_e = p.eval_fast(type_pair_index, r2);
-				curl(this_e, v[1]);
-				e += this_e;
-			}
-		}
-	}
+    e += ig.eval_intra(*this, v[1]);
 
 	// flex-flex
 	VINA_FOR_IN(i, other_pairs) {
@@ -701,7 +690,7 @@ fl model::eval_intramolecular(const precalculate& p, const vec& v) {
 		if(find_ligand(pair.a) < ligands.size() || find_ligand(pair.b) < ligands.size()) continue; // we only need flex-flex
 		fl r2 = vec_distance_sqr(coords[pair.a], coords[pair.b]);
 		if(r2 < cutoff_sqr) {
-			fl this_e = p.eval_fast(pair.type_pair_index, r2);
+			fl this_e = p.eval_fast(pair.a, pair.b, r2);
 			curl(this_e, v[2]);
 			e += this_e;
 		}
@@ -710,7 +699,7 @@ fl model::eval_intramolecular(const precalculate& p, const vec& v) {
 	return e;
 }
 
-fl model::eval_adjusted      (const scoring_function& sf, const precalculate& p, const igrid& ig, const vec& v, fl intramolecular_energy) {
+fl model::eval_adjusted      (const scoring_function& sf, const precalculate_byatom& p, const igrid& ig, const vec& v, fl intramolecular_energy) {
 	fl e = eval(p, ig, v); // sets c
 	return sf.conf_independent(*this, e - intramolecular_energy);
 }

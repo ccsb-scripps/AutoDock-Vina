@@ -23,26 +23,26 @@
 #ifndef VINA_MONTE_CARLO_H
 #define VINA_MONTE_CARLO_H
 
-#include "ssd.h"
 #include "incrementable.h"
+#include "model.h"
 
 struct monte_carlo {
-	unsigned num_steps;
+	unsigned global_steps;
 	fl temperature;
 	vec hunt_cap;
 	fl min_rmsd;
 	sz num_saved_mins;
 	fl mutation_amplitude;
-	ssd ssd_par;
-	monte_carlo() : num_steps(2500), temperature(1.2), hunt_cap(10, 1.5, 10), min_rmsd(0.5), num_saved_mins(50), mutation_amplitude(2) {} // T = 600K, R = 2cal/(K*mol) -> temperature = RT = 1.2;  num_steps = 50*lig_atoms = 2500
+	unsigned local_steps;
+	monte_carlo() : global_steps(2500), temperature(1.2), hunt_cap(10, 1.5, 10), min_rmsd(0.5), num_saved_mins(50), mutation_amplitude(2) {} // T = 600K, R = 2cal/(K*mol) -> temperature = RT = 1.2;  global_steps = 50*lig_atoms = 2500
 
-	output_type operator()(model& m, const precalculate& p, const igrid& ig, const precalculate& p_widened, const igrid& ig_widened, const vec& corner1, const vec& corner2, incrementable* increment_me, rng& generator) const;
-	output_type many_runs(model& m, const precalculate& p, const igrid& ig, const vec& corner1, const vec& corner2, sz num_runs, rng& generator) const;
+	output_type operator()(model& m, const precalculate_byatom& p, const igrid& ig, const vec& corner1, const vec& corner2, incrementable* increment_me, rng& generator) const;
+	output_type many_runs(model& m, const precalculate_byatom& p, const igrid& ig, const vec& corner1, const vec& corner2, sz num_runs, rng& generator) const;
 
-	void single_run(model& m, output_type& out, const precalculate& p, const igrid& ig, rng& generator) const;
+	void single_run(model& m, output_type& out, const precalculate_byatom& p, const igrid& ig, rng& generator) const;
 	// out is sorted
-	void operator()(model& m, output_container& out, const precalculate& p, const igrid& ig, const precalculate& p_widened, const igrid& ig_widened, const vec& corner1, const vec& corner2, incrementable* increment_me, rng& generator) const;
-	void many_runs(model& m, output_container& out, const precalculate& p, const igrid& ig, const vec& corner1, const vec& corner2, sz num_runs, rng& generator) const;
+	void operator()(model& m, output_container& out, const precalculate_byatom& p, const igrid& ig, const vec& corner1, const vec& corner2, incrementable* increment_me, rng& generator) const;
+	void many_runs(model& m, output_container& out, const precalculate_byatom& p, const igrid& ig, const vec& corner1, const vec& corner2, sz num_runs, rng& generator) const;
 
 };
 

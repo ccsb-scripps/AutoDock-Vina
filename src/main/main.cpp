@@ -105,14 +105,22 @@ Thank you!\n";
 	try {
 		tee log;
 		std::string rigid_name, ligand_name, flex_name, config_name, out_name, log_name;
+        std::string ad4_maps, scoring_function;
 		double center_x, center_y, center_z; 
-		int size_x, size_y, size_z;
+		double size_x, size_y, size_z;
 		int cpu = 0, seed, exhaustiveness = 8, verbosity = 2, num_modes = 9;
 		double energy_range = 2.0;
 		double granularity = 0.375;
 		bool no_cache = false;
 
-		// -0.035579, -0.005156, 0.840245, -0.035069, -0.587439, 0.05846
+		// autodock4.2 weights
+		double weight_ad4_vdw   = 0.1662;
+		double weight_ad4_hb    = 0.1209;
+		double weight_ad4_elec  = 0.1406;
+		double weight_ad4_dsolv = 0.1322;
+		double weight_ad4_rot   = 0.2983;
+
+        // vina weights
 		double weight_gauss1      = -0.035579;
 		double weight_gauss2      = -0.005156;
 		double weight_repulsion   =  0.840245;
@@ -128,6 +136,9 @@ Thank you!\n";
 			("receptor", value<std::string>(&rigid_name), "rigid part of the receptor (PDBQT)")
 			("flex", value<std::string>(&flex_name), "flexible side chains, if any (PDBQT)")
 			("ligand", value<std::string>(&ligand_name), "ligand (PDBQT)")
+			("ad4_maps", value<std::string>(&ad4_maps), "maps for the autodock4.2 (ad4) scoring function")
+			//("vina_maps", value<std::string>(&vina_maps), "maps for vina scoring function")
+			("scoring_function", value<std::string>(&scoring_function), "vina or ad4")
 		;
 		//options_description search_area("Search area (required, except with --score_only)");
 		options_description search_area("Search space (required)");
@@ -135,9 +146,9 @@ Thank you!\n";
 			("center_x", value<double>(&center_x), "X coordinate of the center")
 			("center_y", value<double>(&center_y), "Y coordinate of the center")
 			("center_z", value<double>(&center_z), "Z coordinate of the center")
-			("size_x", value<int>(&size_x), "size in the X dimension (Angstroms)")
-			("size_y", value<int>(&size_y), "size in the Y dimension (Angstroms)")
-			("size_z", value<int>(&size_z), "size in the Z dimension (Angstroms)")
+			("size_x", value<double>(&size_x), "size in the X dimension (Angstroms)")
+			("size_y", value<double>(&size_y), "size in the Y dimension (Angstroms)")
+			("size_z", value<double>(&size_z), "size in the Z dimension (Angstroms)")
 		;
 		//options_description outputs("Output prefixes (optional - by default, input names are stripped of .pdbqt\nare used as prefixes. _001.pdbqt, _002.pdbqt, etc. are appended to the prefixes to produce the output names");
 		options_description outputs("Output (optional)");
@@ -150,12 +161,19 @@ Thank you!\n";
 			("score_only",     bool_switch(&score_only),     "score only - search space can be omitted")
 			("local_only",     bool_switch(&local_only),     "do local search only")
 			("randomize_only", bool_switch(&randomize_only), "randomize input, attempting to avoid clashes")
+
 			("weight_gauss1", value<double>(&weight_gauss1)->default_value(weight_gauss1),                "gauss_1 weight")
 			("weight_gauss2", value<double>(&weight_gauss2)->default_value(weight_gauss2),                "gauss_2 weight")
 			("weight_repulsion", value<double>(&weight_repulsion)->default_value(weight_repulsion),       "repulsion weight")
 			("weight_hydrophobic", value<double>(&weight_hydrophobic)->default_value(weight_hydrophobic), "hydrophobic weight")
 			("weight_hydrogen", value<double>(&weight_hydrogen)->default_value(weight_hydrogen),          "Hydrogen bond weight")
 			("weight_rot", value<double>(&weight_rot)->default_value(weight_rot),                         "N_rot weight")
+
+			("weight_ad4_vdw",   value<double>(&weight_ad4_vdw)  ->default_value(weight_ad4_vdw),   "ad4_vdw weight")
+			("weight_ad4_hb",    value<double>(&weight_ad4_hb)   ->default_value(weight_ad4_hb),    "ad4_hb weight")
+			("weight_ad4_elec",  value<double>(&weight_ad4_elec) ->default_value(weight_ad4_elec),  "ad4_elec weight")
+			("weight_ad4_dsolv", value<double>(&weight_ad4_dsolv)->default_value(weight_ad4_dsolv), "ad4_dsolv weight")
+			("weight_ad4_rot",   value<double>(&weight_ad4_rot)  ->default_value(weight_ad4_rot),   "ad4_rot weight")
 		;
 		options_description misc("Misc (optional)");
 		misc.add_options()
@@ -221,14 +239,38 @@ Thank you!\n";
 		}
 
 		bool output_produced   = !score_only; 
-		bool receptor_needed   = !randomize_only;
+		bool receptor_needed   = !(scoring_function.compare("ad4") == 0);
+        scoring_function_choice sfchoice=SF_VINA;
 
 		if(receptor_needed) {
-			if(vm.count("receptor") <= 0) {
-				std::cerr << "Missing receptor.\n" << "\nCorrect usage:\n" << desc_simple << '\n';
+			if((vm.count("receptor") <= 0)){// & (vm.count("vina_maps") <= 0)){
+				std::cerr << desc_simple << "\n\nMissing either receptor or vina_maps.\n";
 				return 1;
 			}
 		}
+        if(scoring_function.compare("ad4") == 0) {
+            sfchoice = SF_AD42;
+            //if((vm.count("receptor") > 0) | (vm.count("vina_maps") > 0) | (vm.count("ad4_maps") <= 0)) {
+            //if(                               (vm.count("vina_maps") > 0) | (vm.count("ad4_maps") <= 0)) {
+            if((vm.count("ad4_maps") <= 0)) {
+				std::cerr << "When using AutoDock4.2 scoring function (--scoring_function ad4):\n";
+				std::cerr << "  --ad4_maps  is required\n";
+				//std::cerr << "  --vina_maps not accepted\n";
+				//std::cerr << "  --receptor  not accepted\n";
+				return 1;
+            }
+        }
+        else if (scoring_function.compare("vina") == 0) {
+            sfchoice = SF_VINA;
+            if(vm.count("ad4_maps") > 0) {
+				std::cerr << desc_simple << "\n\nNo ad4_maps with vina scoring function\n";
+				return 1;
+            }
+        }
+        //if((vm.count("vina_maps") > 0) & (vm.count("receptor") > 0)){
+		//	std::cerr << desc_simple << "\n\nMust provide either --receptor or --vina_maps, not both.\n";
+		//	return 1;
+		//}
 		if(vm.count("ligand") <= 0) {
 			std::cerr << "Missing ligand.\n" << "\nCorrect usage:\n" << desc_simple << '\n';
 			return 1;
@@ -248,6 +290,7 @@ Thank you!\n";
 			}
 		}
 
+
 		doing(verbosity, "Reading input", log);
 		done(verbosity, log);
 
@@ -261,23 +304,46 @@ Thank you!\n";
 		log << "Size: X " << size_x << " Y " << size_y << " Z " << size_z << "\n";
 		log << "Center: X " << center_x << " Y " << center_y << " Z " << center_z << "\n";
 		log << "Grid space: " << granularity << "\n";
+		log << "Scoring function (0=vina, 1=ad4): " << sfchoice << "\n";
 		log.endl();
 
-		Vina v(exhaustiveness, cpu, seed, no_cache, verbosity);
-		v.set_receptor(rigid_name, flex_name);
+		Vina v(exhaustiveness, cpu, seed, no_cache, verbosity, sfchoice);
+		if(sfchoice==SF_VINA) {
+			v.set_receptor(rigid_name, flex_name);
+			v.set_weights(weight_gauss1,
+						  weight_gauss2,
+						  weight_repulsion,
+						  weight_hydrophobic,
+						  weight_hydrogen,
+						  weight_rot);
+		}
+		else {
+			v.set_receptor(rigid_name, flex_name); // TODO we don't want to do this
+			v.set_ad4_weights(weight_ad4_vdw,
+							  weight_ad4_hb,
+							  weight_ad4_elec,
+							  weight_ad4_dsolv,
+							  weight_ad4_rot);
+		}
 		v.set_ligand(ligand_name);
 		v.set_forcefield();
 
-		if (score_only) {
-			v.score();
-		} else if(local_only) {
+		if(sfchoice==SF_VINA) {
 			v.set_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
 			v.compute_vina_grid();
+		}
+		else if(sfchoice==SF_AD42) v.load_ad4_maps(ad4_maps);
+        else assert(false);
+
+
+		if (score_only) {
+			v.score();
+            // TODO write contributions
+		} else
+        if(local_only) {
 			v.optimize();
 			v.write_pose(out_name);
 		} else {
-			v.set_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
-			v.compute_vina_grid();
 			v.global_search();
 			v.write_results(out_name, num_modes, energy_range);
 		}

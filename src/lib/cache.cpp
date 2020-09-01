@@ -61,10 +61,25 @@ fl cache::eval      (const model& m, fl v) const { // needs m.coords
 	return e;
 }
 
-fl cache::eval_deriv(      model& m, fl v) const { // needs m.coords, sets m.minus_forces
+fl cache::eval_intra(model& m, fl v) const {
 	fl e = 0;
 	sz nat = num_atom_types(atu);
 
+	VINA_FOR(i, m.num_movable_atoms()) {
+        if(m.find_ligand(i) < m.ligands.size()) continue; // we only want flex-rigid interaction
+		const atom& a = m.atoms[i];
+		sz t = a.get(atu);
+		if(t >= nat) continue;
+		const grid& g = grids[t];
+		assert(g.initialized());
+		e += g.evaluate(m.coords[i], slope, v);
+	}
+	return e;
+}
+
+fl cache::eval_deriv(      model& m, fl v) const { // needs m.coords, sets m.minus_forces
+	fl e = 0;
+	sz nat = num_atom_types(atu);
 	VINA_FOR(i, m.num_movable_atoms()) {
 		const atom& a = m.atoms[i];
 		sz t = a.get(atu);

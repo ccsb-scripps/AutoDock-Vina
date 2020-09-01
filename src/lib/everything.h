@@ -20,13 +20,10 @@
 
 */
 
-#ifndef VINA_EVERYTHING_H
-#define VINA_EVERYTHING_H
-
 #include "terms.h"
 
-struct everything : public terms {
-	everything();
-};
+enum scoring_function_choice {SF_VINA, SF_AD42, SF_VINARDO};
 
-#endif
+struct everything : public terms {
+	everything(scoring_function_choice sfchoice);
+};
