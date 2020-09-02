@@ -117,9 +117,9 @@ public:
     void set_ligand(const std::vector<std::string>& ligand_name);
     //void set_ligand(OpenBabel::OBMol* mol);
     //void set_ligand(std::vector<OpenBabel::OBMol*> mol);
-    void set_weights(double weight_gauss1=-0.035579,  double weight_gauss2=-0.005156, 
-                     double weight_repulsion=0.840245, double weight_hydrophobic=-0.035069, 
-                     double weight_hydrogen=-0.587439, double weight_rot=0.05846);
+    void set_vina_weights(double weight_gauss1=-0.035579,  double weight_gauss2=-0.005156, 
+                          double weight_repulsion=0.840245, double weight_hydrophobic=-0.035069, 
+                          double weight_hydrogen=-0.587439, double weight_rot=0.05846);
 
     void set_ad4_weights(double weight_ad4_vdw =0.1662, double weight_ad4_hb=0.1209, 
                          double weight_ad4_elec=0.1406, double weight_ad4_dsolv=0.1322, 
@@ -130,9 +130,7 @@ public:
     void load_ad4_maps(std::string ad4_maps);
     void randomize(const int max_steps=10000);
     double score();
-    void score(output_type& pose);
-    void score(output_type& pose, double intramolecular_energy);
-    double score(double intramolecular_energy);
+    void score(output_type& pose, double intramolecular_energy=0.);
     void optimize(const int max_steps=0);
     void global_search(const int n_poses=20, const double min_rmsd=1.0);
     void write_results(const std::string& output_name, int how_many=9, double energy_range=3.0);

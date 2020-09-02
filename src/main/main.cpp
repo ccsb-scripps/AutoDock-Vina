@@ -310,20 +310,13 @@ Thank you!\n";
 		Vina v(exhaustiveness, cpu, seed, no_cache, verbosity, sfchoice);
 		if(sfchoice==SF_VINA) {
 			v.set_receptor(rigid_name, flex_name);
-			v.set_weights(weight_gauss1,
-						  weight_gauss2,
-						  weight_repulsion,
-						  weight_hydrophobic,
-						  weight_hydrogen,
-						  weight_rot);
+			v.set_vina_weights(weight_gauss1, weight_gauss2, weight_repulsion,
+				               weight_hydrophobic, weight_hydrogen, weight_rot);
 		}
 		else {
 			v.set_receptor(rigid_name, flex_name); // TODO we don't want to do this
-			v.set_ad4_weights(weight_ad4_vdw,
-							  weight_ad4_hb,
-							  weight_ad4_elec,
-							  weight_ad4_dsolv,
-							  weight_ad4_rot);
+			v.set_ad4_weights(weight_ad4_vdw, weight_ad4_hb, weight_ad4_elec,
+							  weight_ad4_dsolv, weight_ad4_rot);
 		}
 		v.set_ligand(ligand_name);
 		v.set_forcefield();
