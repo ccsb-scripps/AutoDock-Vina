@@ -424,6 +424,7 @@ double Vina::score() {
     VINA_CHECK(m_ff_initialized); // m_precalculated
 
     double e = 0;
+    double lig_grids;
     double intramolecular_energy = 0;
     double intermolecular_energy = 0;
     const vec authentic_v(1000, 1000, 1000);
@@ -434,15 +435,21 @@ double Vina::score() {
     weighted_terms scoring_function(&t, m_weights);
 
     if(m_sf_choice==SF_AD42) {
+        lig_grids = m_ad4grid.eval(m_model, authentic_v[1]);
         intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_ad4grid, authentic_v);
         e = m_model.eval_adjusted(scoring_function, m_precalculated_byatom, m_ad4grid, authentic_v, intramolecular_energy);
     } else if(m_sf_choice==SF_VINA) {
+        lig_grids = m_grid.eval(m_model, authentic_v[1]);
         intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid, authentic_v);
         e = m_model.eval_adjusted(scoring_function, m_precalculated_byatom, m_grid, authentic_v, intramolecular_energy);
     }
     
     if (m_verbosity > 1) {
-        m_log << "Intramolecular (eval_intramolecular): " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
+        m_log << "INTER: " << std::fixed << std::setprecision(5) << lig_grids << " (kcal/mol)";
+        m_log.endl();
+        m_log << "INTRA: " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
+        m_log.endl();
+        m_log << "TOTAL: " << std::fixed << std::setprecision(5) << intramolecular_energy + lig_grids << " (kcal/mol)";
         m_log.endl();
         m_log << "Energy (eval_adjusted): " << std::fixed << std::setprecision(5) << e << " (kcal/mol)";
         m_log.endl();
