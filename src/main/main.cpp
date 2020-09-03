@@ -105,7 +105,8 @@ Thank you!\n";
 	try {
 		tee log;
 		std::string rigid_name, ligand_name, flex_name, config_name, out_name, log_name;
-        std::string ad4_maps, scoring_function;
+        std::string ad4_maps;
+        std::string sf_name = "vina";
 		double center_x, center_y, center_z; 
 		double size_x, size_y, size_z;
 		int cpu = 0, seed, exhaustiveness = 8, verbosity = 2, num_modes = 9;
@@ -138,7 +139,7 @@ Thank you!\n";
 			("ligand", value<std::string>(&ligand_name), "ligand (PDBQT)")
 			("ad4_maps", value<std::string>(&ad4_maps), "maps for the autodock4.2 (ad4) scoring function")
 			//("vina_maps", value<std::string>(&vina_maps), "maps for vina scoring function")
-			("scoring_function", value<std::string>(&scoring_function), "vina or ad4")
+			("scoring_function", value<std::string>(&sf_name)->default_value(sf_name), "vina or ad4")
 		;
 		//options_description search_area("Search area (required, except with --score_only)");
 		options_description search_area("Search space (required)");
@@ -239,8 +240,7 @@ Thank you!\n";
 		}
 
 		bool output_produced   = !score_only; 
-		bool receptor_needed   = !(scoring_function.compare("ad4") == 0);
-        scoring_function_choice sfchoice=SF_VINA;
+		bool receptor_needed   = !(sf_name.compare("ad4") == 0);
 
 		if(receptor_needed) {
 			if((vm.count("receptor") <= 0)){// & (vm.count("vina_maps") <= 0)){
@@ -248,8 +248,8 @@ Thank you!\n";
 				return 1;
 			}
 		}
-        if(scoring_function.compare("ad4") == 0) {
-            sfchoice = SF_AD42;
+
+        if(sf_name.compare("ad4") == 0) {
             //if((vm.count("receptor") > 0) | (vm.count("vina_maps") > 0) | (vm.count("ad4_maps") <= 0)) {
             //if(                               (vm.count("vina_maps") > 0) | (vm.count("ad4_maps") <= 0)) {
             if((vm.count("ad4_maps") <= 0)) {
@@ -259,9 +259,7 @@ Thank you!\n";
 				//std::cerr << "  --receptor  not accepted\n";
 				return 1;
             }
-        }
-        else if (scoring_function.compare("vina") == 0) {
-            sfchoice = SF_VINA;
+        } else if (sf_name.compare("vina") == 0) {
             if(vm.count("ad4_maps") > 0) {
 				std::cerr << desc_simple << "\n\nNo ad4_maps with vina scoring function\n";
 				return 1;
@@ -304,36 +302,32 @@ Thank you!\n";
 		log << "Size: X " << size_x << " Y " << size_y << " Z " << size_z << "\n";
 		log << "Center: X " << center_x << " Y " << center_y << " Z " << center_z << "\n";
 		log << "Grid space: " << granularity << "\n";
-		log << "Scoring function (0=vina, 1=ad4): " << sfchoice << "\n";
+		log << "Scoring function : " << sf_name << "\n";
 		log.endl();
 
-		Vina v(exhaustiveness, cpu, seed, no_cache, verbosity, sfchoice);
-		if(sfchoice==SF_VINA) {
-			v.set_receptor(rigid_name, flex_name);
-			v.set_vina_weights(weight_gauss1, weight_gauss2, weight_repulsion,
-				               weight_hydrophobic, weight_hydrogen, weight_rot);
-		}
-		else {
-			v.set_receptor(rigid_name, flex_name); // TODO we don't want to do this
-			v.set_ad4_weights(weight_ad4_vdw, weight_ad4_hb, weight_ad4_elec,
-							  weight_ad4_dsolv, weight_ad4_rot);
-		}
-		v.set_ligand(ligand_name);
-		v.set_forcefield();
+		Vina v(sf_name, exhaustiveness, cpu, seed, no_cache, verbosity);
 
-		if(sfchoice==SF_VINA) {
-			v.set_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
-			v.compute_vina_grid();
-		}
-		else if(sfchoice==SF_AD42) v.load_ad4_maps(ad4_maps);
-        else assert(false);
+        // Can be ignored for AD4
+        v.set_receptor(rigid_name, flex_name);
+        v.set_ligand(ligand_name);
 
+        // Technically we don't have to initialize weights, 
+        // because they are initialized during the Vina object creation with the default weights
+        // but we still do it in case the user decided to change them
+		if (sf_name.compare("vina") == 0) {
+            v.set_vina_weights(weight_gauss1, weight_gauss2, weight_repulsion,
+                               weight_hydrophobic, weight_hydrogen, weight_rot);
+			v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
+		} else {
+            v.set_ad4_weights(weight_ad4_vdw, weight_ad4_hb, weight_ad4_elec,
+                              weight_ad4_dsolv, weight_ad4_rot);
+            v.load_ad4_maps(ad4_maps);
+        }
 
 		if (score_only) {
 			v.score();
             // TODO write contributions
-		} else
-        if(local_only) {
+		} else if (local_only) {
 			v.optimize();
 			v.write_pose(out_name);
 		} else {

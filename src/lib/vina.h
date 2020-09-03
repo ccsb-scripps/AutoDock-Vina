@@ -61,15 +61,12 @@
 class Vina {
 public:
     // Constructor
-    Vina(int exhaustiveness=8, int cpu=0, int seed=0, bool no_cache=false, int verbosity=2, scoring_function_choice sf_choice=scoring_function_choice::SF_AD42) {
+    Vina(const std::string& sf_name="vina", int exhaustiveness=8, int cpu=0, int seed=0, bool no_cache=false, int verbosity=2) {
         m_exhaustiveness = exhaustiveness;
-        m_no_cache = no_cache;
         m_verbosity = verbosity;
         m_receptor_initialized = false;
         m_ligand_initialized = false;
-        m_box_initialized = false;
-        m_grid_initialized = false;
-        m_ff_initialized = false;
+        m_map_initialized = false;
         m_seed = generate_seed(seed);
 
         try {
@@ -102,10 +99,18 @@ public:
             m_log << "WARNING: at low exhaustiveness, it may be impossible to utilize all CPUs.\n";
         }
 
-        //set_weights();
-        m_sf_choice = sf_choice;
-        if(sf_choice==scoring_function_choice::SF_VINA) m_atom_typing_used = atom_type::XS;
-        if(sf_choice==scoring_function_choice::SF_AD42) m_atom_typing_used = atom_type::AD;
+        if (sf_name.compare("vina") == 0) {
+            set_vina_weights();
+            m_sf_choice = SF_VINA;
+            m_atom_typing_used = atom_type::XS;
+        } else if (sf_name.compare("ad4") == 0) {
+            set_ad4_weights();
+            m_sf_choice = SF_AD42;
+            m_atom_typing_used = atom_type::AD;
+        } else {
+            std::cerr << "Scoring function " << sf_name << " not implemented (choices: vina or ad4)\n";
+            exit (EXIT_FAILURE);
+        }
     }
     // Destructor
     virtual ~Vina();
@@ -120,17 +125,13 @@ public:
     void set_vina_weights(double weight_gauss1=-0.035579,  double weight_gauss2=-0.005156, 
                           double weight_repulsion=0.840245, double weight_hydrophobic=-0.035069, 
                           double weight_hydrogen=-0.587439, double weight_rot=0.05846);
-
     void set_ad4_weights(double weight_ad4_vdw =0.1662, double weight_ad4_hb=0.1209, 
                          double weight_ad4_elec=0.1406, double weight_ad4_dsolv=0.1322, 
                          double weight_ad4_rot =0.2983);
-    void set_forcefield();
-    void set_box(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.375);
-    void compute_vina_grid();
+    void compute_vina_maps(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.375);
     void load_ad4_maps(std::string ad4_maps);
     void randomize(const int max_steps=10000);
-    double score();
-    void score(output_type& pose, double intramolecular_energy=0.);
+    std::vector<double> score();
     void optimize(const int max_steps=0);
     void global_search(const int n_poses=20, const double min_rmsd=1.0);
     void write_results(const std::string& output_name, int how_many=9, double energy_range=3.0);
@@ -155,15 +156,11 @@ private:
     weighted_terms m_scoring_function;
     precalculate m_precalculated_sf;
     precalculate_byatom m_precalculated_byatom;
-    bool m_ff_initialized;
     // maps
     grid_dims m_gd;
     vec m_corner1;
     vec m_corner2;
-    bool m_no_cache;
-    bool m_box_initialized;
-    bool m_grid_initialized;
-    bool m_ad4grid_initialized;
+    bool m_map_initialized;
     // global search
     parallel_mc m_parallelmc;
     int m_cpu;
@@ -177,6 +174,9 @@ private:
     std::string vina_remarks(output_type& pose, fl lb, fl ub);
     output_container remove_redundant(const output_container& in, fl min_rmsd);
 
+    void set_forcefield();
+    void set_vina_box(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.375);
+    std::vector<double> score(double intramolecular_energy);
     void optimize(output_type& out, const int max_steps=0);
     int generate_seed(const int seed=0);
 };

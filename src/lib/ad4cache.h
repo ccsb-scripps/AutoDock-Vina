@@ -33,20 +33,13 @@ struct ad4cache : public igrid {
 	fl eval_intra(      model& m, fl v) const; // needs m.coords, sets m.minus_forces // clean up
 	fl eval_deriv(      model& m, fl v) const; // needs m.coords, sets m.minus_forces // clean up
     grid_dims read(const std::string& str);
-    void write(const std::string& str);
+    void write(const std::string& out_prefix, const szv& atom_types, const std::string& gpf_filename="NULL",
+               const std::string& fld_filename="NULL", const std::string& receptor_filename="NULL");
 private:
 	std::string scoring_function_version;
 	atomv atoms; // for verification
 	grid_dims gd;
 	fl slope; // does not get (de-)serialized
 	atom_type::t atu;
-	std::vector<grid> rawgrids;
 	std::vector<grid> grids;
-
-	friend class boost::serialization::access;
-	template<class Archive>
-	void save(Archive& ar, const unsigned version) const;
-	template<class Archive>
-	void load(Archive& ar, const unsigned version);
-	BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
