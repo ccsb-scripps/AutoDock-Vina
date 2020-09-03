@@ -20,20 +20,8 @@
 
 */
 
-#include <boost/serialization/split_member.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/static_assert.hpp>
 #include "ad4cache.h"
-#include "file.h"
-#include "szv_grid.h"
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <algorithm>
-#include <iterator>
 
-#include <boost/optional.hpp> // needed to write files?
 
 namespace fs = boost::filesystem;
 

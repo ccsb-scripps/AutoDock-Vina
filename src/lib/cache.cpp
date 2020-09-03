@@ -20,18 +20,7 @@
 
 */
 
-#include <boost/serialization/split_member.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/static_assert.hpp>
 #include "cache.h"
-#include "file.h"
-#include "szv_grid.h"
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <algorithm>
-#include <iterator>
 
 
 cache::cache(const std::string& scoring_function_version_, const grid_dims& gd_, fl slope_, atom_type::t atom_typing_used_) 

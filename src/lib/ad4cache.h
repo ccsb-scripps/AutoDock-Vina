@@ -20,11 +20,25 @@
 
 */
 
+#ifndef VINA_AD4CACHE_H
+#define VINA_AD4CACHE_H
+
+#include <iostream>
 #include <string>
+#include <sstream>
+#include <algorithm>
+#include <iterator>
+#include <boost/serialization/split_member.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/optional.hpp> // needed to write files?
 #include "igrid.h"
 #include "grid.h"
 #include "model.h"
 #include "file.h"
+#include "szv_grid.h"
+
 
 struct ad4cache : public igrid {
     ad4cache() {}
@@ -43,3 +57,5 @@ private:
 	atom_type::t atu;
 	std::vector<grid> grids;
 };
+
+#endif

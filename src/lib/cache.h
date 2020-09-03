@@ -23,11 +23,20 @@
 #ifndef VINA_CACHE_H
 #define VINA_CACHE_H
 
+#include <iostream>
 #include <string>
+#include <sstream>
+#include <algorithm>
+#include <iterator>
+#include <boost/serialization/split_member.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/static_assert.hpp>
 #include "igrid.h"
 #include "grid.h"
 #include "model.h"
 #include "file.h"
+#include "szv_grid.h"
 
 
 struct cache_mismatch {};

@@ -21,7 +21,7 @@
 */
 
 #include "everything.h"
-#include "int_pow.h"
+
 
 inline fl gaussian(fl x, fl width) {
 	return std::exp(-sqr(x/width));

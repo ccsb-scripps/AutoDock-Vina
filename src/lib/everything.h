@@ -20,10 +20,17 @@
 
 */
 
+#ifndef VINA_EVERYTHING_H
+#define VINA_EVERYTHING_H
+
 #include "terms.h"
+#include "int_pow.h"
+
 
 enum scoring_function_choice {SF_VINA, SF_AD42, SF_VINARDO};
 
 struct everything : public terms {
 	everything(scoring_function_choice sfchoice);
 };
+
+#endif
