@@ -108,6 +108,10 @@ void Vina::set_ligand(const std::string& ligand_name) {
     m_model.append(parse_ligand_pdbqt(ligand_name, m_atom_typing_used));
     m_model.about();
 
+    // Because we precalculate ligand atoms interactions
+    // This is fucking ugly
+    set_forcefield();
+
     // Store in Vina object
     m_ligand_initialized = true;
 }
@@ -123,6 +127,10 @@ void Vina::set_ligand(const std::vector<std::string>& ligand_name) {
 
     VINA_RANGE(i, 0, ligand_name.size())
         m_model.append(parse_ligand_pdbqt(ligand_name[i], m_atom_typing_used));
+
+    // Because we precalculate ligand atoms interactions
+    // This is fucking ugly
+    set_forcefield();
 
     // Store in Vina object
     m_ligand_initialized = true;
@@ -166,7 +174,7 @@ void Vina::set_vina_weights(double weight_gauss1, double weight_gauss2, double w
                             double weight_hydrophobic, double weight_hydrogen, double weight_rot) {
     flv weights;
 
-    if (m_sf_choice==SF_VINA) {
+    if (m_sf_choice == SF_VINA) {
         weights.push_back(weight_gauss1);
         weights.push_back(weight_gauss2);
         weights.push_back(weight_repulsion);
@@ -187,7 +195,7 @@ void Vina::set_ad4_weights(double weight_ad4_vdw , double weight_ad4_hb,
                            double weight_ad4_rot) {
     flv weights;
 
-    if (m_sf_choice==SF_AD42) {
+    if (m_sf_choice == SF_AD42) {
         weights.push_back(weight_ad4_vdw);
         weights.push_back(weight_ad4_hb);
         weights.push_back(weight_ad4_elec);
