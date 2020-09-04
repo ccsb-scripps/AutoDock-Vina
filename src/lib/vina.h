@@ -100,13 +100,13 @@ public:
         }
 
         if (sf_name.compare("vina") == 0) {
-            set_vina_weights();
             m_sf_choice = SF_VINA;
             m_atom_typing_used = atom_type::XS;
+            set_vina_weights();
         } else if (sf_name.compare("ad4") == 0) {
-            set_ad4_weights();
             m_sf_choice = SF_AD42;
             m_atom_typing_used = atom_type::AD;
+            set_ad4_weights();
         } else {
             std::cerr << "Scoring function " << sf_name << " not implemented (choices: vina or ad4)\n";
             exit (EXIT_FAILURE);
