@@ -61,7 +61,6 @@
 #include "quaternion.h"
 #include "random.h"
 #include "scoring_function.h"
-#include "ssd.h"
 #include "szv_grid.h"
 #include "tee.h"
 #include "terms.h"

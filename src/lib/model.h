@@ -139,7 +139,6 @@ struct model {
 	fl evali     (const precalculate_byatom& p,                  const vec& v           ) const;
 	fl evale     (const precalculate_byatom& p, const igrid& ig, const vec& v           ) const;
 	fl eval      (const precalculate_byatom& p, const igrid& ig, const vec& v           );
-	fl eval_deriv(const precalculate& p, const igrid& ig, const vec& v, change& g);
 	fl eval_deriv(const precalculate_byatom& p, const igrid& ig, const vec& v, change& g);
 
 	fl eval_intramolecular(                            const precalculate_byatom& p, const igrid& ig, const vec& v                          );
