@@ -97,9 +97,39 @@ struct ad4_solvation : public usable {
 
 };
 
-inline fl optimal_distance(sz xs_t1, sz xs_t2) {
+bool is_glue_type(sz xs_t) {
+    if((xs_t==XS_TYPE_G0) || (xs_t==XS_TYPE_G1) || (xs_t==XS_TYPE_G2) || (xs_t==XS_TYPE_G3)) return true;
+    return false;}
+
+inline fl optimal_distance(sz xs_t1, sz xs_t2) { // For vina terms only. Not ad4.
+    if(is_glue_type(xs_t1) || is_glue_type(xs_t2)) return 0.0; // G0, G1, G2 or G3
 	return xs_radius(xs_t1) + xs_radius(xs_t2);
 }
+
+
+inline bool is_glued(sz xs_t1, sz xs_t2) {
+    return (xs_t1 == XS_TYPE_G0 && xs_t2 == XS_TYPE_C_H_CG0) ||
+       (xs_t1 == XS_TYPE_G0 && xs_t2 == XS_TYPE_C_P_CG0) ||
+       (xs_t2 == XS_TYPE_G0 && xs_t1 == XS_TYPE_C_H_CG0) ||
+       (xs_t2 == XS_TYPE_G0 && xs_t1 == XS_TYPE_C_P_CG0); // ||
+}
+/*
+       (xs_t1 == XS_TYPE_G1 && xs_t2 == XS_TYPE_C_H_CG1) ||
+       (xs_t1 == XS_TYPE_G1 && xs_t2 == XS_TYPE_C_P_CG1) ||
+       (xs_t2 == XS_TYPE_G1 && xs_t1 == XS_TYPE_C_H_CG1) ||
+       (xs_t2 == XS_TYPE_G1 && xs_t1 == XS_TYPE_C_P_CG1) ||
+
+       (xs_t1 == XS_TYPE_G2 && xs_t2 == XS_TYPE_C_H_CG2) ||
+       (xs_t1 == XS_TYPE_G2 && xs_t2 == XS_TYPE_C_P_CG2) ||
+       (xs_t2 == XS_TYPE_G2 && xs_t1 == XS_TYPE_C_H_CG2) ||
+       (xs_t2 == XS_TYPE_G2 && xs_t1 == XS_TYPE_C_P_CG2) ||
+
+       (xs_t1 == XS_TYPE_G3 && xs_t2 == XS_TYPE_C_H_CG3) ||
+       (xs_t1 == XS_TYPE_G3 && xs_t2 == XS_TYPE_C_P_CG3) ||
+       (xs_t2 == XS_TYPE_G3 && xs_t1 == XS_TYPE_C_H_CG3) ||
+       (xs_t2 == XS_TYPE_G3 && xs_t1 == XS_TYPE_C_P_CG3);
+}
+*/
 
 inline fl ad4_vdw_eps(sz& a) {
     if(a < AD_TYPE_SIZE) return ad_type_property(a).depth;
@@ -187,10 +217,27 @@ struct hydrophobic : public usable {
 			return slope_step(bad, good, r - optimal_distance(t1, t2));
 		else return 0;
 	}
-
 };
 
-struct non_hydrophobic : public usable {
+struct linearattraction : public usable {
+	linearattraction(fl cutoff_) : usable(cutoff_) {
+		name = "linearattraction(c=" + to_string(cutoff) + ")";
+	}
+	fl eval(const atom& a, const atom& b, fl r) const {
+        //if(is_glue_type(a.xs) || is_glue_type(b.xs)) std::cout << "a.xs=" << a.xs << " b.xs=" << b.xs << "\n";
+        //if((a.ad == AD_TYPE_G0 && b.ad == AD_TYPE_CG0) || (a.ad == AD_TYPE_CG0 && b.ad == AD_TYPE_G0)) std::cout << "a.xs=" << a.xs << " b.xs=" << b.xs << "\n";
+		if(is_glued(a.xs, b.xs)) {
+            return r;
+        }
+		else return 0;
+	}
+    fl eval(sz t1, sz t2, fl r) const {
+        if(is_glued(t1, t2)) return r;
+        else return 0;
+    }
+};
+
+struct non_hydrophobic : public usable { // not used
 	fl good;
 	fl bad;
 	non_hydrophobic(fl good_, fl bad_, fl cutoff_) : usable(cutoff_), good(good_), bad(bad_) {
@@ -437,6 +484,7 @@ everything::everything(scoring_function_choice sfchoice) { // enabled according 
 	        add(1, new repulsion( 0.0, 8.0)); // offset, cutoff // WEIGHT:  0.840245
 	        add(1, new hydrophobic(0.5, 1.5, 8.0)); // good, bad, cutoff // WEIGHT:  -0.035069
 	        add(1, new non_dir_h_bond(-0.7, 0, 8.0)); // good, bad, cutoff // WEIGHT:  -0.587439
+            add(1, new linearattraction(20.0));
 	        add(1, new num_tors_div()); // WEIGHT: 1.923 -- FIXME too close to limit?
             break;
         case SF_VINARDO:
@@ -448,8 +496,8 @@ everything::everything(scoring_function_choice sfchoice) { // enabled according 
 	        add(1, new ad4_hb(  0.5, 100000, 8.0)); // smoothing, cap, cutoff
 	        add(1, new electrostatic<1>(100, 20.48)); // exponent, cap, cutoff
 	        add(1, new ad4_solvation(3.6, 0.01097,  true, 20.48)); // desolvation_sigma, solvation_q, charge_dependent, cutoff
+            add(1, new linearattraction(20.0));
 	        add(1, new ad4_tors_add());
-
             break;
         default:
             std::cout << "INSIDE everything::everything()   sfchoice = " << sfchoice << "\n";

@@ -37,7 +37,8 @@ const sz EL_TYPE_Cl   =  7;
 const sz EL_TYPE_Br   =  8;
 const sz EL_TYPE_I    =  9;
 const sz EL_TYPE_Met  = 10;
-const sz EL_TYPE_SIZE = 11;
+const sz EL_TYPE_Dummy= 11;
+const sz EL_TYPE_SIZE = 12;
 
 // AutoDock4
 const sz AD_TYPE_C    =  0;
@@ -60,7 +61,16 @@ const sz AD_TYPE_Ca   = 16;
 const sz AD_TYPE_Fe   = 17;
 const sz AD_TYPE_Cl   = 18;
 const sz AD_TYPE_Br   = 19;
-const sz AD_TYPE_SIZE = 20;
+const sz AD_TYPE_G0   = 20; // closure of cyclic molecules
+const sz AD_TYPE_G1   = 21;
+const sz AD_TYPE_G2   = 22;
+const sz AD_TYPE_G3   = 23;
+const sz AD_TYPE_CG0  = 24;
+const sz AD_TYPE_CG1  = 25;
+const sz AD_TYPE_CG2  = 26;
+const sz AD_TYPE_CG3  = 27;
+const sz AD_TYPE_W    = 28; // hydrated ligand
+const sz AD_TYPE_SIZE = 29;
 
 // X-Score
 const sz XS_TYPE_C_H   =  0;
@@ -80,7 +90,20 @@ const sz XS_TYPE_Cl_H  = 13;
 const sz XS_TYPE_Br_H  = 14;
 const sz XS_TYPE_I_H   = 15;
 const sz XS_TYPE_Met_D = 16;
-const sz XS_TYPE_SIZE  = 17;
+const sz XS_TYPE_C_H_CG0 = 17; // closure of cyclic molecules
+const sz XS_TYPE_C_P_CG0 = 18;
+const sz XS_TYPE_G0      = 19;
+const sz XS_TYPE_C_H_CG1 = 20;
+const sz XS_TYPE_C_P_CG1 = 21;
+const sz XS_TYPE_G1      = 22;
+const sz XS_TYPE_C_H_CG2 = 23;
+const sz XS_TYPE_C_P_CG2 = 24;
+const sz XS_TYPE_G2      = 25;
+const sz XS_TYPE_C_H_CG3 = 26;
+const sz XS_TYPE_C_P_CG3 = 27;
+const sz XS_TYPE_G3      = 28;
+const sz XS_TYPE_W       = 29; // hydrated ligand
+const sz XS_TYPE_SIZE  = 30;
 
 // DrugScore-CSD
 const sz SY_TYPE_C_3   =  0;
@@ -137,7 +160,16 @@ const atom_kind atom_kind_data[] = {
 	{"Ca", 0.99000, 0.55000, 0.0, 0.0,   -0.00110,    2.77000,   1.74}, // 16
 	{"Fe", 0.65000, 0.01000, 0.0, 0.0,   -0.00110,    1.84000,   1.25}, // 17
 	{"Cl", 2.04500, 0.27600, 0.0, 0.0,   -0.00110,   35.82350,   0.99}, // 18
-	{"Br", 2.16500, 0.38900, 0.0, 0.0,   -0.00110,   42.56610,   1.14}  // 19
+	{"Br", 2.16500, 0.38900, 0.0, 0.0,   -0.00110,   42.56610,   1.14}, // 19
+	{"G0", 0.00000, 0.00000, 0.0, 0.0,    0.00000,    0.00000,   0.77}, // 20
+	{"G1", 0.00000, 0.00000, 0.0, 0.0,    0.00000,    0.00000,   0.77}, // 21
+	{"G2", 0.00000, 0.00000, 0.0, 0.0,    0.00000,    0.00000,   0.77}, // 22
+	{"G3", 0.00000, 0.00000, 0.0, 0.0,    0.00000,    0.00000,   0.77}, // 23
+	{"CG0",2.00000, 0.15000, 0.0, 0.0,   -0.00143,   33.51030,   0.77}, // 24
+	{"CG1",2.00000, 0.15000, 0.0, 0.0,   -0.00143,   33.51030,   0.77}, // 25
+	{"CG2",2.00000, 0.15000, 0.0, 0.0,   -0.00143,   33.51030,   0.77}, // 26
+	{"CG3",2.00000, 0.15000, 0.0, 0.0,   -0.00143,   33.51030,   0.77}, // 27
+	{"W",  0.00000, 0.00000, 1.9, 5.0,   -0.00251,   17.15730,   0.00}  // 28
 };
 
 const fl metal_solvation_parameter = -0.00110;
@@ -203,6 +235,15 @@ inline sz ad_type_to_el_type(sz t) {
 		case AD_TYPE_Fe   : return EL_TYPE_Met;
 		case AD_TYPE_Cl   : return EL_TYPE_Cl;
 		case AD_TYPE_Br   : return EL_TYPE_Br;
+		case AD_TYPE_CG0  : return EL_TYPE_C;
+		case AD_TYPE_CG1  : return EL_TYPE_C;
+		case AD_TYPE_CG2  : return EL_TYPE_C;
+		case AD_TYPE_CG3  : return EL_TYPE_C;
+		case AD_TYPE_G0   : return EL_TYPE_Dummy;
+		case AD_TYPE_G1   : return EL_TYPE_Dummy;
+		case AD_TYPE_G2   : return EL_TYPE_Dummy;
+		case AD_TYPE_G3   : return EL_TYPE_Dummy;
+		case AD_TYPE_W    : return EL_TYPE_Dummy;
 		case AD_TYPE_SIZE : return EL_TYPE_SIZE;
 		default: VINA_CHECK(false);
 	}
@@ -226,7 +267,20 @@ const fl xs_vdw_radii[] = {
 	1.8, // Cl_H
 	2.0, // Br_H
 	2.2, // I_H
-	1.2  // Met_D
+	1.2, // Met_D
+    1.9, // C_H_CG0
+    1.9, // C_P_CG0
+    1.9, // C_H_CG1
+    1.9, // C_P_CG1
+    1.9, // C_H_CG2
+    1.9, // C_P_CG2
+    1.9, // C_H_CG3
+    1.9, // C_P_CG3
+    0.0, // G0
+    0.0, // G1
+    0.0, // G2
+    0.0, // G3
+    0.0  // W
 };
 
 inline fl xs_radius(sz t) {

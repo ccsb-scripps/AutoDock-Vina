@@ -171,7 +171,8 @@ void Vina::set_ligand(std::vector<OpenBabel::OBMol*> mol) {
 */
 
 void Vina::set_vina_weights(double weight_gauss1, double weight_gauss2, double weight_repulsion, 
-                            double weight_hydrophobic, double weight_hydrogen, double weight_rot) {
+                            double weight_hydrophobic, double weight_hydrogen, double weight_glue,
+                            double weight_rot) {
     flv weights;
 
     if (m_sf_choice == SF_VINA) {
@@ -180,6 +181,7 @@ void Vina::set_vina_weights(double weight_gauss1, double weight_gauss2, double w
         weights.push_back(weight_repulsion);
         weights.push_back(weight_hydrophobic);
         weights.push_back(weight_hydrogen);
+        weights.push_back(weight_glue);
         weights.push_back(5 * weight_rot / 0.1 - 1);
 
         // Store in Vina object
@@ -192,7 +194,7 @@ void Vina::set_vina_weights(double weight_gauss1, double weight_gauss2, double w
 
 void Vina::set_ad4_weights(double weight_ad4_vdw , double weight_ad4_hb, 
                            double weight_ad4_elec, double weight_ad4_dsolv, 
-                           double weight_ad4_rot) {
+                           double weight_glue,     double weight_ad4_rot) {
     flv weights;
 
     if (m_sf_choice == SF_AD42) {
@@ -200,6 +202,7 @@ void Vina::set_ad4_weights(double weight_ad4_vdw , double weight_ad4_hb,
         weights.push_back(weight_ad4_hb);
         weights.push_back(weight_ad4_elec);
         weights.push_back(weight_ad4_dsolv);
+        weights.push_back(weight_glue);
         weights.push_back(weight_ad4_rot);
 
         // Store in Vina object
@@ -503,7 +506,9 @@ std::vector<double> Vina::score(double intramolecular_energy) {
     weighted_terms scoring_function(&t, m_weights); // used only for the torsion penalty
 
     if (m_sf_choice == SF_AD42) {
+        std::cout << "lig_grids\n";
         lig_grids = m_ad4grid.eval(m_model, authentic_v[1]); // [1]
+        std::cout << "flex_grids\n";
         flex_grids = m_ad4grid.eval_intra(m_model, authentic_v[1]); // [1]
         other_pairs = m_model.evalo(m_precalculated_byatom, authentic_v); // [1]
         lig_intra = m_model.evali(m_precalculated_byatom, authentic_v); // [2]
@@ -658,6 +663,8 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
     parallel_mc m_parallelmc;
     sz heuristic = m_model.num_movable_atoms() + 10 * m_model.get_size().num_degrees_of_freedom();
     m_parallelmc.mc.global_steps = unsigned(70 * 3 * (50 + heuristic) / 2); // 2 * 70 -> 8 * 20 // FIXME
+    //std::cout << "\n\nWarning: doing 100 MC steps\n\n";
+    //m_parallelmc.mc.global_steps = unsigned(100); // 2 * 70 -> 8 * 20 // FIXME
     m_parallelmc.mc.local_steps = unsigned((25 + m_model.num_movable_atoms()) / 3);
     m_parallelmc.mc.min_rmsd = min_rmsd;
     m_parallelmc.mc.num_saved_mins = n_poses;

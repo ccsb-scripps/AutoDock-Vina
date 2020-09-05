@@ -127,6 +127,7 @@ Thank you!\n";
 		double weight_repulsion   =  0.840245;
 		double weight_hydrophobic = -0.035069;
 		double weight_hydrogen    = -0.587439;
+		double weight_glue        = 50.000000; // linearattraction for macrocycle closure
 		double weight_rot         =  0.05846;
 		bool score_only = false, local_only = false, randomize_only = false, help = false, help_advanced = false, version = false; // FIXME
 
@@ -316,11 +317,11 @@ Thank you!\n";
         // but we still do it in case the user decided to change them
 		if (sf_name.compare("vina") == 0) {
             v.set_vina_weights(weight_gauss1, weight_gauss2, weight_repulsion,
-                               weight_hydrophobic, weight_hydrogen, weight_rot);
+                               weight_hydrophobic, weight_hydrogen, weight_glue, weight_rot);
 			v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
 		} else {
             v.set_ad4_weights(weight_ad4_vdw, weight_ad4_hb, weight_ad4_elec,
-                              weight_ad4_dsolv, weight_ad4_rot);
+                              weight_ad4_dsolv, weight_glue, weight_ad4_rot);
             v.load_ad4_maps(ad4_maps);
         }
 
