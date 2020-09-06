@@ -36,9 +36,7 @@ struct interacting_pair {
 	sz type_pair_index;
 	sz a;
 	sz b;
-    sz t1;
-    sz t2;
-	interacting_pair(sz type_pair_index_, sz a_, sz b_, sz t1_, sz t2_) : type_pair_index(type_pair_index_), a(a_), b(b_), t1(t1_), t2(t2_) {}
+	interacting_pair(sz type_pair_index_, sz a_, sz b_) : type_pair_index(type_pair_index_), a(a_), b(b_) {}
 };
 
 typedef std::vector<interacting_pair> interacting_pairs;

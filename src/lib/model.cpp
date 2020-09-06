@@ -213,7 +213,7 @@ void model::append(const model& m) {
 				t.is_a = false;
 				sz new_j = t(j);
 				sz type_pair_index = triangular_matrix_index_permissive(n, t1, t2);
-				other_pairs.push_back(interacting_pair(type_pair_index, new_i, new_j, t1, t2));
+				other_pairs.push_back(interacting_pair(type_pair_index, new_i, new_j));
 			}
 		}
 
@@ -462,16 +462,47 @@ szv model::bonded_to(sz a, sz n) const {
 void model::initialize_pairs(const distance_type_matrix& mobility) {
 	VINA_FOR_IN(i, atoms) {
 		sz i_lig = find_ligand(i);
-		szv bonded_atoms = bonded_to(i, 3);
+		szv bonded_atoms = bonded_to(i, 3);   // up to 1-4
+		szv bonded1_atoms_i = bonded_to(i, 1); // up to 1-2
+        bool i_has_CG0 = false;
+        bool i_has_CG1 = false;
+        bool i_has_CG2 = false;
+        bool i_has_CG3 = false;
+        VINA_FOR_IN(index, bonded1_atoms_i) {
+            sz i_ad = atoms[bonded1_atoms_i[index]].get(atom_type::AD);
+            if      (i_ad==AD_TYPE_CG0) i_has_CG0=true;
+            else if (i_ad==AD_TYPE_CG1) i_has_CG1=true;
+            else if (i_ad==AD_TYPE_CG2) i_has_CG2=true;
+            else if (i_ad==AD_TYPE_CG3) i_has_CG3=true;
+            std::cout << "---> " << i_ad << "\n";
+        }
 		VINA_RANGE(j, i+1, atoms.size()) {
 			if(i >= m_num_movable_atoms && j >= m_num_movable_atoms) continue; // exclude inflex-inflex
 			if(mobility(i, j) == DISTANCE_VARIABLE && !has(bonded_atoms, j)) {
+		        szv bonded1_atoms_j = bonded_to(j, 1); // up to 1-2
+                bool is_closure_clash = false;
+                VINA_FOR_IN(index, bonded1_atoms_j) {
+                    sz j_ad = atoms[bonded1_atoms_j[index]].get(atom_type::AD);
+                    if ((j_ad==AD_TYPE_CG0 && i_has_CG0) ||
+                        (j_ad==AD_TYPE_CG1 && i_has_CG1) ||
+                        (j_ad==AD_TYPE_CG2 && i_has_CG2) ||
+                        (j_ad==AD_TYPE_CG3 && i_has_CG3))
+                            is_closure_clash = true; // 1-2, 1-3 and 1-4 interactions around CG-CG bond
+                }
 				sz t1 = atoms[i].get  (atom_typing_used());
 				sz t2 = atoms[j].get  (atom_typing_used());
+                sz t1_ad = atoms[i].get(atom_type::AD);
+                sz t2_ad = atoms[j].get(atom_type::AD);
+                if ((t1_ad==AD_TYPE_CG0 && t2_ad==AD_TYPE_G0) || (t2_ad==AD_TYPE_CG0 && t1_ad==AD_TYPE_G0) ||
+                    (t1_ad==AD_TYPE_CG1 && t2_ad==AD_TYPE_G1) || (t2_ad==AD_TYPE_CG1 && t1_ad==AD_TYPE_G1) ||
+                    (t1_ad==AD_TYPE_CG2 && t2_ad==AD_TYPE_G2) || (t2_ad==AD_TYPE_CG2 && t1_ad==AD_TYPE_G2) ||
+                    (t1_ad==AD_TYPE_CG3 && t2_ad==AD_TYPE_G3) || (t2_ad==AD_TYPE_CG3 && t1_ad==AD_TYPE_G3))
+                        is_closure_clash = false; // it's the G-CG pair
+                if (is_closure_clash) continue;
 				sz n  = num_atom_types(atom_typing_used());
 				if(t1 < n && t2 < n) { // exclude, say, Hydrogens
 					sz type_pair_index = triangular_matrix_index_permissive(n, t1, t2);
-					interacting_pair ip(type_pair_index, i, j, t1, t2);
+					interacting_pair ip(type_pair_index, i, j);
 					if(i_lig < ligands.size() && find_ligand(j) == i_lig)
 						ligands[i_lig].pairs.push_back(ip);
 					else
@@ -623,7 +654,7 @@ fl eval_interacting_pairs(const precalculate_byatom& p, fl v, const interacting_
 		fl r2 = vec_distance_sqr(coords[ip.a], coords[ip.b]);
 		if(r2 < cutoff_sqr) {
 			fl tmp = p.eval_fast(ip.a, ip.b, r2);
-            std::cout << "pair=" << i << ", ip.a=" << ip.a << ", ip.b=" << ip.b << ", dist=" << sqrt(r2) << ", e=" << tmp << "t1=" << ip.t1 << ", t2=" << ip.t2 << "\n";
+            std::cout << "pair=" << i << ", ip.a=" << ip.a << ", ip.b=" << ip.b << ", dist=" << sqrt(r2) << ", e=" << tmp << "\n";
 			curl(tmp, v);
 			e += tmp;
 		}
