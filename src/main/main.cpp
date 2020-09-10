@@ -170,6 +170,7 @@ Thank you!\n";
 			("weight_hydrophobic", value<double>(&weight_hydrophobic)->default_value(weight_hydrophobic), "hydrophobic weight")
 			("weight_hydrogen", value<double>(&weight_hydrogen)->default_value(weight_hydrogen),          "Hydrogen bond weight")
 			("weight_rot", value<double>(&weight_rot)->default_value(weight_rot),                         "N_rot weight")
+			("weight_glue", value<double>(&weight_glue)->default_value(weight_glue),                         "N_rot weight")
 
 			("weight_ad4_vdw",   value<double>(&weight_ad4_vdw)  ->default_value(weight_ad4_vdw),   "ad4_vdw weight")
 			("weight_ad4_hb",    value<double>(&weight_ad4_hb)   ->default_value(weight_ad4_hb),    "ad4_hb weight")

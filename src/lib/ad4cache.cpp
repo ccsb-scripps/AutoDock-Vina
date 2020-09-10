@@ -86,7 +86,12 @@ fl ad4cache::eval_deriv(model& m, fl v) const { // sets m.minus_forces
 	VINA_FOR(i, m.num_movable_atoms()) {
         const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::AD);
-        if (t==AD_TYPE_G0 || t==AD_TYPE_G1 || t==AD_TYPE_G2 || t==AD_TYPE_G3) continue;
+        if (t==AD_TYPE_G0 || t==AD_TYPE_G1 || t==AD_TYPE_G2 || t==AD_TYPE_G3) {
+            m.minus_forces[i][0] = 0;
+            m.minus_forces[i][1] = 0;
+            m.minus_forces[i][2] = 0;
+            continue;
+        }
         if (t==AD_TYPE_CG0|| t==AD_TYPE_CG1|| t==AD_TYPE_CG2|| t==AD_TYPE_CG3) t=AD_TYPE_C;
 		const grid& g = grids[t];
 		assert(g.initialized());
