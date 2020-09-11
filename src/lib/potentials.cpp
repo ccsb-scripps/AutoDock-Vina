@@ -36,7 +36,12 @@ inline fl slope_step(fl x_bad, fl x_good, fl x) {
     return (x - x_bad) / (x_good - x_bad);
 }
 
+bool is_glue_type(sz xs_t) {
+    if ((xs_t==XS_TYPE_G0) || (xs_t==XS_TYPE_G1) || (xs_t==XS_TYPE_G2) || (xs_t==XS_TYPE_G3)) return true;
+    return false;}
+
 inline fl optimal_distance(sz xs_t1, sz xs_t2) {
+    if (is_glue_type(xs_t1) || is_glue_type(xs_t2)) return 0.0; // G0, G1, G2 or G3
     return xs_radius(xs_t1) + xs_radius(xs_t2);
 }
 
@@ -235,4 +240,41 @@ fl ad4_hb::eval(const atom& a, const atom& b, fl r) {
 
     VINA_CHECK(false);
     return 0; // placating the compiler
+}
+
+// Macrocycle - Vina and AD42
+inline bool is_glued(sz xs_t1, sz xs_t2) {
+    return (xs_t1 == XS_TYPE_G0 && xs_t2 == XS_TYPE_C_H_CG0) ||
+       (xs_t1 == XS_TYPE_G0 && xs_t2 == XS_TYPE_C_P_CG0) ||
+       (xs_t2 == XS_TYPE_G0 && xs_t1 == XS_TYPE_C_H_CG0) ||
+       (xs_t2 == XS_TYPE_G0 && xs_t1 == XS_TYPE_C_P_CG0) ||
+
+       (xs_t1 == XS_TYPE_G1 && xs_t2 == XS_TYPE_C_H_CG1) ||
+       (xs_t1 == XS_TYPE_G1 && xs_t2 == XS_TYPE_C_P_CG1) ||
+       (xs_t2 == XS_TYPE_G1 && xs_t1 == XS_TYPE_C_H_CG1) ||
+       (xs_t2 == XS_TYPE_G1 && xs_t1 == XS_TYPE_C_P_CG1) ||
+
+       (xs_t1 == XS_TYPE_G2 && xs_t2 == XS_TYPE_C_H_CG2) ||
+       (xs_t1 == XS_TYPE_G2 && xs_t2 == XS_TYPE_C_P_CG2) ||
+       (xs_t2 == XS_TYPE_G2 && xs_t1 == XS_TYPE_C_H_CG2) ||
+       (xs_t2 == XS_TYPE_G2 && xs_t1 == XS_TYPE_C_P_CG2) ||
+
+       (xs_t1 == XS_TYPE_G3 && xs_t2 == XS_TYPE_C_H_CG3) ||
+       (xs_t1 == XS_TYPE_G3 && xs_t2 == XS_TYPE_C_P_CG3) ||
+       (xs_t2 == XS_TYPE_G3 && xs_t1 == XS_TYPE_C_H_CG3) ||
+       (xs_t2 == XS_TYPE_G3 && xs_t1 == XS_TYPE_C_P_CG3);
+}
+
+fl linearattraction::eval(const atom& a, const atom& b, fl r) {
+    //if(is_glue_type(a.xs) || is_glue_type(b.xs)) std::cout << "a.xs=" << a.xs << " b.xs=" << b.xs << "\n";
+    //if((a.ad == AD_TYPE_G0 && b.ad == AD_TYPE_CG0) || (a.ad == AD_TYPE_CG0 && b.ad == AD_TYPE_G0)) std::cout << "a.xs=" << a.xs << " b.xs=" << b.xs << "\n";
+    if (is_glued(a.xs, b.xs)) {
+        return r;
+    }
+    else return 0;
+}
+
+fl linearattraction::eval(sz t1, sz t2, fl r) {
+    if (is_glued(t1, t2)) return r;
+    else return 0;
 }

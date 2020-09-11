@@ -128,4 +128,12 @@ private:
     fl cap;
 };
 
+// Macrocycle - Vina and AD42
+class linearattraction : public Potential {
+public:
+    linearattraction() { }
+    fl eval(const atom& a, const atom& b, fl r) override;
+    fl eval(sz t1, sz t2, fl r) override;
+};
+
 #endif

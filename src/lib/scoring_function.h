@@ -42,12 +42,13 @@ public:
     ScoringFunction(const scoring_function_choice sf_choice, const flv& weights, const atom_type::t atom_types) {
         switch(sf_choice) {
             case SF_VINA: {
-                m_cutoff = 8.0;
+                m_cutoff = 20.48;
                 m_potentials = {new vina_gaussian(0, 0.5),
                                 new vina_gaussian(3, 2.0),
                                 new vina_repulsion(0.0),
                                 new vina_hydrophobic(0.5, 1.5),
-                                new vina_non_dir_h_bond(-0.7, 0)};
+                                new vina_non_dir_h_bond(-0.7, 0),
+                                new linearattraction()};
                 m_conf_independents = {new num_tors_div()};
                 break;
             }
@@ -61,7 +62,8 @@ public:
                 m_potentials = {new ad4_vdw(0.5, 100000),
                                 new ad4_hb(0.5, 100000),
                                 new ad4_electrostatic(100),
-                                new ad4_solvation(3.6, 0.01097, true)};
+                                new ad4_solvation(3.6, 0.01097, true),
+                                new linearattraction()};
                 m_conf_independents = {new ad4_tors_add()};
                 break;
             }

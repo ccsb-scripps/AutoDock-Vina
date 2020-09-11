@@ -128,8 +128,11 @@ Thank you!\n";
 		double weight_repulsion   =  0.840245;
 		double weight_hydrophobic = -0.035069;
 		double weight_hydrogen    = -0.587439;
-		double weight_glue        = 50.000000; // linearattraction for macrocycle closure
 		double weight_rot         =  0.05846;
+
+        // macrocycle closure
+        double weight_glue        = 50.000000; // linear attraction
+
 		bool score_only = false, local_only = false, randomize_only = false, help = false, help_advanced = false, version = false; // FIXME
 
 		positional_options_description positional; // remains empty
@@ -171,13 +174,14 @@ Thank you!\n";
 			("weight_hydrophobic", value<double>(&weight_hydrophobic)->default_value(weight_hydrophobic), "hydrophobic weight")
 			("weight_hydrogen", value<double>(&weight_hydrogen)->default_value(weight_hydrogen),          "Hydrogen bond weight")
 			("weight_rot", value<double>(&weight_rot)->default_value(weight_rot),                         "N_rot weight")
-			("weight_glue", value<double>(&weight_glue)->default_value(weight_glue),                         "N_rot weight")
 
 			("weight_ad4_vdw",   value<double>(&weight_ad4_vdw)  ->default_value(weight_ad4_vdw),   "ad4_vdw weight")
 			("weight_ad4_hb",    value<double>(&weight_ad4_hb)   ->default_value(weight_ad4_hb),    "ad4_hb weight")
 			("weight_ad4_elec",  value<double>(&weight_ad4_elec) ->default_value(weight_ad4_elec),  "ad4_elec weight")
 			("weight_ad4_dsolv", value<double>(&weight_ad4_dsolv)->default_value(weight_ad4_dsolv), "ad4_dsolv weight")
 			("weight_ad4_rot",   value<double>(&weight_ad4_rot)  ->default_value(weight_ad4_rot),   "ad4_rot weight")
+
+            ("weight_glue", value<double>(&weight_glue)->default_value(weight_glue),                      "macrocycle glue weight")
 		;
 		options_description misc("Misc (optional)");
 		misc.add_options()
