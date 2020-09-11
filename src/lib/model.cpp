@@ -200,6 +200,7 @@ void model::append(const model& m) {
 	VINA_FOR_IN(i, atoms)
 		VINA_FOR_IN(j, m.atoms) {
 			if(i >= m_num_movable_atoms && j >= m.m_num_movable_atoms) continue; // no need for inflex-inflex interactions
+			if(is_closure_clash(i, j)) continue; // 1-2, 1-3 or 1-4 interaction around CG-CG bond
 
 			const atom& a =   atoms[i];
 			const atom& b = m.atoms[j];
@@ -402,7 +403,14 @@ void model::assign_types() {
 
 		switch(a.el) {
 			case EL_TYPE_H    : break;
-			case EL_TYPE_C    : x = bonded_to_heteroatom(a) ? XS_TYPE_C_P : XS_TYPE_C_H; break;
+			case EL_TYPE_C    :{
+                if     (a.ad == AD_TYPE_CG0){x = bonded_to_heteroatom(a) ? XS_TYPE_C_P_CG0 : XS_TYPE_C_H_CG0;}
+                else if(a.ad == AD_TYPE_CG1){x = bonded_to_heteroatom(a) ? XS_TYPE_C_P_CG1 : XS_TYPE_C_H_CG1;}
+                else if(a.ad == AD_TYPE_CG2){x = bonded_to_heteroatom(a) ? XS_TYPE_C_P_CG2 : XS_TYPE_C_H_CG2;}
+                else if(a.ad == AD_TYPE_CG3){x = bonded_to_heteroatom(a) ? XS_TYPE_C_P_CG3 : XS_TYPE_C_H_CG3;}
+                else                        {x = bonded_to_heteroatom(a) ? XS_TYPE_C_P : XS_TYPE_C_H;}
+                break;
+            }
 			case EL_TYPE_N    : x = (acceptor && donor_NorO) ? XS_TYPE_N_DA : (acceptor ? XS_TYPE_N_A : (donor_NorO ? XS_TYPE_N_D : XS_TYPE_N_P)); break;
 			case EL_TYPE_O    : x = (acceptor && donor_NorO) ? XS_TYPE_O_DA : (acceptor ? XS_TYPE_O_A : (donor_NorO ? XS_TYPE_O_D : XS_TYPE_O_P)); break;
 			case EL_TYPE_S    : x = XS_TYPE_S_P; break;
@@ -412,6 +420,15 @@ void model::assign_types() {
 			case EL_TYPE_Br   : x = XS_TYPE_Br_H; break;
 			case EL_TYPE_I    : x = XS_TYPE_I_H; break;
 			case EL_TYPE_Met  : x = XS_TYPE_Met_D; break;
+            case EL_TYPE_Dummy: {
+                if      (a.ad == AD_TYPE_G0) x = XS_TYPE_G0;
+                else if (a.ad == AD_TYPE_G1) x = XS_TYPE_G1;
+                else if (a.ad == AD_TYPE_G2) x = XS_TYPE_G2;
+                else if (a.ad == AD_TYPE_G3) x = XS_TYPE_G3;
+                else if (a.ad == AD_TYPE_W)  x = XS_TYPE_SIZE; // no W atoms in XS types
+                else VINA_CHECK(false);
+                break;
+            }
 			case EL_TYPE_SIZE : break;
 			default: VINA_CHECK(false);
 		}
@@ -443,14 +460,47 @@ szv model::bonded_to(sz a, sz n) const {
 	return tmp;
 }
 
+// remove 1-2, 1-3 and 1-4 interactions around CG-CG bond
+bool model::is_closure_clash(sz i, sz j) const {
+	sz t1 = atoms[i].get(atom_type::AD);
+	sz t2 = atoms[j].get(atom_type::AD);
+    if ((t1==AD_TYPE_CG0 && t2==AD_TYPE_G0) || (t2==AD_TYPE_CG0 && t1==AD_TYPE_G0) ||
+        (t1==AD_TYPE_CG1 && t2==AD_TYPE_G1) || (t2==AD_TYPE_CG1 && t1==AD_TYPE_G1) ||
+        (t1==AD_TYPE_CG2 && t2==AD_TYPE_G2) || (t2==AD_TYPE_CG2 && t1==AD_TYPE_G2) ||
+        (t1==AD_TYPE_CG3 && t2==AD_TYPE_G3) || (t2==AD_TYPE_CG3 && t1==AD_TYPE_G3))
+            return false; // it's a G-CG pair, not a clash
+	szv neighbors_of_i = bonded_to(i, 1); // up to 1-2 interactions
+	szv neighbors_of_j = bonded_to(j, 1); // up to 1-2 interactions
+	bool i_has_CG0 = false;
+	bool i_has_CG1 = false;
+	bool i_has_CG2 = false;
+	bool i_has_CG3 = false;
+	VINA_FOR_IN(index, neighbors_of_i) {
+		sz type_i = atoms[neighbors_of_i[index]].get(atom_type::AD);
+			if      (type_i==AD_TYPE_CG0) i_has_CG0=true;
+			else if (type_i==AD_TYPE_CG1) i_has_CG1=true;
+			else if (type_i==AD_TYPE_CG2) i_has_CG2=true;
+			else if (type_i==AD_TYPE_CG3) i_has_CG3=true;
+	}
+	VINA_FOR_IN(index, neighbors_of_j) {
+		sz type_j = atoms[neighbors_of_j[index]].get(atom_type::AD);
+		if ((type_j==AD_TYPE_CG0 && i_has_CG0) ||
+			(type_j==AD_TYPE_CG1 && i_has_CG1) ||
+			(type_j==AD_TYPE_CG2 && i_has_CG2) ||
+			(type_j==AD_TYPE_CG3 && i_has_CG3))
+			return true;
+	}
+	return false;
+}
 
 void model::initialize_pairs(const distance_type_matrix& mobility) {
 	VINA_FOR_IN(i, atoms) {
 		sz i_lig = find_ligand(i);
-		szv bonded_atoms = bonded_to(i, 3);
+		szv bonded_atoms = bonded_to(i, 3);   // up to 1-4
 		VINA_RANGE(j, i+1, atoms.size()) {
 			if(i >= m_num_movable_atoms && j >= m_num_movable_atoms) continue; // exclude inflex-inflex
 			if(mobility(i, j) == DISTANCE_VARIABLE && !has(bonded_atoms, j)) {
+                if(is_closure_clash(i, j)) continue;  // 1-2, 1-3 or 1-4 interaction around CG-CG bond
 				sz t1 = atoms[i].get  (atom_typing_used());
 				sz t2 = atoms[j].get  (atom_typing_used());
 				sz n  = num_atom_types(atom_typing_used());
@@ -608,7 +658,6 @@ fl eval_interacting_pairs(const precalculate_byatom& p, fl v, const interacting_
 		fl r2 = vec_distance_sqr(coords[ip.a], coords[ip.b]);
 		if(r2 < cutoff_sqr) {
 			fl tmp = p.eval_fast(ip.a, ip.b, r2);
-            std::cout << "pair=" << i << ", ip.a=" << ip.a << ", ip.b=" << ip.b << ", dist=" << sqrt(r2) << ", e=" << tmp << "\n";
 			curl(tmp, v);
 			e += tmp;
 		}
@@ -664,7 +713,6 @@ fl model::eval(const precalculate_byatom& p, const igrid& ig, const vec& v) { //
 
 fl model::eval_deriv(const precalculate_byatom& p, const igrid& ig, const vec& v, change& g) { // clean up
 	fl e = ig.eval_deriv(*this, v[1]); // sets minus_forces, except inflex
-
 	e += eval_interacting_pairs_deriv(p, v[2], other_pairs, coords, minus_forces); // adds to minus_forces
 	VINA_FOR_IN(i, ligands)
 		e += eval_interacting_pairs_deriv(p, v[0], ligands[i].pairs, coords, minus_forces); // adds to minus_forces

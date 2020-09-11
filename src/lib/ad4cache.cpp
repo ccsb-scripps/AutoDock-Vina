@@ -33,6 +33,8 @@ fl ad4cache::eval(const model& m, fl v) const {
 	VINA_FOR(i, m.num_movable_atoms()) {
         const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::AD);
+        if (t==AD_TYPE_G0 || t==AD_TYPE_G1 || t==AD_TYPE_G2 || t==AD_TYPE_G3) continue;
+        if (t==AD_TYPE_CG0|| t==AD_TYPE_CG1|| t==AD_TYPE_CG2|| t==AD_TYPE_CG3) t=AD_TYPE_C;
 		const grid& g = grids[t];
 		assert(g.initialized());
 		e += g.evaluate(m.coords[i], slope, v);
@@ -59,6 +61,8 @@ fl ad4cache::eval_intra(model& m, fl v) const {
         if(m.find_ligand(i) < m.ligands.size()) continue; // we only want flex-rigid interaction
 		const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::AD);
+        if (t==AD_TYPE_G0 || t==AD_TYPE_G1 || t==AD_TYPE_G2 || t==AD_TYPE_G3) continue;
+        if (t==AD_TYPE_CG0|| t==AD_TYPE_CG1|| t==AD_TYPE_CG2|| t==AD_TYPE_CG3) t=AD_TYPE_C;
 		const grid& g = grids[t];
 		assert(g.initialized());
 		e += g.evaluate(m.coords[i], slope, v);
@@ -82,6 +86,13 @@ fl ad4cache::eval_deriv(model& m, fl v) const { // sets m.minus_forces
 	VINA_FOR(i, m.num_movable_atoms()) {
         const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::AD);
+        if (t==AD_TYPE_G0 || t==AD_TYPE_G1 || t==AD_TYPE_G2 || t==AD_TYPE_G3) {
+            m.minus_forces[i][0] = 0;
+            m.minus_forces[i][1] = 0;
+            m.minus_forces[i][2] = 0;
+            continue;
+        }
+        if (t==AD_TYPE_CG0|| t==AD_TYPE_CG1|| t==AD_TYPE_CG2|| t==AD_TYPE_CG3) t=AD_TYPE_C;
 		const grid& g = grids[t];
 		assert(g.initialized());
 		vec deriv;
@@ -127,6 +138,7 @@ std::string get_adtype_str(sz& t) {
         case AD_TYPE_Fe: return "Fe";
         case AD_TYPE_Cl: return "Cl";
         case AD_TYPE_Br: return "Br";
+        case AD_TYPE_W : return "W";
         default: VINA_CHECK(false);
     }
 }
@@ -204,13 +216,27 @@ grid_dims ad4cache::read(const std::string& map_prefix) {
     std::string type, filename;
     std::vector<grid_dims> gds; // to check all maps have same dims (TODO)
 
+    bool got_C_already = false;
+    sz t;
+
     VINA_FOR(ad_type, AD_TYPE_SIZE){
-        type = get_adtype_str(ad_type);
+        t = ad_type;
+        if ((t==AD_TYPE_G0) || (t==AD_TYPE_G1) ||
+            (t==AD_TYPE_G2) || (t==AD_TYPE_G3))
+            continue;
+        if ((t==AD_TYPE_CG0) || (t==AD_TYPE_CG1) ||
+            (t==AD_TYPE_CG2) || (t==AD_TYPE_CG3))
+            t = AD_TYPE_C;
+        if (t==AD_TYPE_C && got_C_already)
+            continue;
+        if (t==AD_TYPE_C)
+            got_C_already=true;
+        type = get_adtype_str(t);
         filename = map_prefix + "." + type + ".map";
         path p{filename};
         if (fs::exists(p)) {
             std::cout << "Reading " + filename + "\n";
-            readmap(p, gds, grids[ad_type]);
+            readmap(p, gds, grids[t]);
 
         } // if file exists
     } // map loop

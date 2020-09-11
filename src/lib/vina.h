@@ -120,10 +120,11 @@ public:
     //void set_ligand(std::vector<OpenBabel::OBMol*> mol);
     void set_vina_weights(double weight_gauss1=-0.035579,  double weight_gauss2=-0.005156, 
                           double weight_repulsion=0.840245, double weight_hydrophobic=-0.035069, 
-                          double weight_hydrogen=-0.587439, double weight_rot=0.05846);
+                          double weight_hydrogen=-0.587439, double weight_glue=50,
+                          double weight_rot=0.05846);
     void set_ad4_weights(double weight_ad4_vdw =0.1662, double weight_ad4_hb=0.1209, 
                          double weight_ad4_elec=0.1406, double weight_ad4_dsolv=0.1322, 
-                         double weight_ad4_rot =0.2983);
+                         double weight_glue=50,         double weight_ad4_rot =0.2983);
     void compute_vina_maps(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.375);
     void load_ad4_maps(std::string ad4_maps);
     void randomize(const int max_steps=10000);

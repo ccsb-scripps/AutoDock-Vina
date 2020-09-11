@@ -180,7 +180,8 @@ void Vina::set_ligand(std::vector<OpenBabel::OBMol*> mol) {
 */
 
 void Vina::set_vina_weights(double weight_gauss1, double weight_gauss2, double weight_repulsion, 
-                            double weight_hydrophobic, double weight_hydrogen, double weight_rot) {
+                            double weight_hydrophobic, double weight_hydrogen, double weight_glue,
+                            double weight_rot) {
     flv weights;
 
     if (m_sf_choice == SF_VINA) {
@@ -189,6 +190,7 @@ void Vina::set_vina_weights(double weight_gauss1, double weight_gauss2, double w
         weights.push_back(weight_repulsion);
         weights.push_back(weight_hydrophobic);
         weights.push_back(weight_hydrogen);
+        weights.push_back(weight_glue);
         weights.push_back(5 * weight_rot / 0.1 - 1);
 
         // Store in Vina object
@@ -201,7 +203,7 @@ void Vina::set_vina_weights(double weight_gauss1, double weight_gauss2, double w
 
 void Vina::set_ad4_weights(double weight_ad4_vdw , double weight_ad4_hb, 
                            double weight_ad4_elec, double weight_ad4_dsolv, 
-                           double weight_ad4_rot) {
+                           double weight_glue, double weight_ad4_rot) {
     flv weights;
 
     if (m_sf_choice == SF_AD42) {
@@ -209,6 +211,7 @@ void Vina::set_ad4_weights(double weight_ad4_vdw , double weight_ad4_hb,
         weights.push_back(weight_ad4_hb);
         weights.push_back(weight_ad4_elec);
         weights.push_back(weight_ad4_dsolv);
+        weights.push_back(weight_glue);
         weights.push_back(weight_ad4_rot);
 
         // Store in Vina object
@@ -538,11 +541,11 @@ std::vector<double> Vina::score(double intramolecular_energy) {
         m_log.endl();
         m_log << "(3) Torsional Free Energy          : " << std::fixed << std::setprecision(5) << conf_independent << " (kcal/mol)";
         m_log.endl();
-        if (m_sf_choice == SF_AD42) {
-            m_log << "(4) Unbound System's Energy [=(2)] : " << std::fixed << std::setprecision(5) << -lig_intra << " (kcal/mol)";
+        if (m_sf_choice == SF_VINA) {
+            m_log << "(4) Unbound System's Energy        : " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
             m_log.endl();
         } else {
-            m_log << "(4) Unbound System's Energy        : " << std::fixed << std::setprecision(5) << intramolecular_energy << " (kcal/mol)";
+            m_log << "(4) Unbound System's Energy [=(2)] : " << std::fixed << std::setprecision(5) << -lig_intra << " (kcal/mol)";
             m_log.endl();
         }
     }

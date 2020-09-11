@@ -209,6 +209,7 @@ private:
 	sz find_ligand(sz a) const;
 	void bonded_to(sz a, sz n, szv& out) const;
 	szv bonded_to(sz a, sz n) const;
+    bool is_closure_clash(sz i, sz j) const;
 
 	void assign_bonds(const distance_type_matrix& mobility); // assign bonds based on relative mobility, distance and covalent length
 	void assign_types();
