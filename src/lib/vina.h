@@ -48,14 +48,12 @@
 #include "cache.h"
 #include "ad4cache.h"
 #include "parse_error.h"
-#include "everything.h"
-#include "terms.h"
-#include "weighted_terms.h"
-#include "current_weights.h"
 #include "quasi_newton.h"
 #include "tee.h"
 #include "coords.h" // add_to_output_container
 #include "utils.h"
+#include "scoring_function.h"
+#include "precalculate.h"
 
 
 class Vina {
@@ -101,11 +99,9 @@ public:
 
         if (sf_name.compare("vina") == 0) {
             m_sf_choice = SF_VINA;
-            m_atom_typing_used = atom_type::XS;
             set_vina_weights();
         } else if (sf_name.compare("ad4") == 0) {
             m_sf_choice = SF_AD42;
-            m_atom_typing_used = atom_type::AD;
             set_ad4_weights();
         } else {
             std::cerr << "Scoring function " << sf_name << " not implemented (choices: vina or ad4)\n";
@@ -113,7 +109,7 @@ public:
         }
     }
     // Destructor
-    virtual ~Vina();
+    ~Vina();
 
     //void init_logging(const std::string& level=1);
     void set_receptor(const std::string& rigid_name);
@@ -142,27 +138,24 @@ public:
 private:
     //OpenBabel::OBMol m_mol;
     // model and poses
-    atom_type::t m_atom_typing_used;
-    scoring_function_choice m_sf_choice;
     model m_receptor;
     model m_model;
-    cache m_grid;
-    ad4cache m_ad4grid;
     output_container m_poses;
     bool m_receptor_initialized;
     bool m_ligand_initialized;
     // scoring function
+    scoring_function_choice m_sf_choice;
     flv m_weights;
-    weighted_terms m_scoring_function;
-    precalculate m_precalculated_sf;
+    ScoringFunction m_scoring_function;
     precalculate_byatom m_precalculated_byatom;
     // maps
+    cache m_grid;
+    ad4cache m_ad4grid;
     grid_dims m_gd;
     vec m_corner1;
     vec m_corner2;
     bool m_map_initialized;
     // global search
-    parallel_mc m_parallelmc;
     int m_cpu;
     int m_seed;
     int m_exhaustiveness;
@@ -180,6 +173,5 @@ private:
     void optimize(output_type& out, const int max_steps=0);
     int generate_seed(const int seed=0);
 };
-
 
 #endif

@@ -28,9 +28,9 @@
 #include "file.h"
 #include "tree.h"
 #include "matrix.h"
-#include "precalculate.h"
 #include "igrid.h"
 #include "grid_dim.h"
+
 
 struct interacting_pair {
 	sz type_pair_index;
@@ -59,22 +59,21 @@ struct residue : public main_branch {
 enum distance_type {DISTANCE_FIXED, DISTANCE_ROTOR, DISTANCE_VARIABLE};
 typedef strictly_triangular_matrix<distance_type> distance_type_matrix;
 
-struct non_cache; // forward declaration
-struct naive_non_cache; // forward declaration
 struct cache; // forward declaration
 struct szv_grid; // forward declaration
-struct terms; // forward declaration
-struct conf_independent_inputs; // forward declaration
 struct pdbqt_initializer; // forward declaration - only declared in parse_pdbqt.cpp
-struct model_test;
+struct precalculate_byatom; // forward declaration
 
 struct model {
+public:
 	// Had to move it from private to public to make it work. 
 	// So we might have to fix that later
 	model() : m_num_movable_atoms(0), m_atom_typing_used(atom_type::XS) {}
 	model(atom_type::t atype) : m_num_movable_atoms(0), m_atom_typing_used(atype) {}
 
     atomv get_atoms() const { return atoms; } // for precalculate_byatom
+    atom get_atom(sz i) const { return atoms[i]; }
+    ligand get_ligand(sz i) const { return ligands[i]; }
 	
 	void append(const model& m);
 	atom_type::t atom_typing_used() const { return m_atom_typing_used; }
@@ -140,9 +139,8 @@ struct model {
 	fl evale     (const precalculate_byatom& p, const igrid& ig, const vec& v           ) const;
 	fl eval      (const precalculate_byatom& p, const igrid& ig, const vec& v           );
 	fl eval_deriv(const precalculate_byatom& p, const igrid& ig, const vec& v, change& g);
-
-	fl eval_intramolecular(                            const precalculate_byatom& p, const igrid& ig, const vec& v                          );
-	fl eval_adjusted      (const scoring_function& sf, const precalculate_byatom& p, const igrid& ig, const vec& v, fl intramolecular_energy);
+	fl eval_intramolecular(const precalculate_byatom& p, const igrid& ig, const vec& v);
+	//fl eval_adjusted      (const ScoringFunction& sf, const precalculate_byatom& p, const igrid& ig, const vec& v, fl intramolecular_energy);
 
 
 	fl rmsd_lower_bound(const model& m) const; // uses coords
@@ -181,20 +179,15 @@ struct model {
 
 	fl clash_penalty() const;
 
+	const atom& get_atom(const atom_index& i) const { return (i.in_grid ? grid_atoms[i.i] : atoms[i.i]); }
+	      atom& get_atom(const atom_index& i)       { return (i.in_grid ? grid_atoms[i.i] : atoms[i.i]); }
+
 private:
-	friend struct non_cache;
-	friend struct naive_non_cache;
 	friend struct cache;
 	friend struct ad4cache;
 	friend struct szv_grid;
-	friend struct terms;
-	friend struct conf_independent_inputs;
 	friend struct appender_info;
 	friend struct pdbqt_initializer;
-	friend struct model_test;
-
-	const atom& get_atom(const atom_index& i) const { return (i.in_grid ? grid_atoms[i.i] : atoms[i.i]); }
-	      atom& get_atom(const atom_index& i)       { return (i.in_grid ? grid_atoms[i.i] : atoms[i.i]); }
 
 	void write_context(const context& c, ofile& out) const;
 	void write_context(const context& c, ofile& out, const std::string& remark) const {

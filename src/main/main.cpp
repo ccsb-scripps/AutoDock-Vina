@@ -31,6 +31,7 @@
 #include "tee.h"
 #include "vina.h"
 #include "utils.h"
+#include "scoring_function.h"
 
 struct usage_error : public std::runtime_error {
 	usage_error(const std::string& message) : std::runtime_error(message) {}

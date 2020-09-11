@@ -21,6 +21,8 @@
 */
 
 #include "cache.h"
+#include "model.h"
+#include "precalculate.h"
 
 
 cache::cache(const std::string& scoring_function_version_, const grid_dims& gd_, fl slope_, atom_type::t atom_typing_used_) 
