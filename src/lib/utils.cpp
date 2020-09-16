@@ -39,27 +39,25 @@ path make_path(const std::string& str) {
 }
 
 
-void doing(int verbosity, const std::string& str, tee& log) {
-  if(verbosity > 1) {
-    log << str << std::string(" ... ");
-    log.flush();
-  }
+void doing(const std::string& str, int verbosity, int level) {
+    if(verbosity > level) {
+      std::cout << str << std::string(" ... ") << std::flush;
+    }
 }
 
 
-void done(int verbosity, tee& log) {
-  if(verbosity > 1) {
-    log << "done.";
-    log.endl();
-  }
+void done(int verbosity, int level) {
+    if(verbosity > level) {
+        std::cout << "done.\n" << std::flush;
+    }
 }
 
 
 std::string default_output(const std::string& input_name) {
-  std::string tmp = input_name;
-  if(tmp.size() >= 6 && tmp.substr(tmp.size()-6, 6) == ".pdbqt")
-    tmp.resize(tmp.size() - 6); // FIXME?
-  return tmp + "_out.pdbqt";
+    std::string tmp = input_name;
+    if (tmp.size() >= 6 && tmp.substr(tmp.size()-6, 6) == ".pdbqt")
+        tmp.resize(tmp.size() - 6); // FIXME?
+    return tmp + "_out.pdbqt";
 }
 
 
@@ -72,12 +70,12 @@ bool is_directory(const std::string& directory_pathname) {
   //Source: https://stackoverflow.com/questions/18100097/portable-way-to-check-if-directory-exists-windows-linux-c
   struct stat info;
 
-  if (stat(directory_pathname.c_str(), &info) != 0) 
-      return false;
-  else if (info.st_mode & S_IFDIR)  // S_ISDIR() doesn't exist on my windows 
-      return true;
-  else
-      return false;
+    if (stat(directory_pathname.c_str(), &info) != 0) 
+        return false;
+    else if (info.st_mode & S_IFDIR)  // S_ISDIR() doesn't exist on my windows 
+        return true;
+    else
+        return false;
 }
 
 

@@ -59,7 +59,7 @@
 class Vina {
 public:
     // Constructor
-    Vina(const std::string& sf_name="vina", int exhaustiveness=8, int cpu=0, int seed=0, bool no_cache=false, int verbosity=2) {
+    Vina(const std::string& sf_name="vina", int exhaustiveness=8, int cpu=0, int seed=0, bool no_cache=false, int verbosity=1) {
         m_exhaustiveness = exhaustiveness;
         m_verbosity = verbosity;
         m_receptor_initialized = false;
@@ -67,12 +67,8 @@ public:
         m_map_initialized = false;
         m_seed = generate_seed(seed);
 
-        try {
-            if (m_exhaustiveness < 1) {
-                throw "Exhaustiveness must be 1 or greater";
-            }
-        } catch (const char* e) {
-            m_log << "Exception: " << e << "\n";
+        if (m_exhaustiveness < 1) {
+            std::cerr << "ERROR: Exhaustiveness must be 1 or greater";
             exit (EXIT_FAILURE);
         }
 
@@ -88,13 +84,13 @@ public:
             
         } else if (cpu < 0) {
             m_cpu = 1;
-            m_log << "WARNING: Number of CPUs set to a value lower than 0, it was automatically set to 1 per default.\n";
+            std::cerr << "WARNING: Number of CPUs set to a value lower than 0, it was automatically set to 1 per default.\n";
         } else {
             m_cpu = cpu;
         }
 
-        if(verbosity > 1 && exhaustiveness < cpu) {
-            m_log << "WARNING: at low exhaustiveness, it may be impossible to utilize all CPUs.\n";
+        if (exhaustiveness < cpu) {
+            std::cerr << "WARNING: At low exhaustiveness, it may be impossible to utilize all CPUs.\n";
         }
 
         if (sf_name.compare("vina") == 0) {
@@ -104,14 +100,14 @@ public:
             m_sf_choice = SF_AD42;
             set_ad4_weights();
         } else {
-            std::cerr << "Scoring function " << sf_name << " not implemented (choices: vina or ad4)\n";
+            std::cerr << "ERROR: Scoring function " << sf_name << " not implemented (choices: vina or ad4)\n";
             exit (EXIT_FAILURE);
         }
     }
     // Destructor
     ~Vina();
 
-    //void init_logging(const std::string& level=1);
+    void cite();
     void set_receptor(const std::string& rigid_name);
     void set_receptor(const std::string& rigid_name, const std::string& flex_name);
     void set_ligand(const std::string& ligand_name);
@@ -129,7 +125,7 @@ public:
     void load_ad4_maps(std::string ad4_maps);
     void randomize(const int max_steps=10000);
     std::vector<double> score();
-    void optimize(const int max_steps=0);
+    std::vector<double> optimize(const int max_steps=0);
     void global_search(const int n_poses=20, const double min_rmsd=1.0);
     void write_results(const std::string& output_name, int how_many=9, double energy_range=3.0);
     void write_pose(const std::string& output_name, const std::string& remark=std::string());
@@ -162,7 +158,6 @@ private:
     int m_exhaustiveness;
     // others
     int m_verbosity;
-    tee m_log;
 
     std::string vina_remark(fl e, fl lb, fl ub);
     std::string vina_remarks(output_type& pose, fl lb, fl ub);
@@ -171,8 +166,9 @@ private:
     void set_forcefield();
     void set_vina_box(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.375);
     std::vector<double> score(double intramolecular_energy);
-    void optimize(output_type& out, const int max_steps=0);
+    std::vector<double> optimize(output_type& out, const int max_steps=0);
     int generate_seed(const int seed=0);
+    void show_score(const std::vector<double> energies);
 };
 
 #endif

@@ -117,7 +117,7 @@ struct precalculate {
     factor(factor_),
     data(num_atom_types(sf.get_atom_typing()), precalculate_element(n, factor_)),
     m_atom_typing_used(sf.get_atom_typing()) {
-        std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate = " << m_cutoff_sqr << "\n";
+        //std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate = " << m_cutoff_sqr << "\n";
 
         VINA_CHECK(factor > epsilon_fl);
         VINA_CHECK(sz(m_cutoff_sqr*factor) + 1 < n); // cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
@@ -179,7 +179,7 @@ struct precalculate_byatom {
     factor(factor_), 
     data(n_atoms, precalculate_element(n, factor_)), 
     m_atom_typing_used(sf.get_atom_typing()) {
-        std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate_byatom = " << m_cutoff_sqr << "\n";
+        //std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate_byatom = " << m_cutoff_sqr << "\n";
 
         VINA_CHECK(factor > epsilon_fl);
         VINA_CHECK(sz(m_cutoff_sqr*factor) + 1 < n); // cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result

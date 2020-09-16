@@ -30,8 +30,8 @@
 
 inline char separator();
 path make_path(const std::string& str);
-void doing(int verbosity, const std::string& str, tee& log);
-void done(int verbosity, tee& log);
+void doing(const std::string& str, int verbosity, int level=0);
+void done(int verbosity, int level=0);
 std::string default_output(const std::string& input_name);
 std::string default_output(const std::string& input_name, const std::string& directory_pathname);
 bool is_directory(const std::string& directory_pathname);
