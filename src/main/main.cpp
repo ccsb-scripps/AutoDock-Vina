@@ -22,11 +22,13 @@
 
 #include <iostream>
 #include <string>
+#include <vector> // ligand paths
 #include <exception>
+#include <experimental/filesystem>
 #include <boost/program_options.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/exception.hpp>
-#include <boost/filesystem/convenience.hpp> // filesystem::basename
+//#include <boost/filesystem/fstream.hpp>
+//#include <boost/filesystem/exception.hpp>
+//#include <boost/filesystem/convenience.hpp> // filesystem::basename
 #include "parse_error.h"
 #include "tee.h"
 #include "vina.h"
@@ -68,7 +70,7 @@ void check_occurrence(boost::program_options::variables_map& vm, boost::program_
 
 int main(int argc, char* argv[]) {
 	using namespace boost::program_options;
-	const std::string version_string = "AutoDock Vina 1.1.2 (May 11, 2011)";
+	const std::string version_string = "AutoDock Vina 1.2.0 (September 11, 2020)";
 	const std::string error_message = "\n\n\
 Please contact the author, Dr. Oleg Trott <ot14@columbia.edu>, so\n\
 that this problem can be resolved. The reproducibility of the\n\
@@ -105,14 +107,29 @@ Thank you!\n";
 
 	try {
 		tee log;
-		std::string rigid_name, ligand_name, flex_name, config_name, out_name, log_name;
+		std::string rigid_name;
+        std::string flex_name;
+        std::string config_name;
+        std::string out_name;
+        std::string out_dir;
+        std::string log_name;
+        std::vector<std::string> ligand_names;
+        std::vector<std::string> batch_ligand_names;
         std::string ad4_maps;
         std::string sf_name = "vina";
-		double center_x, center_y, center_z; 
-		double size_x, size_y, size_z;
-		int cpu = 0, seed, exhaustiveness = 8, verbosity = 2, num_modes = 9;
-		double energy_range = 2.0;
-		double granularity = 0.375;
+		double center_x;
+        double center_y;
+        double center_z;
+		double size_x;
+        double size_y;
+        double size_z;
+		int cpu = 0;
+        int seed;
+        int exhaustiveness = 8;
+        int verbosity = 2;
+        int num_modes = 9;
+		double energy_range = 3.0;
+		double grid_spacing = 0.375;
 		bool no_cache = false;
 
 		// autodock4.2 weights
@@ -133,7 +150,13 @@ Thank you!\n";
         // macrocycle closure
         double weight_glue        = 50.000000; // linear attraction
 
-		bool score_only = false, local_only = false, randomize_only = false, help = false, help_advanced = false, version = false; // FIXME
+		bool score_only = false;
+        bool local_only = false;
+        bool randomize_only = false;
+        bool help = false;
+        bool help_advanced = false;
+        bool version = false; // FIXME
+        variables_map vm;
 
 		positional_options_description positional; // remains empty
 
@@ -141,25 +164,26 @@ Thank you!\n";
 		inputs.add_options()
 			("receptor", value<std::string>(&rigid_name), "rigid part of the receptor (PDBQT)")
 			("flex", value<std::string>(&flex_name), "flexible side chains, if any (PDBQT)")
-			("ligand", value<std::string>(&ligand_name), "ligand (PDBQT)")
+			("ligand", value<std::vector<std::string>>(&ligand_names)->multitoken(), "ligand (PDBQT)")
+            ("batch", value<std::vector<std::string>>(&batch_ligand_names)->multitoken(), "batch ligand (PDBQT)")
 			("ad4_maps", value<std::string>(&ad4_maps), "maps for the autodock4.2 (ad4) scoring function")
-			//("vina_maps", value<std::string>(&vina_maps), "maps for vina scoring function")
 			("scoring_function", value<std::string>(&sf_name)->default_value(sf_name), "vina or ad4")
 		;
 		//options_description search_area("Search area (required, except with --score_only)");
 		options_description search_area("Search space (required)");
 		search_area.add_options()
-			("center_x", value<double>(&center_x), "X coordinate of the center")
-			("center_y", value<double>(&center_y), "Y coordinate of the center")
-			("center_z", value<double>(&center_z), "Z coordinate of the center")
-			("size_x", value<double>(&size_x), "size in the X dimension (Angstroms)")
-			("size_y", value<double>(&size_y), "size in the Y dimension (Angstroms)")
-			("size_z", value<double>(&size_z), "size in the Z dimension (Angstroms)")
+			("center_x", value<double>(&center_x), "X coordinate of the center (Angstrom)")
+			("center_y", value<double>(&center_y), "Y coordinate of the center (Angstrom)")
+			("center_z", value<double>(&center_z), "Z coordinate of the center (Angstrom)")
+			("size_x", value<double>(&size_x), "size in the X dimension (Angstrom)")
+			("size_y", value<double>(&size_y), "size in the Y dimension (Angstrom)")
+			("size_z", value<double>(&size_z), "size in the Z dimension (Angstrom)")
 		;
 		//options_description outputs("Output prefixes (optional - by default, input names are stripped of .pdbqt\nare used as prefixes. _001.pdbqt, _002.pdbqt, etc. are appended to the prefixes to produce the output names");
 		options_description outputs("Output (optional)");
 		outputs.add_options()
 			("out", value<std::string>(&out_name), "output models (PDBQT), the default is chosen based on the ligand file name")
+            ("dir", value<std::string>(&out_dir), "output directory for batch mode")
 			("log", value<std::string>(&log_name), "optionally, write log file")
 		;
 		options_description advanced("Advanced options (see the manual)");
@@ -190,6 +214,7 @@ Thank you!\n";
 			("exhaustiveness", value<int>(&exhaustiveness)->default_value(8), "exhaustiveness of the global search (roughly proportional to time): 1+")
 			("num_modes", value<int>(&num_modes)->default_value(9), "maximum number of binding modes to generate")
 			("energy_range", value<double>(&energy_range)->default_value(3.0), "maximum energy difference between the best binding mode and the worst one displayed (kcal/mol)")
+            ("spacing", value<double>(&grid_spacing)->default_value(0.375), "grid spacing (Angstrom)")
 		;
 		options_description config("Configuration file (optional)");
 		config.add_options()
@@ -206,7 +231,6 @@ Thank you!\n";
 		desc_config.add(inputs).add(search_area).add(outputs).add(advanced).add(misc);
 		desc_simple.add(inputs).add(search_area).add(outputs).add(misc).add(config).add(info);
 
-		variables_map vm;
 		try {
 			//store(parse_command_line(argc, argv, desc, command_line_style::default_style ^ command_line_style::allow_guessing), vm);
 			store(command_line_parser(argc, argv)
@@ -216,12 +240,12 @@ Thank you!\n";
 				.run(), 
 				vm);
 			notify(vm); 
-		}
-		catch(boost::program_options::error& e) {
+		} catch(boost::program_options::error& e) {
 			std::cerr << "Command line parse error: " << e.what() << '\n' << "\nCorrect usage:\n" << desc_simple << '\n';
 			return 1;
 		}
-		if(vm.count("config")) {
+
+		if (vm.count("config")) {
 			try {
 				path name = make_path(config_name);
 				ifile config_stream(name);
@@ -233,90 +257,107 @@ Thank you!\n";
 				return 1;
 			}
 		}
-		if(help) {
+
+		if (help) {
 			std::cout << desc_simple << '\n';
 			return 0;
 		}
-		if(help_advanced) {
+
+		if (help_advanced) {
 			std::cout << desc << '\n';
 			return 0;
 		}
-		if(version) {
+
+		if (version) {
 			std::cout << version_string << '\n';
 			return 0;
 		}
 
-		bool output_produced   = !score_only; 
 		bool receptor_needed   = !(sf_name.compare("ad4") == 0);
 
-		if(receptor_needed) {
-			if((vm.count("receptor") <= 0)){// & (vm.count("vina_maps") <= 0)){
+		if (receptor_needed) {
+			if((vm.count("receptor") <= 0)){
 				std::cerr << desc_simple << "\n\nMissing either receptor or vina_maps.\n";
 				return 1;
 			}
-		}
+		} else if (vm.count("flex") && !vm.count("receptor")) {
+            throw usage_error("Flexible side chains are not allowed without the rest of the receptor"); // that's the only way parsing works, actually
+        }
 
-        if(sf_name.compare("ad4") == 0) {
-            //if((vm.count("receptor") > 0) | (vm.count("vina_maps") > 0) | (vm.count("ad4_maps") <= 0)) {
-            //if(                               (vm.count("vina_maps") > 0) | (vm.count("ad4_maps") <= 0)) {
-            if((vm.count("ad4_maps") <= 0)) {
+        if (sf_name.compare("ad4") == 0) {
+            if ((vm.count("ad4_maps") <= 0)) {
 				std::cerr << "When using AutoDock4.2 scoring function (--scoring_function ad4):\n";
-				std::cerr << "  --ad4_maps  is required\n";
-				//std::cerr << "  --vina_maps not accepted\n";
-				//std::cerr << "  --receptor  not accepted\n";
+				std::cerr << "  --ad4_maps is required\n";
 				return 1;
             }
         } else if (sf_name.compare("vina") == 0) {
-            if(vm.count("ad4_maps") > 0) {
+            if (vm.count("ad4_maps") > 0) {
 				std::cerr << desc_simple << "\n\nNo ad4_maps with vina scoring function\n";
 				return 1;
             }
         }
-        //if((vm.count("vina_maps") > 0) & (vm.count("receptor") > 0)){
-		//	std::cerr << desc_simple << "\n\nMust provide either --receptor or --vina_maps, not both.\n";
-		//	return 1;
-		//}
-		if(vm.count("ligand") <= 0) {
-			std::cerr << "Missing ligand.\n" << "\nCorrect usage:\n" << desc_simple << '\n';
-			return 1;
-		}
-		if(vm.count("flex") && !vm.count("receptor"))
-			throw usage_error("Flexible side chains are not allowed without the rest of the receptor"); // that's the only way parsing works, actually
 
-		if(vm.count("log") > 0)
+		if (!vm.count("ligand") && !vm.count("batch")) {
+			std::cerr << "ERROR: Missing ligand(s).\n" << "\nCorrect usage:\n" << desc_simple << '\n';
+			exit(EXIT_FAILURE);
+		} else if (vm.count("ligand") && vm.count("batch")) {
+            std::cerr << "ERROR: Can't use both --ligand and --batch simultaneously.\n" << "\nCorrect usage:\n" << desc_simple << '\n';
+            exit(EXIT_FAILURE);
+        } else if (vm.count("batch") && !vm.count("dir")) {
+            std::cerr << "ERROR: Need to specify an output directory for batch mode.\n" << "\nCorrect usage:\n" << desc_simple << '\n';
+            exit(EXIT_FAILURE);
+        } else if (vm.count("dir")) {
+            if (!is_directory(out_dir)) {
+                std::cerr << "ERROR: Directory " << out_dir << " does not exist.\n";
+                exit(EXIT_FAILURE);
+            }
+        } else if (vm.count("ligand") && vm.count("dir")) {
+            std::cout << "WARNING: In ligand mode, --dir argument is ignored.\n";
+        }
+
+		if (vm.count("log") > 0)
 			log.init(log_name);
 
 		log << cite_message << '\n';
 
-		if(output_produced) { // FIXME
-			if(!vm.count("out")) {
-				out_name = default_output(ligand_name);
-				log << "Output will be " << out_name << '\n';
-			}
+		if (!score_only) {
+			if (!vm.count("out") && ligand_names.size() == 1) {
+				out_name = default_output(ligand_names[0]);
+				std::cout << "Output will be " << out_name << '\n';
+			} else if (!vm.count("out") && ligand_names.size() >= 1) {
+                std::cerr << "ERROR: Output name must be defined when docking simultaneously multiple ligands.\n" << "\nCorrect usage:\n" << desc_simple << '\n';
+                exit(EXIT_FAILURE);
+            }
 		}
-
 
 		doing(verbosity, "Reading input", log);
 		done(verbosity, log);
 
-		log << "Exhaustiveness: " << exhaustiveness << "\n";
-		log << "CPU: " << cpu << "\n";
-		log << "Seed: " << seed << "\n";
-		log << "Verbosity: " << verbosity << "\n";
-		log << "Rigid receptor: " << rigid_name << "\n";
-		log << "Flex receptor: " << flex_name << "\n";
-		log << "Ligand: " << ligand_name << "\n";
-		log << "Size: X " << size_x << " Y " << size_y << " Z " << size_z << "\n";
-		log << "Center: X " << center_x << " Y " << center_y << " Z " << center_z << "\n";
-		log << "Grid space: " << granularity << "\n";
-		log << "Scoring function : " << sf_name << "\n";
-		log.endl();
+        std::cout << "Scoring function : " << sf_name << "\n";
+		std::cout << "Rigid receptor: " << rigid_name << "\n";
+		std::cout << "Flex receptor: " << flex_name << "\n";
+        if (ligand_names.size() == 1) {
+            std::cout << "Ligand: " << ligand_names[0] << "\n";
+        } else if (ligand_names.size() > 1) {
+            std::cout << "Ligands:\n";
+            VINA_RANGE(i, 0, ligand_names.size()) {
+                std::cout << "  - " << ligand_names[i] << "\n";
+            }
+        } else if (batch_ligand_names.size() > 1) {
+            std::cout << "Ligands (batch mode): " << batch_ligand_names.size() << " molecules\n";
+        }
+        std::cout << "Center: X " << center_x << " Y " << center_y << " Z " << center_z << "\n";
+		std::cout << "Size: X " << size_x << " Y " << size_y << " Z " << size_z << "\n";
+		std::cout << "Grid space: " << grid_spacing << "\n";
+        std::cout << "Exhaustiveness: " << exhaustiveness << "\n";
+        std::cout << "CPU: " << cpu << "\n";
+        std::cout << "Seed: " << seed << "\n";
+        std::cout << "Verbosity: " << verbosity << "\n";
 
 		Vina v(sf_name, exhaustiveness, cpu, seed, no_cache, verbosity);
 
-        // Can be ignored for AD4
+        // rigid_name variable can be ignored for AD4
         v.set_receptor(rigid_name, flex_name);
-        v.set_ligand(ligand_name);
 
         // Technically we don't have to initialize weights, 
         // because they are initialized during the Vina object creation with the default weights
@@ -324,25 +365,50 @@ Thank you!\n";
 		if (sf_name.compare("vina") == 0) {
             v.set_vina_weights(weight_gauss1, weight_gauss2, weight_repulsion,
                                weight_hydrophobic, weight_hydrogen, weight_glue, weight_rot);
-			v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
+			v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing);
 		} else {
             v.set_ad4_weights(weight_ad4_vdw, weight_ad4_hb, weight_ad4_elec,
                               weight_ad4_dsolv, weight_glue, weight_ad4_rot);
             v.load_ad4_maps(ad4_maps);
         }
 
-		if (score_only) {
-			v.score();
-            // TODO write contributions
-		} else if (local_only) {
-			v.optimize();
-			v.write_pose(out_name);
-		} else {
-			v.global_search();
-			v.write_results(out_name, num_modes, energy_range);
-		}
+        if (vm.count("ligand")) {
+            v.set_ligand(ligand_names);
 
+            if (randomize_only) {
+                v.randomize();
+                v.write_pose(out_name);
+            } else if (score_only) {
+                v.score();
+            } else if (local_only) {
+                v.optimize();
+                v.write_pose(out_name);
+            } else {
+                v.global_search();
+                v.write_results(out_name, num_modes, energy_range);
+            }
+        } else if (vm.count("batch")) {
+            VINA_RANGE(i, 0, batch_ligand_names.size()) {
+                v.set_ligand(batch_ligand_names[i]);
+
+                out_name = default_output(get_filename(batch_ligand_names[i]), out_dir);
+
+                if (randomize_only) {
+                    v.randomize();
+                    v.write_pose(out_name);
+                } else if (score_only) {
+                    v.score();
+                } else if (local_only) {
+                    v.optimize();
+                    v.write_pose(out_name);
+                } else {
+                    v.global_search();
+                    v.write_results(out_name, num_modes, energy_range);
+                }
+            }
+        }
 	}
+
 	catch(file_error& e) {
 		std::cerr << "\n\nError: could not open \"" << e.name.string() << "\" for " << (e.in ? "reading" : "writing") << ".\n";
 		return 1;
@@ -365,7 +431,6 @@ Thank you!\n";
 	}
 
 	// Errors that shouldn't happen:
-
 	catch(std::exception& e) { 
 		std::cerr << "\n\nAn error occurred: " << e.what() << ". " << error_message;
 		return 1; 

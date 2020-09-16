@@ -22,6 +22,17 @@
 
 #include "utils.h"
 
+
+inline char separator() {
+    // Source: https://stackoverflow.com/questions/12971499/how-to-get-the-file-separator-symbol-in-standard-c-c-or
+    #ifdef _WIN32
+        return '\\';
+    #else
+        return '/';
+    #endif
+}
+
+
 path make_path(const std::string& str) {
     boost::filesystem::path p(str);
   return p;
@@ -49,4 +60,33 @@ std::string default_output(const std::string& input_name) {
   if(tmp.size() >= 6 && tmp.substr(tmp.size()-6, 6) == ".pdbqt")
     tmp.resize(tmp.size() - 6); // FIXME?
   return tmp + "_out.pdbqt";
+}
+
+
+std::string default_output(const std::string& input_name, const std::string& directory_pathname) {
+    return directory_pathname + separator() + default_output(input_name);
+}
+
+
+bool is_directory(const std::string& directory_pathname) {
+  //Source: https://stackoverflow.com/questions/18100097/portable-way-to-check-if-directory-exists-windows-linux-c
+  struct stat info;
+
+  if (stat(directory_pathname.c_str(), &info) != 0) 
+      return false;
+  else if (info.st_mode & S_IFDIR)  // S_ISDIR() doesn't exist on my windows 
+      return true;
+  else
+      return false;
+}
+
+
+std::string get_filename(const std::string& s) {
+    size_t i = s.rfind(separator(), s.length());
+
+    if (i != std::string::npos) {
+        return(s.substr(i + 1, s.length() - i));
+    }
+
+    return("");
 }

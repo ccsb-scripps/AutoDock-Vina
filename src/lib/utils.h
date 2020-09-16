@@ -24,11 +24,17 @@
 #define VINA_UTILS_H
 
 #include <string>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "tee.h"
 
+inline char separator();
 path make_path(const std::string& str);
 void doing(int verbosity, const std::string& str, tee& log);
 void done(int verbosity, tee& log);
 std::string default_output(const std::string& input_name);
+std::string default_output(const std::string& input_name, const std::string& directory_pathname);
+bool is_directory(const std::string& directory_pathname);
+std::string get_filename(const std::string& s);
 
 #endif

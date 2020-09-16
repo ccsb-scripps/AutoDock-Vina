@@ -39,7 +39,7 @@ enum scoring_function_choice {SF_VINA, SF_AD42, SF_VINARDO};
 class ScoringFunction {
 public:
     ScoringFunction() { }
-    ScoringFunction(const scoring_function_choice sf_choice, const flv& weights, const atom_type::t atom_types) {
+    ScoringFunction(const scoring_function_choice sf_choice, const flv& weights, const atom_type::t atom_typing) {
         switch(sf_choice) {
             case SF_VINA: {
                 m_cutoff = 20.48;
@@ -77,7 +77,7 @@ public:
         m_num_potentials = m_potentials.size();
         m_num_conf_independents = m_conf_independents.size();
         m_weights = weights;
-        m_atom_types = atom_types;
+        m_atom_typing = atom_typing;
     }
 
     ~ScoringFunction() { }
@@ -86,7 +86,9 @@ public:
     fl eval(sz t1, sz t2, fl r) const;
     fl conf_independent(const model& m, fl e) const;
     fl get_cutoff() const { return m_cutoff; }
-    atom_type::t get_atom_types() const { return m_atom_types; }
+    atom_type::t get_atom_typing() const { return m_atom_typing; }
+    szv get_atom_types() const;
+    sz get_num_atom_types() const { return num_atom_types(m_atom_typing); }
 
 private:
     std::vector<Potential*> m_potentials;
@@ -95,7 +97,7 @@ private:
     fl m_cutoff;
     int m_num_potentials;
     int m_num_conf_independents;
-    atom_type::t m_atom_types;
+    atom_type::t m_atom_typing;
 };
 
 #endif

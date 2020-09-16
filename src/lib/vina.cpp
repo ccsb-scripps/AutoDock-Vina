@@ -83,7 +83,8 @@ void Vina::set_receptor(const std::string& rigid_name) {
     // Read the receptor PDBQT file
     VINA_CHECK(!rigid_name.empty());
 
-    m_receptor = parse_receptor_pdbqt(rigid_name, m_scoring_function.get_atom_types());
+    m_receptor = parse_receptor_pdbqt(rigid_name, m_scoring_function.get_atom_typing());
+    m_model = m_receptor;
     m_receptor_initialized = true;
 }
 
@@ -92,11 +93,12 @@ void Vina::set_receptor(const std::string& rigid_name, const std::string& flex_n
     VINA_CHECK(!rigid_name.empty());
 
     if (!flex_name.empty()) {
-        m_receptor = parse_receptor_pdbqt(rigid_name, flex_name, m_scoring_function.get_atom_types());
+        m_receptor = parse_receptor_pdbqt(rigid_name, flex_name, m_scoring_function.get_atom_typing());
     } else {
-        m_receptor = parse_receptor_pdbqt(rigid_name, m_scoring_function.get_atom_types());
+        m_receptor = parse_receptor_pdbqt(rigid_name, m_scoring_function.get_atom_typing());
     }
 
+    m_model = m_receptor;
     m_receptor_initialized = true;
 }
 
@@ -109,7 +111,7 @@ void Vina::set_ligand(const std::string& ligand_name) {
     output_container poses;
     m_poses = poses;
     // ... and add ligand to the model
-    m_model.append(parse_ligand_pdbqt(ligand_name, m_scoring_function.get_atom_types()));
+    m_model.append(parse_ligand_pdbqt(ligand_name, m_scoring_function.get_atom_typing()));
     m_model.about();
 
     // Because we precalculate ligand atoms interactions
@@ -133,7 +135,7 @@ void Vina::set_ligand(const std::vector<std::string>& ligand_name) {
     m_poses = poses;
 
     VINA_RANGE(i, 0, ligand_name.size())
-        m_model.append(parse_ligand_pdbqt(ligand_name[i], m_scoring_function.get_atom_types()));
+        m_model.append(parse_ligand_pdbqt(ligand_name[i], m_scoring_function.get_atom_typing()));
 
     // Because we precalculate ligand atoms interactions
     sz n_atoms = m_model.num_movable_atoms();
@@ -279,16 +281,15 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
     VINA_CHECK(m_receptor_initialized); // m_model
 
     const fl slope = 1e6; // FIXME: too large? used to be 100
-    const szv atom_types_needed = m_model.get_movable_atom_types(atom_type::XS);
+    const szv atom_types = m_scoring_function.get_atom_types();
 
     // Initialize the vina box
     set_vina_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
-    
-    cache grid("scoring_function_version001", m_gd, slope, atom_type::XS);
 
     doing(m_verbosity, "Computing grid", m_log);
     precalculate precalculated_sf(m_scoring_function);
-    grid.populate(m_model, precalculated_sf, atom_types_needed);
+    cache grid("scoring_function_version001", m_gd, slope, m_scoring_function.get_atom_typing());
+    grid.populate(m_model, precalculated_sf, atom_types);
     done(m_verbosity, m_log);
 
     // Store in Vina object
@@ -319,7 +320,7 @@ void Vina::write_maps(const std::string& map_prefix, const std::string& gpf_file
                       const std::string& fld_filename, const std::string& receptor_filename) {
     VINA_CHECK(m_map_initialized); // // m_gd, m_corner1, m_corner2, m_grid/ad4grid
 
-    const szv atom_types = m_model.get_movable_atom_types(m_scoring_function.get_atom_types());
+    const szv atom_types = m_scoring_function.get_atom_types();
 
     if (m_sf_choice == SF_VINA) {
         m_grid.write(map_prefix, atom_types, gpf_filename, fld_filename, receptor_filename);

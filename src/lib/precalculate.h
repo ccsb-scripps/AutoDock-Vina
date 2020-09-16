@@ -115,8 +115,8 @@ struct precalculate {
     m_cutoff_sqr(sqr(sf.get_cutoff())),
     n(sz(factor_ * m_cutoff_sqr) + 3),  // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
     factor(factor_),
-    data(num_atom_types(atom_type::XS), precalculate_element(n, factor_)),
-    m_atom_typing_used(sf.get_atom_types()) {
+    data(num_atom_types(sf.get_atom_typing()), precalculate_element(n, factor_)),
+    m_atom_typing_used(sf.get_atom_typing()) {
         std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate = " << m_cutoff_sqr << "\n";
 
         VINA_CHECK(factor > epsilon_fl);
@@ -178,7 +178,7 @@ struct precalculate_byatom {
     n(sz(factor_ * m_cutoff_sqr) + 3), 
     factor(factor_), 
     data(n_atoms, precalculate_element(n, factor_)), 
-    m_atom_typing_used(sf.get_atom_types()) {
+    m_atom_typing_used(sf.get_atom_typing()) {
         std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate_byatom = " << m_cutoff_sqr << "\n";
 
         VINA_CHECK(factor > epsilon_fl);

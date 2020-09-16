@@ -22,6 +22,7 @@
 
 #include "scoring_function.h"
 #include "model.h"
+#include "atom_type.h"
 
 
 fl ScoringFunction::eval(atom& a, atom& b, fl r) const { // intentionally not checking for cutoff
@@ -56,4 +57,14 @@ fl ScoringFunction::conf_independent(const model& m, fl e) const {
 
     assert(it == m_weights.end());
     return e;
+}
+
+szv ScoringFunction::get_atom_types() const {
+    szv tmp;
+
+    VINA_FOR(i, num_atom_types(m_atom_typing)) {
+      tmp.push_back(i);
+    }
+
+    return tmp;
 }
