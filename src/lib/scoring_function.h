@@ -42,13 +42,12 @@ public:
     ScoringFunction(const scoring_function_choice sf_choice, const flv& weights, const atom_type::t atom_typing) {
         switch(sf_choice) {
             case SF_VINA: {
-                m_cutoff = 20.48;
-                m_potentials = {new vina_gaussian(0, 0.5),
-                                new vina_gaussian(3, 2.0),
-                                new vina_repulsion(0.0),
-                                new vina_hydrophobic(0.5, 1.5),
-                                new vina_non_dir_h_bond(-0.7, 0),
-                                new linearattraction()};
+                m_potentials = {new vina_gaussian(0, 0.5, 8.0),
+                                new vina_gaussian(3, 2.0, 8.0),
+                                new vina_repulsion(0.0, 8.0),
+                                new vina_hydrophobic(0.5, 1.5, 8.0),
+                                new vina_non_dir_h_bond(-0.7, 0, 8.0),
+                                new linearattraction(20.0)};
                 m_conf_independents = {new num_tors_div()};
                 break;
             }
@@ -58,12 +57,11 @@ public:
                 break;
             }
             case SF_AD42: {
-                m_cutoff = 20.48;
-                m_potentials = {new ad4_vdw(0.5, 100000),
-                                new ad4_hb(0.5, 100000),
-                                new ad4_electrostatic(100),
-                                new ad4_solvation(3.6, 0.01097, true),
-                                new linearattraction()};
+                m_potentials = {new ad4_vdw(0.5, 100000, 8.0),
+                                new ad4_hb(0.5, 100000, 8.0),
+                                new ad4_electrostatic(100, 20.48),
+                                new ad4_solvation(3.6, 0.01097, true, 20.48),
+                                new linearattraction(20.0)};
                 m_conf_independents = {new ad4_tors_add()};
                 break;
             }
@@ -78,6 +76,10 @@ public:
         m_num_conf_independents = m_conf_independents.size();
         m_weights = weights;
         m_atom_typing = atom_typing;
+
+        VINA_FOR (i, m_num_potentials) {
+            m_max_cutoff = (std::max)(m_max_cutoff, m_potentials[i]->get_cutoff());
+        }
     }
 
     ~ScoringFunction() { }
@@ -85,7 +87,7 @@ public:
     fl eval(atom& a, atom& b, fl r) const; // intentionally not checking for cutoff
     fl eval(sz t1, sz t2, fl r) const;
     fl conf_independent(const model& m, fl e) const;
-    fl get_cutoff() const { return m_cutoff; }
+    fl get_max_cutoff() const { return m_max_cutoff; }
     atom_type::t get_atom_typing() const { return m_atom_typing; }
     szv get_atom_types() const;
     sz get_num_atom_types() const { return num_atom_types(m_atom_typing); }
@@ -94,7 +96,7 @@ private:
     std::vector<Potential*> m_potentials;
     std::vector<ConfIndependent*> m_conf_independents;
     flv m_weights;
-    fl m_cutoff;
+    fl m_max_cutoff;
     int m_num_potentials;
     int m_num_conf_independents;
     atom_type::t m_atom_typing;

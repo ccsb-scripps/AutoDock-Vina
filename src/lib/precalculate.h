@@ -112,7 +112,7 @@ struct precalculate_element {
 struct precalculate {
     precalculate() {}
     precalculate(const ScoringFunction& sf, fl v = max_fl, fl factor_ = 32) : // sf should not be discontinuous, even near cutoff, for the sake of the derivatives
-    m_cutoff_sqr(sqr(sf.get_cutoff())),
+    m_cutoff_sqr(sqr(sf.get_max_cutoff())),
     n(sz(factor_ * m_cutoff_sqr) + 3),  // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
     factor(factor_),
     data(num_atom_types(sf.get_atom_typing()), precalculate_element(n, factor_)),
@@ -174,7 +174,7 @@ struct precalculate_byatom {
     precalculate_byatom() {}
     precalculate_byatom(const ScoringFunction& sf, sz n_atoms, atomv& atoms, fl v = max_fl, fl factor_ = 32) : // sf should not be discontinuous, even near cutoff, for the sake of the derivatives
     // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
-    m_cutoff_sqr(sqr(sf.get_cutoff())), 
+    m_cutoff_sqr(sqr(sf.get_max_cutoff())), 
     n(sz(factor_ * m_cutoff_sqr) + 3), 
     factor(factor_), 
     data(n_atoms, precalculate_element(n, factor_)), 
