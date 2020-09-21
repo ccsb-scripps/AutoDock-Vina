@@ -6,14 +6,14 @@ import re
 import subprocess
 import sys
 import sysconfig
+from setuptools.command.build_ext import build_ext
+from setuptools.command.install import install
+from setuptools import setup, Extension
 from distutils.command.build import build
 from distutils.command.sdist import sdist
 from distutils.errors import DistutilsExecError
 from distutils.version import StrictVersion
 from distutils.util import convert_path
-from setuptools.command.build_ext import build_ext
-from setuptools.command.install import install
-from setuptools import setup, Extension
 from distutils.sysconfig import customize_compiler
 from distutils.ccompiler import show_compilers
 
