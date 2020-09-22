@@ -120,8 +120,10 @@ Thank you!\n";
         int cpu = 0;
         int seed;
         int exhaustiveness = 8;
+        int max_evals = 0;
         int verbosity = 1;
         int num_modes = 9;
+        double min_rmsd = 1.0;
         double energy_range = 3.0;
         double grid_spacing = 0.375;
         bool no_cache = false;
@@ -205,7 +207,9 @@ Thank you!\n";
             ("cpu", value<int>(&cpu), "the number of CPUs to use (the default is to try to detect the number of CPUs or, failing that, use 1)")
             ("seed", value<int>(&seed), "explicit random seed")
             ("exhaustiveness", value<int>(&exhaustiveness)->default_value(8), "exhaustiveness of the global search (roughly proportional to time): 1+")
+            ("max_evals", value<int>(&max_evals)->default_value(0), "number of evaluations in each MC run (if zero, which is the default, the number of MC steps is based on heuristics)")
             ("num_modes", value<int>(&num_modes)->default_value(9), "maximum number of binding modes to generate")
+            ("min_rmsd", value<double>(&min_rmsd)->default_value(1.0), "minimum RMSD between output poses")
             ("energy_range", value<double>(&energy_range)->default_value(3.0), "maximum energy difference between the best binding mode and the worst one displayed (kcal/mol)")
             ("spacing", value<double>(&grid_spacing)->default_value(0.375), "grid spacing (Angstrom)")
             ("verbosity", value<int>(&verbosity)->default_value(1), "verbosity (0=no output, 1=normal, 2=verbose)")
@@ -346,7 +350,7 @@ Thank you!\n";
             std::cout << "\n";
         }
 
-        Vina v(sf_name, exhaustiveness, cpu, seed, no_cache, verbosity);
+        Vina v(sf_name, exhaustiveness, cpu, seed, no_cache, verbosity, max_evals);
 
         // rigid_name variable can be ignored for AD4
         v.set_receptor(rigid_name, flex_name);
@@ -376,7 +380,7 @@ Thank you!\n";
                 v.optimize();
                 v.write_pose(out_name);
             } else {
-                v.global_search();
+                v.global_search(num_modes, min_rmsd);
                 v.write_results(out_name, num_modes, energy_range);
             }
         } else if (vm.count("batch")) {
@@ -394,7 +398,7 @@ Thank you!\n";
                     v.optimize();
                     v.write_pose(out_name);
                 } else {
-                    v.global_search();
+                    v.global_search(num_modes, min_rmsd);
                     v.write_results(out_name, num_modes, energy_range);
                 }
             }
