@@ -128,17 +128,15 @@ void Vina::set_ligand(const std::string& ligand_name) {
     // Replace current model with receptor and reinitialize poses
     m_model = m_receptor;
     output_container poses;
-    m_poses = poses;
     // ... and add ligand to the model
     m_model.append(parse_ligand_pdbqt(ligand_name, m_scoring_function.get_atom_typing()));
     m_model.about();
 
     // Because we precalculate ligand atoms interactions
-    sz n_atoms = m_model.num_movable_atoms();
-    atomv atoms = m_model.get_atoms();
-    precalculate_byatom precalculated_byatom(m_scoring_function, n_atoms, atoms);
+    precalculate_byatom precalculated_byatom(m_scoring_function, m_model);
 
     // Store in Vina object
+    m_poses = poses;
     m_precalculated_byatom = precalculated_byatom;
     m_ligand_initialized = true;
 }
@@ -151,17 +149,15 @@ void Vina::set_ligand(const std::vector<std::string>& ligand_name) {
     // Replace current model with receptor and reinitialize poses
     m_model = m_receptor;
     output_container poses;
-    m_poses = poses;
 
     VINA_RANGE(i, 0, ligand_name.size())
         m_model.append(parse_ligand_pdbqt(ligand_name[i], m_scoring_function.get_atom_typing()));
 
     // Because we precalculate ligand atoms interactions
-    sz n_atoms = m_model.num_movable_atoms();
-    atomv atoms = m_model.get_atoms();
-    precalculate_byatom precalculated_byatom(m_scoring_function, n_atoms, atoms);
+    precalculate_byatom precalculated_byatom(m_scoring_function, m_model);
 
     // Store in Vina object
+    m_poses = poses;
     m_precalculated_byatom = precalculated_byatom;
     m_ligand_initialized = true;
 }
@@ -243,17 +239,9 @@ void Vina::set_ad4_weights(double weight_ad4_vdw , double weight_ad4_hb,
     }
 }
 
-void Vina::set_forcefield() {
-    atom_type::t atom_types;
-
-    if (m_sf_choice == SF_VINA) {
-        atom_types = atom_type::XS;
-    } else {
-        atom_types = atom_type::AD;
-    }
-
-    ScoringFunction scoring_function(m_sf_choice, m_weights, atom_types);
-
+void Vina::set_forcefield() 
+{
+    ScoringFunction scoring_function(m_sf_choice, m_weights);
     // Store in Vina object
     m_scoring_function = scoring_function;
 }
@@ -296,14 +284,19 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
     VINA_CHECK(m_receptor_initialized); // m_model
 
     const fl slope = 1e6; // FIXME: too large? used to be 100
-    const szv atom_types = m_scoring_function.get_atom_types();
+    szv atom_types;
+    atom_type::t atom_typing = m_scoring_function.get_atom_typing();
 
-    // Initialize the vina box
-    set_vina_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
+    if (m_ligand_initialized) 
+        atom_types = m_model.get_movable_atom_types(atom_typing);
+    else
+        atom_types = m_scoring_function.get_atom_types();
 
     doing("Computing Vina grid", m_verbosity, 0);
+    // Initialize the vina box
+    set_vina_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
     precalculate precalculated_sf(m_scoring_function);
-    cache grid("scoring_function_version001", m_gd, slope, m_scoring_function.get_atom_typing());
+    cache grid("scoring_function_version001", m_gd, slope, atom_typing);
     grid.populate(m_model, precalculated_sf, atom_types);
     done(m_verbosity, 0);
 

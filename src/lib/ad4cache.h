@@ -32,7 +32,6 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/optional.hpp> // needed to write files?
 #include "igrid.h"
 #include "grid.h"
 #include "model.h"

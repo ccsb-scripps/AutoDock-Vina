@@ -38,10 +38,6 @@
 #include "szv_grid.h"
 
 
-struct cache_mismatch {};
-struct rigid_mismatch : public cache_mismatch {};
-struct grid_dims_mismatch : public cache_mismatch {};
-struct energy_mismatch : public cache_mismatch {};
 struct precalculate;
 struct model;
 

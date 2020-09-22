@@ -25,17 +25,21 @@
 #include "precalculate.h"
 
 
-cache::cache(const std::string& scoring_function_version_, const grid_dims& gd_, fl slope_, atom_type::t atom_typing_used_) 
+cache::cache(const std::string& scoring_function_version_, const grid_dims& gd_, fl slope_, atom_type::t atom_typing_used_)
 : scoring_function_version(scoring_function_version_), gd(gd_), slope(slope_), atu(atom_typing_used_), grids(num_atom_types(atom_typing_used_)) {}
 
 fl cache::eval(const model& m, fl v) const { // needs m.coords
 	fl e = 0;
-	sz nat = num_atom_types(atu);
+	sz nat = num_atom_types(atom_type::XS);
 
 	VINA_FOR(i, m.num_movable_atoms()) {
 		const atom& a = m.atoms[i];
-		sz t = a.get(atu);
-		if(t >= nat) continue;
+		sz t = a.get(atom_type::XS);
+		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3) continue;
+		else if (t >= nat) continue;
+		if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_P_CG1 ||
+			t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_H_CG3 || t == XS_TYPE_C_P_CG3) t = AD_TYPE_C;
+
 		const grid& g = grids[t];
 		assert(g.initialized());
 		e += g.evaluate(m.coords[i], slope, v);
@@ -45,13 +49,17 @@ fl cache::eval(const model& m, fl v) const { // needs m.coords
 
 fl cache::eval_intra(model& m, fl v) const {
 	fl e = 0;
-	sz nat = num_atom_types(atu);
+	sz nat = num_atom_types(atom_type::XS);
 
 	VINA_FOR(i, m.num_movable_atoms()) {
         if(m.find_ligand(i) < m.ligands.size()) continue; // we only want flex-rigid interaction
 		const atom& a = m.atoms[i];
-		sz t = a.get(atu);
-		if(t >= nat) continue;
+		sz t = a.get(atom_type::XS);
+		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3) continue;
+		else if (t >= nat) continue;
+		if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_P_CG1 ||
+			t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_H_CG3 || t == XS_TYPE_C_P_CG3) t = AD_TYPE_C;
+
 		const grid& g = grids[t];
 		assert(g.initialized());
 		e += g.evaluate(m.coords[i], slope, v);
@@ -61,12 +69,23 @@ fl cache::eval_intra(model& m, fl v) const {
 
 fl cache::eval_deriv(model& m, fl v) const { // needs m.coords, sets m.minus_forces
 	fl e = 0;
-	sz nat = num_atom_types(atu);
+	sz nat = num_atom_types(atom_type::XS);
 
 	VINA_FOR(i, m.num_movable_atoms()) {
 		const atom& a = m.atoms[i];
-		sz t = a.get(atu);
-		if(t >= nat) { m.minus_forces[i].assign(0); continue; }
+		sz t = a.get(atom_type::XS);
+		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
+		{
+			m.minus_forces[i].assign(0);
+			continue;
+		} else if (t >= nat) 
+		{ 
+			m.minus_forces[i].assign(0);
+			continue;
+		}
+		if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_P_CG1 ||
+			t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_H_CG3 || t == XS_TYPE_C_P_CG3) t = AD_TYPE_C;
+
 		const grid& g = grids[t];
 		assert(g.initialized());
 		vec deriv;
@@ -78,23 +97,31 @@ fl cache::eval_deriv(model& m, fl v) const { // needs m.coords, sets m.minus_for
 
 std::string convert_XS_to_string(sz t) {
 	switch(t) {
-		case XS_TYPE_C_H   : return "C_H";
-		case XS_TYPE_C_P   : return "C_P";
-		case XS_TYPE_N_P   : return "N_P";
-		case XS_TYPE_N_D   : return "N_D";
-		case XS_TYPE_N_A   : return "N_A";
-		case XS_TYPE_N_DA  : return "N_DA";
-		case XS_TYPE_O_P   : return "O_P";
-		case XS_TYPE_O_D   : return "O_D";
-		case XS_TYPE_O_A   : return "O_A";
-		case XS_TYPE_O_DA  : return "O_DA";
-		case XS_TYPE_S_P   : return "S_P";
-		case XS_TYPE_P_P   : return "P_P";
-		case XS_TYPE_F_H   : return "F_H";
-		case XS_TYPE_Cl_H  : return "Cl_H";
-		case XS_TYPE_Br_H  : return "Br_H";
-		case XS_TYPE_I_H   : return "I_H";
-		case XS_TYPE_Met_D : return "Met_D";
+		case XS_TYPE_C_H     : return "C_H";
+		case XS_TYPE_C_P     : return "C_P";
+		case XS_TYPE_N_P     : return "N_P";
+		case XS_TYPE_N_D     : return "N_D";
+		case XS_TYPE_N_A     : return "N_A";
+		case XS_TYPE_N_DA    : return "N_DA";
+		case XS_TYPE_O_P     : return "O_P";
+		case XS_TYPE_O_D     : return "O_D";
+		case XS_TYPE_O_A     : return "O_A";
+		case XS_TYPE_O_DA    : return "O_DA";
+		case XS_TYPE_S_P     : return "S_P";
+		case XS_TYPE_P_P     : return "P_P";
+		case XS_TYPE_F_H     : return "F_H";
+		case XS_TYPE_Cl_H    : return "Cl_H";
+		case XS_TYPE_Br_H    : return "Br_H";
+		case XS_TYPE_I_H     : return "I_H";
+		case XS_TYPE_Met_D   : return "Met_D";
+		case XS_TYPE_C_H_CG0 : return "C_H"; // closure of cyclic molecules
+		case XS_TYPE_C_P_CG0 : return "C_H";
+		case XS_TYPE_C_H_CG1 : return "C_H";
+		case XS_TYPE_C_P_CG1 : return "C_H";
+		case XS_TYPE_C_H_CG2 : return "C_H";
+		case XS_TYPE_C_P_CG2 : return "C_H";
+		case XS_TYPE_C_H_CG3 : return "C_H";
+		case XS_TYPE_C_P_CG3 : return "C_H";
 		default: VINA_CHECK(false);
 	}
 }
@@ -150,8 +177,13 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 
 void cache::populate(const model& m, const precalculate& p, const szv& atom_types_needed) {
 	szv needed;
+
 	VINA_FOR_IN(i, atom_types_needed) {
 		sz t = atom_types_needed[i];
+		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3) continue;
+		if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_P_CG1 ||
+			t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_H_CG3 || t == XS_TYPE_C_P_CG3) t = AD_TYPE_C;
+
 		if(!grids[t].initialized()) {
 			needed.push_back(t);
 			grids[t].init(gd);

@@ -1,4 +1,4 @@
-LIBOBJ = ad4cache.o cache.o conf_independent.o coords.o grid.o szv_grid.o model.o monte_carlo.o mutate.o parallel_mc.o parse_pdbqt.o potentials.o quasi_newton.o quaternion.o random.o scoring_function.o utils.o vina.o
+LIBOBJ = ad4cache.o cache.o conf_independent.o coords.o grid.o szv_grid.o model.o monte_carlo.o mutate.o parallel_mc.o parse_pdbqt.o potentials.o precalculate.o quasi_newton.o quaternion.o random.o scoring_function.o utils.o vina.o
 MAINOBJ = main.o
 SPLITOBJ = split.o
 

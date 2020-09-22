@@ -357,7 +357,6 @@ Thank you!\n";
         if (sf_name.compare("vina") == 0) {
             v.set_vina_weights(weight_gauss1, weight_gauss2, weight_repulsion,
                                weight_hydrophobic, weight_hydrogen, weight_glue, weight_rot);
-            v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing);
         } else {
             v.set_ad4_weights(weight_ad4_vdw, weight_ad4_hb, weight_ad4_elec,
                               weight_ad4_dsolv, weight_glue, weight_ad4_rot);
@@ -366,6 +365,11 @@ Thank you!\n";
 
         if (vm.count("ligand")) {
             v.set_ligand(ligand_names);
+
+            if (sf_name.compare("vina") == 0) {
+                // Will compute maps only for Vina atom types in the ligand(s)
+                v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing);
+            }
 
             if (randomize_only) {
                 v.randomize();
@@ -380,6 +384,11 @@ Thank you!\n";
                 v.write_results(out_name, num_modes, energy_range);
             }
         } else if (vm.count("batch")) {
+            if (sf_name.compare("vina") == 0) {
+                // Will compute maps only for Vina atom types in the ligand(s)
+                v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing);
+            }
+
             VINA_RANGE(i, 0, batch_ligand_names.size()) {
                 v.set_ligand(batch_ligand_names[i]);
 

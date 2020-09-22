@@ -25,32 +25,89 @@
 #include "atom_type.h"
 
 
-fl ScoringFunction::eval(atom& a, atom& b, fl r) const { // intentionally not checking for cutoff
+ScoringFunction::ScoringFunction(const scoring_function_choice sf_choice, const flv &weights)
+{
+    switch (sf_choice)
+    {
+        case SF_VINA:
+        {
+            m_potentials = {new vina_gaussian(0, 0.5, 8.0),
+                            new vina_gaussian(3, 2.0, 8.0),
+                            new vina_repulsion(0.0, 8.0),
+                            new vina_hydrophobic(0.5, 1.5, 8.0),
+                            new vina_non_dir_h_bond(-0.7, 0, 8.0),
+                            new linearattraction(20.0)};
+            m_conf_independents = {new num_tors_div()};
+            m_atom_typing = atom_type::XS;
+            break;
+        }
+        case SF_VINARDO:
+        {
+            std::cout << "\n\nVinardo scoring function is not implemented yet.\n\nAborting.\n\n";
+            VINA_CHECK(false);
+            break;
+        }
+        case SF_AD42:
+        {
+            m_potentials = {new ad4_vdw(0.5, 100000, 8.0),
+                            new ad4_hb(0.5, 100000, 8.0),
+                            new ad4_electrostatic(100, 20.48),
+                            new ad4_solvation(3.6, 0.01097, true, 20.48),
+                            new linearattraction(20.0)};
+            m_conf_independents = {new ad4_tors_add()};
+            m_atom_typing = atom_type::AD;
+            break;
+        }
+        default:
+        {
+            std::cout << "INSIDE everything::everything()   sfchoice = " << sf_choice << "\n";
+            VINA_CHECK(false);
+            break;
+        }
+    }
+
+    m_num_potentials = m_potentials.size();
+    m_num_conf_independents = m_conf_independents.size();
+    m_weights = weights;
+
+    VINA_FOR(i, m_num_potentials)
+    {
+        m_max_cutoff = (std::max)(m_max_cutoff, m_potentials[i]->get_cutoff());
+    }
+}
+
+fl ScoringFunction::eval(atom& a, atom& b, fl r) const
+{   // intentionally not checking for cutoff
     fl acc = 0;
 
-    VINA_FOR (i, m_num_potentials) {
+    VINA_FOR (i, m_num_potentials)
+    {
         acc += m_weights[i] * m_potentials[i]->eval(a, b, r);
     }
 
     return acc;
 }
 
-fl ScoringFunction::eval(sz t1, sz t2, fl r) const { // intentionally not checking for cutoff
+fl ScoringFunction::eval(sz t1, sz t2, fl r) const
+{   // intentionally not checking for cutoff
     fl acc = 0;
 
-    VINA_FOR (i, m_num_potentials) {
+    VINA_FOR (i, m_num_potentials)
+    {
         acc += m_weights[i] * m_potentials[i]->eval(t1, t2, r);
     }
 
     return acc;
 }
 
-fl ScoringFunction::conf_independent(const model& m, fl e) const {
+fl ScoringFunction::conf_independent(const model& m, fl e) const
+{
     // Iterator for weights
     flv::const_iterator it = m_weights.begin() + m_num_potentials;
     conf_independent_inputs in(m); // FIXME quite inefficient, but I think speed is irrelevant here, right?
 
-    VINA_FOR (i, m_num_conf_independents) {
+    VINA_FOR (i, m_num_conf_independents)
+    {
         // We don't accumulate energy. Why? I don't know...
         e = m_conf_independents[i]->eval(in, e, it);
     }
@@ -59,10 +116,12 @@ fl ScoringFunction::conf_independent(const model& m, fl e) const {
     return e;
 }
 
-szv ScoringFunction::get_atom_types() const {
+szv ScoringFunction::get_atom_types() const
+{
     szv tmp;
 
-    VINA_FOR(i, num_atom_types(m_atom_typing)) {
+    VINA_FOR(i, num_atom_types(m_atom_typing))
+    {
       tmp.push_back(i);
     }
 
