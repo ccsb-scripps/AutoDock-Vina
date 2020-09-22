@@ -25,8 +25,7 @@
 #include "precalculate.h"
 
 
-cache::cache(const std::string& scoring_function_version_, const grid_dims& gd_, fl slope_, atom_type::t atom_typing_used_)
-: scoring_function_version(scoring_function_version_), gd(gd_), slope(slope_), atu(atom_typing_used_), grids(num_atom_types(atom_typing_used_)) {}
+cache::cache(const grid_dims& gd_, fl slope_) : gd(gd_), slope(slope_), grids(XS_TYPE_SIZE) {}
 
 fl cache::eval(const model& m, fl v) const { // needs m.coords
 	fl e = 0;
@@ -193,7 +192,7 @@ void cache::populate(const model& m, const precalculate& p, const szv& atom_type
 		return;
 	flv affinities(needed.size());
 
-	sz nat = num_atom_types(atu);
+	sz nat = num_atom_types(atom_type::XS);
 
 	grid& g = grids[needed.front()];
 
@@ -211,14 +210,14 @@ void cache::populate(const model& m, const precalculate& p, const szv& atom_type
 				VINA_FOR_IN(possibilities_i, possibilities) {
 					const sz i = possibilities[possibilities_i];
 					const atom& a = m.grid_atoms[i];
-					const sz t1 = a.get(atu);
+					const sz t1 = a.get(atom_type::XS);
 					if(t1 >= nat) continue;
 					const fl r2 = vec_distance_sqr(a.coords, probe_coords);
 					if(r2 <= cutoff_sqr) {
 						VINA_FOR_IN(j, needed) {
 							const sz t2 = needed[j];
 							assert(t2 < nat);
-							const sz type_pair_index = triangular_matrix_index_permissive(num_atom_types(atu), t1, t2);
+							const sz type_pair_index = triangular_matrix_index_permissive(nat, t1, t2);
 							affinities[j] += p.eval_fast(type_pair_index, r2);
 						}
 					}

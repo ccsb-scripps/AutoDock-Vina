@@ -296,7 +296,7 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
     // Initialize the vina box
     set_vina_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
     precalculate precalculated_sf(m_scoring_function);
-    cache grid("scoring_function_version001", m_gd, slope, atom_typing);
+    cache grid(m_gd, slope);
     grid.populate(m_model, precalculated_sf, atom_types);
     done(m_verbosity, 0);
 

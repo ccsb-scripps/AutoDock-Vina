@@ -49,11 +49,8 @@ struct ad4cache : public igrid {
     void write(const std::string& out_prefix, const szv& atom_types, const std::string& gpf_filename="NULL",
                const std::string& fld_filename="NULL", const std::string& receptor_filename="NULL");
 private:
-	std::string scoring_function_version;
-	atomv atoms; // for verification
 	grid_dims gd;
 	fl slope; // does not get (de-)serialized
-	atom_type::t atu;
 	std::vector<grid> grids;
 };
 

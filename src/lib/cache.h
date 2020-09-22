@@ -43,7 +43,7 @@ struct model;
 
 struct cache : public igrid {
     cache() {}
-	cache(const std::string& scoring_function_version_, const grid_dims& gd_, fl slope_, atom_type::t atom_typing_used_);
+	cache(const grid_dims& gd_, fl slope_);
 	fl eval      (const model& m, fl v) const; // needs m.coords // clean up
 	fl eval_intra(      model& m, fl v) const; // needs m.coords // clean up
 	fl eval_deriv(      model& m, fl v) const; // needs m.coords, sets m.minus_forces // clean up
@@ -51,11 +51,8 @@ struct cache : public igrid {
                const std::string& fld_filename="NULL", const std::string& receptor_filename="NULL");
 	void populate(const model& m, const precalculate& p, const szv& atom_types_needed);
 private:
-	std::string scoring_function_version;
-	atomv atoms; // for verification
 	grid_dims gd;
 	fl slope; // does not get (de-)serialized
-	atom_type::t atu;
 	std::vector<grid> grids;
 };
 
