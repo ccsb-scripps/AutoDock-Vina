@@ -548,6 +548,7 @@ std::vector<double> Vina::optimize(output_type& out, int max_steps) {
     const vec authentic_v(1000, 1000, 1000);
     std::vector<double> energies_before_opt;
     std::vector<double> energies_after_opt;
+    int evalcount = 0;
 
     // Define the number minimization steps based on the number moving atoms
     if (max_steps == 0) {
@@ -563,8 +564,8 @@ std::vector<double> Vina::optimize(output_type& out, int max_steps) {
 
     doing("Performing local search", m_verbosity, 0);
     VINA_FOR(p, 5) {
-        if (m_sf_choice == SF_VINA) quasi_newton_par(m_model, m_precalculated_byatom, m_grid,    out, g, authentic_v);
-        if (m_sf_choice == SF_AD42) quasi_newton_par(m_model, m_precalculated_byatom, m_ad4grid, out, g, authentic_v);
+        if (m_sf_choice == SF_VINA) quasi_newton_par(m_model, m_precalculated_byatom, m_grid,    out, g, authentic_v, evalcount);
+        if (m_sf_choice == SF_AD42) quasi_newton_par(m_model, m_precalculated_byatom, m_ad4grid, out, g, authentic_v, evalcount);
     }
     done(m_verbosity, 0);
 
@@ -617,6 +618,7 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
     sz heuristic = m_model.num_movable_atoms() + 10 * m_model.get_size().num_degrees_of_freedom();
     parallelmc.mc.global_steps = unsigned(70 * 3 * (50 + heuristic) / 2); // 2 * 70 -> 8 * 20 // FIXME
     parallelmc.mc.local_steps = unsigned((25 + m_model.num_movable_atoms()) / 3);
+    parallelmc.mc.max_evals = m_max_evals;
     parallelmc.mc.min_rmsd = min_rmsd;
     parallelmc.mc.num_saved_mins = n_poses;
     parallelmc.mc.hunt_cap = vec(10, 10, 10);

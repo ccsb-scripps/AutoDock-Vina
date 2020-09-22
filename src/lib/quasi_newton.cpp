@@ -40,10 +40,10 @@ struct quasi_newton_aux {
     }
 };
 
-void quasi_newton::operator()(model& m, const precalculate_byatom& p, const igrid& ig, output_type& out, change& g, const vec& v) const { // g must have correct size
+void quasi_newton::operator()(model& m, const precalculate_byatom& p, const igrid& ig, output_type& out, change& g, const vec& v, int& evalcount) const { // g must have correct size
     quasi_newton_aux aux(&m, &p, &ig, v);
 
-    fl res = bfgs(aux, out.c, g, max_steps, average_required_improvement, 10);
+    fl res = bfgs(aux, out.c, g, max_steps, average_required_improvement, 10, evalcount);
 
     // Update model a last time after optimization
     m.set(out.c);

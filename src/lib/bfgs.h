@@ -63,7 +63,7 @@ inline bool bfgs_update(flmat& h, const Change& p, const Change& y, const fl alp
 }
 
 template<typename F, typename Conf, typename Change>
-fl line_search(F& f, sz n, const Conf& x, const Change& g, const fl f0, const Change& p, Conf& x_new, Change& g_new, fl& f1) { // returns alpha
+fl line_search(F& f, sz n, const Conf& x, const Change& g, const fl f0, const Change& p, Conf& x_new, Change& g_new, fl& f1, int& evalcount) { // returns alpha
 	const fl c0 = 0.0001;
 	const unsigned max_trials = 10;
 	const fl multiplier = 0.5;
@@ -74,6 +74,7 @@ fl line_search(F& f, sz n, const Conf& x, const Change& g, const fl f0, const Ch
 	VINA_U_FOR(trial, max_trials) {
 		x_new = x; x_new.increment(p, alpha);
 		f1 = f(x_new, g_new);
+		evalcount++;
 		if(f1 - f0 < c0 * alpha * pg) // FIXME check - div by norm(p) ? no?
 			break;
 		alpha *= multiplier;
@@ -93,7 +94,8 @@ void subtract_change(Change& b, const Change& a, sz n) { // b -= a
 }
 
 template<typename F, typename Conf, typename Change>
-fl bfgs(F& f, Conf& x, Change& g, const unsigned max_steps, const fl average_required_improvement, const sz over) { // x is I/O, final value is returned
+fl bfgs(F& f, Conf& x, Change& g, const unsigned max_steps, const fl average_required_improvement, const sz over,
+		int& evalcount) { // x is I/O, final value is returned
 	sz n = g.num_floats();
 	flmat h(n, 0);
 	set_diagonal(h, 1);
@@ -101,6 +103,7 @@ fl bfgs(F& f, Conf& x, Change& g, const unsigned max_steps, const fl average_req
 	Change g_new(g);
 	Conf x_new(x);
 	fl f0 = f(x, g);
+	evalcount++;
 
 	fl f_orig = f0;
 	Change g_orig(g);
@@ -114,7 +117,7 @@ fl bfgs(F& f, Conf& x, Change& g, const unsigned max_steps, const fl average_req
 	VINA_U_FOR(step, max_steps) {
 		minus_mat_vec_product(h, g, p);
 		fl f1 = 0;
-		const fl alpha = line_search(f, n, x, g, f0, p, x_new, g_new, f1);
+		const fl alpha = line_search(f, n, x, g, f0, p, x_new, g_new, f1, evalcount);
 		Change y(g_new); subtract_change(y, g, n);
 
 		f_values.push_back(f1);
