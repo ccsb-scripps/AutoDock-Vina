@@ -25,74 +25,7 @@
 #include "precalculate.h"
 
 
-cache::cache(const grid_dims& gd_, fl slope_) : gd(gd_), slope(slope_), grids(XS_TYPE_SIZE) {}
-
-fl cache::eval(const model& m, fl v) const { // needs m.coords
-	fl e = 0;
-	sz nat = num_atom_types(atom_type::XS);
-
-	VINA_FOR(i, m.num_movable_atoms()) {
-		const atom& a = m.atoms[i];
-		sz t = a.get(atom_type::XS);
-		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3) continue;
-		else if (t >= nat) continue;
-		if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_P_CG1 ||
-			t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_H_CG3 || t == XS_TYPE_C_P_CG3) t = AD_TYPE_C;
-
-		const grid& g = grids[t];
-		assert(g.initialized());
-		e += g.evaluate(m.coords[i], slope, v);
-	}
-	return e;
-}
-
-fl cache::eval_intra(model& m, fl v) const {
-	fl e = 0;
-	sz nat = num_atom_types(atom_type::XS);
-
-	VINA_FOR(i, m.num_movable_atoms()) {
-        if(m.find_ligand(i) < m.ligands.size()) continue; // we only want flex-rigid interaction
-		const atom& a = m.atoms[i];
-		sz t = a.get(atom_type::XS);
-		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3) continue;
-		else if (t >= nat) continue;
-		if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_P_CG1 ||
-			t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_H_CG3 || t == XS_TYPE_C_P_CG3) t = AD_TYPE_C;
-
-		const grid& g = grids[t];
-		assert(g.initialized());
-		e += g.evaluate(m.coords[i], slope, v);
-	}
-	return e;
-}
-
-fl cache::eval_deriv(model& m, fl v) const { // needs m.coords, sets m.minus_forces
-	fl e = 0;
-	sz nat = num_atom_types(atom_type::XS);
-
-	VINA_FOR(i, m.num_movable_atoms()) {
-		const atom& a = m.atoms[i];
-		sz t = a.get(atom_type::XS);
-		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
-		{
-			m.minus_forces[i].assign(0);
-			continue;
-		} else if (t >= nat) 
-		{ 
-			m.minus_forces[i].assign(0);
-			continue;
-		}
-		if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_P_CG1 ||
-			t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_H_CG3 || t == XS_TYPE_C_P_CG3) t = AD_TYPE_C;
-
-		const grid& g = grids[t];
-		assert(g.initialized());
-		vec deriv;
-		e += g.evaluate(m.coords[i], slope, v, deriv);
-		m.minus_forces[i] = deriv;
-	}
-	return e;
-}
+namespace fs = boost::filesystem;
 
 std::string convert_XS_to_string(sz t) {
 	switch(t) {
@@ -113,26 +46,245 @@ std::string convert_XS_to_string(sz t) {
 		case XS_TYPE_Br_H    : return "Br_H";
 		case XS_TYPE_I_H     : return "I_H";
 		case XS_TYPE_Met_D   : return "Met_D";
-		case XS_TYPE_C_H_CG0 : return "C_H"; // closure of cyclic molecules
-		case XS_TYPE_C_P_CG0 : return "C_H";
-		case XS_TYPE_C_H_CG1 : return "C_H";
-		case XS_TYPE_C_P_CG1 : return "C_H";
-		case XS_TYPE_C_H_CG2 : return "C_H";
-		case XS_TYPE_C_P_CG2 : return "C_H";
-		case XS_TYPE_C_H_CG3 : return "C_H";
-		case XS_TYPE_C_P_CG3 : return "C_H";
+		case XS_TYPE_W       : return "W";
 		default: VINA_CHECK(false);
 	}
 }
 
+cache::cache(fl slope_) : slope(slope_), grids(XS_TYPE_SIZE) {}
+
+fl cache::eval(const model& m, fl v) const { // needs m.coords
+	fl e = 0;
+	sz nat = num_atom_types(atom_type::XS);
+
+	std::cout << "Eval\n";
+
+	VINA_FOR(i, m.num_movable_atoms()) {
+		const atom& a = m.atoms[i];
+		sz t = a.get(atom_type::XS);
+
+		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
+			continue;
+		else if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_H_CG3)
+			t = XS_TYPE_C_H;
+		else if (t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_P_CG1 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_P_CG3)
+			t = XS_TYPE_C_P;
+		else if (t >= nat) // This is used to ignore hydrogen atoms
+			continue;
+
+		const grid& g = grids[t];
+		assert(g.initialized());
+		e += g.evaluate(m.coords[i], slope, v);
+	}
+	return e;
+}
+
+fl cache::eval_intra(model& m, fl v) const {
+	fl e = 0;
+	sz nat = num_atom_types(atom_type::XS);
+
+	VINA_FOR(i, m.num_movable_atoms()) {
+        if(m.find_ligand(i) < m.ligands.size()) continue; // we only want flex-rigid interaction
+		const atom& a = m.atoms[i];
+		sz t = a.get(atom_type::XS);
+
+		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
+			continue;
+		else if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_H_CG3)
+			t = XS_TYPE_C_H;
+		else if (t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_P_CG1 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_P_CG3)
+			t = XS_TYPE_C_P;
+		else if (t >= nat) // This is used to ignore hydrogen atoms
+			continue;
+
+		const grid& g = grids[t];
+		assert(g.initialized());
+		e += g.evaluate(m.coords[i], slope, v);
+	}
+	return e;
+}
+
+fl cache::eval_deriv(model& m, fl v) const { // needs m.coords, sets m.minus_forces
+	fl e = 0;
+	sz nat = num_atom_types(atom_type::XS);
+
+	VINA_FOR(i, m.num_movable_atoms()) {
+		const atom& a = m.atoms[i];
+		sz t = a.get(atom_type::XS);
+
+		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
+		{	
+			m.minus_forces[i].assign(0);
+			continue;
+		}
+		else if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_H_CG3)
+			t = XS_TYPE_C_H;
+		else if (t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_P_CG1 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_P_CG3)
+			t = XS_TYPE_C_P;
+		else if (t >= nat) // This is used to ignore hydrogen atoms
+			continue;
+
+		const grid& g = grids[t];
+		assert(g.initialized());
+		vec deriv;
+		e += g.evaluate(m.coords[i], slope, v, deriv);
+		m.minus_forces[i] = deriv;
+	}
+	return e;
+}
+
+std::vector<std::string> vina_split(std::string str)
+{
+	std::vector<std::string> fields;
+	std::string field;
+	std::istringstream iss(str);
+	while (std::getline(iss, field, ' '))
+	{
+		fields.push_back(field);
+	};
+	return fields;
+}
+
+void read_vina_map(path &filename, std::vector<grid_dims> &gds, grid &g)
+{
+	sz line_counter = 0;
+	sz pt_counter = 0;
+	sz x = 0;
+	sz y = 0;
+	sz z = 0;
+	grid_dims gd;
+	std::string line;
+	fl spacing, center, halfspan;
+	sz nx, ny, nz;
+
+	ifile in(filename);
+
+	while (std::getline(in, line))
+	{
+		line_counter++;
+		if (line_counter == 4)
+		{
+			std::vector<std::string> fields = vina_split(line);
+			spacing = std::atof(fields[1].c_str());
+		}
+		if (line_counter == 5)
+		{
+			std::vector<std::string> fields = vina_split(line);
+			nx = std::atoi(fields[1].c_str());
+			ny = std::atoi(fields[2].c_str());
+			nz = std::atoi(fields[3].c_str());
+			gd[0].n = nx + sz(nx % 2 == 0) - 1; // n voxels, not sample points
+			gd[1].n = ny + sz(nx % 2 == 0) - 1;
+			gd[2].n = nz + sz(nx % 2 == 0) - 1;
+			//std::cout << spacing << " " << gd[0].n << "\n";
+		}
+		if (line_counter == 6)
+		{
+			std::vector<std::string> fields = vina_split(line);
+			VINA_FOR(i, 3)
+			{
+				center = std::atof(fields[i + 1].c_str());
+				halfspan = (gd[i].n) * spacing / 2.0;
+				gd[i].begin = center - halfspan;
+				gd[i].end = center + halfspan;
+			}
+			gds.push_back(gd);
+			g.init(gd);
+		}
+		if (line_counter > 6)
+		{
+			//std::cout << line << "\n";
+			g.m_data(x, y, z) = std::atof(line.c_str());
+			y += sz(x == (gd[0].n + 1));
+			z += sz(y == (gd[1].n + 1));
+			x = x % (gd[0].n + 1);
+			y = y % (gd[1].n + 1);
+			pt_counter++;
+			std::cout << x << " " << y << " " << z << " " << std::atof(line.c_str()) << "\n";
+			x++;
+		}
+	} // line loop
+}
+
+grid_dims cache::read(const std::string &map_prefix)
+{
+	sz t;
+	sz nat = num_atom_types(atom_type::XS);
+	std::string type, filename;
+	std::vector<grid_dims> gds; // to check all maps have same dims (TODO)
+
+	bool got_C_H_already = false;
+	bool got_C_P_already = false;
+
+	VINA_FOR(xs_type, XS_TYPE_SIZE)
+	{
+		t = xs_type;
+
+		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
+			continue;
+		else if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_H_CG3)
+			t = XS_TYPE_C_H;
+		else if (t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_P_CG1 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_P_CG3)
+			t = XS_TYPE_C_P;
+		else if (t >= nat) // This is used to ignore hydrogen atoms
+			continue;
+
+		if (t == XS_TYPE_C_H && got_C_H_already)
+			continue;
+		else if (t == XS_TYPE_C_P && got_C_P_already)
+			continue;
+
+		if (t == XS_TYPE_C_H)
+			got_C_H_already = true;
+		else if (t == XS_TYPE_C_P)
+			got_C_P_already = true;
+
+		type = convert_XS_to_string(t);
+		filename = map_prefix + "." + type + ".map";
+		path p{filename};
+		if (fs::exists(p)) {
+			std::cout << "Read " + filename + "\n";
+			read_vina_map(p, gds, grids[t]);
+		}
+	} // map loop
+
+	return gds[0];
+}
+
 void cache::write(const std::string& out_prefix, const szv& atom_types, const std::string& gpf_filename,
-                  const std::string& fld_filename, const std::string& receptor_filename) {
+                  const std::string& fld_filename, const std::string& receptor_filename) 
+{
+	sz nat = num_atom_types(atom_type::XS);
 	std::string atom_type;
 	std::string filename;
+	bool got_C_H_already = false;
+	bool got_C_P_already = false;
 
-	VINA_FOR_IN(t, atom_types) {
+	VINA_FOR_IN(i, atom_types) {
+		sz t = atom_types[i];
+
+		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
+			continue;
+		else if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_H_CG3)
+			t = XS_TYPE_C_H;
+		else if (t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_P_CG1 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_P_CG3)
+			t = XS_TYPE_C_P;
+		else if (t >= nat) // This is used to ignore hydrogen atoms
+			continue;
+
+		if (t == XS_TYPE_C_H && got_C_H_already)
+			continue;
+		else if (t == XS_TYPE_C_P && got_C_P_already)
+			continue;
+
+		if (t == XS_TYPE_C_H)
+			got_C_H_already = true;
+		else if (t == XS_TYPE_C_P)
+			got_C_P_already = true;
+
 		atom_type = convert_XS_to_string(t);
 		filename = out_prefix + "." + atom_type + ".map";
+		std::cout << "Writing " + filename + "\n";
 		path p(filename);
 		ofile out(p);
 
@@ -174,14 +326,31 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 	} // map atom type
 } // cache::write
 
-void cache::populate(const model& m, const precalculate& p, const szv& atom_types_needed) {
+void cache::populate(const model &m, const precalculate &p, const grid_dims &gd, const szv &atom_types_needed)
+{
 	szv needed;
+	bool got_C_H_already = false;
+	bool got_C_P_already = false;
 
 	VINA_FOR_IN(i, atom_types_needed) {
 		sz t = atom_types_needed[i];
-		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3) continue;
-		if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_P_CG1 ||
-			t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_H_CG3 || t == XS_TYPE_C_P_CG3) t = AD_TYPE_C;
+
+		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
+			continue;
+		else if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_H_CG3)
+			t = XS_TYPE_C_H;
+		else if (t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_P_CG1 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_P_CG3)
+			t = XS_TYPE_C_P;
+
+		if (t == XS_TYPE_C_H && got_C_H_already)
+			continue;
+		else if (t == XS_TYPE_C_P && got_C_P_already)
+			continue;
+
+		if (t == XS_TYPE_C_H)
+			got_C_H_already = true;
+		else if (t == XS_TYPE_C_P)
+			got_C_P_already = true;
 
 		if(!grids[t].initialized()) {
 			needed.push_back(t);
@@ -191,6 +360,9 @@ void cache::populate(const model& m, const precalculate& p, const szv& atom_type
 	if(needed.empty())
 		return;
 	flv affinities(needed.size());
+
+	VINA_FOR_IN(i, needed)
+		std::cout << "Populate needed " << needed[i] << "\n";
 
 	sz nat = num_atom_types(atom_type::XS);
 

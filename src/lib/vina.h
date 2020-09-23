@@ -123,7 +123,7 @@ public:
                          double weight_ad4_elec=0.1406, double weight_ad4_dsolv=0.1322, 
                          double weight_glue=50, double weight_ad4_rot =0.2983);
     void compute_vina_maps(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.375);
-    void load_ad4_maps(std::string ad4_maps);
+    void load_maps(std::string maps);
     void randomize(const int max_steps=10000);
     std::vector<double> score();
     std::vector<double> optimize(const int max_steps=0);

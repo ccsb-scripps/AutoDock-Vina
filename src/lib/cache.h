@@ -34,6 +34,7 @@
 #include <boost/static_assert.hpp>
 #include "igrid.h"
 #include "grid.h"
+#include "model.h"
 #include "file.h"
 #include "szv_grid.h"
 
@@ -43,13 +44,14 @@ struct model;
 
 struct cache : public igrid {
     cache() {}
-	cache(const grid_dims& gd_, fl slope_);
+	cache(fl slope_);
 	fl eval      (const model& m, fl v) const; // needs m.coords // clean up
 	fl eval_intra(      model& m, fl v) const; // needs m.coords // clean up
 	fl eval_deriv(      model& m, fl v) const; // needs m.coords, sets m.minus_forces // clean up
+    grid_dims read(const std::string& str);
     void write(const std::string& out_prefix, const szv& atom_types, const std::string& gpf_filename="NULL",
                const std::string& fld_filename="NULL", const std::string& receptor_filename="NULL");
-	void populate(const model& m, const precalculate& p, const szv& atom_types_needed);
+	void populate(const model& m, const precalculate& p, const grid_dims& gd, const szv& atom_types_needed);
 private:
 	grid_dims gd;
 	fl slope; // does not get (de-)serialized

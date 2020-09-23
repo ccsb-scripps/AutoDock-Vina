@@ -107,6 +107,7 @@ Thank you!\n";
         std::string config_name;
         std::string out_name;
         std::string out_dir;
+        std::string out_vina_maps;
         std::vector<std::string> ligand_names;
         std::vector<std::string> batch_ligand_names;
         std::string maps;
@@ -180,6 +181,7 @@ Thank you!\n";
         outputs.add_options()
             ("out", value<std::string>(&out_name), "output models (PDBQT), the default is chosen based on the ligand file name")
             ("dir", value<std::string>(&out_dir), "output directory for batch mode")
+            ("write_vina_maps", value<std::string>(&out_vina_maps), "output filename (directory + prefix name) for vina maps")
         ;
         options_description advanced("Advanced options (see the manual)");
         advanced.add_options()
@@ -288,13 +290,11 @@ Thank you!\n";
         }
 
         if (sf_name.compare("ad4") == 0) {
-            if ((vm.count("maps") <= 0)) {
+            if ((!vm.count("maps"))) {
                 std::cerr << desc_simple << "\n\nERROR: Affinity maps are missing.\n";
                 exit(EXIT_FAILURE);
-            }
-        } else if (sf_name.compare("vina") == 0) {
-            if (vm.count("maps") > 0) {
-                std::cerr << "WARNING: Affinity maps vina scoring function are ignored for the moment.\n";
+            } else if (vm.count("out_vina_maps")) {
+                std::cerr << "WARNING: Cannot output vina maps using AD4 scoring function.\n";
             }
         }
 
@@ -364,15 +364,22 @@ Thank you!\n";
         } else {
             v.set_ad4_weights(weight_ad4_vdw, weight_ad4_hb, weight_ad4_elec,
                               weight_ad4_dsolv, weight_glue, weight_ad4_rot);
-            v.load_ad4_maps(maps);
+            v.load_maps(maps);
         }
 
         if (vm.count("ligand")) {
             v.set_ligand(ligand_names);
 
             if (sf_name.compare("vina") == 0) {
-                // Will compute maps only for Vina atom types in the ligand(s)
-                v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing);
+                if (vm.count("maps")) {
+                    v.load_maps(maps);
+                } else {
+                    // Will compute maps only for Vina atom types in the ligand(s)
+                    v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing);
+
+                    if (vm.count("write_vina_maps"))
+                        v.write_maps(out_vina_maps);
+                }
             }
 
             if (randomize_only) {
@@ -389,8 +396,15 @@ Thank you!\n";
             }
         } else if (vm.count("batch")) {
             if (sf_name.compare("vina") == 0) {
-                // Will compute maps only for Vina atom types in the ligand(s)
-                v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing);
+                if (vm.count("maps")) {
+                    v.load_maps(maps);
+                } else {
+                    // Will compute maps for all Vina atom types
+                    v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing);
+
+                    if (vm.count("write_vina_maps"))
+                        v.write_maps(out_vina_maps);
+                }
             }
 
             VINA_RANGE(i, 0, batch_ligand_names.size()) {

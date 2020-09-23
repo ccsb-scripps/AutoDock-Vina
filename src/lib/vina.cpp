@@ -287,7 +287,7 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
     szv atom_types;
     atom_type::t atom_typing = m_scoring_function.get_atom_typing();
 
-    if (m_ligand_initialized) 
+    if (m_ligand_initialized)
         atom_types = m_model.get_movable_atom_types(atom_typing);
     else
         atom_types = m_scoring_function.get_atom_types();
@@ -296,8 +296,8 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
     // Initialize the vina box
     set_vina_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
     precalculate precalculated_sf(m_scoring_function);
-    cache grid(m_gd, slope);
-    grid.populate(m_model, precalculated_sf, atom_types);
+    cache grid(slope);
+    grid.populate(m_model, precalculated_sf, m_gd, atom_types);
     done(m_verbosity, 0);
 
     // Store in Vina object
@@ -305,19 +305,31 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
     m_map_initialized = true;
 }
 
-void Vina::load_ad4_maps(std::string ad4_maps) {
+void Vina::load_maps(std::string maps) {
     const fl slope = 1e6; // FIXME: too large? used to be 100
     grid_dims gd;
 
-    doing("Reading AD4.2 maps", m_verbosity, 0);
-    ad4cache grid(slope);
-    gd = grid.read(ad4_maps);
-    done(m_verbosity, 0);
+    if (m_sf_choice == SF_VINA) {
+        doing("Reading Vina maps", m_verbosity, 0);
+        cache grid(slope);
+        gd = grid.read(maps);
+        done(m_verbosity, 0);
+        std::cout << "HERE1\n";
+        m_grid = grid;
+        std::cout << "HERE2\n";
+    } else {
+        doing("Reading AD4.2 maps", m_verbosity, 0);
+        ad4cache grid(slope);
+        gd = grid.read(maps);
+        done(m_verbosity, 0);
+        m_ad4grid = grid;
+    }
+
+    std::cerr << "HERE\n";
 
     // Store in Vina object
     const vec corner1(gd[0].begin, gd[1].begin, gd[2].begin);
-    const vec corner2(gd[0].end,   gd[1].end,   gd[2].end);
-    m_ad4grid = grid;
+    const vec corner2(gd[0].end, gd[1].end, gd[2].end);
     m_gd = gd;
     m_corner1 = corner1;
     m_corner2 = corner2;
@@ -328,7 +340,13 @@ void Vina::write_maps(const std::string& map_prefix, const std::string& gpf_file
                       const std::string& fld_filename, const std::string& receptor_filename) {
     VINA_CHECK(m_map_initialized); // // m_gd, m_corner1, m_corner2, m_grid/ad4grid
 
-    const szv atom_types = m_scoring_function.get_atom_types();
+    szv atom_types;
+    atom_type::t atom_typing = m_scoring_function.get_atom_typing();
+
+    if (m_ligand_initialized)
+        atom_types = m_model.get_movable_atom_types(atom_typing);
+    else
+        atom_types = m_scoring_function.get_atom_types();
 
     if (m_sf_choice == SF_VINA) {
         m_grid.write(map_prefix, atom_types, gpf_filename, fld_filename, receptor_filename);

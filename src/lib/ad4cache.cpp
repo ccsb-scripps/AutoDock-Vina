@@ -25,6 +25,33 @@
 
 namespace fs = boost::filesystem;
 
+std::string get_adtype_str(sz& t) {
+    switch(t) {
+        case AD_TYPE_C : return "C";
+        case AD_TYPE_A : return "A";
+        case AD_TYPE_N : return "N";
+        case AD_TYPE_O : return "O";
+        case AD_TYPE_P : return "P";
+        case AD_TYPE_S : return "S";
+        case AD_TYPE_H : return "H";
+        case AD_TYPE_F : return "F";
+        case AD_TYPE_I : return "I";
+        case AD_TYPE_NA: return "NA";
+        case AD_TYPE_OA: return "OA";
+        case AD_TYPE_SA: return "SA";
+        case AD_TYPE_HD: return "HD";
+        case AD_TYPE_Mg: return "Mg";
+        case AD_TYPE_Mn: return "Mn";
+        case AD_TYPE_Zn: return "Zn";
+        case AD_TYPE_Ca: return "Ca";
+        case AD_TYPE_Fe: return "Fe";
+        case AD_TYPE_Cl: return "Cl";
+        case AD_TYPE_Br: return "Br";
+        case AD_TYPE_W : return "W";
+        default: VINA_CHECK(false);
+    }
+}
+
 ad4cache::ad4cache(fl slope_): slope(slope_), grids(AD_TYPE_SIZE + 2) {}
 
 fl ad4cache::eval(const model& m, fl v) const {
@@ -34,9 +61,10 @@ fl ad4cache::eval(const model& m, fl v) const {
     VINA_FOR(i, m.num_movable_atoms()) {
         const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::AD);
-        if (t==AD_TYPE_G0 || t==AD_TYPE_G1 || t==AD_TYPE_G2 || t==AD_TYPE_G3) continue;
-        else if (t >= nat) continue;
-        if (t==AD_TYPE_CG0|| t==AD_TYPE_CG1|| t==AD_TYPE_CG2|| t==AD_TYPE_CG3) t = AD_TYPE_C;
+        if (t == AD_TYPE_G0 || t == AD_TYPE_G1 || t == AD_TYPE_G2 || t == AD_TYPE_G3)
+            continue;
+        else if (t == AD_TYPE_CG0 || t == AD_TYPE_CG1 || t == AD_TYPE_CG2 || t == AD_TYPE_CG3)
+            t = AD_TYPE_C;
 
         // HB + vdW
         const grid& g = grids[t];
@@ -65,9 +93,10 @@ fl ad4cache::eval_intra(model& m, fl v) const {
         if(m.find_ligand(i) < m.ligands.size()) continue; // we only want flex-rigid interaction
 		const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::AD);
-        if (t==AD_TYPE_G0 || t==AD_TYPE_G1 || t==AD_TYPE_G2 || t==AD_TYPE_G3) continue;
-        else if (t >= nat) continue;
-        if (t==AD_TYPE_CG0|| t==AD_TYPE_CG1|| t==AD_TYPE_CG2|| t==AD_TYPE_CG3) t = AD_TYPE_C;
+        if (t == AD_TYPE_G0 || t == AD_TYPE_G1 || t == AD_TYPE_G2 || t == AD_TYPE_G3)
+            continue;
+        else if (t == AD_TYPE_CG0 || t == AD_TYPE_CG1 || t == AD_TYPE_CG2 || t == AD_TYPE_CG3)
+            t = AD_TYPE_C;
 
         // HB + vdW
         const grid& g = grids[t];
@@ -97,12 +126,9 @@ fl ad4cache::eval_deriv(model& m, fl v) const { // sets m.minus_forces
         if (t==AD_TYPE_G0 || t==AD_TYPE_G1 || t==AD_TYPE_G2 || t==AD_TYPE_G3) {
             m.minus_forces[i].assign(0);
             continue;
-        } else if (t >= nat)
-        {
-            m.minus_forces[i].assign(0);
-            continue;
+        } else if (t==AD_TYPE_CG0|| t==AD_TYPE_CG1|| t==AD_TYPE_CG2|| t==AD_TYPE_CG3) {
+            t = AD_TYPE_C;
         }
-        if (t==AD_TYPE_CG0|| t==AD_TYPE_CG1|| t==AD_TYPE_CG2|| t==AD_TYPE_CG3) t = AD_TYPE_C;
 
         // HB + vdW
         const grid& g = grids[t];
@@ -128,33 +154,6 @@ fl ad4cache::eval_deriv(model& m, fl v) const { // sets m.minus_forces
 	return e;
 }
 
-std::string get_adtype_str(sz& t) {
-    switch(t) {
-        case AD_TYPE_C : return "C";
-        case AD_TYPE_A : return "A";
-        case AD_TYPE_N : return "N";
-        case AD_TYPE_O : return "O";
-        case AD_TYPE_P : return "P";
-        case AD_TYPE_S : return "S";
-        case AD_TYPE_H : return "H";
-        case AD_TYPE_F : return "F";
-        case AD_TYPE_I : return "I";
-        case AD_TYPE_NA: return "NA";
-        case AD_TYPE_OA: return "OA";
-        case AD_TYPE_SA: return "SA";
-        case AD_TYPE_HD: return "HD";
-        case AD_TYPE_Mg: return "Mg";
-        case AD_TYPE_Mn: return "Mn";
-        case AD_TYPE_Zn: return "Zn";
-        case AD_TYPE_Ca: return "Ca";
-        case AD_TYPE_Fe: return "Fe";
-        case AD_TYPE_Cl: return "Cl";
-        case AD_TYPE_Br: return "Br";
-        case AD_TYPE_W : return "W";
-        default: VINA_CHECK(false);
-    }
-}
-
 std::vector<std::string> split(std::string str) {
     std::vector<std::string> fields;
     std::string field;
@@ -166,7 +165,7 @@ std::vector<std::string> split(std::string str) {
     return fields;
 }
 
-void readmap(path& filename, std::vector<grid_dims>& gds, grid& g) {
+void read_ad4_map(path& filename, std::vector<grid_dims>& gds, grid& g) {
 
     sz line_counter = 0;
     sz pt_counter = 0;
@@ -215,7 +214,7 @@ void readmap(path& filename, std::vector<grid_dims>& gds, grid& g) {
             x = x % (gd[0].n + 1);
             y = y % (gd[1].n + 1);
             pt_counter++;
-            // std::cout << x << " " << y << " " << z << std::atof(line.c_str()) << "\n";
+            std::cout << x << " " << y << " " << z << " " << std::atof(line.c_str()) << "\n";
             x++;
         }
 
@@ -233,6 +232,7 @@ grid_dims ad4cache::read(const std::string& map_prefix) {
 
     VINA_FOR(ad_type, AD_TYPE_SIZE){
         t = ad_type;
+
         if ((t==AD_TYPE_G0) || (t==AD_TYPE_G1) ||
             (t==AD_TYPE_G2) || (t==AD_TYPE_G3))
             continue;
@@ -243,12 +243,13 @@ grid_dims ad4cache::read(const std::string& map_prefix) {
             continue;
         if (t==AD_TYPE_C)
             got_C_already=true;
+
         type = get_adtype_str(t);
         filename = map_prefix + "." + type + ".map";
         path p{filename};
         if (fs::exists(p)) {
             std::cout << "Reading " + filename + "\n";
-            readmap(p, gds, grids[t]);
+            read_ad4_map(p, gds, grids[t]);
 
         } // if file exists
     } // map loop
@@ -257,13 +258,13 @@ grid_dims ad4cache::read(const std::string& map_prefix) {
     filename = map_prefix + ".e.map";
     path pe{filename};
     std::cout << "Reading " + filename + "\n";
-    readmap(pe, gds, grids[AD_TYPE_SIZE]);
+    read_ad4_map(pe, gds, grids[AD_TYPE_SIZE]);
 
     //  dsolv map
     filename = map_prefix + ".d.map";
     path pd{filename};
     std::cout << "Reading " + filename + "\n";
-    readmap(pd, gds, grids[AD_TYPE_SIZE + 1]);
+    read_ad4_map(pd, gds, grids[AD_TYPE_SIZE + 1]);
 
     // TODO verify grid_dims consistency
 
