@@ -107,7 +107,7 @@ Thank you!\n";
         std::string config_name;
         std::string out_name;
         std::string out_dir;
-        std::string out_vina_maps;
+        std::string out_maps;
         std::vector<std::string> ligand_names;
         std::vector<std::string> batch_ligand_names;
         std::string maps;
@@ -181,7 +181,7 @@ Thank you!\n";
         outputs.add_options()
             ("out", value<std::string>(&out_name), "output models (PDBQT), the default is chosen based on the ligand file name")
             ("dir", value<std::string>(&out_dir), "output directory for batch mode")
-            ("write_vina_maps", value<std::string>(&out_vina_maps), "output filename (directory + prefix name) for vina maps")
+            ("write_maps", value<std::string>(&out_maps), "output filename (directory + prefix name) for maps")
         ;
         options_description advanced("Advanced options (see the manual)");
         advanced.add_options()
@@ -293,8 +293,6 @@ Thank you!\n";
             if ((!vm.count("maps"))) {
                 std::cerr << desc_simple << "\n\nERROR: Affinity maps are missing.\n";
                 exit(EXIT_FAILURE);
-            } else if (vm.count("out_vina_maps")) {
-                std::cerr << "WARNING: Cannot output vina maps using AD4 scoring function.\n";
             }
         }
 
@@ -365,6 +363,10 @@ Thank you!\n";
             v.set_ad4_weights(weight_ad4_vdw, weight_ad4_hb, weight_ad4_elec,
                               weight_ad4_dsolv, weight_glue, weight_ad4_rot);
             v.load_maps(maps);
+
+            // It works, but why would you do this?!
+            if (vm.count("write_maps"))
+                v.write_maps(out_maps);
         }
 
         if (vm.count("ligand")) {
@@ -377,8 +379,8 @@ Thank you!\n";
                     // Will compute maps only for Vina atom types in the ligand(s)
                     v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing);
 
-                    if (vm.count("write_vina_maps"))
-                        v.write_maps(out_vina_maps);
+                    if (vm.count("write_maps"))
+                        v.write_maps(out_maps);
                 }
             }
 
@@ -402,8 +404,8 @@ Thank you!\n";
                     // Will compute maps for all Vina atom types
                     v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing);
 
-                    if (vm.count("write_vina_maps"))
-                        v.write_maps(out_vina_maps);
+                    if (vm.count("write_maps"))
+                        v.write_maps(out_maps);
                 }
             }
 

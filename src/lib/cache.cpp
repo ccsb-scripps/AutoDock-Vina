@@ -57,8 +57,6 @@ fl cache::eval(const model& m, fl v) const { // needs m.coords
 	fl e = 0;
 	sz nat = num_atom_types(atom_type::XS);
 
-	std::cout << "Eval\n";
-
 	VINA_FOR(i, m.num_movable_atoms()) {
 		const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::XS);
@@ -173,10 +171,11 @@ void read_vina_map(path &filename, std::vector<grid_dims> &gds, grid &g)
 			nx = std::atoi(fields[1].c_str());
 			ny = std::atoi(fields[2].c_str());
 			nz = std::atoi(fields[3].c_str());
-			gd[0].n = nx + sz(nx % 2 == 0) - 1; // n voxels, not sample points
-			gd[1].n = ny + sz(nx % 2 == 0) - 1;
-			gd[2].n = nz + sz(nx % 2 == 0) - 1;
-			//std::cout << spacing << " " << gd[0].n << "\n";
+			// You might have an even number of NELEMENTS, but it's always an odd number in AutoDock
+			gd[0].n = nx + sz(nx % 2 == 0); // n voxels, not sample points
+			gd[1].n = ny + sz(nx % 2 == 0);
+			gd[2].n = nz + sz(nx % 2 == 0);
+			// std::cout << nx << " " << ny << " " << nz << " " << spacing << " " << gd[0].n << " " << gd[1].n << " " << gd[2].n << "\n";
 		}
 		if (line_counter == 6)
 		{
@@ -184,23 +183,24 @@ void read_vina_map(path &filename, std::vector<grid_dims> &gds, grid &g)
 			VINA_FOR(i, 3)
 			{
 				center = std::atof(fields[i + 1].c_str());
-				halfspan = (gd[i].n) * spacing / 2.0;
+				halfspan = (gd[i].n - 1) * spacing / 2.0;
 				gd[i].begin = center - halfspan;
 				gd[i].end = center + halfspan;
+				// std::cout << center << " " << halfspan << " " << gd[i].begin << " " << gd[i].end << "\n";
 			}
 			gds.push_back(gd);
 			g.init(gd);
+
 		}
 		if (line_counter > 6)
 		{
-			//std::cout << line << "\n";
+			// std::cout << pt_counter << " " << x << " " << y << " " << z << " " << std::atof(line.c_str()) << "\n";
 			g.m_data(x, y, z) = std::atof(line.c_str());
-			y += sz(x == (gd[0].n + 1));
-			z += sz(y == (gd[1].n + 1));
-			x = x % (gd[0].n + 1);
-			y = y % (gd[1].n + 1);
+			y += sz(x == (gd[0].n));
+			z += sz(y == (gd[1].n));
+			x = x % (gd[0].n);
+			y = y % (gd[1].n);
 			pt_counter++;
-			std::cout << x << " " << y << " " << z << " " << std::atof(line.c_str()) << "\n";
 			x++;
 		}
 	} // line loop
@@ -208,7 +208,6 @@ void read_vina_map(path &filename, std::vector<grid_dims> &gds, grid &g)
 
 grid_dims cache::read(const std::string &map_prefix)
 {
-	sz t;
 	sz nat = num_atom_types(atom_type::XS);
 	std::string type, filename;
 	std::vector<grid_dims> gds; // to check all maps have same dims (TODO)
@@ -216,9 +215,9 @@ grid_dims cache::read(const std::string &map_prefix)
 	bool got_C_H_already = false;
 	bool got_C_P_already = false;
 
-	VINA_FOR(xs_type, XS_TYPE_SIZE)
+	VINA_FOR(atom_type, XS_TYPE_SIZE)
 	{
-		t = xs_type;
+		sz t = atom_type;
 
 		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
 			continue;
@@ -243,7 +242,6 @@ grid_dims cache::read(const std::string &map_prefix)
 		filename = map_prefix + "." + type + ".map";
 		path p{filename};
 		if (fs::exists(p)) {
-			std::cout << "Read " + filename + "\n";
 			read_vina_map(p, gds, grids[t]);
 		}
 	} // map loop
@@ -282,47 +280,52 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 		else if (t == XS_TYPE_C_P)
 			got_C_P_already = true;
 
-		atom_type = convert_XS_to_string(t);
-		filename = out_prefix + "." + atom_type + ".map";
-		std::cout << "Writing " + filename + "\n";
-		path p(filename);
-		ofile out(p);
+		if (grids[t].initialized()) {
+			atom_type = convert_XS_to_string(t);
+			filename = out_prefix + "." + atom_type + ".map";
+			path p(filename);
+			ofile out(p);
 
-		// write header
-        out << "GRID_PARAMETER_FILE " << gpf_filename << "\n";
-        out << "GRID_DATA_FILE " << fld_filename << "\n";
-        out << "MACROMOLECULE " << receptor_filename << "\n";
+			// write header
+			out << "GRID_PARAMETER_FILE " << gpf_filename << "\n";
+			out << "GRID_DATA_FILE " << fld_filename << "\n";
+			out << "MACROMOLECULE " << receptor_filename << "\n";
 
-		// m_factor_inv is spacing
-		// check that it's the same in every dimension (it must be)
-		// check that == operator is OK
-		if ((grids[t].m_factor_inv[0] != grids[t].m_factor_inv[1]) & (grids[t].m_factor_inv[0] != grids[t].m_factor_inv[2])) {
-			printf("m_factor_inv x=%f, y=%f, z=%f\n", grids[t].m_factor_inv[0], grids[t].m_factor_inv[1], grids[t].m_factor_inv[2]);
-			return;
-		}
+			// m_factor_inv is spacing
+			// check that it's the same in every dimension (it must be)
+			// check that == operator is OK
+			if ((grids[t].m_factor_inv[0] != grids[t].m_factor_inv[1]) & (grids[t].m_factor_inv[0] != grids[t].m_factor_inv[2]))
+			{
+				printf("m_factor_inv x=%f, y=%f, z=%f\n", grids[t].m_factor_inv[0], grids[t].m_factor_inv[1], grids[t].m_factor_inv[2]);
+				return;
+			}
 
-		out << "SPACING " << grids[t].m_factor_inv[0] << "\n";
+			out << "SPACING " << grids[t].m_factor_inv[0] << "\n";
 
-		// The number of elements has to be an odd number. Who said AD was not odd?
-        int size_x = (grids[t].m_data.dim0() % 2 == 0) ?  grids[t].m_data.dim0() - 1 : grids[t].m_data.dim0();
-        int size_y = (grids[t].m_data.dim1() % 2 == 0) ?  grids[t].m_data.dim1() - 1 : grids[t].m_data.dim1();
-        int size_z = (grids[t].m_data.dim2() % 2 == 0) ?  grids[t].m_data.dim2() - 1 : grids[t].m_data.dim2();
-        out << "NELEMENTS " << size_x << " " << size_y  << " " << size_z << "\n";
+			// The number of elements in the grid is an odd number. But NELEMENTS has to be an even number.
+			int size_x = (grids[t].m_data.dim0() % 2 == 0) ? grids[t].m_data.dim0() : grids[t].m_data.dim0() - 1;
+			int size_y = (grids[t].m_data.dim1() % 2 == 0) ? grids[t].m_data.dim1() : grids[t].m_data.dim1() - 1;
+			int size_z = (grids[t].m_data.dim2() % 2 == 0) ? grids[t].m_data.dim2() : grids[t].m_data.dim2() - 1;
+			out << "NELEMENTS " << size_x << " " << size_y << " " << size_z << "\n";
 
-		// center
-		fl cx = grids[t].m_init[0] + grids[t].m_range[0] * 0.5;
-		fl cy = grids[t].m_init[1] + grids[t].m_range[1] * 0.5;
-		fl cz = grids[t].m_init[2] + grids[t].m_range[2] * 0.5;
-		out << "CENTER " << cx << " " << cy << " " << cz << "\n";
+			// center
+			fl cx = grids[t].m_init[0] + grids[t].m_range[0] * 0.5;
+			fl cy = grids[t].m_init[1] + grids[t].m_range[1] * 0.5;
+			fl cz = grids[t].m_init[2] + grids[t].m_range[2] * 0.5;
+			out << "CENTER " << cx << " " << cy << " " << cz << "\n";
 
-		// write data
-		VINA_FOR(z, grids[t].m_data.dim2()) {
-			VINA_FOR(y, grids[t].m_data.dim1()) {
-				VINA_FOR(x, grids[t].m_data.dim0()) {
-					out << std::setprecision(4) << grids[t].m_data(x, y, z) << "\n"; // slow?
-				} // x
-			} // y
-		} // z
+			// write data
+			VINA_FOR(z, grids[t].m_data.dim2())
+			{
+				VINA_FOR(y, grids[t].m_data.dim1())
+				{
+					VINA_FOR(x, grids[t].m_data.dim0())
+					{
+						out << std::setprecision(4) << grids[t].m_data(x, y, z) << "\n"; // slow?
+					} // x
+				} // y
+			} // z
+		} // map initialized
 	} // map atom type
 } // cache::write
 
@@ -360,9 +363,6 @@ void cache::populate(const model &m, const precalculate &p, const grid_dims &gd,
 	if(needed.empty())
 		return;
 	flv affinities(needed.size());
-
-	VINA_FOR_IN(i, needed)
-		std::cout << "Populate needed " << needed[i] << "\n";
 
 	sz nat = num_atom_types(atom_type::XS);
 

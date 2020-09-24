@@ -262,10 +262,12 @@ void Vina::set_vina_box(double center_x, double center_y, double center_z, doubl
     vec center(center_x, center_y, center_z);
 
     VINA_FOR_IN(i, gd) {
-        gd[i].n = sz(std::ceil(span[i] / granularity));
-        fl real_span = granularity * gd[i].n;
-        gd[i].begin = center[i] - real_span / 2;
-        gd[i].end = gd[i].begin + real_span;
+        // Make sure that the number of grid points is an odd number
+        sz n = std::ceil(span[i] / granularity);
+        gd[i].n = std::ceil(n / 2) * 2 + 1;
+        fl real_span = granularity * (gd[i].n - 1) / 2.;
+        gd[i].begin = center[i] - real_span;
+        gd[i].end = center[i] + real_span;
     }
 
     const vec corner1(gd[0].begin, gd[1].begin, gd[2].begin);
@@ -314,9 +316,7 @@ void Vina::load_maps(std::string maps) {
         cache grid(slope);
         gd = grid.read(maps);
         done(m_verbosity, 0);
-        std::cout << "HERE1\n";
         m_grid = grid;
-        std::cout << "HERE2\n";
     } else {
         doing("Reading AD4.2 maps", m_verbosity, 0);
         ad4cache grid(slope);
@@ -324,8 +324,6 @@ void Vina::load_maps(std::string maps) {
         done(m_verbosity, 0);
         m_ad4grid = grid;
     }
-
-    std::cerr << "HERE\n";
 
     // Store in Vina object
     const vec corner1(gd[0].begin, gd[1].begin, gd[2].begin);
@@ -349,9 +347,16 @@ void Vina::write_maps(const std::string& map_prefix, const std::string& gpf_file
         atom_types = m_scoring_function.get_atom_types();
 
     if (m_sf_choice == SF_VINA) {
+        doing("Writing Vina maps", m_verbosity, 0);
         m_grid.write(map_prefix, atom_types, gpf_filename, fld_filename, receptor_filename);
+        done(m_verbosity, 0);
     } else {
+        // Add electrostatics and desolvation maps
+        atom_types.push_back(AD_TYPE_SIZE);
+        atom_types.push_back(AD_TYPE_SIZE + 1);
+        doing("Writing AD4.2 maps", m_verbosity, 0);
         m_ad4grid.write(map_prefix, atom_types, gpf_filename, fld_filename, receptor_filename);
+        done(m_verbosity, 0);
     }
 }
 
