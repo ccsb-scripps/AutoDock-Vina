@@ -57,8 +57,6 @@ fl cache::eval(const model& m, fl v) const { // needs m.coords
 	fl e = 0;
 	sz nat = num_atom_types(atom_type::XS);
 
-	std::cout << "Eval\n";
-
 	VINA_FOR(i, m.num_movable_atoms()) {
 		const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::XS);

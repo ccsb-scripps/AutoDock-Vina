@@ -325,8 +325,6 @@ void Vina::load_maps(std::string maps) {
         m_ad4grid = grid;
     }
 
-    std::cerr << "HERE\n";
-
     // Store in Vina object
     const vec corner1(gd[0].begin, gd[1].begin, gd[2].begin);
     const vec corner2(gd[0].end, gd[1].end, gd[2].end);

@@ -193,7 +193,6 @@ void read_ad4_map(path& filename, std::vector<grid_dims>& gds, grid& g) {
             gd[0].n = nx + sz(nx % 2 == 0) - 1; // n voxels, not sample points
             gd[1].n = ny + sz(nx % 2 == 0) - 1;
             gd[2].n = nz + sz(nx % 2 == 0) - 1;
-            //std::cout << spacing << " " << gd[0].n << "\n";
         }
         if (line_counter == 6) {
             std::vector<std::string> fields = split(line);
@@ -214,7 +213,6 @@ void read_ad4_map(path& filename, std::vector<grid_dims>& gds, grid& g) {
             x = x % (gd[0].n + 1);
             y = y % (gd[1].n + 1);
             pt_counter++;
-            std::cout << x << " " << y << " " << z << " " << std::atof(line.c_str()) << "\n";
             x++;
         }
 
