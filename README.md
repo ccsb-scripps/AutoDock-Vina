@@ -38,6 +38,7 @@ Build python documentation with Sphinx
 ```bash
 $ cd build/python/docs
 $ make html
+# Open index.html located in docs/build/html
 ```
 
 ### Quick tutorial
