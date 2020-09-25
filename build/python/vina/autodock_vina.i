@@ -14,7 +14,7 @@
 #################################################################\n"
 %enddef
 
-%module(docstring=DOCSTRING, package="vina") vina
+%module(docstring=DOCSTRING, package="vina") vina_wrapper
 
 %begin %{
 #define SWIG_PYTHON_2_UNICODE

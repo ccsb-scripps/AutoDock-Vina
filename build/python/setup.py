@@ -197,7 +197,7 @@ class CustomBuildExt(build_ext):
 
 
 obextension = Extension(
-    'vina._vina',
+    'vina._vina_wrapper',
     sources=glob.glob('../../src/lib/*.cpp') + ['vina/autodock_vina.i'],
     extra_link_args=['-lboost_system', '-lboost_thread', 
                      '-lboost_serialization', '-lboost_filesystem', 
