@@ -47,7 +47,7 @@ $ make html
 from vina import Vina
 
 
-v = Vina()
+v = Vina(exhaustiveness=32)
 
 v.set_receptor("protein.pdbqt")
 v.set_ligand('ligand.pdbqt')
