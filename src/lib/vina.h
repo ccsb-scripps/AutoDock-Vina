@@ -59,7 +59,7 @@
 class Vina {
 public:
     // Constructor
-    Vina(const std::string& sf_name="vina", int exhaustiveness=8, int cpu=0, int seed=0, bool no_cache=false, int verbosity=1, int max_evals=0) {
+    Vina(const std::string &sf_name="vina", int exhaustiveness=8, int max_evals=0, int cpu=0, int seed=0, int verbosity=1) {
         m_max_evals = max_evals;
         m_exhaustiveness = exhaustiveness;
         m_verbosity = verbosity;

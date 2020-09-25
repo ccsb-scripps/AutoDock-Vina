@@ -127,7 +127,6 @@ Thank you!\n";
         double min_rmsd = 1.0;
         double energy_range = 3.0;
         double grid_spacing = 0.375;
-        bool no_cache = false;
 
         // autodock4.2 weights
         double weight_ad4_vdw   = 0.1662;
@@ -348,7 +347,7 @@ Thank you!\n";
             std::cout << "\n";
         }
 
-        Vina v(sf_name, exhaustiveness, cpu, seed, no_cache, verbosity, max_evals);
+        Vina v(sf_name, exhaustiveness, max_evals, cpu, seed, verbosity);
 
         // rigid_name variable can be ignored for AD4
         v.set_receptor(rigid_name, flex_name);
