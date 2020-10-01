@@ -117,8 +117,9 @@ public:
 		write_structure(out, remark);
 		out << "ENDMDL\n";
 	}
+	std::string write_model(sz model_number, const std::string &remark);
 
-	void seti(const conf& c);
+	void seti(const conf &c);
 	void sete(const conf& c);
 	void set (const conf& c);
 
@@ -167,6 +168,20 @@ public:
 			tmp.push_back(coords[i]);
 		return tmp;
 	}
+
+	std::vector<double> get_ligand_coords() {
+		// Way to get coordinates out of the C++ world
+		VINA_CHECK(ligands.size() == 1);
+		std::vector<double> tmp;
+		const ligand &lig = ligands.front();
+		VINA_RANGE(i, lig.begin, lig.end) {
+			tmp.push_back(coords[i][0]);
+			tmp.push_back(coords[i][1]);
+			tmp.push_back(coords[i][2]);
+		}
+		return tmp;
+	}
+
 	vecv get_heavy_atom_movable_coords() const { // FIXME mv
 		vecv tmp;
 		VINA_FOR(i, num_movable_atoms())
@@ -189,6 +204,7 @@ private:
 	friend struct appender_info;
 	friend struct pdbqt_initializer;
 
+	void write_context(const context &c, std::ostringstream& out) const;
 	void write_context(const context& c, ofile& out) const;
 	void write_context(const context& c, ofile& out, const std::string& remark) const {
 		out << remark;

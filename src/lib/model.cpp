@@ -620,6 +620,34 @@ void model::write_context(const context& c, ofile& out) const {
 	}
 }
 
+void model::write_context(const context &c, std::ostringstream& out) const {
+	verify_bond_lengths();
+
+	VINA_FOR_IN(i, c) {
+		const std::string &str = c[i].first;
+		if (c[i].second)
+			out << coords_to_pdbqt_string(coords[c[i].second.get()], str) << '\n';
+		else
+			out << str << '\n';
+	}
+}
+
+std::string model::write_model(sz model_number, const std::string &remark) {
+	std::ostringstream out;
+
+	out << "MODEL " << model_number << '\n';
+	out << remark;
+
+	VINA_FOR_IN(i, ligands)
+		write_context(ligands[i].cont, out);
+	if (num_flex() > 0) // otherwise remark is written in vain
+		write_context(flex_context, out);
+
+	out << "ENDMDL\n";
+
+	return out.str();
+}
+
 void model::seti(const conf& c) {
 	ligands.set_conf(atoms, internal_coords, c.ligands);
 }

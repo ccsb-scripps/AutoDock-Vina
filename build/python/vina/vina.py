@@ -9,6 +9,8 @@ import glob
 import stat
 import sys
 
+import numpy as np
+
 from .vina_wrapper import Vina as _Vina
 from . import utils
 
@@ -215,8 +217,31 @@ class Vina:
                 raise RuntimeError('Error: Cannot overwrite %s, already exists.' % pdbqt_filename)
 
         self._vina.write_pose(pdbqt_filename, remarks)
+    
+    def poses(self, n_poses=9, energy_range=3.0, coordinates_only=False):
+        """Get poses from docking.
 
-    def write_docking_results(self, dlg_filename, n_poses=9, energy_range=3.0, overwrite=False):
+        Args:
+            n_pose (int): number of poses to write (default: 9)
+            energy_range (float): maximum energy difference from best pose (default: 3.0 kcal/mol)
+            coordinates_only (bool): return coordinates for each pose only 
+
+        """
+        if n_poses <= 0:
+            raise ValueError('Error: number of poses written must be greater than zero.')
+        if energy_range <= 0:
+            raise ValueError('Error: energy range must be greater than zero.')
+        
+        if coordinates_only:
+            # Dirty hack to get the coordinates from C++, it is not advised to have vector<vector<vector<double>>>
+            coordinates = np.array(self._vina.get_poses_coordinates(n_poses, energy_range))
+            coordinates = coordinates.reshape((coordinates.shape[0], coordinates.shape[1] // 3, 3))
+            coordinates = np.around(coordinates, decimals=3)
+            return coordinates
+        else:
+            return self._vina.get_poses(n_poses, energy_range)
+
+    def write_poses(self, dlg_filename, n_poses=9, energy_range=3.0, overwrite=False):
         """Write poses from docking.
 
         Args:
@@ -236,7 +261,7 @@ class Vina:
         if energy_range <= 0:
             raise ValueError('Error: energy range must be greater than zero.')
 
-        self._vina.write_results(dlg_filename, n_poses, energy_range)
+        self._vina.write_poses(dlg_filename, n_poses, energy_range)
 
     def randomize(self):
         """Randomize the input ligand conformation."""

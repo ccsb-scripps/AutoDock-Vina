@@ -90,6 +90,7 @@ if sys.platform.find("linux") != -1:
 namespace std {
     %template(IntVector) vector<int>;
     %template(DoubleVector) vector<double>;
+    %template(DoubleVectorVector) vector<vector<double>>;
     %template(StringVector) vector<string>;
     %template(ConstCharVector) vector<const char*>;
     //%template(OBMolVector) vector<OpenBabel::OBMol*>;

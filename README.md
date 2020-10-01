@@ -9,6 +9,7 @@ Molecular docking and virtual screening program
 
 You need, at a minimum (requirements):
 * Python (=3.7)
+* Numpy
 * OpenBabel
 * SWIG
 * Boost-cpp
@@ -21,7 +22,7 @@ I highly recommand you to install the Anaconda distribution (https://www.continu
 ```bash
 $ conda create -n vina python=3.7
 $ conda activate vina
-$ conda install -c conda-forge openbabel swig boost-cpp sphinx sphinx_rtd_theme
+$ conda install -c conda-forge numpy openbabel swig boost-cpp sphinx sphinx_rtd_theme
 ```
 
 Finally, we can install the `Vina` package

@@ -55,49 +55,6 @@ int Vina::generate_seed(const int seed) {
     }
 }
 
-std::string Vina::vina_remarks(output_type& pose, fl lb, fl ub) {
-    std::ostringstream remark;
-
-    remark.setf(std::ios::fixed, std::ios::floatfield);
-    remark.setf(std::ios::showpoint);
-
-    remark << "REMARK VINA RESULT: " 
-           << std::setw(9) << std::setprecision(1) << pose.e
-           << "  " << std::setw(9) << std::setprecision(3) << lb
-           << "  " << std::setw(9) << std::setprecision(3) << ub
-           << '\n';
-    
-    remark << "REMARK ITER + INTRA:     " << std::setw(12) << std::setprecision(4) << pose.total << "\n";
-    remark << "REMARK INTER:            " << std::setw(12) << std::setprecision(4) << pose.inter << "\n";
-    remark << "REMARK INTRA:            " << std::setw(12) << std::setprecision(4) << pose.intra << "\n";
-    if(m_sf_choice==SF_AD42) remark << "REMARK CONF_INDEPENDENT: " << std::setw(12) << std::setprecision(4) << pose.conf_independent << "\n";
-    remark << "REMARK UNBOUND:          " << std::setw(12) << std::setprecision(4) << pose.unbound << "\n";
-
-    return remark.str();
-}
-
-std::string Vina::vina_remark(fl e, fl lb, fl ub) {
-    std::ostringstream remark;
-
-    remark.setf(std::ios::fixed, std::ios::floatfield);
-    remark.setf(std::ios::showpoint);
-
-    remark << "REMARK VINA RESULT: " 
-           << std::setw(9) << std::setprecision(1) << e
-           << "  " << std::setw(9) << std::setprecision(3) << lb
-           << "  " << std::setw(9) << std::setprecision(3) << ub
-           << '\n';
-
-    return remark.str();
-}
-
-output_container Vina::remove_redundant(const output_container& in, fl min_rmsd) {
-    output_container tmp;
-    VINA_FOR_IN(i, in)
-        add_to_output_container(tmp, in[i], min_rmsd, in.size());
-    return tmp;
-}
-
 void Vina::set_receptor(const std::string& rigid_name) {
     // Read the receptor PDBQT file
     VINA_CHECK(!rigid_name.empty());
@@ -374,12 +331,32 @@ void Vina::write_pose(const std::string& output_name, const std::string& remark)
     m_model.write_structure(f, format_remark.str());
 }
 
-void Vina::write_results(const std::string& output_name, int how_many, double energy_range) {
-    std::string remarks;
-    model best_model = m_model;
-    boost::optional<model> ref;
+std::string Vina::vina_remarks(output_type &pose, fl lb, fl ub) {
+    std::ostringstream remark;
+
+    remark.setf(std::ios::fixed, std::ios::floatfield);
+    remark.setf(std::ios::showpoint);
+
+    remark << "REMARK VINA RESULT: "
+           << std::setw(9) << std::setprecision(1) << pose.e
+           << "  " << std::setw(9) << std::setprecision(3) << lb
+           << "  " << std::setw(9) << std::setprecision(3) << ub
+           << '\n';
+
+    remark << "REMARK ITER + INTRA:     " << std::setw(12) << std::setprecision(4) << pose.total << "\n";
+    remark << "REMARK INTER:            " << std::setw(12) << std::setprecision(4) << pose.inter << "\n";
+    remark << "REMARK INTRA:            " << std::setw(12) << std::setprecision(4) << pose.intra << "\n";
+    if (m_sf_choice == SF_AD42)
+        remark << "REMARK CONF_INDEPENDENT: " << std::setw(12) << std::setprecision(4) << pose.conf_independent << "\n";
+    remark << "REMARK UNBOUND:          " << std::setw(12) << std::setprecision(4) << pose.unbound << "\n";
+
+    return remark.str();
+}
+
+std::vector<std::vector<double>> Vina::get_poses_coordinates(int how_many, double energy_range) {
     int n = 0;
     double best_energy = 0;
+    std::vector<std::vector<double>> coordinates;
 
     if (how_many < 0) {
         std::cerr << "WARNING: Number of pose to write set to < 0. Automatically adjusted to default value: 9.\n";
@@ -392,19 +369,8 @@ void Vina::write_results(const std::string& output_name, int how_many, double en
     }
 
     if (!m_poses.empty()) {
-        if (m_verbosity > 0) {
-            std::cout << '\n';
-            std::cout << "mode |   affinity | dist from best mode\n";
-            std::cout << "     | (kcal/mol) | rmsd l.b.| rmsd u.b.\n";
-            std::cout << "-----+------------+----------+----------\n";
-        }
-
-        // Get the best conf and its energy
-        best_model.set(m_poses[0].c);
+        // Get energy from the best conf
         best_energy = m_poses[0].e;
-
-        // Open output file
-        ofile f(make_path(output_name));
 
         VINA_FOR_IN(i, m_poses) {
             /* Stop if:
@@ -412,30 +378,82 @@ void Vina::write_results(const std::string& output_name, int how_many, double en
                 - If there is no conf to write
                 - The energy of the current conf is superior than best_energy + energy_range
             */
-            if (n >= how_many || !not_max(m_poses[i].e) || m_poses[i].e > best_energy + energy_range) break; // check energy_range sanity FIXME
+            if (n >= how_many || !not_max(m_poses[i].e) || m_poses[i].e > best_energy + energy_range)
+                break; // check energy_range sanity FIXME
 
             // Push the current pose to model
             m_model.set(m_poses[i].c);
-
-            // Get RMSD between current pose and best_model
-            const model& r = ref ? ref.get() : best_model;
-            const fl lb = m_model.rmsd_lower_bound(r);
-            const fl ub = m_model.rmsd_upper_bound(r);
-
-            if (m_verbosity > 0) {
-                std::cout << std::setw(4) << i+1 << "    " << std::setw(9) << std::setprecision(1) << m_poses[i].e; // intermolecular_energies[i];
-                std::cout << "  " << std::setw(9) << std::setprecision(3) << lb << "  " << std::setw(9) << std::setprecision(3) << ub << "\n"; // FIXME need user-readable error messages in case of failures
-            }
-
-            // Write conf
-            remarks = vina_remarks(m_poses[i], lb, ub);
-            m_model.write_model(f, n + 1, remarks);
+            coordinates.push_back(m_model.get_ligand_coords());
 
             n++;
         }
 
         // Push back the best conf in model
         m_model.set(m_poses[0].c);
+    } else {
+            std::cerr << "WARNING: Could not find any conformations. No conformations were written.\n";
+    }
+
+    return coordinates;
+}
+
+std::string Vina::get_poses(int how_many, double energy_range) {
+    int n = 0;
+    double best_energy = 0;
+    std::ostringstream out;
+    std::string remarks;
+
+    if (how_many < 0) {
+        std::cerr << "WARNING: Number of pose to write set to < 0. Automatically adjusted to default value: 9.\n";
+        how_many = 9;
+    }
+
+    if (energy_range < 0) {
+        std::cerr << "WARNING: Energy range set to < 0 kcal/mol. Automatically adjusted to default value: 3. kcal/mol.\n";
+        energy_range = 3.0;
+    }
+
+    if (!m_poses.empty()) {
+        // Get energy from the best conf
+        best_energy = m_poses[0].e;
+
+        VINA_FOR_IN(i, m_poses) {
+            /* Stop if:
+                - We wrote the number of conf asked
+                - If there is no conf to write
+                - The energy of the current conf is superior than best_energy + energy_range
+            */
+            if (n >= how_many || !not_max(m_poses[i].e) || m_poses[i].e > best_energy + energy_range)
+                break; // check energy_range sanity FIXME
+
+            // Push the current pose to model
+            m_model.set(m_poses[i].c);
+
+            // Write conf
+            remarks = vina_remarks(m_poses[i], m_poses[i].lb, m_poses[i].ub);
+            out << m_model.write_model(n + 1, remarks);
+            
+            n++;
+        }
+
+        // Push back the best conf in model
+        m_model.set(m_poses[0].c);
+
+    } else {
+        std::cerr << "WARNING: Could not find any conformations. No conformations were written.\n";
+    }
+
+    return out.str();
+}
+
+void Vina::write_poses(const std::string& output_name, int how_many, double energy_range) {
+    std::string out;
+
+    if (!m_poses.empty()) {
+        // Open output file
+        ofile f(make_path(output_name));
+        out = get_poses(how_many, energy_range);
+        f << out;
     } else {
         std::cerr << "WARNING: Could not find any conformations. No conformations were written.\n";
     }
@@ -622,6 +640,27 @@ std::vector<double> Vina::optimize(int max_steps) {
     return energies;
 }
 
+output_container Vina::remove_redundant(const output_container &in, fl min_rmsd) {
+    output_container tmp;
+    VINA_FOR_IN(i, in)
+    add_to_output_container(tmp, in[i], min_rmsd, in.size());
+    return tmp;
+}
+
+void Vina::show_docking_report() {
+    if (!m_poses.empty()) {
+        std::cout << '\n';
+        std::cout << "mode |   affinity | dist from best mode\n";
+        std::cout << "     | (kcal/mol) | rmsd l.b.| rmsd u.b.\n";
+        std::cout << "-----+------------+----------+----------\n";
+
+        VINA_FOR_IN(i, m_poses) {
+            std::cout << std::setw(4) << i + 1 << "    " << std::setw(9) << std::setprecision(1) << m_poses[i].e;                                                // intermolecular_energies[i];
+            std::cout << "  " << std::setw(9) << std::setprecision(3) << m_poses[i].lb << "  " << std::setw(9) << std::setprecision(3) << m_poses[i].ub << "\n"; // FIXME need user-readable error messages in case of failures
+        }
+    }
+}
+
 void Vina::global_search(const int exhaustiveness, const int n_poses, const double min_rmsd, const int max_evals)
 {
     // Vina search (Monte-carlo and local optimization)
@@ -642,6 +681,8 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
     double e = 0;
     double intramolecular_energy = 0;
     const vec authentic_v(1000, 1000, 1000);
+    model best_model;
+    boost::optional<model> ref;
     output_container poses;
     std::stringstream sstm;
     rng generator(static_cast<rng::result_type>(seed));
@@ -675,6 +716,7 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
         poses.sort();
         // we update model with the best conf
         m_model.set(poses[0].c);
+        best_model = m_model;
 
         // For the Vina scoring function, we take the intramolecular energy from the best pose
         if (m_sf_choice == SF_VINA) 
@@ -696,6 +738,11 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
             poses[i].conf_independent = energies[5];
             poses[i].unbound = energies[6];
 
+            // Get RMSD between current pose and best_model
+            const model &r = ref ? ref.get() : best_model;
+            poses[i].lb = m_model.rmsd_lower_bound(r);
+            poses[i].ub = m_model.rmsd_upper_bound(r);
+
             if (m_verbosity > 1)
                 show_score(energies);
         }
@@ -706,6 +753,9 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 
     // Store results in Vina object
     m_poses = poses;
+
+    if (m_verbosity > 0)
+        show_docking_report();
 }
 
 Vina::~Vina() {

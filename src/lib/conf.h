@@ -358,6 +358,8 @@ private:
 struct output_type {
 	conf c;
 	fl e;
+	fl lb;
+	fl ub;
 	fl intra;
 	fl inter;
     fl conf_independent;

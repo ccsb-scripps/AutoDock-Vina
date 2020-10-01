@@ -393,7 +393,7 @@ Thank you!\n";
                 v.write_pose(out_name);
             } else {
                 v.global_search(exhaustiveness, num_modes, min_rmsd, max_evals);
-                v.write_results(out_name, num_modes, energy_range);
+                v.write_poses(out_name, num_modes, energy_range);
             }
         } else if (vm.count("batch")) {
             if (sf_name.compare("vina") == 0) {
@@ -423,7 +423,7 @@ Thank you!\n";
                     v.write_pose(out_name);
                 } else {
                     v.global_search(exhaustiveness, num_modes, min_rmsd, max_evals);
-                    v.write_results(out_name, num_modes, energy_range);
+                    v.write_poses(out_name, num_modes, energy_range);
                 }
             }
         }
