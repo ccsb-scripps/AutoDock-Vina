@@ -19,7 +19,7 @@ $(shell $(GPP) $(LDFLAGS) -l boost_thread-mt linktest.cpp -o linktest >/dev/null
 threadmt:=$(shell if [ -f ./linktest ]; then echo "-mt"; rm ./linktest; fi;)
 $(shell rm ./linktest.cpp)
 
-LIBS = -l boost_system${BOOST_LIB_VERSION} -l boost_thread${threadmt}${BOOST_LIB_VERSION} -l boost_serialization${BOOST_LIB_VERSION} -l boost_filesystem${BOOST_LIB_VERSION} -l boost_program_options${BOOST_LIB_VERSION}#-l pthread
+LIBS = -l boost_thread${threadmt}${BOOST_LIB_VERSION} -l boost_serialization${BOOST_LIB_VERSION} -l boost_filesystem${BOOST_LIB_VERSION} -l boost_program_options${BOOST_LIB_VERSION}#-l pthread
 
 .SUFFIXES: .cpp .o
 
