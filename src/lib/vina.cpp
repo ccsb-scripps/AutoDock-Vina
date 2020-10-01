@@ -622,11 +622,21 @@ std::vector<double> Vina::optimize(int max_steps) {
     return energies;
 }
 
-void Vina::global_search(const int n_poses, const double min_rmsd) {
+void Vina::global_search(const int exhaustiveness, const int n_poses, const double min_rmsd, const int max_evals)
+{
     // Vina search (Monte-carlo and local optimization)
     // Check if ff, box and ligand were initialized
     VINA_CHECK(m_ligand_initialized); // m_model
     VINA_CHECK(m_map_initialized); // // m_gd, m_corner1, m_corner2, m_grid/ad4grid
+
+    if (exhaustiveness < 1) {
+        std::cerr << "ERROR: Exhaustiveness must be 1 or greater";
+        exit(EXIT_FAILURE);
+    }
+
+    if (exhaustiveness < m_cpu) {
+        std::cerr << "WARNING: At low exhaustiveness, it may be impossible to utilize all CPUs.\n";
+    }
 
     int seed = generate_seed();
     double e = 0;
@@ -641,11 +651,11 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
     sz heuristic = m_model.num_movable_atoms() + 10 * m_model.get_size().num_degrees_of_freedom();
     parallelmc.mc.global_steps = unsigned(70 * 3 * (50 + heuristic) / 2); // 2 * 70 -> 8 * 20 // FIXME
     parallelmc.mc.local_steps = unsigned((25 + m_model.num_movable_atoms()) / 3);
-    parallelmc.mc.max_evals = m_max_evals;
+    parallelmc.mc.max_evals = max_evals;
     parallelmc.mc.min_rmsd = min_rmsd;
     parallelmc.mc.num_saved_mins = n_poses;
     parallelmc.mc.hunt_cap = vec(10, 10, 10);
-    parallelmc.num_tasks = m_exhaustiveness;
+    parallelmc.num_tasks = exhaustiveness;
     parallelmc.num_threads = m_cpu;
     parallelmc.display_progress = (m_verbosity > 0);
 
@@ -698,7 +708,6 @@ void Vina::global_search(const int n_poses, const double min_rmsd) {
     m_poses = poses;
 }
 
-
 Vina::~Vina() {
     //OpenBabel::OBMol m_mol;
     // model and poses
@@ -722,7 +731,6 @@ Vina::~Vina() {
     // global search
     int m_cpu;
     int m_seed;
-    int m_exhaustiveness;
     // others
     int m_verbosity;
 }

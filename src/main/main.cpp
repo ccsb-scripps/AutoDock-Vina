@@ -347,7 +347,7 @@ Thank you!\n";
             std::cout << "\n";
         }
 
-        Vina v(sf_name, exhaustiveness, max_evals, cpu, seed, verbosity);
+        Vina v(sf_name, cpu, seed, verbosity);
 
         // rigid_name variable can be ignored for AD4
         v.set_receptor(rigid_name, flex_name);
@@ -392,7 +392,7 @@ Thank you!\n";
                 v.optimize();
                 v.write_pose(out_name);
             } else {
-                v.global_search(num_modes, min_rmsd);
+                v.global_search(exhaustiveness, num_modes, min_rmsd, max_evals);
                 v.write_results(out_name, num_modes, energy_range);
             }
         } else if (vm.count("batch")) {
@@ -422,7 +422,7 @@ Thank you!\n";
                     v.optimize();
                     v.write_pose(out_name);
                 } else {
-                    v.global_search(num_modes, min_rmsd);
+                    v.global_search(exhaustiveness, num_modes, min_rmsd, max_evals);
                     v.write_results(out_name, num_modes, energy_range);
                 }
             }

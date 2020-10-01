@@ -27,8 +27,9 @@ $ conda install -c conda-forge openbabel swig boost-cpp sphinx sphinx_rtd_theme
 Finally, we can install the `Vina` package
 ```bash
 $ git clone https://github.com/ccsb-scripps/AutoDock-Vina
+$ cd AutoDock-Vina
 $ git checkout boost-python
-$ cd AutoDock-Vina/build/python
+$ cd build/python
 $ python setup.py build install
 ```
 
@@ -48,7 +49,7 @@ $ make html
 from vina import Vina
 
 
-v = Vina(exhaustiveness=32)
+v = Vina()
 
 v.set_receptor("protein.pdbqt")
 v.set_ligand('ligand.pdbqt')
@@ -56,6 +57,6 @@ v.set_ligand('ligand.pdbqt')
 v.compute_vina_maps([0., 0., 0.], [30, 30, 30], 0.375)
 print(v.score())
 print(v.optimize())
-v.dock()
+v.dock(exhaustiveness=32)
 v.write_docking_results("docking_results.pdbqt")
 ```

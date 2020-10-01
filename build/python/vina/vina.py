@@ -14,22 +14,21 @@ from . import utils
 
 
 class Vina:
-    def __init__(self, sf_name='vina', exhaustiveness=8, max_evals=0, cpu=0, seed=0, verbosity=1):
+    def __init__(self, sf_name='vina', cpu=0, seed=0, verbosity=1):
         """Initialize a Vina object.
 
         Args:
             sf_name (str): Scoring function name to use (Vina or ad4) (default: vina)
-            exhaustiveness (int): Number of MC run (default: 8)
-            max_evals (int): Maximum number of evaluation (default: 0; use heuristics rules)
             cpu (int): Number of CPU to use (default: 0; use all of them)
             seed (int): Random seed (default: 0; ramdomly choosed)
             verbosity (int): verbosity 0: not output, 1: normal, 2: verbose (default: 1; some output)
 
         """
         sf_name = sf_name.lower()
-        assert sf_name in ('vina', 'ad4'), 'Error: Scoring function %s not recognized. (only vina or ad4)' % sf_name
+        if not sf_name in ('vina', 'ad4'):
+            raise ValueError('Error: Scoring function %s not recognized. (only vina or ad4)' % sf_name)
 
-        self._vina = _Vina(sf_name, exhaustiveness, max_evals, cpu, seed, verbosity)
+        self._vina = _Vina(sf_name, cpu, seed, verbosity)
         
         self._sf_name = sf_name
         if sf_name == 'vina':
@@ -76,14 +75,19 @@ class Vina:
 
         """
         # For the rigid part of the receptor
-        assert os.path.exists(rigid_pdbqt_filename), 'Error: file %s does not exist.' % rigid_pdbqt_filename
+        if not os.path.exists(rigid_pdbqt_filename):
+            raise RuntimeError('Error: file %s does not exist.' % rigid_pdbqt_filename)
         _, extension = os.path.splitext(rigid_pdbqt_filename)
-        assert extension == '.pdbqt', 'Error: Vina requires a PDBQT file for the (rigid) receptor.'
+        if not extension == '.pdbqt':
+            raise TypeError('Error: Vina requires a PDBQT file for the (rigid) receptor.')
+
         # For the flex part of the receptor
         if flex_pdbqt_filename is not None:
-            assert os.path.exists(flex_pdbqt_filename), 'Error: file %s does not exist.' % flex_pdbqt_filename
+            if not os.path.exists(flex_pdbqt_filename):
+                raise RuntimeError('Error: file %s does not exist.' % flex_pdbqt_filename)
             _, extension = os.path.splitext(flex_pdbqt_filename)
-            assert extension == '.pdbqt', 'Error: Vina requires a PDBQT file for the (flex) receptor.'
+            if not extension == '.pdbqt':
+                raise TypeError('Error: Vina requires a PDBQT file for the (flex) receptor.')
 
         if flex_pdbqt_filename is None:
             self._vina.set_receptor(rigid_pdbqt_filename)
@@ -104,9 +108,11 @@ class Vina:
             pdbqt_filename = [pdbqt_filename]
 
         for pf in pdbqt_filename:
-            assert os.path.exists(pf), 'Error: file %s does not exist.' % pf
+            if not os.path.exists(pf):
+                raise RuntimeError('Error: file %s does not exist.' % pf)
             _, extension = os.path.splitext(pf)
-            assert extension == '.pdbqt', 'Error: Vina requires a PDBQT filename for the ligand.'
+            if not extension == '.pdbqt':
+                raise TypeError('Error: Vina requires a PDBQT file for the ligand.')
 
         if len(pdbqt_filename) == 1:
             self._vina.set_ligand(pdbqt_filename[0])
@@ -122,30 +128,36 @@ class Vina:
             weights (list): list or weights
 
         """
-        assert isinstance(weights, (list, tuple)), 'Error: Cannot set weights (%s).' % weights
-
+        if not isinstance(weights, (list, tuple)):
+            raise TypeError('Error: Cannot set weights (%s).' % weights)
         if self._sf_name == 'vina':
-            assert len(weights) == 7, 'Error: Number of weights does not correspond to Vina scoring function.' 
-            self._vina.set_vina_weights(weights)
+            if len(weights) != 7:
+                raise ValueError('Error: Number of weights does not correspond to Vina scoring function.' )
+            self._vina.set_vina_weights(list(weights))
         else:
-            assert len(weights) == 6, 'Error: Number of weights does not correspond to AD4 scoring function.'
-            self._vina.set_ad4_weights(weights)
+            if len(weights) != 6:
+                raise ValueError('Error: Number of weights does not correspond to AD4 scoring function.')
+            self._vina.set_ad4_weights(list(weights))
 
         self._weights = weights
 
-    def compute_vina_maps(self, center, box_size, spacing=0.375):
+    def compute_vina_maps(self, center, box_size, spacing=0.5):
         """Compute affinity maps using Vina scoring function.
 
         Args:
             center (list): center position
             box_siwe (list): size of the box in Angstrom
-            spacing (float): grid spacing (default: 0.375)
+            spacing (float): grid spacing (default: 0.5)
 
         """
-        assert len(center) == 3, 'Error: center of the box needs to be defined by (x, y, z) in Angstrom.'
-        assert len(box_size) == 3, 'Error: box size needs to be defined by (a, b, c) in Angstrom.'
-        assert all([i > 0 for i in box_size]), 'Error: box dimensions are required to be positive.'
-        assert spacing > 0, 'Error: spacing should be positive.'
+        if len(center) != 3:
+            raise ValueError('Error: center of the box needs to be defined by (x, y, z) in Angstrom.')
+        if len(box_size) != 3:
+            raise ValueError('Error: box size needs to be defined by (a, b, c) in Angstrom.')
+        if not all([i > 0 for i in box_size]):
+            raise ValueError('Error: box dimensions are required to be positive.')
+        if spacing <= 0:
+            raise ValueError('Error: spacing should be greater than zero.')
 
         x, y, z = center
         a, b, c = box_size
@@ -161,8 +173,9 @@ class Vina:
             map_prefix_filename (str): affinity map prefix filename
 
         """
-        existing_maps = glob.glob('%s.*.map' % map_prefix_filename)
-        assert existing_maps, 'Error: Cannot find affinity maps with %s' % map_prefix_filename
+        if not glob.glob('%s.*.map' % map_prefix_filename):
+            raise RuntimeError('Error: Cannot find affinity maps with %s' % map_prefix_filename)
+
         self._vina.load_maps(map_prefix_filename)
     
     def write_maps(self, map_prefix_filename='receptor', gpf_filename='NULL',
@@ -177,10 +190,13 @@ class Vina:
             overwrite (bool): allow overwriting (default: false)
 
         """
-        assert self._center is not None, 'Error: no affinity maps were defined.'
+        if self._center is None:
+            raise RuntimeError('Error: no affinity maps were defined.')
         if not overwrite:
             existing_maps = glob.glob('%s.*.map' % map_prefix_filename)
-            assert not existing_maps, 'Error: Cannot overwrite existing affinity maps (%s)' % existing_maps
+            if existing_maps:
+                raise RuntimeError('Error: Cannot overwrite existing affinity maps (%s)' % existing_maps)
+
         self._vina.write_maps(map_prefix_filename, gpf_filename, fld_filename, receptor_filename)
     
     def write_pose(self, pdbqt_filename, remarks='', overwrite=False):
@@ -192,9 +208,12 @@ class Vina:
             overwrite (bool): allow overwriting (default: false)
 
         """
-        assert utils.check_file_writable(pdbqt_filename), 'Error: Cannot write pose at %s.' % pdbqt_filename
+        if not utils.check_file_writable(pdbqt_filename):
+            raise RuntimeError('Error: Cannot write pose at %s.' % pdbqt_filename)
         if not overwrite:
-            assert not os.path.exists(pdbqt_filename), 'Error: Cannot overwrite %s, already exists.' % pdbqt_filename
+            if os.path.exists(pdbqt_filename):
+                raise RuntimeError('Error: Cannot overwrite %s, already exists.' % pdbqt_filename)
+
         self._vina.write_pose(pdbqt_filename, remarks)
 
     def write_docking_results(self, dlg_filename, n_poses=9, energy_range=3.0, overwrite=False):
@@ -207,11 +226,16 @@ class Vina:
             overwrite (bool): allow overwriting (default: false)
 
         """
-        assert utils.check_file_writable(dlg_filename), 'Error: Cannot write docking results at %s.' % dlg_filename
+        if not utils.check_file_writable(dlg_filename):
+            raise RuntimeError('Error: Cannot write docking results at %s.' % dlg_filename)
         if not overwrite:
-            assert not os.path.exists(dlg_filename), 'Error: Cannot overwrite %s, already exists.' % dlg_filename
-        assert n_poses > 0, 'Error: number of poses written must be positive.'
-        assert energy_range > 0., 'Error: energy range must be positive.'
+            if os.path.exists(dlg_filename):
+                raise RuntimeError('Error: Cannot overwrite %s, already exists.' % dlg_filename)
+        if n_poses <= 0:
+            raise ValueError('Error: number of poses written must be greater than zero.')
+        if energy_range <= 0:
+            raise ValueError('Error: energy range must be greater than zero.')
+
         self._vina.write_results(dlg_filename, n_poses, energy_range)
 
     def randomize(self):
@@ -236,14 +260,23 @@ class Vina:
         """
         return self._vina.optimize()
 
-    def dock(self, n_poses=20, min_rmsd=1.0):
+    def dock(self, exhaustiveness=8, n_poses=20, min_rmsd=1.0, max_evals=0):
         """Docking: global search optimization.
 
         Args:
+            exhaustiveness (int): Number of MC run (default: 8)
             n_poses (int): number of pose to generate (default: 20)
             min_rmsd (float): minimum RMSD difference between poses (default: 1.0 Ansgtrom)
+            max_evals (int): Maximum number of evaluation (default: 0; use heuristics rules)
 
         """
-        assert n_poses > 0, 'Error: number of poses to generate must be positive.'
-        assert min_rmsd > 0., 'Error: minimal RMSD must be positive.'
-        self._vina.global_search(n_poses, min_rmsd)
+        if exhaustiveness <= 0:
+            raise ValueError('Error: exhaustiveness must be 1 or greater.')
+        if n_poses <= 0:
+            raise ValueError('Error: number of poses to generate must be greater than zero.')
+        if min_rmsd <= 0:
+            raise ValueError('Error: minimal RMSD must be greater than zero.')
+        if max_evals < 0:
+            raise ValueError('Error: maximum evaluations must be positive.')
+
+        self._vina.global_search(exhaustiveness, n_poses, min_rmsd, max_evals)

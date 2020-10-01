@@ -294,11 +294,11 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 			// m_factor_inv is spacing
 			// check that it's the same in every dimension (it must be)
 			// check that == operator is OK
-			if ((grids[t].m_factor_inv[0] != grids[t].m_factor_inv[1]) & (grids[t].m_factor_inv[0] != grids[t].m_factor_inv[2]))
+			/*if ((grids[t].m_factor_inv[0] != grids[t].m_factor_inv[1]) & (grids[t].m_factor_inv[0] != grids[t].m_factor_inv[2]))
 			{
 				printf("m_factor_inv x=%f, y=%f, z=%f\n", grids[t].m_factor_inv[0], grids[t].m_factor_inv[1], grids[t].m_factor_inv[2]);
 				return;
-			}
+			}*/
 
 			out << "SPACING " << grids[t].m_factor_inv[0] << "\n";
 

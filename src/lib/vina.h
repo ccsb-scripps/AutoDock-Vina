@@ -59,19 +59,12 @@
 class Vina {
 public:
     // Constructor
-    Vina(const std::string &sf_name="vina", int exhaustiveness=8, int max_evals=0, int cpu=0, int seed=0, int verbosity=1) {
-        m_max_evals = max_evals;
-        m_exhaustiveness = exhaustiveness;
+    Vina(const std::string &sf_name="vina", int cpu=0, int seed=0, int verbosity=1) {
         m_verbosity = verbosity;
         m_receptor_initialized = false;
         m_ligand_initialized = false;
         m_map_initialized = false;
         m_seed = generate_seed(seed);
-
-        if (m_exhaustiveness < 1) {
-            std::cerr << "ERROR: Exhaustiveness must be 1 or greater";
-            exit (EXIT_FAILURE);
-        }
 
         // Look for the number of cpu
         if (cpu == 0) {
@@ -88,10 +81,6 @@ public:
             std::cerr << "WARNING: Number of CPUs set to a value lower than 0, it was automatically set to 1 per default.\n";
         } else {
             m_cpu = cpu;
-        }
-
-        if (exhaustiveness < cpu) {
-            std::cerr << "WARNING: At low exhaustiveness, it may be impossible to utilize all CPUs.\n";
         }
 
         if (sf_name.compare("vina") == 0) {
@@ -119,15 +108,15 @@ public:
                           double weight_repulsion=0.840245, double weight_hydrophobic=-0.035069, 
                           double weight_hydrogen=-0.587439, double weight_glue=50,
                           double weight_rot=0.05846);
-    void set_ad4_weights(double weight_ad4_vdw =0.1662, double weight_ad4_hb=0.1209, 
+    void set_ad4_weights(double weight_ad4_vdw=0.1662, double weight_ad4_hb=0.1209, 
                          double weight_ad4_elec=0.1406, double weight_ad4_dsolv=0.1322, 
                          double weight_glue=50, double weight_ad4_rot =0.2983);
-    void compute_vina_maps(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.375);
+    void compute_vina_maps(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.5);
     void load_maps(std::string maps);
     void randomize(const int max_steps=10000);
     std::vector<double> score();
     std::vector<double> optimize(const int max_steps=0);
-    void global_search(const int n_poses=20, const double min_rmsd=1.0);
+    void global_search(const int exhaustiveness=8, const int n_poses=20, const double min_rmsd=1.0, const int max_evals=0);
     void write_results(const std::string& output_name, int how_many=9, double energy_range=3.0);
     void write_pose(const std::string& output_name, const std::string& remark=std::string());
     void write_maps(const std::string& map_prefix="receptor", const std::string& gpf_filename="NULL",
@@ -156,8 +145,6 @@ private:
     // global search
     int m_cpu;
     int m_seed;
-    int m_exhaustiveness;
-    int m_max_evals;
     // others
     int m_verbosity;
 
