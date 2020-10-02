@@ -116,18 +116,18 @@ def locate_ob():
 def locate_boost():
     """Try to locate boost."""
     if in_conda:
-        # It means that Openbabel was installed in an Anaconda env
+        # It means that SWIG was installed in an Anaconda env
         data_pathname = sysconfig.get_path('data')
-        include_dirs = data_pathname + os.path.sep + 'include' + os.path.sep + 'boost'
+        include_dirs = data_pathname + os.path.sep + 'include'
         library_dirs = data_pathname + os.path.sep + 'lib'
 
-        if os.path.isdir(include_dirs):
+        if os.path.isdir(include_dirs + os.path.sep + 'boost'):
             print('Boost library location automatically determined in Anaconda.')
             return include_dirs, library_dirs
     else:
-        include_dirs = '/usr/include' + os.path.sep + 'boost'
+        include_dirs = '/usr/include'
 
-        if os.path.isdir(include_dirs):
+        if os.path.isdir(include_dirs + os.path.sep + 'boost'):
             print('Boost library location was automatically guessed.')
 
             if glob.glob('usr/lib/x86_64-linux-gnu/libboost*.so'):
@@ -224,7 +224,7 @@ class CustomBuildExt(build_ext):
 obextension = Extension(
     'vina._vina_wrapper',
     sources=glob.glob('../../src/lib/*.cpp') + ['vina/autodock_vina.i'],
-    extra_link_args=['-lboost_thread', '-lboost_serialization',
+    extra_link_args=['-lboost_system', '-lboost_thread', '-lboost_serialization',
                      '-lboost_filesystem', '-lboost_program_options'],
     libraries=['openbabel'],
     headers=glob.glob('../../src/lib/*.h'),
