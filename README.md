@@ -55,9 +55,9 @@ v = Vina()
 v.set_receptor("protein.pdbqt")
 v.set_ligand('ligand.pdbqt')
 
-v.compute_vina_maps([0., 0., 0.], [30, 30, 30])
+v.compute_vina_maps(center=[0., 0., 0.], box_size=[30, 30, 30])
 print(v.score())
 print(v.optimize())
 v.dock(exhaustiveness=32)
-v.write_poses("docking_results.pdbqt")
+v.write_poses(dlg_filename="docking_results.pdbqt")
 ```
