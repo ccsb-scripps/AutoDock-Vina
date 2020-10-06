@@ -162,7 +162,7 @@ Thank you!\n";
             ("flex", value<std::string>(&flex_name), "flexible side chains, if any (PDBQT)")
             ("ligand", value<std::vector<std::string>>(&ligand_names)->multitoken(), "ligand (PDBQT)")
             ("batch", value<std::vector<std::string>>(&batch_ligand_names)->multitoken(), "batch ligand (PDBQT)")
-            ("scoring_function", value<std::string>(&sf_name)->default_value(sf_name), "vina or ad4")
+            ("scoring", value<std::string>(&sf_name)->default_value(sf_name), "vina or ad4")
         ;
         //options_description search_area("Search area (required, except with --score_only)");
         options_description search_area("Search space (required)");
@@ -276,30 +276,35 @@ Thank you!\n";
             std::cout << cite_message << '\n';
         }
 
-        bool receptor_needed   = !(sf_name.compare("ad4") == 0);
-
-        if (receptor_needed) {
-            if((vm.count("receptor") <= 0)){
-                std::cerr << desc_simple << "\n\nERROR: Missing either receptor or vina_maps.\n";
-                exit(EXIT_FAILURE);
-            }
-        } else if (vm.count("flex") && !vm.count("receptor")) {
-            std::cerr << desc_simple << "\n\nERROR: Flexible side chains are not allowed without the rest of the receptor.\n";
+        if (vm.count("receptor") && vm.count("maps")) {
+            std::cerr << "ERROR: Cannot specify both receptor and affinity maps at the same time, --flex argument is allowed with receptor or maps.\n";
             exit(EXIT_FAILURE);
         }
 
-        if (sf_name.compare("ad4") == 0) {
-            if ((!vm.count("maps"))) {
+        if (sf_name.compare("vina") == 0) {
+            if (!vm.count("receptor") && !vm.count("maps")) {
+                std::cerr << desc_simple << "ERROR: The receptor or affinity maps must be specified.\n";
+                exit(EXIT_FAILURE);
+            }
+        } else if (sf_name.compare("ad4") == 0) {
+            if (vm.count("receptor")) {
+                std::cerr << "ERROR: No receptor allowed, only --flex argument with the AD4 scoring function.\n";
+                exit(EXIT_FAILURE);
+            }
+            if (!vm.count("maps")) {
                 std::cerr << desc_simple << "\n\nERROR: Affinity maps are missing.\n";
                 exit(EXIT_FAILURE);
             }
+        } else {
+            std::cerr << desc_simple << "Scoring function " << sf_name << " unknown.\n";
+            exit(EXIT_FAILURE);
         }
 
         if (!vm.count("ligand") && !vm.count("batch")) {
             std::cerr << desc_simple << "\n\nERROR: Missing ligand(s).\n";
             exit(EXIT_FAILURE);
         } else if (vm.count("ligand") && vm.count("batch")) {
-            std::cerr << desc_simple << "\n\nERROR: Can't use both --ligand and --batch simultaneously.\n";
+            std::cerr << desc_simple << "\n\nERROR: Can't use both --ligand and --batch arguments simultaneously.\n";
             exit(EXIT_FAILURE);
         } else if (vm.count("batch") && !vm.count("dir")) {
             std::cerr << desc_simple << "\n\nERROR: Need to specify an output directory for batch mode.\n";

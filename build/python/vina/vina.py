@@ -68,20 +68,24 @@ class Vina:
         """Print citation message."""
         self._vina.cite()
 
-    def set_receptor(self, rigid_pdbqt_filename, flex_pdbqt_filename=None):
+    def set_receptor(self, rigid_pdbqt_filename=None, flex_pdbqt_filename=None):
         """Set receptor.
 
         Args:
-            rigid_pdbqt_filename (str): rigid pdbqt receptor filename
-            flex_pdbqt_filename (str): flexible residues pdbqt filename
+            rigid_pdbqt_filename (str): rigid pdbqt receptor filename (default: None)
+            flex_pdbqt_filename (str): flexible residues pdbqt filename (default: None)
 
         """
+        if rigid_pdbqt_filename is None and flex_pdbqt_filename is None:
+            raise ValueError('Error: No (rigid) receptor or flexible residues were specified')
+
         # For the rigid part of the receptor
-        if not os.path.exists(rigid_pdbqt_filename):
-            raise RuntimeError('Error: file %s does not exist.' % rigid_pdbqt_filename)
-        _, extension = os.path.splitext(rigid_pdbqt_filename)
-        if not extension == '.pdbqt':
-            raise TypeError('Error: Vina requires a PDBQT file for the (rigid) receptor.')
+        if rigid_pdbqt_filename is not None:
+            if not os.path.exists(rigid_pdbqt_filename):
+                raise RuntimeError('Error: file %s does not exist.' % rigid_pdbqt_filename)
+            _, extension = os.path.splitext(rigid_pdbqt_filename)
+            if not extension == '.pdbqt':
+                raise TypeError('Error: Vina requires a PDBQT file for the (rigid) receptor.')
 
         # For the flex part of the receptor
         if flex_pdbqt_filename is not None:
@@ -91,10 +95,13 @@ class Vina:
             if not extension == '.pdbqt':
                 raise TypeError('Error: Vina requires a PDBQT file for the (flex) receptor.')
 
-        if flex_pdbqt_filename is None:
-            self._vina.set_receptor(rigid_pdbqt_filename)
+        if rigid_pdbqt_filename is not None:
+            if flex_pdbqt_filename is not None:
+                self._vina.set_receptor(rigid_pdbqt_filename, flex_pdbqt_filename)
+            else:
+                self._vina.set_receptor(rigid_pdbqt_filename)
         else:
-            self._vina.set_receptor(rigid_pdbqt_filename, flex_pdbqt_filename)
+            self._vina.set_receptor('', flex_pdbqt_filename)
 
         self._rigid_receptor = rigid_pdbqt_filename
         self._flex_receptor = flex_pdbqt_filename
@@ -148,17 +155,17 @@ class Vina:
 
         Args:
             center (list): center position
-            box_siwe (list): size of the box in Angstrom
+            box_size (list): size of the box in Angstrom
             spacing (float): grid spacing (default: 0.5)
 
         """
         if len(center) != 3:
             raise ValueError('Error: center of the box needs to be defined by (x, y, z) in Angstrom.')
-        if len(box_size) != 3:
+        elif len(box_size) != 3:
             raise ValueError('Error: box size needs to be defined by (a, b, c) in Angstrom.')
-        if not all([i > 0 for i in box_size]):
+        elif not all([i > 0 for i in box_size]):
             raise ValueError('Error: box dimensions are required to be positive.')
-        if spacing <= 0:
+        elif spacing <= 0:
             raise ValueError('Error: spacing should be greater than zero.')
 
         x, y, z = center
@@ -194,7 +201,7 @@ class Vina:
         """
         if self._center is None:
             raise RuntimeError('Error: no affinity maps were defined.')
-        if not overwrite:
+        elif not overwrite:
             existing_maps = glob.glob('%s.*.map' % map_prefix_filename)
             if existing_maps:
                 raise RuntimeError('Error: Cannot overwrite existing affinity maps (%s)' % existing_maps)
@@ -212,7 +219,7 @@ class Vina:
         """
         if not utils.check_file_writable(pdbqt_filename):
             raise RuntimeError('Error: Cannot write pose at %s.' % pdbqt_filename)
-        if not overwrite:
+        elif not overwrite:
             if os.path.exists(pdbqt_filename):
                 raise RuntimeError('Error: Cannot overwrite %s, already exists.' % pdbqt_filename)
 
@@ -229,7 +236,7 @@ class Vina:
         """
         if n_poses <= 0:
             raise ValueError('Error: number of poses written must be greater than zero.')
-        if energy_range <= 0:
+        elif energy_range <= 0:
             raise ValueError('Error: energy range must be greater than zero.')
         
         if coordinates_only:
@@ -241,27 +248,27 @@ class Vina:
         else:
             return self._vina.get_poses(n_poses, energy_range)
 
-    def write_poses(self, dlg_filename, n_poses=9, energy_range=3.0, overwrite=False):
+    def write_poses(self, pdbqt_filename, n_poses=9, energy_range=3.0, overwrite=False):
         """Write poses from docking.
 
         Args:
-            dlg_filename (str): docking ligand filename (PDBQT)
+            pdbqt_filename (str): PDBQT file containing poses found
             n_pose (int): number of poses to write (default: 9)
             energy_range (float): maximum energy difference from best pose (default: 3.0 kcal/mol)
             overwrite (bool): allow overwriting (default: false)
 
         """
-        if not utils.check_file_writable(dlg_filename):
-            raise RuntimeError('Error: Cannot write docking results at %s.' % dlg_filename)
-        if not overwrite:
-            if os.path.exists(dlg_filename):
-                raise RuntimeError('Error: Cannot overwrite %s, already exists.' % dlg_filename)
-        if n_poses <= 0:
+        if not utils.check_file_writable(pdbqt_filename):
+            raise RuntimeError('Error: Cannot write docking results at %s.' % pdbqt_filename)
+        elif not overwrite:
+            if os.path.exists(pdbqt_filename):
+                raise RuntimeError('Error: Cannot overwrite %s, already exists.' % pdbqt_filename)
+        elif n_poses <= 0:
             raise ValueError('Error: number of poses written must be greater than zero.')
-        if energy_range <= 0:
+        elif energy_range <= 0:
             raise ValueError('Error: energy range must be greater than zero.')
 
-        self._vina.write_poses(dlg_filename, n_poses, energy_range)
+        self._vina.write_poses(pdbqt_filename, n_poses, energy_range)
 
     def randomize(self):
         """Randomize the input ligand conformation."""
@@ -274,7 +281,10 @@ class Vina:
             list: list of energies (total, lig_inter, flex_inter, other_inter, lig_intra, conf_independent)
 
         """
-        return self._vina.score()
+        # It does not make sense to report energies with a precision higher than 3
+        # since the coordinates precision is 3.
+        energies = np.around(self._vina.score(), decimals=3)
+        return energies
 
     def optimize(self):
         """Quick local BFGS optimization.
@@ -283,7 +293,10 @@ class Vina:
             list: list of energies (total, lig_inter, flex_inter, other_inter, lig_intra, conf_independent)
 
         """
-        return self._vina.optimize()
+        # It does not make sense to report energies with a precision higher than 3
+        # since the coordinates precision is 3.
+        energies = np.around(self._vina.optimize(), decimals=3)
+        return energies
 
     def dock(self, exhaustiveness=8, n_poses=20, min_rmsd=1.0, max_evals=0):
         """Docking: global search optimization.
@@ -297,11 +310,11 @@ class Vina:
         """
         if exhaustiveness <= 0:
             raise ValueError('Error: exhaustiveness must be 1 or greater.')
-        if n_poses <= 0:
+        elif n_poses <= 0:
             raise ValueError('Error: number of poses to generate must be greater than zero.')
-        if min_rmsd <= 0:
+        elif min_rmsd <= 0:
             raise ValueError('Error: minimal RMSD must be greater than zero.')
-        if max_evals < 0:
+        elif max_evals < 0:
             raise ValueError('Error: maximum evaluations must be positive.')
 
         self._vina.global_search(exhaustiveness, n_poses, min_rmsd, max_evals)

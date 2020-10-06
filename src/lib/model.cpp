@@ -197,10 +197,31 @@ void model::append(const model& m) {
 
 	t.append(other_pairs, m.other_pairs);
 
-	VINA_FOR_IN(i, atoms)
-		VINA_FOR_IN(j, m.atoms) {
-			if(i >= m_num_movable_atoms && j >= m.m_num_movable_atoms) continue; // no need for inflex-inflex interactions
-			if(is_closure_clash(i, j)) continue; // 1-2, 1-3 or 1-4 interaction around CG-CG bond
+	VINA_CHECK(minus_forces.size() == coords.size());
+	VINA_CHECK(m.minus_forces.size() == m.coords.size());
+
+	t.coords_append(internal_coords, m.internal_coords);
+	t.coords_append(coords, m.coords);
+	t.coords_append(minus_forces, m.minus_forces); // for now, minus_forces.size() == coords.size() (includes inflex)
+
+	t.append(ligands, m.ligands);
+	t.append(flex, m.flex);
+	t.append(flex_context, m.flex_context);
+
+	t.append(grid_atoms, m.grid_atoms);
+	t.coords_append(atoms, m.atoms);
+
+	// Add interaction pairs between previously added atoms and (very likely) ligand atoms
+	/* Interactions:
+	- flex   - flex   : YES (not tested yet)
+	- flex   - ligand : YES
+	- ligand - ligand : NO
+	- macrocycle closure interactions: NO (1-2, 1-3, 1-4)
+	*/
+	VINA_FOR(i, m_num_movable_atoms) {
+		VINA_RANGE(j, m_num_movable_atoms, m_num_movable_atoms + m.m_num_movable_atoms) {
+			if (is_closure_clash(i, j)) continue; // 1-2, 1-3 or 1-4 interaction around CG-CG bond
+			if (is_atom_in_ligand(i) && is_atom_in_ligand(j)) continue; // don't add ligand-ligand interaction in other_pairs
 
 			const atom& a =   atoms[i];
 			const atom& b = m.atoms[j];
@@ -210,28 +231,11 @@ void model::append(const model& m) {
 			sz n = num_atom_types(atom_typing_used());
 
 			if(t1 < n && t2 < n) {
-				t.is_a =  true;
-				sz new_i = t(i);
-				t.is_a = false;
-				sz new_j = t(j);
 				sz type_pair_index = triangular_matrix_index_permissive(n, t1, t2);
-				other_pairs.push_back(interacting_pair(type_pair_index, new_i, new_j));
+				other_pairs.push_back(interacting_pair(type_pair_index, i, j));
 			}
 		}
-
-	VINA_CHECK(  minus_forces.size() ==   coords.size());
-	VINA_CHECK(m.minus_forces.size() == m.coords.size());
-
-	t.coords_append(internal_coords, m.internal_coords);
-	t.coords_append(         coords, m         .coords);
-	t.coords_append(   minus_forces, m   .minus_forces); // for now, minus_forces.size() == coords.size() (includes inflex)
-
-	t.append(ligands,         m.ligands);
-	t.append(flex,            m.flex);
-	t.append(flex_context,    m.flex_context);
-
-	t       .append(grid_atoms, m.grid_atoms);
-	t.coords_append(     atoms, m     .atoms);
+	}
 
 	m_num_movable_atoms += m.m_num_movable_atoms;
 }
@@ -444,6 +448,21 @@ sz model::find_ligand(sz a) const {
 	return ligands.size();
 }
 
+bool model::is_atom_in_ligand(sz a) const {
+	VINA_FOR_IN(i, ligands) {
+		if (a >= ligands[i].begin && a < ligands[i].end)
+			return true;
+	}
+	return false;
+}
+
+bool model::is_movable_atom(sz a) const {
+	if (a < num_movable_atoms())
+		return true;
+	else
+		return false;
+}
+
 void model::bonded_to(sz a, sz n, szv& out) const {
 	if(!has(out, a)) { // not found
 		out.push_back(a);
@@ -496,20 +515,30 @@ bool model::is_closure_clash(sz i, sz j) const {
 }
 
 void model::initialize_pairs(const distance_type_matrix& mobility) {
+	/* Interactions:
+	- intra ligand : YES (1-4 only)
+	- intra flex   : NO
+	- intra macrocycle closure interactions: NO (1-2, 1-3, 1-4)
+	*/
 	VINA_FOR_IN(i, atoms) {
 		sz i_lig = find_ligand(i);
 		szv bonded_atoms = bonded_to(i, 3);   // up to 1-4
-		VINA_RANGE(j, i+1, atoms.size()) {
-			if(i >= m_num_movable_atoms && j >= m_num_movable_atoms) continue; // exclude inflex-inflex
-			if(mobility(i, j) == DISTANCE_VARIABLE && !has(bonded_atoms, j)) {
-                if(is_closure_clash(i, j)) continue;  // 1-2, 1-3 or 1-4 interaction around CG-CG bond
+
+		VINA_RANGE(j, i + 1, atoms.size()) {
+			if (!is_atom_in_ligand(i) && !is_atom_in_ligand(j)) continue; // exclude intra flex
+
+			if (mobility(i, j) == DISTANCE_VARIABLE && !has(bonded_atoms, j)) {
+                if (is_closure_clash(i, j)) continue;  // 1-2, 1-3 or 1-4 interaction around CG-CG bond
+				
 				sz t1 = atoms[i].get  (atom_typing_used());
 				sz t2 = atoms[j].get  (atom_typing_used());
 				sz n  = num_atom_types(atom_typing_used());
-				if(t1 < n && t2 < n) { // exclude, say, Hydrogens
+
+				if (t1 < n && t2 < n) { // exclude, say, Hydrogens
 					sz type_pair_index = triangular_matrix_index_permissive(n, t1, t2);
 					interacting_pair ip(type_pair_index, i, j);
-					if(i_lig < ligands.size() && find_ligand(j) == i_lig)
+					
+					if (i_lig < ligands.size() && find_ligand(j) == i_lig)
 						ligands[i_lig].pairs.push_back(ip);
 					else
 						other_pairs.push_back(ip);
@@ -715,19 +744,19 @@ fl eval_interacting_pairs_deriv(const precalculate_byatom& p, fl v, const intera
 	return e;
 }
 
-fl model::evalo(const precalculate_byatom& p,  const vec& v) const { // clean up
-	fl e = eval_interacting_pairs(p, v[0], other_pairs, internal_coords);
+fl model::evalo(const precalculate_byatom& p, const vec& v) const { // clean up
+	fl e = eval_interacting_pairs(p, v[0], other_pairs, coords);
 	return e;
 }
 
-fl model::evali(const precalculate_byatom& p,                                  const vec& v                          ) const { // clean up
+fl model::evali(const precalculate_byatom& p, const vec& v) const { // clean up
 	fl e = 0;
 	VINA_FOR_IN(i, ligands) 
 		e += eval_interacting_pairs(p, v[0], ligands[i].pairs, coords); // probably might was well use coords here
 	return e;
 }
 
-fl model::evale(const precalculate_byatom& p, const igrid& ig, const vec& v                          ) const { // clean up
+fl model::evale(const precalculate_byatom& p, const igrid& ig, const vec& v) const { // clean up
 	fl e = ig.eval(*this, v[1]);
 	e += eval_interacting_pairs(p, v[2], other_pairs, coords);
 	return e;
@@ -766,9 +795,11 @@ fl model::eval_intramolecular(const precalculate_byatom& p, const igrid& ig, con
 	// flex-flex
 	VINA_FOR_IN(i, other_pairs) {
 		const interacting_pair& pair = other_pairs[i];
-		if(find_ligand(pair.a) < ligands.size() || find_ligand(pair.b) < ligands.size()) continue; // we only need flex-flex
+		
+		if (is_atom_in_ligand(pair.a) || is_atom_in_ligand(pair.b)) continue; // we only need flex-flex
+		
 		fl r2 = vec_distance_sqr(coords[pair.a], coords[pair.b]);
-		if(r2 < cutoff_sqr) {
+		if (r2 < cutoff_sqr) {
 			fl this_e = p.eval_fast(pair.a, pair.b, r2);
 			curl(this_e, v[2]);
 			e += this_e;

@@ -650,31 +650,39 @@ model parse_ligand_pdbqt(OpenBabel::OBMol* mol) { // can throw parse_error
 }
 */
 
-model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& flex_name, atom_type::t atype) { // can throw parse_error
+model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& flex_name, atom_type::t atype) { 
+    // Parse PDBQT receptor with flex residues
+    if (rigid_name.empty() && flex_name.empty()) {
+        // CONDITION 1
+        std::cerr << "ERROR: No (rigid) receptor or flexible residues were specified.\n";
+        exit(EXIT_FAILURE);
+    }
+
     rigid r;
     non_rigid_parsed nrp;
     context c;
-
-    parse_pdbqt_rigid(make_path(rigid_name), r);
-    parse_pdbqt_flex(make_path(flex_name), nrp, c);
-
     pdbqt_initializer tmp(atype);
-    tmp.initialize_from_rigid(r);
-    tmp.initialize_from_nrp(nrp, c, false);
-    tmp.initialize(nrp.mobility_matrix());
 
-    return tmp.m;
-}
+    if (!rigid_name.empty()) {
+        parse_pdbqt_rigid(make_path(rigid_name), r);
+    }
+    
+    if (!flex_name.empty()) {
+        parse_pdbqt_flex(make_path(flex_name), nrp, c);
+    }
 
-model parse_receptor_pdbqt(const std::string& rigid_name, atom_type::t atype) { // can throw parse_error
-    rigid r;
+    if (!rigid_name.empty()) {
+        tmp.initialize_from_rigid(r);
+        if (flex_name.empty()) {
+            distance_type_matrix mobility_matrix;
+            tmp.initialize(mobility_matrix);
+        }
+    }
 
-    parse_pdbqt_rigid(make_path(rigid_name), r);
-
-    pdbqt_initializer tmp(atype);
-    tmp.initialize_from_rigid(r);
-    distance_type_matrix mobility_matrix;
-    tmp.initialize(mobility_matrix);
+    if (!flex_name.empty()) {
+        tmp.initialize_from_nrp(nrp, c, false);
+        tmp.initialize(nrp.mobility_matrix());
+    }
 
     return tmp.m;
 }

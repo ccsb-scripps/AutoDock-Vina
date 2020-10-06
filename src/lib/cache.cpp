@@ -45,6 +45,8 @@ std::string convert_XS_to_string(sz t) {
 		case XS_TYPE_Cl_H    : return "Cl_H";
 		case XS_TYPE_Br_H    : return "Br_H";
 		case XS_TYPE_I_H     : return "I_H";
+		case XS_TYPE_Si      : return "Si";
+		case XS_TYPE_At      : return "At";
 		case XS_TYPE_Met_D   : return "Met_D";
 		case XS_TYPE_W       : return "W";
 		default: VINA_CHECK(false);
@@ -71,7 +73,10 @@ fl cache::eval(const model& m, fl v) const { // needs m.coords
 			continue;
 
 		const grid& g = grids[t];
-		assert(g.initialized());
+		if (!g.initialized()) {
+			std::cerr << "ERROR: Affinity map for atom type " << convert_XS_to_string(t) << " is not present.\n";
+			exit(EXIT_FAILURE);
+        }
 		e += g.evaluate(m.coords[i], slope, v);
 	}
 	return e;
@@ -82,7 +87,7 @@ fl cache::eval_intra(model& m, fl v) const {
 	sz nat = num_atom_types(atom_type::XS);
 
 	VINA_FOR(i, m.num_movable_atoms()) {
-        if(m.find_ligand(i) < m.ligands.size()) continue; // we only want flex-rigid interaction
+        if(m.is_atom_in_ligand(i)) continue; // we only want flex-rigid interaction
 		const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::XS);
 
@@ -96,7 +101,10 @@ fl cache::eval_intra(model& m, fl v) const {
 			continue;
 
 		const grid& g = grids[t];
-		assert(g.initialized());
+		if (!g.initialized()) {
+			std::cerr << "ERROR: Affinity map for atom type " << convert_XS_to_string(t) << " is not present.\n";
+			exit(EXIT_FAILURE);
+        }
 		e += g.evaluate(m.coords[i], slope, v);
 	}
 	return e;
@@ -123,7 +131,10 @@ fl cache::eval_deriv(model& m, fl v) const { // needs m.coords, sets m.minus_for
 			continue;
 
 		const grid& g = grids[t];
-		assert(g.initialized());
+		if (!g.initialized()) {
+			std::cerr << "ERROR: Affinity map for atom type " << convert_XS_to_string(t) << " is not present.\n";
+			exit(EXIT_FAILURE);
+        }
 		vec deriv;
 		e += g.evaluate(m.coords[i], slope, v, deriv);
 		m.minus_forces[i] = deriv;

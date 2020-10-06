@@ -40,9 +40,7 @@
 #include "parse_error.h"
 #include "utils.h"
 
-
-model parse_receptor_pdbqt(const std::string& rigid, const std::string& flex, atom_type::t atype); // can throw parse_error
-model parse_receptor_pdbqt(const std::string& rigid, atom_type::t atype); // can throw parse_error
+model parse_receptor_pdbqt(const std::string &rigid=std::string(), const std::string &flex=std::string(), atom_type::t atype=atom_type::XS); // can throw parse_error
 model parse_ligand_pdbqt(const std::string& name, atom_type::t atype); // can throw parse_error
 //model parse_ligand_pdbqt(OpenBabel::OBMol* mol); // can throw parse_error
  

@@ -47,6 +47,8 @@ std::string get_adtype_str(sz& t) {
         case AD_TYPE_Fe: return "Fe";
         case AD_TYPE_Cl: return "Cl";
         case AD_TYPE_Br: return "Br";
+        case AD_TYPE_Si: return "Si";
+        case AD_TYPE_At: return "At";
         case AD_TYPE_W : return "W";
         default: VINA_CHECK(false);
     }
@@ -68,20 +70,25 @@ fl ad4cache::eval(const model& m, fl v) const {
 
         // HB + vdW
         const grid& g = grids[t];
-		assert(g.initialized());
+		if (!g.initialized()) {
+            std::cerr << "ERROR: Affinity map for atom type " << get_adtype_str(t) << " is not present.\n";
+            exit(EXIT_FAILURE);
+        }
 		e += g.evaluate(m.coords[i], slope, v);
+        std::cout << e << "\n";
 
         // elec
 		const grid& ge = grids[AD_TYPE_SIZE];
 		assert(ge.initialized());
 		e += ge.evaluate(m.coords[i], slope, v) * a.charge;
+        std::cout << e << "\n";
 
         // desolv
 		const grid& gd = grids[AD_TYPE_SIZE + 1];
 		assert(gd.initialized());
 		e += gd.evaluate(m.coords[i], slope, v) * std::abs(a.charge);
-
-	}
+        std::cout << e << "\n";
+    }
 	return e;
 }
 
@@ -90,7 +97,7 @@ fl ad4cache::eval_intra(model& m, fl v) const {
 	sz nat = num_atom_types(atom_type::AD);
 
     VINA_FOR(i, m.num_movable_atoms()) {
-        if(m.find_ligand(i) < m.ligands.size()) continue; // we only want flex-rigid interaction
+        if(m.is_atom_in_ligand(i)) continue; // we only want flex-rigid interaction
 		const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::AD);
         if (t == AD_TYPE_G0 || t == AD_TYPE_G1 || t == AD_TYPE_G2 || t == AD_TYPE_G3)
@@ -100,7 +107,10 @@ fl ad4cache::eval_intra(model& m, fl v) const {
 
         // HB + vdW
         const grid& g = grids[t];
-		assert(g.initialized());
+		if (!g.initialized()) {
+            std::cerr << "ERROR: Affinity map for atom type " << get_adtype_str(t) << " is not present.\n";
+            exit(EXIT_FAILURE);
+        }
 		e += g.evaluate(m.coords[i], slope, v);
 
         // elec
@@ -132,7 +142,10 @@ fl ad4cache::eval_deriv(model& m, fl v) const { // sets m.minus_forces
 
         // HB + vdW
         const grid& g = grids[t];
-		assert(g.initialized());
+		if (!g.initialized()) {
+            std::cerr << "ERROR: Affinity map for atom type " << get_adtype_str(t) << " is not present.\n";
+            exit(EXIT_FAILURE);
+        }
 		vec deriv;
 		e += g.evaluate(m.coords[i], slope, v, deriv);
 		m.minus_forces[i] = deriv;

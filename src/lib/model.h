@@ -78,6 +78,9 @@ public:
 	void append(const model& m);
 	atom_type::t atom_typing_used() const { return m_atom_typing_used; }
 
+	bool is_atom_in_ligand(sz a) const;
+	bool is_movable_atom(sz a) const;
+	sz num_atoms() const { return atoms.size(); }
 	sz num_movable_atoms() const { return m_num_movable_atoms; }
 	sz num_internal_pairs() const;
 	sz num_other_pairs() const { return other_pairs.size(); }

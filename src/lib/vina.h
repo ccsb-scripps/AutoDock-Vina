@@ -98,8 +98,7 @@ public:
     ~Vina();
 
     void cite();
-    void set_receptor(const std::string& rigid_name);
-    void set_receptor(const std::string& rigid_name, const std::string& flex_name);
+    void set_receptor(const std::string &rigid_name=std::string(), const std::string &flex_name=std::string());
     void set_ligand(const std::string& ligand_name);
     void set_ligand(const std::vector<std::string>& ligand_name);
     //void set_ligand(OpenBabel::OBMol* mol);
@@ -110,7 +109,7 @@ public:
                           double weight_rot=0.05846);
     void set_ad4_weights(double weight_ad4_vdw=0.1662, double weight_ad4_hb=0.1209, 
                          double weight_ad4_elec=0.1406, double weight_ad4_dsolv=0.1322, 
-                         double weight_glue=50, double weight_ad4_rot =0.2983);
+                         double weight_glue=50, double weight_ad4_rot=0.2983);
     void compute_vina_maps(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.5);
     void load_maps(std::string maps);
     void randomize(const int max_steps=10000);
@@ -119,9 +118,9 @@ public:
     void global_search(const int exhaustiveness=8, const int n_poses=20, const double min_rmsd=1.0, const int max_evals=0);
     void show_docking_report();
     std::string get_poses(int how_many=9, double energy_range=3.0);
-    std::vector<std::vector<double>> get_poses_coordinates(int how_many = 9, double energy_range = 3.0);
-    void write_pose(const std::string &output_name, const std::string &remark = std::string());
-    void write_poses(const std::string &output_name, int how_many = 9, double energy_range = 3.0);
+    std::vector<std::vector<double>> get_poses_coordinates(int how_many=9, double energy_range=3.0);
+    void write_pose(const std::string &output_name, const std::string &remark=std::string());
+    void write_poses(const std::string &output_name, int how_many=9, double energy_range=3.0);
     void write_maps(const std::string& map_prefix="receptor", const std::string& gpf_filename="NULL",
                     const std::string& fld_filename="NULL", const std::string& receptor_filename="NULL");
 
