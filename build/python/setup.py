@@ -116,7 +116,7 @@ def locate_ob():
 def locate_boost():
     """Try to locate boost."""
     if in_conda:
-        # It means that SWIG was installed in an Anaconda env
+        # It means that Boost was installed in an Anaconda env
         data_pathname = sysconfig.get_path('data')
         include_dirs = data_pathname + os.path.sep + 'include'
         library_dirs = data_pathname + os.path.sep + 'lib'
