@@ -74,12 +74,16 @@ public:
     atomv get_atoms() const { return atoms; } // for precalculate_byatom
     atom get_atom(sz i) const { return atoms[i]; }
     ligand get_ligand(sz i) const { return ligands[i]; }
-	
+	vec get_coords(sz i) const { return coords[i]; }
+	interacting_pairs get_other_pairs() const { return other_pairs; }
+	interacting_pairs get_inter_pairs() const { return inter_pairs; }
+
 	void append(const model& m);
 	atom_type::t atom_typing_used() const { return m_atom_typing_used; }
 
 	bool is_atom_in_ligand(sz a) const;
 	bool is_movable_atom(sz a) const;
+	sz find_ligand(sz a) const;
 	sz num_atoms() const { return atoms.size(); }
 	sz num_movable_atoms() const { return m_num_movable_atoms; }
 	sz num_internal_pairs() const;
@@ -91,10 +95,11 @@ public:
 	sz ligand_length(sz ligand_number) const;
 
 	szv get_movable_atom_types(atom_type::t atom_typing_used_) const;
-
+	vecv get_ligand_coords() const;
+	std::vector<double> get_ligand_coords();
+	vecv get_heavy_atom_movable_coords() const;
 	conf_size get_size() const;
 	conf get_initial_conf() const; // torsions = 0, orientations = identity, ligand positions = current
-
 	grid_dims movable_atoms_box(fl add_to_each_dimension, fl granularity = 0.375) const;
 
 	void write_flex  (                  const path& name, const std::string& remark) const { write_context(flex_context, name, remark); }
@@ -122,8 +127,6 @@ public:
 	}
 	std::string write_model(sz model_number, const std::string &remark);
 
-	void seti(const conf &c);
-	void sete(const conf& c);
 	void set (const conf& c);
 
 	fl gyration_radius(sz ligand_number) const; // uses coords
@@ -140,12 +143,9 @@ public:
 	// clean up
 	fl evalo     (const precalculate_byatom& p,                  const vec& v           ) const;
 	fl evali     (const precalculate_byatom& p,                  const vec& v           ) const;
-	fl evale     (const precalculate_byatom& p, const igrid& ig, const vec& v           ) const;
-	fl eval      (const precalculate_byatom& p, const igrid& ig, const vec& v           );
+	fl eval_inter(const precalculate_byatom& p,                  const vec& v           ) const;
 	fl eval_deriv(const precalculate_byatom& p, const igrid& ig, const vec& v, change& g);
 	fl eval_intramolecular(const precalculate_byatom& p, const igrid& ig, const vec& v);
-	//fl eval_adjusted      (const ScoringFunction& sf, const precalculate_byatom& p, const igrid& ig, const vec& v, fl intramolecular_energy);
-
 
 	fl rmsd_lower_bound(const model& m) const; // uses coords
 	fl rmsd_upper_bound(const model& m) const; // uses coords
@@ -153,46 +153,10 @@ public:
 
 	void verify_bond_lengths() const;
 	void about() const;
-
-	vecv get_ligand_internal_coords() const { // FIXME rm
-		VINA_CHECK(ligands.size() == 1);
-		vecv tmp;
-		const ligand& lig = ligands.front();
-		VINA_RANGE(i, lig.begin, lig.end)
-			tmp.push_back(internal_coords[i]);
-		return tmp;
-	}
-
-	vecv get_ligand_coords() const { // FIXME rm
-		VINA_CHECK(ligands.size() == 1);
-		vecv tmp;
-		const ligand& lig = ligands.front();
-		VINA_RANGE(i, lig.begin, lig.end)
-			tmp.push_back(coords[i]);
-		return tmp;
-	}
-
-	std::vector<double> get_ligand_coords() {
-		// Way to get coordinates out of the C++ world
-		VINA_CHECK(ligands.size() == 1);
-		std::vector<double> tmp;
-		const ligand &lig = ligands.front();
-		VINA_RANGE(i, lig.begin, lig.end) {
-			tmp.push_back(coords[i][0]);
-			tmp.push_back(coords[i][1]);
-			tmp.push_back(coords[i][2]);
-		}
-		return tmp;
-	}
-
-	vecv get_heavy_atom_movable_coords() const { // FIXME mv
-		vecv tmp;
-		VINA_FOR(i, num_movable_atoms())
-			if(atoms[i].el != EL_TYPE_H)
-				tmp.push_back(coords[i]);
-		return tmp;
-	}
-	void check_internal_pairs() const;
+	void check_ligand_internal_pairs() const;
+	void show_pairs() const;
+	void show_atoms() const;
+	void show_forces() const;
 	void print_stuff(bool show_coords=true, bool show_internal=true, bool show_atoms=true, bool show_grid=true, bool show_about=true) const; // FIXME rm
 
 	fl clash_penalty() const;
@@ -225,7 +189,6 @@ private:
 	atom_index sz_to_atom_index(sz i) const; // grid_atoms, atoms
 	bool bonded_to_HD(const atom& a) const;
 	bool bonded_to_heteroatom(const atom& a) const;
-	sz find_ligand(sz a) const;
 	void bonded_to(sz a, sz n, szv& out) const;
 	szv bonded_to(sz a, sz n) const;
     bool is_closure_clash(sz i, sz j) const;
@@ -236,7 +199,6 @@ private:
 	void initialize(const distance_type_matrix& mobility);
 	fl clash_penalty_aux(const interacting_pairs& pairs) const;
 
-	vecv internal_coords;
 	vecv coords;
 	vecv minus_forces;
 
@@ -245,7 +207,8 @@ private:
 	vector_mutable<ligand> ligands;
 	vector_mutable<residue> flex;
 	context flex_context;
-	interacting_pairs other_pairs; // all except internal to one ligand: ligand-other ligands; ligand-flex/inflex; flex-flex/inflex
+	interacting_pairs other_pairs; // INTRAmolecular interactions: flex_i - flex_j and flex_i - flex_i
+	interacting_pairs inter_pairs; // INTERmolecular interactions: ligand - flex and ligand_i - ligand_j
 
 	sz m_num_movable_atoms;
 	atom_type::t m_atom_typing_used;

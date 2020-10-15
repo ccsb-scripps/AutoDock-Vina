@@ -174,7 +174,6 @@ fl ad4_electrostatic::eval(const atom& a, const atom& b, fl r) {
     if (tmp < epsilon_fl)
         return q1q2 * cap / diel;
     else {
-        //std::cout << diel << " dist=" << r << " q1=" << a.charge << " q2=" << b.charge <<  " q1q2=" << q1q2 << " tmp=" << tmp << " energy=" << q1q2 * (std::min)(cap, 1/(int_pow<i>(r) * diel)) << "\n";
         return q1q2 * (std::min)(cap, 1 / (int_pow<1>(r) * diel));
     }
 }
@@ -228,7 +227,6 @@ fl ad4_vdw::eval(const atom& a, const atom& b, fl r) {
     if (r >= cutoff)
         return 0.;
 
-    //std::cout << "we are here!!!\n";
     sz t1 = a.ad;
     sz t2 = b.ad;
     fl hb_depth = ad4_hb_eps(t1) * ad4_hb_eps(t2);
@@ -259,10 +257,8 @@ fl ad4_hb::eval(const atom& a, const atom& b, fl r) {
 
     sz t1 = a.ad; 
     sz t2 = b.ad; 
-    //std::cout << "HERE " << t1 << "\n";
     fl hb_rij = ad4_hb_radius(t1) + ad4_hb_radius(t2);
     fl hb_depth = ad4_hb_eps(t1) * ad4_hb_eps(t2);
-    //std::cout << "hb_eps " << ad4_hb_eps(t1) << " " << ad4_hb_eps(t2) << " r=" << r << " t1=" << t1 << ", t2= " << t2 << "\n";
     fl vdw_rij = ad4_vdw_radius(t1) + ad4_vdw_radius(t2);
     
     if (hb_depth >= 0)
@@ -309,8 +305,6 @@ fl linearattraction::eval(const atom& a, const atom& b, fl r) {
     if (r >= cutoff)
         return 0.;
 
-    //if(is_glue_type(a.xs) || is_glue_type(b.xs)) std::cout << "a.xs=" << a.xs << " b.xs=" << b.xs << "\n";
-    //if((a.ad == AD_TYPE_G0 && b.ad == AD_TYPE_CG0) || (a.ad == AD_TYPE_CG0 && b.ad == AD_TYPE_G0)) std::cout << "a.xs=" << a.xs << " b.xs=" << b.xs << "\n";
     if (is_glued(a.xs, b.xs))
         return r;
     else 

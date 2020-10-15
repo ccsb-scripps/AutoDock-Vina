@@ -179,7 +179,8 @@ flv precalculate::calculate_rs() const
 }
 
 precalculate_byatom::precalculate_byatom(const ScoringFunction &sf, const model &model, fl v, fl factor)
-{   // sf should not be discontinuous, even near cutoff, for the sake of the derivatives
+{   
+    // sf should not be discontinuous, even near cutoff, for the sake of the derivatives
     m_factor = factor;
     m_cutoff_sqr = sqr(sf.get_max_cutoff());
     m_n = sz(m_factor * m_cutoff_sqr) + 3; // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
@@ -237,6 +238,6 @@ flv precalculate_byatom::calculate_rs() const
 {
     flv tmp(m_n, 0);
     VINA_FOR(i, m_n)
-    tmp[i] = std::sqrt(i / m_factor);
+        tmp[i] = std::sqrt(i / m_factor);
     return tmp;
 }

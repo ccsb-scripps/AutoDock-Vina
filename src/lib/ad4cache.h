@@ -45,7 +45,9 @@ struct ad4cache : public igrid {
 	fl eval      (const model& m, fl v) const; // needs m.coords // clean up
 	fl eval_intra(      model& m, fl v) const; // needs m.coords, sets m.minus_forces // clean up
 	fl eval_deriv(      model& m, fl v) const; // needs m.coords, sets m.minus_forces // clean up
+    bool is_in_grid(const model &m, fl margin=0.0001) const;
     bool is_atom_type_grid_initialized(sz t) const { return grids[t].initialized(); }
+    bool are_atom_types_grid_initialized(szv atom_types) const;
     grid_dims read(const std::string& str);
     void write(const std::string& out_prefix, const szv& atom_types, const std::string& gpf_filename="NULL",
                const std::string& fld_filename="NULL", const std::string& receptor_filename="NULL");

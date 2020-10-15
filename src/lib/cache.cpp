@@ -60,23 +60,33 @@ fl cache::eval(const model& m, fl v) const { // needs m.coords
 	sz nat = num_atom_types(atom_type::XS);
 
 	VINA_FOR(i, m.num_movable_atoms()) {
+		if(!m.is_atom_in_ligand(i)) continue; // we only want ligand - grid interaction
 		const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::XS);
 
-		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
-			continue;
-		else if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_H_CG3)
-			t = XS_TYPE_C_H;
-		else if (t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_P_CG1 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_P_CG3)
-			t = XS_TYPE_C_P;
-		else if (t >= nat) // This is used to ignore hydrogen atoms
-			continue;
+		if (t >= nat) { continue; }
+		switch (t)
+		{
+			case XS_TYPE_G0:
+			case XS_TYPE_G1:
+			case XS_TYPE_G2:
+			case XS_TYPE_G3:
+				continue;
+			case XS_TYPE_C_H_CG0:
+			case XS_TYPE_C_H_CG1:
+			case XS_TYPE_C_H_CG2:
+			case XS_TYPE_C_H_CG3:
+				t = XS_TYPE_C_H;
+				break;
+			case XS_TYPE_C_P_CG0:
+			case XS_TYPE_C_P_CG1:
+			case XS_TYPE_C_P_CG2:
+			case XS_TYPE_C_P_CG3:
+				t = XS_TYPE_C_P;
+				break;
+		}
 
 		const grid& g = grids[t];
-		if (!g.initialized()) {
-			std::cerr << "ERROR: Affinity map for atom type " << convert_XS_to_string(t) << " is not present.\n";
-			exit(EXIT_FAILURE);
-        }
 		e += g.evaluate(m.coords[i], slope, v);
 	}
 	return e;
@@ -91,20 +101,29 @@ fl cache::eval_intra(model& m, fl v) const {
 		const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::XS);
 
-		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
-			continue;
-		else if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_H_CG3)
-			t = XS_TYPE_C_H;
-		else if (t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_P_CG1 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_P_CG3)
-			t = XS_TYPE_C_P;
-		else if (t >= nat) // This is used to ignore hydrogen atoms
-			continue;
+		if (t >= nat) { continue; }
+		switch (t)
+		{
+			case XS_TYPE_G0:
+			case XS_TYPE_G1:
+			case XS_TYPE_G2:
+			case XS_TYPE_G3:
+				continue;
+			case XS_TYPE_C_H_CG0:
+			case XS_TYPE_C_H_CG1:
+			case XS_TYPE_C_H_CG2:
+			case XS_TYPE_C_H_CG3:
+				t = XS_TYPE_C_H;
+				break;
+			case XS_TYPE_C_P_CG0:
+			case XS_TYPE_C_P_CG1:
+			case XS_TYPE_C_P_CG2:
+			case XS_TYPE_C_P_CG3:
+				t = XS_TYPE_C_P;
+				break;
+		}
 
 		const grid& g = grids[t];
-		if (!g.initialized()) {
-			std::cerr << "ERROR: Affinity map for atom type " << convert_XS_to_string(t) << " is not present.\n";
-			exit(EXIT_FAILURE);
-        }
 		e += g.evaluate(m.coords[i], slope, v);
 	}
 	return e;
@@ -118,28 +137,60 @@ fl cache::eval_deriv(model& m, fl v) const { // needs m.coords, sets m.minus_for
 		const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::XS);
 
-		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
-		{	
-			m.minus_forces[i].assign(0);
-			continue;
+		if (t >= nat) { m.minus_forces[i].assign(0); continue; }
+		switch (t)
+		{
+			case XS_TYPE_G0:
+			case XS_TYPE_G1:
+			case XS_TYPE_G2:
+			case XS_TYPE_G3:
+				m.minus_forces[i].assign(0);
+				continue;
+			case XS_TYPE_C_H_CG0:
+			case XS_TYPE_C_H_CG1:
+			case XS_TYPE_C_H_CG2:
+			case XS_TYPE_C_H_CG3:
+				t = XS_TYPE_C_H;
+				break;
+			case XS_TYPE_C_P_CG0:
+			case XS_TYPE_C_P_CG1:
+			case XS_TYPE_C_P_CG2:
+			case XS_TYPE_C_P_CG3:
+				t = XS_TYPE_C_P;
+				break;
 		}
-		else if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_H_CG3)
-			t = XS_TYPE_C_H;
-		else if (t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_P_CG1 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_P_CG3)
-			t = XS_TYPE_C_P;
-		else if (t >= nat) // This is used to ignore hydrogen atoms
-			continue;
 
-		const grid& g = grids[t];
-		if (!g.initialized()) {
-			std::cerr << "ERROR: Affinity map for atom type " << convert_XS_to_string(t) << " is not present.\n";
-			exit(EXIT_FAILURE);
-        }
 		vec deriv;
+		const grid& g = grids[t];
 		e += g.evaluate(m.coords[i], slope, v, deriv);
 		m.minus_forces[i] = deriv;
 	}
 	return e;
+}
+
+bool cache::is_in_grid(const model& m, fl margin) const {
+	VINA_FOR(i, m.num_movable_atoms()) {
+		if(m.atoms[i].is_hydrogen()) continue;
+
+		const vec& a_coords = m.coords[i];
+		VINA_FOR_IN(j, gd) {
+			if(gd[j].n > 0)
+				if(a_coords[j] < gd[j].begin - margin || a_coords[j] > gd[j].end + margin) 
+					return false;
+		}
+	}
+	return true;
+}
+
+bool cache::are_atom_types_grid_initialized(szv atom_types) const {
+    VINA_FOR_IN(i, atom_types) {
+        if (!is_atom_type_grid_initialized(atom_types[i])) {
+            std::cerr << "ERROR: Affinity map for atom type " <<  convert_XS_to_string(atom_types[i]) << " is not present.\n";
+            return false;
+        }
+    }
+
+    return true;
 }
 
 std::vector<std::string> vina_split(std::string str)
@@ -230,14 +281,27 @@ grid_dims cache::read(const std::string &map_prefix)
 	{
 		sz t = atom_type;
 
-		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
-			continue;
-		else if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_H_CG3)
-			t = XS_TYPE_C_H;
-		else if (t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_P_CG1 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_P_CG3)
-			t = XS_TYPE_C_P;
-		else if (t >= nat) // This is used to ignore hydrogen atoms
-			continue;
+		if (t >= nat) { continue; }
+		switch (t)
+		{
+			case XS_TYPE_G0:
+			case XS_TYPE_G1:
+			case XS_TYPE_G2:
+			case XS_TYPE_G3:
+				continue;
+			case XS_TYPE_C_H_CG0:
+			case XS_TYPE_C_H_CG1:
+			case XS_TYPE_C_H_CG2:
+			case XS_TYPE_C_H_CG3:
+				t = XS_TYPE_C_H;
+				break;
+			case XS_TYPE_C_P_CG0:
+			case XS_TYPE_C_P_CG1:
+			case XS_TYPE_C_P_CG2:
+			case XS_TYPE_C_P_CG3:
+				t = XS_TYPE_C_P;
+				break;
+		}
 
 		if (t == XS_TYPE_C_H && got_C_H_already)
 			continue;
@@ -272,14 +336,27 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 	VINA_FOR_IN(i, atom_types) {
 		sz t = atom_types[i];
 
-		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
-			continue;
-		else if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_H_CG3)
-			t = XS_TYPE_C_H;
-		else if (t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_P_CG1 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_P_CG3)
-			t = XS_TYPE_C_P;
-		else if (t >= nat) // This is used to ignore hydrogen atoms
-			continue;
+		if (t >= nat) { continue; }
+		switch (t)
+		{
+			case XS_TYPE_G0:
+			case XS_TYPE_G1:
+			case XS_TYPE_G2:
+			case XS_TYPE_G3:
+				continue;
+			case XS_TYPE_C_H_CG0:
+			case XS_TYPE_C_H_CG1:
+			case XS_TYPE_C_H_CG2:
+			case XS_TYPE_C_H_CG3:
+				t = XS_TYPE_C_H;
+				break;
+			case XS_TYPE_C_P_CG0:
+			case XS_TYPE_C_P_CG1:
+			case XS_TYPE_C_P_CG2:
+			case XS_TYPE_C_P_CG3:
+				t = XS_TYPE_C_P;
+				break;
+		}
 
 		if (t == XS_TYPE_C_H && got_C_H_already)
 			continue;
@@ -349,12 +426,26 @@ void cache::populate(const model &m, const precalculate &p, const grid_dims &gd,
 	VINA_FOR_IN(i, atom_types_needed) {
 		sz t = atom_types_needed[i];
 
-		if (t == XS_TYPE_G0 || t == XS_TYPE_G1 || t == XS_TYPE_G2 || t == XS_TYPE_G3)
-			continue;
-		else if (t == XS_TYPE_C_H_CG0 || t == XS_TYPE_C_H_CG1 || t == XS_TYPE_C_H_CG2 || t == XS_TYPE_C_H_CG3)
-			t = XS_TYPE_C_H;
-		else if (t == XS_TYPE_C_P_CG0 || t == XS_TYPE_C_P_CG1 || t == XS_TYPE_C_P_CG2 || t == XS_TYPE_C_P_CG3)
-			t = XS_TYPE_C_P;
+		switch (t)
+		{
+			case XS_TYPE_G0:
+			case XS_TYPE_G1:
+			case XS_TYPE_G2:
+			case XS_TYPE_G3:
+				continue;
+			case XS_TYPE_C_H_CG0:
+			case XS_TYPE_C_H_CG1:
+			case XS_TYPE_C_H_CG2:
+			case XS_TYPE_C_H_CG3:
+				t = XS_TYPE_C_H;
+				break;
+			case XS_TYPE_C_P_CG0:
+			case XS_TYPE_C_P_CG1:
+			case XS_TYPE_C_P_CG2:
+			case XS_TYPE_C_P_CG3:
+				t = XS_TYPE_C_P;
+				break;
+		}
 
 		if (t == XS_TYPE_C_H && got_C_H_already)
 			continue;

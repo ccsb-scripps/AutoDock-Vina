@@ -599,8 +599,6 @@ struct pdbqt_initializer {
         }
         VINA_CHECK(m.coords.size() == n);
 
-        m.internal_coords.resize(m.coords.size(), zero_vec); // FIXME
-
         m.minus_forces = m.coords;
         m.m_num_movable_atoms = nrp.atoms.size();
 

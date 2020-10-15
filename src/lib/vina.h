@@ -116,7 +116,6 @@ public:
     std::vector<double> score();
     std::vector<double> optimize(const int max_steps=0);
     void global_search(const int exhaustiveness=8, const int n_poses=20, const double min_rmsd=1.0, const int max_evals=0);
-    void show_docking_report();
     std::string get_poses(int how_many=9, double energy_range=3.0);
     std::vector<std::vector<double>> get_poses_coordinates(int how_many=9, double energy_range=3.0);
     void write_pose(const std::string &output_name, const std::string &remark=std::string());
