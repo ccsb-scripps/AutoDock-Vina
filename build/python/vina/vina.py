@@ -150,13 +150,13 @@ class Vina:
 
         self._weights = weights
 
-    def compute_vina_maps(self, center, box_size, spacing=1.0):
+    def compute_vina_maps(self, center, box_size, spacing=0.375):
         """Compute affinity maps using Vina scoring function.
 
         Args:
             center (list): center position
             box_size (list): size of the box in Angstrom
-            spacing (float): grid spacing (default: 1.0)
+            spacing (float): grid spacing (default: 0.375)
 
         """
         if len(center) != 3:
