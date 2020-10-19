@@ -39,6 +39,8 @@ ScoringFunction::ScoringFunction(const scoring_function_choice sf_choice, const 
                             new linearattraction(20.0)};
             m_conf_independents = {new num_tors_div()};
             m_atom_typing = atom_type::XS;
+            m_cutoff = 8.0;
+            m_max_cutoff = 20.0;
             break;
         }
         case SF_VINARDO:
@@ -56,6 +58,8 @@ ScoringFunction::ScoringFunction(const scoring_function_choice sf_choice, const 
                             new linearattraction(20.0)};
             m_conf_independents = {new ad4_tors_add()};
             m_atom_typing = atom_type::AD;
+            m_cutoff = 20.48;
+            m_max_cutoff = 20.48;
             break;
         }
         default:
@@ -69,11 +73,6 @@ ScoringFunction::ScoringFunction(const scoring_function_choice sf_choice, const 
     m_num_potentials = m_potentials.size();
     m_num_conf_independents = m_conf_independents.size();
     m_weights = weights;
-
-    VINA_FOR(i, m_num_potentials)
-    {
-        m_max_cutoff = (std::max)(m_max_cutoff, m_potentials[i]->get_cutoff());
-    }
 }
 
 fl ScoringFunction::eval(atom& a, atom& b, fl r) const

@@ -120,14 +120,15 @@ void precalculate_element::widen(const flv &rs, fl left, fl right)
 precalculate::precalculate(const ScoringFunction &sf, fl v, fl factor)
 {   // sf should not be discontinuous, even near cutoff, for the sake of the derivatives
     m_factor = factor;
-    m_cutoff_sqr = sqr(sf.get_max_cutoff());
-    m_n = sz(m_factor * m_cutoff_sqr) + 3; // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
-    //std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate = " << m_cutoff_sqr << "\n";
+    m_cutoff_sqr = sqr(sf.get_cutoff());
+    m_max_cutoff_sqr = sqr(sf.get_max_cutoff());
+    m_n = sz(m_factor * m_max_cutoff_sqr) + 3; // sz(factor * r^2) + 1 <= sz(factor * max_cutoff_sqr) + 2 <= n-1 < n  // see assert below
+    //std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate = " << m_max_cutoff_sqr << "\n";
     triangular_matrix<precalculate_element> data(num_atom_types(sf.get_atom_typing()), precalculate_element(m_n, m_factor));
 
     VINA_CHECK(m_factor > epsilon_fl);
-    VINA_CHECK(sz(m_cutoff_sqr * m_factor) + 1 < m_n); // cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
-    VINA_CHECK(m_cutoff_sqr * m_factor + 1 < m_n);
+    VINA_CHECK(sz(m_max_cutoff_sqr * m_factor) + 1 < m_n); // max_cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
+    VINA_CHECK(m_max_cutoff_sqr * m_factor + 1 < m_n);
 
     flv rs = calculate_rs();
 
@@ -152,13 +153,13 @@ precalculate::precalculate(const ScoringFunction &sf, fl v, fl factor)
 
 fl precalculate::eval_fast(sz type_pair_index, fl r2) const
 {
-    assert(r2 <= m_cutoff_sqr);
+    assert(r2 <= m_max_cutoff_sqr);
     return m_data(type_pair_index).eval_fast(r2);
 }
 
 pr precalculate::eval_deriv(sz type_pair_index, fl r2) const
 {
-    assert(r2 <= m_cutoff_sqr);
+    assert(r2 <= m_max_cutoff_sqr);
     return m_data(type_pair_index).eval_deriv(r2);
 }
 
@@ -174,7 +175,7 @@ flv precalculate::calculate_rs() const
 {
     flv tmp(m_n, 0);
     VINA_FOR(i, m_n)
-    tmp[i] = std::sqrt(i / m_factor);
+        tmp[i] = std::sqrt(i / m_factor);
     return tmp;
 }
 
@@ -182,16 +183,17 @@ precalculate_byatom::precalculate_byatom(const ScoringFunction &sf, const model 
 {   
     // sf should not be discontinuous, even near cutoff, for the sake of the derivatives
     m_factor = factor;
-    m_cutoff_sqr = sqr(sf.get_max_cutoff());
-    m_n = sz(m_factor * m_cutoff_sqr) + 3; // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
+    m_cutoff_sqr = sqr(sf.get_cutoff());
+    m_max_cutoff_sqr = sqr(sf.get_max_cutoff());
+    m_n = sz(m_factor * m_max_cutoff_sqr) + 3; // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
     //std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate = " << m_cutoff_sqr << "\n";
     sz n_atoms = model.num_atoms();
     atomv atoms = model.get_atoms();
     triangular_matrix<precalculate_element> data(n_atoms, precalculate_element(m_n, m_factor));
 
     VINA_CHECK(m_factor > epsilon_fl);
-    VINA_CHECK(sz(m_cutoff_sqr * m_factor) + 1 < m_n); // cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
-    VINA_CHECK(m_cutoff_sqr * m_factor + 1 < m_n);
+    VINA_CHECK(sz(m_max_cutoff_sqr * m_factor) + 1 < m_n); // cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
+    VINA_CHECK(m_max_cutoff_sqr * m_factor + 1 < m_n);
 
     flv rs = calculate_rs();
 
@@ -216,13 +218,13 @@ precalculate_byatom::precalculate_byatom(const ScoringFunction &sf, const model 
 
 fl precalculate_byatom::eval_fast(sz i, sz j, fl r2) const
 {
-    assert(r2 <= m_cutoff_sqr);
+    assert(r2 <= m_max_cutoff_sqr);
     return m_data(i, j).eval_fast(r2);
 }
 
 pr precalculate_byatom::eval_deriv(sz i, sz j, fl r2) const
 {
-    assert(r2 <= m_cutoff_sqr);
+    assert(r2 <= m_max_cutoff_sqr);
     return m_data(i, j).eval_deriv(r2);
 }
 

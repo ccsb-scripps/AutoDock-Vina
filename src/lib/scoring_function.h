@@ -44,15 +44,18 @@ public:
     fl eval(atom& a, atom& b, fl r) const; // intentionally not checking for cutoff
     fl eval(sz t1, sz t2, fl r) const;
     fl conf_independent(const model& m, fl e) const;
+    fl get_cutoff() const { return m_cutoff; }
     fl get_max_cutoff() const { return m_max_cutoff; }
     atom_type::t get_atom_typing() const { return m_atom_typing; }
     szv get_atom_types() const;
     sz get_num_atom_types() const { return num_atom_types(m_atom_typing); }
+    flv get_weights() const { return m_weights; }
 
 private:
     std::vector<Potential*> m_potentials;
     std::vector<ConfIndependent*> m_conf_independents;
     flv m_weights;
+    fl m_cutoff;
     fl m_max_cutoff;
     int m_num_potentials;
     int m_num_conf_independents;

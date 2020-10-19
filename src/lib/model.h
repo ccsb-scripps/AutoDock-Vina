@@ -64,6 +64,9 @@ struct szv_grid; // forward declaration
 struct pdbqt_initializer; // forward declaration - only declared in parse_pdbqt.cpp
 struct precalculate_byatom; // forward declaration
 
+fl eval_interacting_pairs(const precalculate_byatom& p, fl v, const interacting_pairs& pairs, const vecv& coords, const bool with_max_cutoff=false);
+fl eval_interacting_pairs_deriv(const precalculate_byatom& p, fl v, const interacting_pairs& pairs, const vecv& coords, vecv& forces, const bool with_max_cutoff=false);
+
 struct model {
 public:
 	// Had to move it from private to public to make it work. 
@@ -77,6 +80,7 @@ public:
 	vec get_coords(sz i) const { return coords[i]; }
 	interacting_pairs get_other_pairs() const { return other_pairs; }
 	interacting_pairs get_inter_pairs() const { return inter_pairs; }
+	interacting_pairs get_glue_pairs() const { return glue_pairs; }
 
 	void append(const model& m);
 	atom_type::t atom_typing_used() const { return m_atom_typing_used; }
@@ -192,6 +196,7 @@ private:
 	void bonded_to(sz a, sz n, szv& out) const;
 	szv bonded_to(sz a, sz n) const;
     bool is_closure_clash(sz i, sz j) const;
+	bool is_glue_pair(sz i, sz j) const;
 
 	void assign_bonds(const distance_type_matrix& mobility); // assign bonds based on relative mobility, distance and covalent length
 	void assign_types();
@@ -209,6 +214,7 @@ private:
 	context flex_context;
 	interacting_pairs other_pairs; // INTRAmolecular interactions: flex_i - flex_j and flex_i - flex_i
 	interacting_pairs inter_pairs; // INTERmolecular interactions: ligand - flex and ligand_i - ligand_j
+	interacting_pairs glue_pairs; // INTRAmolecular interactions: glue_i - glue_i
 
 	sz m_num_movable_atoms;
 	atom_type::t m_atom_typing_used;
