@@ -315,7 +315,7 @@ grid_dims cache::read(const std::string &map_prefix)
 
 		type = convert_XS_to_string(t);
 		filename = map_prefix + "." + type + ".map";
-		path p{filename};
+		path p(filename);
 		if (fs::exists(p)) {
 			read_vina_map(p, gds, grids[t]);
 		}

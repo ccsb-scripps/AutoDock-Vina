@@ -313,7 +313,7 @@ grid_dims ad4cache::read(const std::string& map_prefix) {
 
         type = get_adtype_str(t);
         filename = map_prefix + "." + type + ".map";
-        path p{filename};
+        path p(filename);
         if (fs::exists(p)) {
             read_ad4_map(p, gds, grids[t]);
 
@@ -322,12 +322,12 @@ grid_dims ad4cache::read(const std::string& map_prefix) {
 
     //  elec map
     filename = map_prefix + ".e.map";
-    path pe{filename};
+    path pe(filename);
     read_ad4_map(pe, gds, grids[AD_TYPE_SIZE]);
 
     //  dsolv map
     filename = map_prefix + ".d.map";
-    path pd{filename};
+    path pd(filename);
     read_ad4_map(pd, gds, grids[AD_TYPE_SIZE + 1]);
 
     // TODO verify grid_dims consistency

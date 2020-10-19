@@ -160,8 +160,8 @@ Thank you!\n";
         inputs.add_options()
             ("receptor", value<std::string>(&rigid_name), "rigid part of the receptor (PDBQT)")
             ("flex", value<std::string>(&flex_name), "flexible side chains, if any (PDBQT)")
-            ("ligand", value<std::vector<std::string>>(&ligand_names)->multitoken(), "ligand (PDBQT)")
-            ("batch", value<std::vector<std::string>>(&batch_ligand_names)->multitoken(), "batch ligand (PDBQT)")
+            ("ligand", value< std::vector<std::string> >(&ligand_names)->multitoken(), "ligand (PDBQT)")
+            ("batch", value< std::vector<std::string> >(&batch_ligand_names)->multitoken(), "batch ligand (PDBQT)")
             ("scoring", value<std::string>(&sf_name)->default_value(sf_name), "vina or ad4")
         ;
         //options_description search_area("Search area (required, except with --score_only)");

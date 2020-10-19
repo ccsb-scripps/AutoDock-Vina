@@ -392,10 +392,10 @@ void Vina::write_maps(const std::string& map_prefix, const std::string& gpf_file
     }
 }
 
-std::vector<std::vector<double>> Vina::get_poses_coordinates(int how_many, double energy_range) {
+std::vector< std::vector<double> > Vina::get_poses_coordinates(int how_many, double energy_range) {
     int n = 0;
     double best_energy = 0;
-    std::vector<std::vector<double>> coordinates;
+    std::vector< std::vector<double> > coordinates;
 
     if (how_many < 0) {
         std::cerr << "Error: number of poses asked must be greater than zero.\n";

@@ -31,13 +31,13 @@ ScoringFunction::ScoringFunction(const scoring_function_choice sf_choice, const 
     {
         case SF_VINA:
         {
-            m_potentials = {new vina_gaussian(0, 0.5, 8.0),
-                            new vina_gaussian(3, 2.0, 8.0),
-                            new vina_repulsion(0.0, 8.0),
-                            new vina_hydrophobic(0.5, 1.5, 8.0),
-                            new vina_non_dir_h_bond(-0.7, 0, 8.0),
-                            new linearattraction(20.0)};
-            m_conf_independents = {new num_tors_div()};
+            m_potentials.push_back(new vina_gaussian(0, 0.5, 8.0));
+            m_potentials.push_back(new vina_gaussian(3, 2.0, 8.0));
+            m_potentials.push_back(new vina_repulsion(0.0, 8.0));
+            m_potentials.push_back(new vina_hydrophobic(0.5, 1.5, 8.0));
+            m_potentials.push_back(new vina_non_dir_h_bond(-0.7, 0, 8.0));
+            m_potentials.push_back(new linearattraction(20.0));
+            m_conf_independents.push_back(new num_tors_div());
             m_atom_typing = atom_type::XS;
             break;
         }
@@ -49,12 +49,12 @@ ScoringFunction::ScoringFunction(const scoring_function_choice sf_choice, const 
         }
         case SF_AD42:
         {
-            m_potentials = {new ad4_vdw(0.5, 100000, 8.0),
-                            new ad4_hb(0.5, 100000, 8.0),
-                            new ad4_electrostatic(100, 20.48),
-                            new ad4_solvation(3.6, 0.01097, true, 20.48),
-                            new linearattraction(20.0)};
-            m_conf_independents = {new ad4_tors_add()};
+            m_potentials.push_back(new ad4_vdw(0.5, 100000, 8.0));
+            m_potentials.push_back(new ad4_hb(0.5, 100000, 8.0));
+            m_potentials.push_back(new ad4_electrostatic(100, 20.48));
+            m_potentials.push_back(new ad4_solvation(3.6, 0.01097, true, 20.48));
+            m_potentials.push_back(new linearattraction(20.0));
+            m_conf_independents.push_back(new ad4_tors_add());
             m_atom_typing = atom_type::AD;
             break;
         }
