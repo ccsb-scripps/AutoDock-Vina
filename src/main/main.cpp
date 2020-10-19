@@ -412,7 +412,9 @@ Thank you!\n";
                 v.randomize();
                 v.write_pose(out_name);
             } else if (score_only) {
-                v.score();
+                std::vector<double> energies;
+                energies = v.score();
+                v.show_score(energies);
             } else if (local_only) {
                 v.optimize();
                 v.write_pose(out_name);

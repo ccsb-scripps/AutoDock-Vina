@@ -66,9 +66,9 @@ void Vina::set_receptor(const std::string& rigid_name, const std::string& flex_n
         - 6. Vina     rigid YES, flex  NO: SUCCESS
         - 7. Vina     rigid  NO, flex YES: SUCCESS (need to read maps later)
     */
-    if (rigid_name.empty() && flex_name.empty()) {
+    if (rigid_name.empty() && flex_name.empty() && m_sf_choice == SF_VINA) {
         // CONDITION 1
-        std::cerr << "ERROR: No (rigid) receptor or flexible residues were specified.\n";
+        std::cerr << "ERROR: No (rigid) receptor or flexible residues were specified. (vina.cpp)\n";
         exit(EXIT_FAILURE);
     } else if (m_sf_choice == SF_AD42 && !rigid_name.empty()) {
         // CONDITIONS 2, 3

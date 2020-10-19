@@ -642,11 +642,11 @@ model parse_ligand_pdbqt_from_string(const std::string& string_name, atom_type::
 
 model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& flex_name, atom_type::t atype) { 
     // Parse PDBQT receptor with flex residues
-    if (rigid_name.empty() && flex_name.empty()) {
-        // CONDITION 1
-        std::cerr << "ERROR: No (rigid) receptor or flexible residues were specified.\n";
-        exit(EXIT_FAILURE);
-    }
+    //if (rigid_name.empty() && flex_name.empty()) {
+    //    // CONDITION 1
+    //    std::cerr << "ERROR: No (rigid) receptor or flexible residues were specified.\n";
+    //    exit(EXIT_FAILURE);
+    //}
 
     rigid r;
     non_rigid_parsed nrp;

@@ -130,6 +130,7 @@ public:
     void write_poses(const std::string &output_name, int how_many=9, double energy_range=3.0);
     void write_maps(const std::string& map_prefix="receptor", const std::string& gpf_filename="NULL",
                     const std::string& fld_filename="NULL", const std::string& receptor_filename="NULL");
+    void show_score(const std::vector<double> energies);
 
 private:
     // model and poses
@@ -165,7 +166,6 @@ private:
     std::vector<double> score(double intramolecular_energy);
     std::vector<double> optimize(output_type& out, const int max_steps=0);
     int generate_seed(const int seed=0);
-    void show_score(const std::vector<double> energies);
 };
 
 #endif
