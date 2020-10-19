@@ -815,6 +815,7 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
     parallelmc.num_threads = m_cpu;
     parallelmc.display_progress = (m_verbosity > 0);
 
+    // Docking search
     sstm << "Performing search (random seed: " << seed << ")";
     doing(sstm.str(), m_verbosity, 1);
     if (m_sf_choice == SF_VINA) {
@@ -824,6 +825,7 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
     }
     done(m_verbosity, 1);
 
+    // Docking post-processing and rescoring
     poses = remove_redundant(poses, min_rmsd);
 
     if (!poses.empty()) {
@@ -851,8 +853,10 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
             poses[i].conf_independent = energies[6]; // "torsion"
             poses[i].unbound = energies[7]; // specific to each scoring function
 
-            if (m_verbosity > 1)
+            if (m_verbosity > 1) {
+                std::cout << "FINAL ENERGY: \n";
                 show_score(energies);
+            }
         }
 
         // Since pose.e contains the final energy, we have to sort them again
