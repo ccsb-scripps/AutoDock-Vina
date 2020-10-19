@@ -67,18 +67,16 @@ public:
         m_seed = generate_seed(seed);
 
         // Look for the number of cpu
-        if (cpu == 0) {
+        if (cpu <= 0) {
             unsigned num_cpus = boost::thread::hardware_concurrency();
 
             if (num_cpus > 0) {
                 m_cpu = num_cpus;
             } else {
-                m_cpu = 1;
+                std::cerr << "WARNING: Could not determined the number of concurrent thread supported on this machine. ";
+                std::cerr << "You might need to set it manually using cpu argument or fix the issue.\n";
+                exit(EXIT_FAILURE);
             }
-            
-        } else if (cpu < 0) {
-            m_cpu = 1;
-            std::cerr << "WARNING: Number of CPUs set to a value lower than 0, it was automatically set to 1 per default.\n";
         } else {
             m_cpu = cpu;
         }

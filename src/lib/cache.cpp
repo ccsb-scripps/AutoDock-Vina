@@ -183,9 +183,35 @@ bool cache::is_in_grid(const model& m, fl margin) const {
 }
 
 bool cache::are_atom_types_grid_initialized(szv atom_types) const {
-    VINA_FOR_IN(i, atom_types) {
-        if (!is_atom_type_grid_initialized(atom_types[i])) {
-            std::cerr << "ERROR: Affinity map for atom type " <<  convert_XS_to_string(atom_types[i]) << " is not present.\n";
+	sz nat = num_atom_types(atom_type::XS);
+
+	VINA_FOR_IN(i, atom_types) {
+		sz t = atom_types[i];
+		
+		if (t >= nat) { continue; }
+		switch (t)
+		{
+			case XS_TYPE_G0:
+			case XS_TYPE_G1:
+			case XS_TYPE_G2:
+			case XS_TYPE_G3:
+				continue;
+			case XS_TYPE_C_H_CG0:
+			case XS_TYPE_C_H_CG1:
+			case XS_TYPE_C_H_CG2:
+			case XS_TYPE_C_H_CG3:
+				t = XS_TYPE_C_H;
+				break;
+			case XS_TYPE_C_P_CG0:
+			case XS_TYPE_C_P_CG1:
+			case XS_TYPE_C_P_CG2:
+			case XS_TYPE_C_P_CG3:
+				t = XS_TYPE_C_P;
+				break;
+		}
+
+        if (!is_atom_type_grid_initialized(t)) {
+            std::cerr << "ERROR: Affinity map for atom type " <<  convert_XS_to_string(t) << " is not present.\n";
             return false;
         }
     }

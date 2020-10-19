@@ -55,12 +55,10 @@ struct cache : public igrid {
     void write(const std::string& out_prefix, const szv& atom_types, const std::string& gpf_filename="NULL",
                const std::string& fld_filename="NULL", const std::string& receptor_filename="NULL");
 	void populate(const model& m, const precalculate& p, const grid_dims& gd, const szv& atom_types_needed);
-    std::vector<grid> grids;
-
 private:
 	grid_dims gd;
 	fl slope; // does not get (de-)serialized
-	//std::vector<grid> grids;
+	std::vector<grid> grids;
 };
 
 #endif

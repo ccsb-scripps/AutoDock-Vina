@@ -199,6 +199,7 @@ void model::append(const model& m) {
 
 	t.append(other_pairs, m.other_pairs);
 	t.append(inter_pairs, m.inter_pairs);
+	t.append(glue_pairs, m.glue_pairs);
 
 	VINA_CHECK(minus_forces.size() == coords.size());
 	VINA_CHECK(m.minus_forces.size() == m.coords.size());
@@ -234,7 +235,9 @@ void model::append(const model& m) {
 			if (t1 < n && t2 < n) {
 				sz type_pair_index = triangular_matrix_index_permissive(n, t1, t2);
 				
-				if (is_atom_in_ligand(i) && is_atom_in_ligand(j)) {
+				if (is_glue_pair(i, j)) {
+					glue_pairs.push_back(interacting_pair(type_pair_index, i, j)); // glue_i - glue_j
+				} else if (is_atom_in_ligand(i) && is_atom_in_ligand(j)) {
 					inter_pairs.push_back(interacting_pair(type_pair_index, i, j)); // INTER: ligand_i - ligand_j
 				} else if (is_atom_in_ligand(i) || is_atom_in_ligand(j)) {
 					inter_pairs.push_back(interacting_pair(type_pair_index, i, j)); // INTER: flex - ligand
@@ -500,6 +503,19 @@ bool model::is_closure_clash(sz i, sz j) const {
 	return false;
 }
 
+bool model::is_glue_pair(sz i, sz j) const {
+	sz t1 = atoms[i].get(atom_type::AD);
+	sz t2 = atoms[j].get(atom_type::AD);
+
+	if ((t1 == AD_TYPE_CG0 && t2 == AD_TYPE_G0) || (t2 == AD_TYPE_CG0 && t1 == AD_TYPE_G0) ||
+		(t1 == AD_TYPE_CG1 && t2 == AD_TYPE_G1) || (t2 == AD_TYPE_CG1 && t1 == AD_TYPE_G1) ||
+		(t1 == AD_TYPE_CG2 && t2 == AD_TYPE_G2) || (t2 == AD_TYPE_CG2 && t1 == AD_TYPE_G2) ||
+		(t1 == AD_TYPE_CG3 && t2 == AD_TYPE_G3) || (t2 == AD_TYPE_CG3 && t1 == AD_TYPE_G3))
+		return true;
+	else
+		return false;
+}
+
 void model::initialize_pairs(const distance_type_matrix& mobility) {
 	/* Interactions:
 	- ligand_i - ligand_i : YES (1-4 only) (ligand.pairs)
@@ -515,15 +531,18 @@ void model::initialize_pairs(const distance_type_matrix& mobility) {
 			if (mobility(i, j) == DISTANCE_VARIABLE && !has(bonded_atoms, j)) {
                 if (is_closure_clash(i, j)) continue;  // 1-2, 1-3 or 1-4 interaction around CG-CG bond
 				
-				sz t1 = atoms[i].get  (atom_typing_used());
-				sz t2 = atoms[j].get  (atom_typing_used());
+				sz t1 = atoms[i].get(atom_typing_used());
+				sz t2 = atoms[j].get(atom_typing_used());
 				sz n  = num_atom_types(atom_typing_used());
 
 				if (t1 < n && t2 < n) { // exclude, say, Hydrogens
 					sz type_pair_index = triangular_matrix_index_permissive(n, t1, t2);
 					interacting_pair ip(type_pair_index, i, j);
 					
-					if (i_lig < ligands.size() && find_ligand(j) == i_lig) {
+					if (is_glue_pair(i, j)) {
+						// Add glue_i - glue_i interaction pair
+						glue_pairs.push_back(ip);
+					} else if (i_lig < ligands.size() && find_ligand(j) == i_lig) {
 						// Add INTRAmolecular ligand_i - ligand_i
 						ligands[i_lig].pairs.push_back(ip);
 					} else if (!is_atom_in_ligand(i) && !is_atom_in_ligand(j)) {
@@ -741,9 +760,14 @@ fl model::gyration_radius(sz ligand_number) const {
 }
 
 
-fl eval_interacting_pairs(const precalculate_byatom& p, fl v, const interacting_pairs& pairs, const vecv& coords) { // clean up
-	const fl cutoff_sqr = p.cutoff_sqr();
+fl eval_interacting_pairs(const precalculate_byatom& p, fl v, const interacting_pairs& pairs, const vecv& coords, const bool with_max_cutoff) { // clean up
 	fl e = 0;
+	fl cutoff_sqr = p.cutoff_sqr();
+
+	if (with_max_cutoff) {
+		cutoff_sqr = p.max_cutoff_sqr();
+	}
+
 	VINA_FOR_IN(i, pairs) {
 		const interacting_pair& ip = pairs[i];
 		fl r2 = vec_distance_sqr(coords[ip.a], coords[ip.b]);
@@ -756,9 +780,14 @@ fl eval_interacting_pairs(const precalculate_byatom& p, fl v, const interacting_
 	return e;
 }
 
-fl eval_interacting_pairs_deriv(const precalculate_byatom& p, fl v, const interacting_pairs& pairs, const vecv& coords, vecv& forces) { // adds to forces  // clean up
-	const fl cutoff_sqr = p.cutoff_sqr();
+fl eval_interacting_pairs_deriv(const precalculate_byatom& p, fl v, const interacting_pairs& pairs, const vecv& coords, vecv& forces, const bool with_max_cutoff) { // adds to forces  // clean up
 	fl e = 0;
+	fl cutoff_sqr = p.cutoff_sqr();
+
+	if (with_max_cutoff) {
+		cutoff_sqr = p.max_cutoff_sqr();
+	}
+
 	VINA_FOR_IN(i, pairs) {
 		const interacting_pair& ip = pairs[i];
 		vec r = coords[ip.b] - coords[ip.a]; // a -> b
@@ -768,6 +797,7 @@ fl eval_interacting_pairs_deriv(const precalculate_byatom& p, fl v, const intera
 			vec force; force = tmp.second * r;
 			curl(tmp.first, force, v);
 			e += tmp.first;
+
 			// FIXME inefficient, if using hard curl
 			forces[ip.a] -= force; // we could omit forces on inflex here
 			forces[ip.b] += force;
@@ -794,11 +824,23 @@ fl model::evali(const precalculate_byatom& p, const vec& v) const { // clean up
 }
 
 fl model::eval_deriv(const precalculate_byatom& p, const igrid& ig, const vec& v, change& g) { // clean up
+	// INTER ligand - grid
 	fl e = ig.eval_deriv(*this, v[1]); // sets minus_forces, except inflex
+
+	// INTRA ligand_i - ligand_i
 	VINA_FOR_IN(i, ligands)
 		e += eval_interacting_pairs_deriv(p, v[0], ligands[i].pairs, coords, minus_forces); // adds to minus_forces
-	e += eval_interacting_pairs_deriv(p, v[2], inter_pairs, coords, minus_forces); // adds to minus_forces
-	e += eval_interacting_pairs_deriv(p, v[2], other_pairs, coords, minus_forces); // adds to minus_forces
+
+	// INTER ligand_i - ligand_j and ligand_i - flex_i
+	if (!inter_pairs.empty()) 
+		e += eval_interacting_pairs_deriv(p, v[2], inter_pairs, coords, minus_forces); // adds to minus_forces
+	// INTRA flex_i - flex_i and flex_i - flex_j
+	if (!other_pairs.empty())
+		e += eval_interacting_pairs_deriv(p, v[2], other_pairs, coords, minus_forces); // adds to minus_forces
+	// glue_i - glue_i and glue_i - glue_j
+	if (!glue_pairs.empty())
+		e += eval_interacting_pairs_deriv(p, v[2], glue_pairs, coords, minus_forces, true); // adds to minus_forces
+
 	// calculate derivatives
 	ligands.derivative(coords, minus_forces, g.ligands);
 	flex.derivative(coords, minus_forces, g.flex); // inflex forces are ignored
@@ -819,13 +861,21 @@ fl model::eval_intramolecular(const precalculate_byatom& p, const igrid& ig, con
 	// flex_i - flex_i and flex_i - flex_j
 	VINA_FOR_IN(i, other_pairs) {
 		const interacting_pair& pair = other_pairs[i];
-		
 		fl r2 = vec_distance_sqr(coords[pair.a], coords[pair.b]);
 		if (r2 < cutoff_sqr) {
 			fl this_e = p.eval_fast(pair.a, pair.b, r2);
 			curl(this_e, v[2]);
 			e += this_e;
 		}
+	}
+
+	// glue_i - glue_i and glue_i - glue_j interactions (no cutoff)
+	VINA_FOR_IN(i, glue_pairs) {
+		const interacting_pair& pair = glue_pairs[i];
+		fl r2 = vec_distance_sqr(coords[pair.a], coords[pair.b]);
+		fl this_e = p.eval_fast(pair.a, pair.b, r2);
+		curl(this_e, v[2]);
+		e += this_e;
 	}
 
 	return e;
@@ -985,6 +1035,17 @@ void model::show_pairs() const {
     interacting_pairs other_pairs = get_other_pairs();
     VINA_FOR_IN(i, other_pairs) {
 		const interacting_pair& ip = other_pairs[i];
+		std::cout << "FLEX       ";
+		std::cout << " - " << ip.a << " : " << ip.b
+				  << " - " << get_coords(ip.a)[0] << " " << get_coords(ip.a)[1] << " " << get_coords(ip.a)[2]
+				  << " - " << get_coords(ip.b)[0] << " " << get_coords(ip.b)[1] << " " << get_coords(ip.b)[2]
+				  << "\n";
+	}
+
+	std::cout << "GLUE - GLUE PAIRS\n";
+    interacting_pairs glue_pairs = get_glue_pairs();
+    VINA_FOR_IN(i, glue_pairs) {
+		const interacting_pair& ip = glue_pairs[i];
 		std::cout << "FLEX       ";
 		std::cout << " - " << ip.a << " : " << ip.b
 				  << " - " << get_coords(ip.a)[0] << " " << get_coords(ip.a)[1] << " " << get_coords(ip.a)[2]

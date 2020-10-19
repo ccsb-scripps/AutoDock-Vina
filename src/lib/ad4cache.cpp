@@ -195,8 +195,25 @@ bool ad4cache::is_in_grid(const model& m, fl margin) const {
 
 bool ad4cache::are_atom_types_grid_initialized(szv atom_types) const {
     VINA_FOR_IN(i, atom_types) {
-        if (!is_atom_type_grid_initialized(atom_types[i])) {
-            std::cerr << "ERROR: Affinity map for atom type " << get_adtype_str(atom_types[i]) << " is not present.\n";
+        sz t = atom_types[i];
+
+        switch (t)
+		{
+			case AD_TYPE_G0:
+			case AD_TYPE_G1:
+			case AD_TYPE_G2:
+			case AD_TYPE_G3:
+				continue;
+			case AD_TYPE_CG0:
+			case AD_TYPE_CG1:
+			case AD_TYPE_CG2:
+			case AD_TYPE_CG3:
+				t = AD_TYPE_C;
+				break;
+		}
+
+        if (!is_atom_type_grid_initialized(t)) {
+            std::cerr << "ERROR: Affinity map for atom type " << get_adtype_str(t) << " is not present.\n";
             return false;
         }
     }
