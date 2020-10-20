@@ -336,21 +336,3 @@ void ForceField::read_vina_forcefield(const std::string& forcefield_filename) {
         myfile.close();
     }
 }
-
-ForceField::~ForceField() {
-    bool m_is_vina;
-    bool m_is_autodock;
-    std::map<std::string, std::string> m_conversion_ad_vina;
-    std::map<std::string, std::string> m_conversion_vina_ad;
-    std::vector<std::string> m_atom_types;
-    std::vector<std::string> m_parameters;
-    std::map<std::string, double> m_weights;
-    std::map<std::string, double> m_rii_vdw;
-    std::map<std::string, double> m_epsii_vdw;
-    std::map<std::string, double> m_sol_par;
-    std::map<std::string, double> m_vol;
-    std::map<std::string, double> m_rij_hb;
-    std::map<std::string, double> m_epsij_hb;
-    std::map<std::string, int> m_hbond;
-    std::map<std::string, int> m_bond_index;
-}

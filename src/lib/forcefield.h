@@ -56,7 +56,7 @@ public:
     }
 
     // Destructor
-    virtual ~ForceField();
+    virtual ~ForceField() { };
 
     bool is_vina();
     bool is_autodock4();

@@ -63,56 +63,56 @@ class num_tors_sqr : public ConfIndependent {
 public:
     num_tors_sqr() { }
     sz size() const { return 1; }
-    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i) override;
+    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i);
 };
 
 class num_tors_sqrt : public ConfIndependent {
 public:
     num_tors_sqrt() { }
     sz size() const { return 1; }
-    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i) override;
+    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i);
 };
 
 class num_tors_div : public ConfIndependent {
 public:
     num_tors_div() { }
     sz size() const { return 1; }
-    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i) override;
+    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i);
 };
 
 class ligand_length : public ConfIndependent {
 public:
     ligand_length() { }
     sz size() const { return 1; }
-    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i) override;
+    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i);
 };
 
 class num_ligands : public ConfIndependent {
 public:
     num_ligands() { }
     sz size() const { return 1; }
-    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i) override;
+    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i);
 };
 
 class num_heavy_atoms_div : public ConfIndependent {
 public:
     num_heavy_atoms_div() { }
     sz size() const { return 1; }
-    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i) override;
+    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i);
 };
 
 class num_heavy_atoms : public ConfIndependent {
 public:
     num_heavy_atoms() { }
     sz size() const { return 1; }
-    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i) override;
+    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i);
 };
 
 class num_hydrophobic_atoms : public ConfIndependent {
 public:
     num_hydrophobic_atoms() { }
     sz size() const { return 1; }
-    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i) override;
+    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i);
 };
 
 // AD42
@@ -120,7 +120,7 @@ class ad4_tors_add : public ConfIndependent {
 public:
     ad4_tors_add() { }
     sz size() const { return 1; }
-    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i) override;
+    fl eval(const conf_independent_inputs& in, fl x, flv::const_iterator& i);
 };
 
 #endif

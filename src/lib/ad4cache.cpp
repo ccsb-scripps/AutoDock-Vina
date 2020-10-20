@@ -309,24 +309,21 @@ grid_dims ad4cache::read(const std::string& map_prefix) {
         sz t = atom_type;
 
         switch (t)
-		{
-			case AD_TYPE_G0:
-			case AD_TYPE_G1:
-			case AD_TYPE_G2:
-			case AD_TYPE_G3:
-				continue;
-			case AD_TYPE_CG0:
-			case AD_TYPE_CG1:
-			case AD_TYPE_CG2:
-			case AD_TYPE_CG3:
-				t = AD_TYPE_C;
-				break;
-		}
-
-        if (t==AD_TYPE_C && got_C_already)
-            continue;
-        if (t==AD_TYPE_C)
-            got_C_already=true;
+	{
+		case AD_TYPE_G0:
+		case AD_TYPE_G1:
+		case AD_TYPE_G2:
+		case AD_TYPE_G3:
+			continue;
+		case AD_TYPE_CG0:
+		case AD_TYPE_CG1:
+		case AD_TYPE_CG2:
+		case AD_TYPE_CG3:
+			if (got_C_already) continue;
+			t = AD_TYPE_C;
+			got_C_already = true;
+			break;
+	}
 
         type = get_adtype_str(t);
         filename = map_prefix + "." + type + ".map";

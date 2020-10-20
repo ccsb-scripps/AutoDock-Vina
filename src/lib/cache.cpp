@@ -209,14 +209,13 @@ bool cache::are_atom_types_grid_initialized(szv atom_types) const {
 				t = XS_TYPE_C_P;
 				break;
 		}
+		if (!is_atom_type_grid_initialized(t)) {
+			std::cerr << "ERROR: Affinity map for atom type " <<  convert_XS_to_string(t) << " is not present.\n";
+			return false;
+		}
+	}
 
-        if (!is_atom_type_grid_initialized(t)) {
-            std::cerr << "ERROR: Affinity map for atom type " <<  convert_XS_to_string(t) << " is not present.\n";
-            return false;
-        }
-    }
-
-    return true;
+	return true;
 }
 
 std::vector<std::string> vina_split(std::string str)
@@ -319,26 +318,19 @@ grid_dims cache::read(const std::string &map_prefix)
 			case XS_TYPE_C_H_CG1:
 			case XS_TYPE_C_H_CG2:
 			case XS_TYPE_C_H_CG3:
+				if (got_C_H_already) continue;
 				t = XS_TYPE_C_H;
+				got_C_H_already = true;
 				break;
 			case XS_TYPE_C_P_CG0:
 			case XS_TYPE_C_P_CG1:
 			case XS_TYPE_C_P_CG2:
 			case XS_TYPE_C_P_CG3:
+				if (got_C_P_already) continue;
 				t = XS_TYPE_C_P;
+				got_C_P_already = true;
 				break;
 		}
-
-		if (t == XS_TYPE_C_H && got_C_H_already)
-			continue;
-		else if (t == XS_TYPE_C_P && got_C_P_already)
-			continue;
-
-		if (t == XS_TYPE_C_H)
-			got_C_H_already = true;
-		else if (t == XS_TYPE_C_P)
-			got_C_P_already = true;
-
 		type = convert_XS_to_string(t);
 		filename = map_prefix + "." + type + ".map";
 		path p(filename);
@@ -374,26 +366,19 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 			case XS_TYPE_C_H_CG1:
 			case XS_TYPE_C_H_CG2:
 			case XS_TYPE_C_H_CG3:
+				if (got_C_H_already) continue;
 				t = XS_TYPE_C_H;
+				got_C_H_already = true;
 				break;
 			case XS_TYPE_C_P_CG0:
 			case XS_TYPE_C_P_CG1:
 			case XS_TYPE_C_P_CG2:
 			case XS_TYPE_C_P_CG3:
+				if (got_C_P_already) continue;
 				t = XS_TYPE_C_P;
+				got_C_P_already = true;
 				break;
 		}
-
-		if (t == XS_TYPE_C_H && got_C_H_already)
-			continue;
-		else if (t == XS_TYPE_C_P && got_C_P_already)
-			continue;
-
-		if (t == XS_TYPE_C_H)
-			got_C_H_already = true;
-		else if (t == XS_TYPE_C_P)
-			got_C_P_already = true;
-
 		if (grids[t].initialized()) {
 			atom_type = convert_XS_to_string(t);
 			filename = out_prefix + "." + atom_type + ".map";
@@ -416,10 +401,13 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 
 			out << "SPACING " << grids[t].m_factor_inv[0] << "\n";
 
+			int size_x = grids[t].m_data.dim0();
+			int size_y = grids[t].m_data.dim1();
+			int size_z = grids[t].m_data.dim2();
 			// The number of elements in the grid is an odd number. But NELEMENTS has to be an even number.
-			int size_x = (grids[t].m_data.dim0() % 2 == 0) ? grids[t].m_data.dim0() : grids[t].m_data.dim0() - 1;
-			int size_y = (grids[t].m_data.dim1() % 2 == 0) ? grids[t].m_data.dim1() : grids[t].m_data.dim1() - 1;
-			int size_z = (grids[t].m_data.dim2() % 2 == 0) ? grids[t].m_data.dim2() : grids[t].m_data.dim2() - 1;
+			size_x -= (size_x & 1);
+			size_y -= (size_y & 1);
+			size_z -= (size_z & 1);
 			out << "NELEMENTS " << size_x << " " << size_y << " " << size_z << "\n";
 
 			// center
@@ -451,7 +439,6 @@ void cache::populate(const model &m, const precalculate &p, const grid_dims &gd,
 
 	VINA_FOR_IN(i, atom_types_needed) {
 		sz t = atom_types_needed[i];
-
 		switch (t)
 		{
 			case XS_TYPE_G0:
@@ -463,26 +450,19 @@ void cache::populate(const model &m, const precalculate &p, const grid_dims &gd,
 			case XS_TYPE_C_H_CG1:
 			case XS_TYPE_C_H_CG2:
 			case XS_TYPE_C_H_CG3:
+				if (got_C_H_already) continue;
 				t = XS_TYPE_C_H;
+				got_C_H_already = true;
 				break;
 			case XS_TYPE_C_P_CG0:
 			case XS_TYPE_C_P_CG1:
 			case XS_TYPE_C_P_CG2:
 			case XS_TYPE_C_P_CG3:
+				if (got_C_P_already) continue;
 				t = XS_TYPE_C_P;
+				got_C_P_already = true;
 				break;
 		}
-
-		if (t == XS_TYPE_C_H && got_C_H_already)
-			continue;
-		else if (t == XS_TYPE_C_P && got_C_P_already)
-			continue;
-
-		if (t == XS_TYPE_C_H)
-			got_C_H_already = true;
-		else if (t == XS_TYPE_C_P)
-			got_C_P_already = true;
-
 		if(!grids[t].initialized()) {
 			needed.push_back(t);
 			grids[t].init(gd);
