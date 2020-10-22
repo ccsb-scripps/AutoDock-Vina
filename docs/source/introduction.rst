@@ -1,5 +1,5 @@
-AutoDock Vina
-=============
+About AutoDock Vina
+===================
 
 Introduction
 ------------
