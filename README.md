@@ -38,7 +38,7 @@ $ python setup.py build install
 
 Build python documentation with Sphinx
 ```bash
-$ cd build/python/docs
+$ cd docs
 $ make html
 # Open index.html located in docs/build/html
 ```
