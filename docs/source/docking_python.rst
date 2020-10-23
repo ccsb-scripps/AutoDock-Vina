@@ -1,20 +1,112 @@
+.. _python_docking:
+
 Python scripting
 ================
 
+First example
+-------------
+
+Let's begin with a very simple example of an AutoDock Vina script. It loads affinity maps for the AutoDock forcefield with their filenames starting by `1iep`, then load a PDBQT file containing a ligand called `1iep_ligand.pdbqt`, score the current pose, minimize it, dock it and save the minimized pose to a PDBQT file called `1iep_ligand_minimized.pdbqt`. For the full documentation about the `Vina` Python package, see :ref:`vina`.
+
 .. code-block:: python
+
+	#! /usr/bin/env python
+
+	from vina import Vina
+
+	v = Vina(sf_name='vina')
+
+	v.compute_vina_maps()
+	v.set_ligand('1iep_ligand.pdbqt')
 	
+	# Score the current pose
+	energy = v.score()
+
+	# Minimized locally the current pose
+	energy_minimized = v.optimize()
+	v.write_pose('1iep_ligand_minimized.pdbqt', overwrite=True)
+
+	# Dock the ligand
+	v.dock(exhaustiveness=32, n_poses=20)
+	v.write_poses('1iep_ligand_out.pdbqt', n_poses=5, overwrite=True)
+
+You can find this script in the `example` folder of AutoDock-Vina available on Github. To execute it from a command line, go to your terminal/console/command prompt window. Navigate to the `examples` folder by typing
+
+.. code-block:: console
+
+	$ cd <examples_directory>
+	$ python first_example.py
+
+Let's go through the script line by line and see how it works.
+
+.. code-block:: python
+
+	from vina import Vina
+
+This line is just for Python to tell it to load the Python package ``vina``.
+
+.. code-block:: python
+
+	v = Vina(sf_name='vina')
+
+This line creates the ``Vina`` object that will be use for the subsequent taks. More precisely, it specifies also the forcefield that will be used for the molecular docking, here the Vina forcefield will be used. In the case, you want to use another forcefield like AutoDock4 or Vinardo, just replace ``vina`` by ``ad4`` or ``vinardo``. Other options can be define, like the number of cpu that will be used during the molecule docking. By default, Vina will use the avaialble cpus on you machine (``cpu=0``), but you could use only one with ``cpu=1``.
+
+.. code-block:: python
+
+	v.set_receptor('1iep_protein.pdbqt')
+
+Here, we are loading a PDBQT file called ``1iep_protein.pdbqt`` containing the receptor. If necessary, PDBQT file containing the flexible sidechains can be also load at the same time by doing ``v.set_receptor('1iep_rigid.pdbqt', '1iep_flex.pdbqt')``.
+
+.. code-block:: python
+
+	v.set_ligand('1iep_ligand.pdbqt')
+	v.compute_vina_maps()
+
+The next lines are used to first load a PDBQT file containing the ligand called ``1iep_ligand.pdbqt`` and then compute the affinity maps for each ligand atom types accroding to the Vina forcefield. You might need to read first the tutorial :ref:`basic_docking` to learn how to create a PDBQT file of a ligand. There is a small subility here, the behavior of the ``compute_vina_maps()`` function changes if the ligand was loaded before or after computing the vina maps. If no ligand was initialized, ``compute_vina_maps()`` will compute the affinity map for each atom types defined in the Vina forcefield (22 in total). This is very useful when we want to dock ligands in batch (a.k.a virtual screening) but we don't necessarily know beforehand what atom types will be necessary for thoses ligands.
+
+.. code-block:: python
+
+	# Score the current pose
+	energy = v.score()
+
+Next, we simply ask Vina to calculate the energy (`score`) of the current pose using the forcefield defined at the beginning, and retrieve the energy of each component in a numpy array. This task is often useful when you want to get the energy from the specific pose.
+
+.. code-block:: python
+
+	# Minimized locally the current pose
+	energy_minimized = v.optimize()
+	v.write_pose('1iep_ligand_minimized.pdbqt', overwrite=True)
+
+This line tells AutoDock Vina to perform a local energy minimization. It is useful sometimes to perform a quick energy minization after manually placing a ligand in a pocket and to remove possible steric clashes with itself and the receptor.
+
+.. code-block:: python
+
+	# Dock the ligand
+	v.dock(exhaustiveness=32, n_poses=20)
+	v.write_poses('1iep_ligand_out.pdbqt', n_poses=5, overwrite=True)
+
+Finally, we run the molecular docking. Here we will ask `Vina` to run 32 consecutive Monte-Carlo samplings using the ``exhaustiveness`` argument and store 20 poses (``n_poses``) during the search. At the end, we will write a PDBQT file called ``1iep_ligand_out.pdbqt`` containing only the 5 first poses (``n_poses``), ranked by score. Of course, this can be change to 20 to include all the poses that were saved during the calculations, at the condition that the energy difference between the best pose and the 20th pose if less than 3 kcal/mol. This behavior can be changed using the ``energy_range`` argument to an higher value.
+
+Flexible docking with AutoDock forcefield
+-----------------------------------------
+
+.. code-block:: python
+	:caption: Content of the Python script **flex_docking.py**
+
 	#! /usr/bin/env python
 
 	from vina import Vina
 
 	v = Vina(sf_name='ad4')
-	v.load_maps('1iep')
+	v.set_receptor(lex_pdbqt_filename='1fpu_flex.pdbqt')
+	v.load_maps('1fpu')
 
 	v.set_ligand('1iep_ligand.pdbqt')
 	v.dock(exhaustiveness=32)
 
-	v.write_poses('1iep_ligandH_out.pdbqt')
+	v.write_poses('1iep_ligand_out.pdbqt')
 
 .. code-block:: console
 
-	python basic_docking.py
+	$ python flex_docking.py
+

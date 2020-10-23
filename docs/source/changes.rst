@@ -5,8 +5,11 @@ Changes
 -----
   
   - Refactoring of the Vina code to be able to be used as a library
-  - Addition of macrocycle and hydrated docking protocols
-  - Added AutoDock and Vinardo Forcefield alongside the Vina Forcefield
+  - Can load external maps
+  - Support of simultaneous docking of multiple ligands and batch mode for virtual screening
+  - Support of macrocycle molecules
+  - Addition of the hydrated docking protocol
+  - Added AutoDock4 and Vinardo forcefields
   - Added Python bindings for Python 3
 
 1.1.2

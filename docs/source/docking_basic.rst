@@ -1,3 +1,5 @@
+.. _basic_docking:
+
 Basic docking
 =============
 
@@ -13,7 +15,7 @@ During this step, we will create a PDBQT file of our receptor that will contain 
 
 .. code-block:: bash
 
-	prepare_receptor.py -r 1iep_receptorH.pdb -o 1iep_receptor.pdbqt
+	$ prepare_receptor.py -r 1iep_receptorH.pdb -o 1iep_receptor.pdbqt
 
 
 2. Preparing the ligand
@@ -23,13 +25,20 @@ This step is very similar to the previous step. We will also create a PDBQT file
 
 .. code-block:: bash
 
-	prepare_ligand.py -r 1iep_ligandH.pdb -o 1iep_ligand.pdbqt
+	$ prepare_ligand.py -r 1iep_ligandH.pdb -o 1iep_ligand.pdbqt
 
 
 3. (Optional) Generating affinity maps for AutoDock FF
 ------------------------------------------------------
 
-Now, we have to define the grid space for the docking, typically, a 3D box around a the potential binding site of a receptor. During this step, we will create the input file for `AutoGrid4`, which will create an affinity map file for each atom types. The grid parameter file specifies an AutoGrid calculation, including the size and location of the grid, the atom types that will be used, the coordinate file for the rigid receptor, and other parameters for calculation of the grids.
+Now, we have to define the grid space for the docking, typically, a 3D box around a the potential binding site of a receptor. During this step, we will create the input file for AutoGrid4, which will create an affinity map file for each atom types. The grid parameter file specifies an AutoGrid4 calculation, including the size and location of the grid, the atom types that will be used, the coordinate file for the rigid receptor, and other parameters for calculation of the grids.
+
+To prepare the gpf file for AutoGrid4, your can use the following command line tool:
+
+.. code-block:: bash
+
+	$ prepare_gpf.py -l 1iep_ligand.pdbqt -r 1iep_receptor.pdbqt
+
 
 .. code-block:: console
 	:caption: Content of the grid parameter file (**1iep.gpf**) for the receptor c-Abl (**1iep_receptor.pdbqt**)
@@ -52,26 +61,35 @@ Now, we have to define the grid space for the docking, typically, a 3D box aroun
 	dsolvmap 1iep.d.map                  # desolvation potential map
 	dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
 
-We created the grid parameter file in the previous step, and now we can use `AutoGrid` to generate the different map files that will be used for the molecular docking.
+We created the grid parameter file in the previous step, and now we can use the `autogrid4` command to generate the different map files that will be used for the molecular docking:
 
 .. code-block:: bash
 
-	autogrid4 -p 1iep.gpf -l 1iep.glg
+	$ autogrid4 -p 1iep.gpf -l 1iep.glg
+
+From this command you should have generated the following files:
+
+.. code-block:: console
+
+	1iep.maps.fld       # grid data file
+	1iep.*.map          # affinity maps for different atom types
+	1iep.d.map          # desolvation map
+	1iep.e.map          # electrostatic map
 
 4. Running AutoDock Vina
 ------------------------
 
-The imatinib ligand used in this protocol is challenging, and Vina will occasionally not find the correct pose with the default parameters. Vina provides a parameter called `Exhaustiveness` to change the amount of computational effort used during a docking experiment. The default exhaustiveness value is 8; increasing this to about 32 will give a more consistent docking result. At this point of the tutorial, you have the choice to decide to run the molecular docking using either the AutoDock forcefield (requires affinity maps) or using the Vina/Vinardo forcefield.
+The imatinib ligand used in this protocol is challenging, and Vina will occasionally not find the correct pose with the default parameters. Vina provides a parameter called `Exhaustiveness` to change the amount of computational effort used during a docking experiment. The default exhaustiveness value is 8; increasing this to about 32 will give a more consistent docking result. At this point of the tutorial, you have the choice to decide to run the molecular docking using either the AutoDock forcefield (requires affinity maps) or using the Vina forcefield.
 
 4.a. Using AutoDock forcefield
 ______________________________
 
-When using the AutoDock forcefield, you only need to provide the affinity maps and the ligand, while specifying that the forcefield used will be AutoDock4 using the option `--scoring ad4`.
+When using the AutoDock4 forcefield, you only need to provide the affinity maps and the ligand, while specifying that the forcefield used will be AutoDock4 using the option `--scoring ad4`.
 
 .. code-block:: bash
 
-	vina  --ligand 1iep_ligand.pdbqt --maps 1iep --scoring ad4 \
-	      --exhaustiveness 32 --out 1iep_ligand_ad4_out.pdbqt
+	$ vina  --ligand 1iep_ligand.pdbqt --maps 1iep --scoring ad4 \
+	        --exhaustiveness 32 --out 1iep_ligand_ad4_out.pdbqt
 
 4.b. Using Vina forcefield
 __________________________
@@ -90,8 +108,12 @@ Contrary to AutoDock4, you don't need to precalculate the affinity grid maps wit
 
 .. code-block:: bash
 
-	vina --receptor 1iep_receptor.pdbqt --ligand 1iep_ligand.pdbqt --config box.txt \
-	     --exhaustiveness=32 --out 1iep_ligand_vina_out.pdbqt
+	$ vina --receptor 1iep_receptor.pdbqt --ligand 1iep_ligand.pdbqt --config box.txt \
+	       --exhaustiveness=32 --out 1iep_ligand_vina_out.pdbqt
+
+.. tip::
+
+	Alternatively, you can use the Vinardo forcefield by adding the `--scoring vinardo` option.
 
 Running AutoDock Vina will write a docked coordinate file `1iep_ligand_out.pdbqt` and also present docking information to the terminal window.
 

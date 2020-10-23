@@ -1,3 +1,5 @@
+.. _macrocycle_docking:
+
 Docking with macrocycles
 ========================
 
@@ -15,3 +17,8 @@ DOCKING AND RING CLOSURE (c): the ligand is docked applying a linear attraction 
 To restore the closed ring geometry a custom long range linear attraction potential is applied to these atoms during the docking calculation. This potential is effective at long range distances and guarantees the ring closure even with large cycles.
 
 No extra maps are calculated for the G atoms because, for sake of evaluation of ligand-protein interaction, they are considered as normal carbon atoms. Therefore, C maps are used in their place. During the docking process, the potential guides the edge atoms next to each other resulting in an effective ring closure, while allowing the GA algorithm to explore the ring conformations.
+
+**Please cite these papers, if you are using this protocol in your work**:
+
+	- Santos-Martins, D., Eberhardt, J., Bianco, G., Solis-Vasquez, L., Ambrosio, F. A., Koch, A., & Forli, S. (2019). D3R Grand Challenge 4: prospective pose prediction of BACE1 ligands with AutoDock-GPU. Journal of Computer-Aided Molecular Design, 33(12), 1071-1081.
+	- Forli, S., & Botta, M. (2007). Lennard-Jones potential and dummy atom settings to overcome the AUTODOCK limitation in treating flexible ring systems. Journal of chemical information and modeling, 47(4), 1481-1492.

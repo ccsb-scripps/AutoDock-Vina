@@ -1,90 +1,118 @@
+.. _hydrated_docking:
+
 Hydrated docking
 ================
 
-Interactions between biological molecules are often mediated by ordered water molecules. We have developed a method that uses the existing version of AutoDock but modifies the force field to model explicit water molecules. The ligand is decorated with an ensemble of water molecules, which may or may not then contribute to the interaction based on a modified energy evaluation grid. In tests, this hydration has shown improvement in the prediction of bound conformations of small fragment molecules, such as those used in fragment-based drug discovery.
+Introduction
+------------
+
+In physiological environments, proteins and other biological structures are surrounded by water molecules. When a small-molecule binds to a protein, it must displace most of the waters occupying the binding cavity. However, rarely are all water molecules displaced.
+
+Some waters can be so strongly bound and conserved among similar proteins that from a ligand-docking perspective they are considered a part of the target structure, altering the binding site topography.
+
+Interactions between biological molecules are often mediated by ordered water molecules. Thus a method was developed that uses the existing version of AutoDock but modifies the force field to model explicit water molecules. In tests, this hydration has shown improvement in the prediction of bound conformations of small fragment molecules, such as those used in fragment-based drug discovery.
+
+This is an advanced docking method for a single ligand with a single receptor incorporating explicit bridging water molecules. The ligand is decorated with an ensemble of water molecules (by adding dummy atoms), which may or may not then contribute to the interactions. A modified AutoGrid map is then used during docking, giving a favorable score when the water is well placed and omitting the water if it overlaps with the receptor. A final script analyzes the docked results, retaining only those waters in appropriate positions.
+
+**Please cite this paper, if you are using this protocol in your work**:
+
+	- Forli, S., & Olson, A. J. (2012). A force field with discrete displaceable waters and desolvation entropy for hydrated ligand docking. Journal of medicinal chemistry, 55(2), 623-638.
 
 .. warning::
-
-	Be aware that with this implementation of the method, it is difficult to compare results obtained with very diverse ligands without doing extra of post-processing on the results, because the energy estimation needs to be normalized. For this reason, the method is not suitable for virtual screenings. This doesn’t affect the structural accuracy, so comparisons within docking poses are fine. An improved scoring function to overcome this issue is in the works.
+	
+	While this method was validated with the AutoDock4 forcefield, we strongly advice you against using this protcol with the Vina and Vinardo forcefield.
 
 .. note::
 	This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the raccoon-lite Python package.
 
-– The directory ‘example’ contains a case study with both input and output files from a
-typical hydrated docking calculation.
-
 1. Preparing the receptor
 -------------------------
 
-The receptor can be prepared using the method described earlier
+The receptor can be prepared using the method described earlier in the following tutorials: :ref:`basic_docking` or :ref:`flexible_docking` if one wants to incorporate some sidechain flexibility.
 
 2. Preparing the ligand
 -----------------------
 
-The W atoms must be added to a PDBQT file. By default the hydrated ligand is saved with
-the “_HYDRO” suffix added (i.e. ligand.pdbqt => ligand_HYDRO.pdbqt).
+The water molecules (W atoms) must be added to a PDBQT file. By default the hydrated ligand is saved with the “_HYDRO” suffix added (i.e. ligand.pdbqt => ligand_HYDRO.pdbqt).
 
-This is an advanced docking method for a single ligand with a single receptor incorporating explicit bridging water molecules. This method adds dummy atoms to the ligand that correspond to all possible sites of hydration. A modified AutoGrid map is then used during docking, giving a favorable score when the water is well placed and omitting the water if it overlaps with the receptor. A final script analyzes the docked results, retaining only those waters in appropriate positions. This protocol assumes that the ligand and receptor have been prepared for a standard AutoDock docking. Two coordinate files, ligand.pdbqt and protein.pdbqt, created using the same protocol as that described in Steps 1–4 in the above example, have been provided for this protocol, along with a modified parameter file for the force field, a modified docking parameter file and several Python scripts for performing each step.
-
-To add water positions to the ligand, type at the command line:
+To add water positions to the ligand, type and execute the command line:
 
 .. code-block:: bash
 
-	python wet.py -i ligand.pdbqt
+	$ python wet.py -i ligand.pdbqt
 
-This script adds the dummy ‘W’ atoms to the ligand PDBQT file, saving it to the file ‘ligand_HYDRO.pdbqt’.
+3. Generating affinity maps
+---------------------------
 
-3. Generating affinity maps for AutoDock FF
--------------------------------------------
+Calculate the grid maps following the standard AutoDock protocol, checking that OA and HD types are present in the ligand atom set. If not, the GPF file must be modified to include them; i.e. :
+	
+	- add OA and HD to the line “ligand_types …. ”
+	- add lines “map protein.HD.map” and “map protein.OA.map”
 
-Calculate the grid maps following the standard AutoDock protocol, checking that OA and HD
-types are present in the ligand atom set. If not, the GPF file must be modified to include
-them; i.e. :
-– add OA and HD to the line “ligand_types …. ”
-– add lines “map protein.HD.map” and “map protein.OA.map”
+.. code-block:: console
+	:caption: Content of the grid parameter file (**hydro.gpf**) for the receptor (**protein.pdbqt**)
+
+	npts 50 50 50                        # num.grid points in xyz
+	gridfld protein.maps.fld             # grid_data_file
+	spacing 0.375                        # spacing(A)
+	receptor_types A C HD N OA SA        # receptor atom types
+	ligand_types A C N NA HD OA          # ligand atom types * ADD OA/HD TYPES IF NOT PRESENT *
+	receptor protein.pdbqt               # macromolecule
+	gridcenter 83.461 98.522 -16.407     # xyz-coordinates or auto
+	smooth 0.5                           # store minimum energy w/in rad(A)
+	map protein.A.map                    # atom-specific affinity map
+	map protein.C.map                    # atom-specific affinity map
+	map protein.N.map                    # atom-specific affinity map
+	map protein.NA.map                   # atom-specific affinity map
+	map protein.HD.map                   # atom-specific affinity map   * ADD HD IF NOT PRESENT *
+	map protein.OA.map                   # atom-specific affinity map   * ADD OA IF NOT PRESENT *
+	elecmap protein.e.map                # electrostatic potential map
+	dsolvmap protein.d.map               # desolvation potential map
+	dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
+
+To execute `autogrid4` using `protein.gpf`, run the folllowing command line:
 
 .. code-block:: bash
 
-	autogrid4 -p protein.gpf -l protein.glg
+	$ autogrid4 -p hydro.gpf -l hydro.glg
 
-Water maps are generated by combining OA and HD maps. If standard filenames are used for
-maps (i.e. receptor = protein.pdbqt >> maps = protein.OA.map, protein.HD.map), only the
-receptor name must be specified:
-
-Generate the ‘W’ map. If standard filenames are used for the maps, only the receptor name must be specified for the script that generates the map for the water energy evaluation
+The water map W is generated by combining OA and HD affinity maps. If standard filenames are used for maps (i.e. receptor = protein.pdbqt >> maps = protein.OA.map, protein.HD.map), only the receptor name must be specified:
 
 .. code-block:: bash
 
-	python mapwater.py -r protein.pdbqt -s protein.W.map
+	$ python mapwater.py -r protein.pdbqt -s protein.W.map
 
 4. Running AutoDock Vina
 ------------------------
 
-Prepare the DPF containing the keyword “parameter_file AD4_water_forcefield.dat”, and add
-the W type map (“protein.W.map”), then run the docking.
-
-Run AutoDock (see Step 5B(v) for more information) in ADT with ‘Run → RunAutoDock’ or at the command line with
+Run AutoDock Vina with the AutoDock forcefield:
 
 .. code-block:: bash
 
-	vina  --ligand 1iep_HYDRO_ligand.pdbqt --maps 1iep_HYDRO --scoring ad4 \
-	      --exhaustiveness 32 --out 1iep_ligand_ad4_HYDRO_out.pdbqt
+	$ vina  --ligand ligand_HYDRO.pdbqt --maps protein --scoring ad4 \
+	        --exhaustiveness 32 --out ligand_HYDRO_out.pdbqt
 
+5. Post-processing
+------------------
 
-5. Extract and score the results
---------------------------------
-
-This script will filter the docking results using the receptor to identify displaced water and the W map to rank the conserved ones as strong or weak. This will write a file called ligand_LELC_DRY_SCORED.pdbqt with the calculated energy.
-
-Docking results are filtered by using the receptor to remove displaced waters and the W
-map file to rank the conserved ones. By default, the LELC pose is extracted as result.
+Docking results are filtered by using the receptor to remove displaced waters and the W map file to rank the conserved ones as stron or weak. By default, the LELC pose is extracted as result.
 
 .. code-block:: bash
 
-	python dry.py -c -r protein.pdbqt -m protein.W.map -i ligand_HYDRO_protein.dlg
+	$ python dry.py -c -r protein.pdbqt -m protein.W.map -i ligand_HYDRO_protein.dlg
 
-Waters are ranked (STRONG, WEAK) and scored inside the output file (“\*_LELC_DRY_SCORED.pdbqt”) with the
-calculated energy.
-…
-REMARK  STRONG water ( score: -0.91 )
-…
+Waters are ranked (STRONG, WEAK) and scored inside the output file `ligand_LELC_DRY_SCORED.pdbqt` with the calculated energy.
+
+.. code-block:: console
+
+	…
+	REMARK  STRONG water ( score: -0.91 )
+	…
+
+
+6. Results
+----------
+
+.. warning::
+
+	Be aware that with this implementation of the method, it is difficult to compare results obtained with very diverse ligands without doing extra of post-processing on the results, because the energy estimation needs to be normalized. For this reason, the method is not suitable for virtual screenings. This doesn’t affect the structural accuracy, so comparisons within docking poses are fine. An improved scoring function to overcome this issue is in the works.

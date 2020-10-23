@@ -1,6 +1,50 @@
 Installation
 ============
 
+Unix- and Linux-based OS
+------------------------
+
+Vina is expected to work on x86 and compatible 64-bit Linux systems.
+
+**Installing**: 
+
+.. code-block:: bash
+
+    tar xzvf autodock_vina_1_2_0_linux_x86.tgz
+
+Optionally, you can copy the binary files where you want.
+
+**Running**:
+
+.. code-block:: bash
+
+    ./autodock_vina_1_2_0_linux_x86/bin/vina --help
+
+If the executable is in your PATH, you can just type "vina --help" instead.
+
+Mac OS
+------
+
+The 64 bit version is expected to work on Mac OS X 10.15 (Catalina) and newer. The 32 bit version of Vina is expected to work on Mac OS X from 10.4 (Tiger) through 10.14 (Mojave).
+
+**Installing**:
+
+.. code-block:: bash
+
+    tar xzvf autodock_vina_1_2_0_mac_64bit.tgz   # 64 bit
+    tar xzvf autodock_vina_1_2_0_mac.tgz         # 32 bit
+
+Optionally, you can copy the binary files where you want.
+
+**Running**:
+
+.. code-block:: bash
+
+    ./autodock_vina_1_2_0_mac_64bit/bin/vina --help     # 64 bit
+    ./autodock_vina_1_2_0_mac/bin/vina --help           # 32 bit
+
+If the executable is in your PATH, you can just type "vina --help" instead.
+
 Windows
 -------
 
@@ -18,70 +62,65 @@ Open the Command Prompt and, if you installed Vina in the default location, type
 
     "\Program Files\The Scripps Research Institute\Vina\vina.exe" --help
 
-If you are using Cygwin, the above command would instead be
+Python bindings
+---------------
+
+**AutoDock Vina installation using Conda**:
+
+The `Conda package manager <https://docs.conda.io/en/latest/>`_ is included as part of the Anaconda Python distribution, which can be download from `https://docs.continuum.io/anaconda/install <https://docs.continuum.io/anaconda/install/>`_. This is a Python distribution specially designed for scientific applications, with many of the most popular scientific packages preinstalled. Alternatively, you can use `Miniconda <https://conda.pydata.org/miniconda.html>`_, which includes only Python itself, plus the Conda package manager.
+
+1. Begin by installing the most recent 64 bit, Python 3.x version of either Anaconda or Miniconda
+2. (Optional, but highly suggested) If you want, you can create a dedicated environment for the `AutoDock Vina` package:
 
 .. code-block:: bash
 
-    /cygdrive/c/Program\ Files/The\ Scripps\ Research\ Institute/Vina/vina --help
+    $ conda create -n vina python=3
+    $ conda activate vina
+    $ conda install -c conda-forge numpy openbabel swig boost-cpp sphinx sphinx_rtd_theme
+    $ conda install -c ccsb-scripps autodock-vina
 
-See the Video Tutorial for details. Don't forget to check out Other Software for GUIs, etc.
-
-Linux
------
-Vina is expected to work on x86 and compatible 64-bit Linux systems.
-
-**Installing**: 
+3. And type the following command
 
 .. code-block:: bash
 
-    tar xzvf autodock_vina_1_1_2_linux_x86.tgz
+    $ conda install -c ccsb-scripps autodock-vina
 
-Optionally, you can copy the binary files where you want.
-
-**Running**:
+**AutoDock Vina installation using pip**:
 
 .. code-block:: bash
 
-    ./autodock_vina_1_1_2_linux_x86/bin/vina --help
-
-If the executable is in your PATH, you can just type "vina --help" instead. See the Video Tutorial for details. Don't forget to check out Other Software for GUIs, etc.
-
-Mac
----
-
-The 64 bit version is expected to work on Mac OS X 10.15 (Catalina) and newer. The 32 bit version of Vina is expected to work on Mac OS X from 10.4 (Tiger) through 10.14 (Mojave).
-
-**Installing**:
-
-.. code-block:: bash
-
-    tar xzvf autodock_vina_1_1_2_mac_64bit.tgz   # 64 bit
-    tar xzvf autodock_vina_1_1_2_mac.tgz         # 32 bit
-
-Optionally, you can copy the binary files where you want.
-
-**Running**:
-
-.. code-block:: bash
-
-    ./autodock_vina_1_1_2_mac_64bit/bin/vina --help     # 64 bit
-    ./autodock_vina_1_1_2_mac/bin/vina --help           # 32 bit
-
-If the executable is in your PATH, you can just type "vina --help" instead. See the Video Tutorial for details. Don't forget to check out Other Software for GUIs, etc.
+    $ pip install autodock-vina
 
 Building from Source
 --------------------
 
-Attention: Building Vina from source is NOT meant to be done by regular users! (these instructions might be outdated)
+.. warning::
 
-- Step 1: **Install a C++ compiler suite**. On Windows, you may want to install Visual Studio; on OS X, Xcode; and on Linux, the GCC compiler suite.
-- Step 2: **Install Boost**. Then, build and run one of the example programs, such as the Regex example, to confirm that you have completed this step. If you can't do this, please seek help from the Boost community.
-- Step 3: **Build Vina**. If you are using Visual Studio, you may want to create three projects: lib, main and split, with the source code from the appropriate subdirectories. lib must be a library, that the other projects depend on, and main and split must be console applications. For optimal performance, remember to compile using the Release mode.
+    Building Vina from source is NOT meant to be done by regular users!
 
-On OS X and Linux, you may want to navigate to the appropriate build subdirectory, customize the Makefile by setting the paths and the Boost version, and then type
+- Step 1: **Install a C++ compiler suite**
+    On Windows, you may want to install Visual Studio; on mac OS, Xcode; and on Linux, the GCC compiler suite.
+- Step 2: **Install Boost**
+    Then, build and run one of the example programs, such as the Regex example, to confirm that you have completed this step. If you can't do this, please seek help from the Boost community.
+- Step 3: **Build Vina**
 
-.. code-block:: bash
+    Start by downloading the last release of AutoDock Vina from github:
 
-    make depend
-    make
+    .. code-block:: bash
+    
+        $ git clone https://github.com/ccsb-scripps/AutoDock-Vina
 
+    To compile the binary (you might need to customize the Makefile by setting the paths and the Boost version):
+
+    .. code-block:: bash
+
+        $ cd AutoDock-Vina/build/linux/release
+        $ make depend
+        $ make
+
+    To compile the Python bindings:
+
+    .. code-block:: bash
+
+        $ cd AutoDock-Vina/build/python
+        $ python setup.py clean --all build install

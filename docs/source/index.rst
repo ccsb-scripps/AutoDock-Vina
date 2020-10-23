@@ -1,7 +1,7 @@
 AutoDock Vina: Molecular docking program
 ========================================
 
-**AutoDock Vina** is one of the fastest and most widely used **open-source** docking engines. It is a turnkey computational docking program that is based on a simple scoring function and rapid gradient-optimization conformational search. It was originally designed and implemented by Dr. Oleg Trott in the Molecular Graphics Lab at The Scripps Research Institute.
+**AutoDock Vina** is one of the **fastest** and **most widely used** **open-source** docking engines. It is a turnkey computational docking program that is based on a simple scoring function and rapid gradient-optimization conformational search. It was originally designed and implemented by Dr. Oleg Trott in the Molecular Graphics Lab at The Scripps Research Institute.
 
 Vina's design philosophy is not to require the user to understand its implementation details, tweak obscure search parameters, cluster results or know advanced algebra (quaternions). All that is required is the structures of the molecules being docked and the specification of the search space including the binding site. Calculating grid maps and assigning atom charges is not needed (when using Vina or Vinardo forcefields). Like in AutoDock 4, some receptor side chains can be chosen to be treated as flexible during docking. Additionally, it takes advantage of multiple CPUs or CPU cores on your system to significantly shorten its running time, which makes it faster than AutoDock 4 by *orders of magnitude*. Moreover, it significantly improves the average accuracy of the binding mode predictions compared to AutoDock 4.
 
