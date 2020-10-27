@@ -10,7 +10,6 @@ Molecular docking and virtual screening program
 You need, at a minimum (requirements):
 * Python (=3.7)
 * Numpy
-* OpenBabel
 * SWIG
 * Boost-cpp
 * Sphinx (documentation)
@@ -22,7 +21,7 @@ I highly recommand you to install the Anaconda distribution (https://www.continu
 ```bash
 $ conda create -n vina python=3.7
 $ conda activate vina
-$ conda install -c conda-forge numpy openbabel swig boost-cpp sphinx sphinx_rtd_theme
+$ conda install -c conda-forge numpy swig boost-cpp sphinx sphinx_rtd_theme
 ```
 
 Finally, we can install the `Vina` package
@@ -53,7 +52,7 @@ from vina import Vina
 v = Vina()
 
 v.set_receptor(rigid_pdbqt_filename="protein.pdbqt")
-v.set_ligand('ligand.pdbqt')
+v.set_ligand_from_file('ligand.pdbqt')
 
 v.compute_vina_maps(center=[0., 0., 0.], box_size=[30, 30, 30])
 print(v.score())

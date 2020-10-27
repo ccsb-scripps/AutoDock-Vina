@@ -30,52 +30,49 @@ Moreover, the ADFR software suite provides a number of software tools for automa
 	- Ravindranath, P. A., Forli, S., Goodsell, D. S., Olson, A. J., & Sanner, M. F. (2015). AutoDockFR: advances in protein-ligand docking with explicitly specified binding site flexibility. PLoS computational biology, 11(12), e1004586.
 	- Zhao, Y., Stoffler, D., & Sanner, M. (2006). Hierarchical and multi-resolution representation of protein flexibility. Bioinformatics, 22(22), 2768-2774.
 
-Raccoon-lite
-------------
+Raccoon
+-------
 
 .. note::
 
-	Raccoon-lite is not related to Raccoon, contained in MGLTools, and does not serve the same purpose. More information about Raccoon, a Virtual Screenings graphical interface for AutoDock and AutoDock Vina, can be found here: `https://ccsb.scripps.edu/autodock/raccoon <https://ccsb.scripps.edu/autodock/raccoon/>`_
+	The Python package ``raccoon`` is not related to Raccoon (GUI), contained in MGLTools, and does not serve the same purpose. More information about Raccoon (GUI), a Virtual Screenings graphical interface for AutoDock and AutoDock Vina, can be found here: `https://ccsb.scripps.edu/autodock/raccoon <https://ccsb.scripps.edu/autodock/raccoon/>`_
 
-The Python package Raccoon-lite is a new type of package developped in the Forli lab also at the `Center for Computational Structural Biology (CCSB) <https://ccsb.scripps.edu>`_.  It provides tools covering other docking aspects not handled by the ADFR software suite. This package provides addtionnal tools for the following docking protocols:
+The Python package ``raccoon`` is a new type of package developped in the Forli lab also at the `Center for Computational Structural Biology (CCSB) <https://ccsb.scripps.edu>`_.  It provides tools covering other docking aspects not handled by the ADFR software suite. This package provides addtionnal tools for the following docking protocols:
 
 	- Hydrated docking
 	- Macrocycles
-	- Docking with Zinc metal
 
 This new tool can be easily installed with all its depencies using `pip` or `conda` package managers. 
 
-**Raccoon-lite installation using Conda**:
+**Raccoon installation using Conda**:
 
 The `Conda package manager <https://docs.conda.io/en/latest/>`_ is included as part of the Anaconda Python distribution, which can be download from `https://docs.continuum.io/anaconda/install <https://docs.continuum.io/anaconda/install/>`_. This is a Python distribution specially designed for scientific applications, with many of the most popular scientific packages preinstalled. Alternatively, you can use `Miniconda <https://conda.pydata.org/miniconda.html>`_, which includes only Python itself, plus the Conda package manager.
 
 1. Begin by installing the most recent 64 bit, Python 3.x version of either Anaconda or Miniconda
-2. (Optional, but highly suggested) If you want, you can create a dedicated environment for `raccoon-lite` and `AutoDock Vina` packages:
+2. (Optional, but highly suggested) If you want, you can create a dedicated environment for ``raccoon`` and `AutoDock Vina` packages:
 
 .. code-block:: bash
 
 	conda create -n vina python=3
 	conda activate vina
-	conda install -c conda-forge numpy openbabel swig boost-cpp sphinx sphinx_rtd_theme
+	conda install -c conda-forge numpy swig boost-cpp sphinx sphinx_rtd_theme
 	conda install -c ccsb-scripps autodock-vina
 
 3. And type the following command
 
 .. code-block:: bash
 
-	conda install -c ccsb-scripps raccoon-lite
+	conda install -c ccsb-scripps raccoon
 
-**Raccoon-lite installation using pip**:
+**Raccoon installation using pip**:
 
 .. code-block:: bash
 
-	pip install raccoon-lite
+	pip install raccoon
 
 If the installation was successful, you should now be able to access to the following command/tools from your terminal by typing:
 
-	- rc_prepare_macrocycle.py
-	- rc_wet.py
-	- rc_mapwater.py
-	- rc_dry.py
-	- rc_prepare_gfp4zn.py
-	- rc_zinc_pseudo.py
+	- prepare_macrocycle.py
+	- wet.py
+	- mapwater.py
+	- dry.py

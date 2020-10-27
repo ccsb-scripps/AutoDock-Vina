@@ -16,8 +16,10 @@ Let's begin with a very simple example of an AutoDock Vina script. It loads affi
 
 	v = Vina(sf_name='vina')
 
+	v.set_receptor('1iep_protein.pdbqt')
+
 	v.compute_vina_maps()
-	v.set_ligand('1iep_ligand.pdbqt')
+	v.set_ligand_from_file('1iep_ligand.pdbqt')
 	
 	# Score the current pose
 	energy = v.score()
@@ -34,7 +36,7 @@ You can find this script in the `example` folder of AutoDock-Vina available on G
 
 .. code-block:: console
 
-	$ cd <examples_directory>
+	$ cd <examples_directory>/python_scripting
 	$ python first_example.py
 
 Let's go through the script line by line and see how it works.
@@ -59,10 +61,10 @@ Here, we are loading a PDBQT file called ``1iep_protein.pdbqt`` containing the r
 
 .. code-block:: python
 
-	v.set_ligand('1iep_ligand.pdbqt')
+	v.set_ligand_from_file('1iep_ligand.pdbqt')
 	v.compute_vina_maps()
 
-The next lines are used to first load a PDBQT file containing the ligand called ``1iep_ligand.pdbqt`` and then compute the affinity maps for each ligand atom types accroding to the Vina forcefield. You might need to read first the tutorial :ref:`basic_docking` to learn how to create a PDBQT file of a ligand. There is a small subility here, the behavior of the ``compute_vina_maps()`` function changes if the ligand was loaded before or after computing the vina maps. If no ligand was initialized, ``compute_vina_maps()`` will compute the affinity map for each atom types defined in the Vina forcefield (22 in total). This is very useful when we want to dock ligands in batch (a.k.a virtual screening) but we don't necessarily know beforehand what atom types will be necessary for thoses ligands.
+The next lines are used to first load a PDBQT file containing the ligand called ``1iep_ligand.pdbqt`` and then compute the affinity maps for each ligand atom types accroding to the Vina forcefield. You might need to read first the tutorial :ref:`basic_docking` to learn how to create a PDBQT file of a ligand. There is a small subility here, the behavior of the ``compute_vina_maps()`` function changes if the ligand was loaded before or after computing the vina maps. If no ligand was initialized, ``compute_vina_maps()`` will compute the affinity map for each atom types defined in the Vina forcefield (22 in total). This is very useful when we want to dock ligands in batch (a.k.a virtual screening) but we don't necessarily know beforehand what atom types will be necessary for thoses ligands. Alternately to ``set_ligand_from_file()``, you could also load a molecule using a molecule string in PDBQT format using the ``set_ligand_from_string()`` function.
 
 .. code-block:: python
 
@@ -101,7 +103,7 @@ Flexible docking with AutoDock forcefield
 	v.set_receptor(lex_pdbqt_filename='1fpu_flex.pdbqt')
 	v.load_maps('1fpu')
 
-	v.set_ligand('1iep_ligand.pdbqt')
+	v.set_ligand_from_file('1iep_ligand.pdbqt')
 	v.dock(exhaustiveness=32)
 
 	v.write_poses('1iep_ligand_out.pdbqt')

@@ -3,7 +3,7 @@
 Flexible docking
 ================
 
-The lack of receptor flexibility is arguably the greatest limitation in these types of docking methods. However, AutoDock Vina allows some limited flexibility of selected receptor side chains. In this tutorial, we will describe the cross-docking of imatinib to c-Abl in PDB entry 1fpu, treating Thr315 as flexible. 
+The lack of receptor flexibility is arguably the greatest limitation in these types of docking methods. However, AutoDock Vina allows some limited flexibility of selected receptor side chains. In this tutorial, we will describe the cross-docking of the `imatinib molecule <https://en.wikipedia.org/wiki/Imatinib>`_ to c-Abl in PDB entry `1fpu <https://www.rcsb.org/structure/1FPU>`_, treating Thr315 as flexible. 
 
 .. tip::
 
@@ -12,77 +12,86 @@ The lack of receptor flexibility is arguably the greatest limitation in these ty
 	- Lin, J. H., Perryman, A. L., Schames, J. R., & McCammon, J. A. (2003). The relaxed complex method: Accommodating receptor flexibility for drug design with an improved scoring scheme. Biopolymers: Original Research on Biomolecules, 68(1), 47-62.
 
 .. note::
-	This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the raccoon-lite Python package.
+	This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the raccoon Python package.
+
+.. note::
+	The materials present is this tutorial can be also found here: `https://www.nature.com/articles/nprot.2016.051 <https://www.nature.com/articles/nprot.2016.051>`_. If you are using this tutotial for your works, you can cite the following paper:
+
+	- Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.
 
 1. Preparing the flexible receptor
 ----------------------------------
 
-During this step, we are going to split the receptor coordinates into two PDBQT files: one for the rigid portion and one for the flexible side chains. As with the rigid docking tutorial, the method requires a receptor coordinate file that includes all hydrogen atoms. 
+During this step, we are going to split the receptor coordinates into two PDBQT files: one for the rigid portion and one for the flexible side chains. As with the :ref:`basic_docking` tutorial, the method requires a receptor coordinate file that includes all hydrogen atoms. The file ``1fpu_receptorH.pdb`` is provided (see ``<autodock-vina_directory>/example/flexible_docking/data`` directory). This file contains the receptor coordinates taken from PDB entry ``1fpu``.
 
 .. code-block:: bash
 	
 	$ prepare_receptor -r 1fpu_receptorH.pdb -o 1fpu_receptor.pdbqt
-	$ prepare_flexreceptor.py -r 1fpu_receptor.pdbqt -s A:THR315
+	$ pythonsh <script_directory>/prepare_flexreceptor.py -r 1fpu_receptor.pdbqt -s THR315
 
-This will create two different files, one containing only the rigid part of the protein, and the other one containing Thr315 as flexible residue:
+Other options are available for ``prepare_flexreceptor.py`` with the ``-h`` option. This will create two different files, one containing only the rigid part of the protein, and the other one containing Thr315 as flexible residue:
 
 .. code-block:: console
 
-	1fpu_rigid.pdbqt           # rigid part
-	1fpu_flex.pdbqt            # flexible sidechain of Thr315
+	1fpu_receptor_rigid.pdbqt           # rigid part
+	1fpu_receptor_flex.pdbqt            # flexible sidechain of Thr315
+
+If you are not sure about this step, the output PDBQT files ``1fpu_receptor_rigid.pdbqt`` and ``1fpu_receptor_flex.pdbqt`` are available in ``solution`` directory.
 
 
 2. Prepare ligand
 -----------------
 
-For the molecular docking with flexible sidechains, we will use the ligand file `1iep_ligand.pdbqt` from the previous tutorial :ref:`basic_docking`.
+For the molecular docking with flexible sidechains, we will use the ligand file ``1iep_ligand.pdbqt`` from the previous tutorial :ref:`basic_docking`.
 
 3. (Optional) Generating affinity maps for AutoDock FF
 ------------------------------------------------------
 
-As well as for the docking with a fully rigid receptor, we need to generate a grid parameter file (.gpf) to precalculate the affinity map for each atom types. However, instead of using the full receptor, affinity maps will be calculated only for the rigid part of the receptor (`1fpu_rigid.pdbqt`).
+As well as for the docking with a fully rigid receptor, we need to generate a GPF file to precalculate the affinity map for each atom types. However, instead of using the full receptor, affinity maps will be calculated only for the rigid part of the receptor (``1fpu_receptor_rigid.pdbqt``).
 
-To prepare the gpf file for the rigid part of the receptor:
+To prepare the GPF file for the rigid part of the receptor:
 
 .. code-block:: bash
 
-	$ prepare_gpf.py -l xxxx.pdbqt -r 1fpu_rigid.pdbqt
+	$ pythonsh prepare_gpf.py -l 1iep_ligand.pdbqt -r 1fpu_receptor_rigid.pdbqt -y
+
+Luckily for us, the structure ``1iep`` and ``1fpu`` are almost perfectly superposed already, so we can also center the grid around ``1iep_ligand.pdbqt``. Otherwise, the center of the grid can be specified using the option ``-p gridcenter='X,X,X'``.
 
 .. code-block:: console
-	:caption: Content of the grid parameter file (**1fpu_flex.gpf**) for the receptor c-Abl (**1fpu_rigid.pdbqt**)
+	:caption: Content of the grid parameter file (**1fpu_receptor_rigid.gpf**) for the receptor c-Abl (**1fpu_receptor_rigid.pdbqt**)
 
-	npts 40 46 52                        # num.grid points in xyz
-	gridfld 1fpu.maps.fld                # grid_data_file
+	npts 40 45 40                        # num.grid points in xyz
+	gridfld 1fpu_receptor_rigid.maps.fld # grid_data_file
 	spacing 0.375                        # spacing(A)
-	receptor_types A C HD N OA SA        # receptor atom types
+	receptor_types A C NA OA N SA HD     # receptor atom types
 	ligand_types A C NA OA N HD          # ligand atom types
-	receptor 1fpu_rigid.pdbqt            # macromolecule
-	gridcenter 15.19 53.903 14.661       # xyz-coordinates or auto
+	receptor 1fpu_receptor_rigid.pdbqt   # macromolecule
+	gridcenter 15.662 53.211 15.546      # xyz-coordinates or auto
 	smooth 0.5                           # store minimum energy w/in rad(A)
-	map 1fpu.A.map                       # atom-specific affinity map
-	map 1fpu.C.map                       # atom-specific affinity map
-	map 1fpu.NA.map                      # atom-specific affinity map
-	map 1fpu.OA.map                      # atom-specific affinity map
-	map 1fpu.N.map                       # atom-specific affinity map
-	map 1fpu.HD.map                      # atom-specific affinity map
-	elecmap 1fpu.e.map                   # electrostatic potential map
-	dsolvmap 1fpu.d.map                  # desolvation potential map
+	map 1fpu_receptor_rigid.A.map        # atom-specific affinity map
+	map 1fpu_receptor_rigid.C.map        # atom-specific affinity map
+	map 1fpu_receptor_rigid.NA.map       # atom-specific affinity map
+	map 1fpu_receptor_rigid.OA.map       # atom-specific affinity map
+	map 1fpu_receptor_rigid.N.map        # atom-specific affinity map
+	map 1fpu_receptor_rigid.HD.map       # atom-specific affinity map
+	elecmap 1fpu_receptor_rigid.e.map    # electrostatic potential map
+	dsolvmap 1fpu_receptor_rigid.d.map              # desolvation potential map
 	dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
 
-To execute `autogrid4` using `1fpu_flex.gpf`, run the folllowing command line:
+To execute ``autogrid4`` using ``1fpu_receptor_rigid.gpf``, run the folllowing command line:
 
 .. code-block:: bash
 
-	$ autogrid4 -p 1fpu_flex.gpf -l 1fpu_flex.glg
+	$ autogrid4 -p 1fpu_receptor_rigid.gpf -l 1fpu_receptor_rigid.glg
 
 You should obtain as well the following files:
 
 .. code-block:: console
 
-	1fpu.maps.fld       # grid data file
-	1fpu.*.map          # affinity maps for different atom types
-	1fpu.d.map          # desolvation map
-	1fpu.e.map          # electrostatic map
+	1fpu_receptor.maps.fld       # grid data file
+	1fpu_receptor.*.map          # affinity maps for A, C, HD, NA, N, OA atom types
+	1fpu_receptor.d.map          # desolvation map
+	1fpu_receptor.e.map          # electrostatic map
 
 
 4. Running AutoDock Vina
@@ -91,41 +100,118 @@ You should obtain as well the following files:
 4.a. Using AutoDock forcefield
 ______________________________
 
-While using the AutoDock4 forcefield, only the flex part of the receptor is necessary, as well as the affinity maps. Once the receptor (flex part), ligand and maps were prepared, you can perform the flexible side-chain docking by simply running the following command line:
+While using the AutoDock4 forcefield, only the flex part of the receptor is necessary, as well as the affinity maps. Once the receptor (flex part ``1fpu_receptor_flex.pdbqt``), ligand ``1iep_ligand.pdbqt`` and maps ``1fpu_receptor_rigid`` were prepared, you can perform the flexible side-chain docking by simply running the following command line:
 
 .. code-block:: bash
 
-	$ vina --flex 1fpu_flex.pdbqt --ligand 1iep_ligand.pdbqt --maps 1fpu --scoring ad4 \
-	       --exhaustiveness 24 --out 1fpu_ligand_flex.pdbqt
+	$ vina --flex 1fpu_receptor_flex.pdbqt --ligand 1iep_ligand.pdbqt \
+	       --maps 1fpu_receptor_rigid --scoring ad4 \
+	       --exhaustiveness 32 --out 1fpu_ligand_flex_ad4_out.pdbqt
+
+Running AutoDock Vina will write a PDBQT file called ``1fpu_ligand_flex_ad4_out.pdbqt`` contaning all the poses found during the molecular docking as well as the Thr315 sidechain conformations, and also present docking information to the terminal window.
 
 4.b. Using Vina forcefield
 __________________________
 
-As well as for the fully rigid molecular docking, you only need to specify the center and dimensions (in Angstrom) of the grid.
+As well as for the fully rigid molecular docking, you only need to specify the center and dimensions (in Angstrom) of the grid. Here, instead of specifying each parameters for the grid box using the arguments ``--center_x, --center_y, --center_z`` and ``--size_x, --size_y, --size_z``, we will also store all those informations in a text file ``1fpu_receptor_rigid_vina_box.txt``.
 
 .. code-block:: console
-	:caption: Content of the config file (**box.txt**) for AutoDock Vina
+	:caption: Content of the config file (**1fpu_receptor_rigid_vina_box.txt**) for AutoDock Vina
 
-	center_x = 15.19
-	center_y = 53.903
-	center_z = 14.661
+	center_x = 15.662
+	center_y = 53.211
+	center_z = 15.546  
 	size_x = 15.0
-	size_y = 17.25
-	size_z = 19.5
+	size_y = 16.875
+	size_z = 15.0
 
-However, when using the Vina forcefield, you will need to specify both the rigid (needed to compute internally the affinity maps) and flex part of receptor. To perform the same docking experiment but using Vina forcefield run the following command line:
+However, when using the Vina forcefield, you will need to specify both the rigid ``1fpu_receptor_rigid.pdbqt`` (needed to compute internally the affinity maps) and flex part ``1fpu_receptor_flex.pdbqt`` of the receptor. To perform the same docking experiment but using Vina forcefield run the following command line:
 
 .. code-block:: bash
 
-	$ vina --receptor 1fpu_rigid.pdbqt --flex 1fpu_flex.pdbqt --ligand 1iep_ligand.pdbqt \
-	       --config box.txt --exhaustiveness 24 --out 1fpu_ligand_flex.pdbqt
+	$ vina --receptor 1fpu_receptor_rigid.pdbqt --flex 1fpu_receptor_flex.pdbqt \
+	       --ligand 1iep_ligand.pdbqt --config 1fpu_receptor_rigid_vina_box.txt \
+	       --exhaustiveness 32 --out 1fpu_ligand_flex_vina_out.pdbqt
 
 .. tip::
 
-	Alternatively, you can use the Vinardo forcefield by adding the `--scoring vinardo` option.
+	Alternatively, you can use the Vinardo forcefield by adding the ``--scoring vinardo`` option.
+
+Running AutoDock Vina will write a PDBQT file called ``1fpu_ligand_flex_vina_out.pdbqt``.
 
 5. Results
 ----------
 
-Analyze the flexible docking results using ADT (Fig. 3b), as described in Step 5A(iv).
+.. warning::
+	
+	Please don't forget that energy scores giving by the AutoDock and Vina forcefield are not comparable between each other.
 
+5.a. Using AutoDock forcefield
+______________________________
+
+The predicted free energy of binding should be about ``-15 kcal/mol`` for poses that are similar to the crystallographic pose.
+
+.. code-block:: console
+
+	Scoring function : ad4
+	Flex receptor: 1fpu_receptor_flex.pdbqt
+	Ligand: 1iep_ligand.pdbqt
+	Exhaustiveness: 32
+	CPU: 0
+	Verbosity: 1
+
+	Reading AD4.2 maps ... done.
+
+	0%   10   20   30   40   50   60   70   80   90   100%
+	|----|----|----|----|----|----|----|----|----|----|
+	***************************************************
+
+	mode |   affinity | dist from best mode
+	     | (kcal/mol) | rmsd l.b.| rmsd u.b.
+	-----+------------+----------+----------
+	   1       -15.09          0          0
+	   2       -13.09      1.491      1.974
+	   3        -12.5      3.443       6.58
+	   4       -12.11      2.696      10.59
+	   5       -11.92      1.718      2.274
+	   6        -11.4      2.307       3.74
+	   7       -11.06      2.082      10.91
+	   8       -10.76       2.69      11.57
+	   9       -10.27      2.104      11.08
+
+5.b. Using Vina forcefield
+__________________________
+
+Using the vina forcefield, you should obtain a similar output from Vina with the best score around ``-11 kcal/mol``.
+
+.. code-block:: console
+
+	Scoring function : vina
+	Rigid receptor: 1fpu_receptor_rigid.pdbqt
+	Flex receptor: 1fpu_receptor_flex.pdbqt
+	Ligand: 1iep_ligand.pdbqt
+	Center: X 15.662 Y 53.211 Z 15.546
+	Size: X 15 Y 16.875 Z 15
+	Grid space: 0.375
+	Exhaustiveness: 32
+	CPU: 0
+	Verbosity: 1
+
+	Computing Vina grid ... done.
+
+	0%   10   20   30   40   50   60   70   80   90   100%
+	|----|----|----|----|----|----|----|----|----|----|
+	***************************************************
+
+	mode |   affinity | dist from best mode
+	     | (kcal/mol) | rmsd l.b.| rmsd u.b.
+	-----+------------+----------+----------
+	   1       -10.95          0          0
+	   2        -10.2      2.456      12.25
+	   3       -9.759       2.06      12.26
+	   4       -8.872      2.445      12.09
+	   5       -8.449      2.322      11.64
+	   6       -7.665      2.126      11.27
+	   7       -7.486      1.595      2.752
+	   8        -7.45      1.818      2.679
+	   9       -7.239      1.366      2.209

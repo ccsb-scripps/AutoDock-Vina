@@ -1,0 +1,17 @@
+BEGIN_RES THR A 315
+REMARK  2 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK    1  A    between atoms: CA   and  CB  
+REMARK    2  A    between atoms: CB   and  OG1 
+ROOT
+ATOM      1  CA  THR A 315      13.079  52.503   8.093  1.00 45.40     0.205 C 
+ENDROOT
+BRANCH   1   2
+ATOM      2  CB  THR A 315      13.429  52.900   9.553  1.00 45.76     0.146 C 
+ATOM      3  CG2 THR A 315      12.339  53.679  10.200  1.00 42.73     0.042 C 
+BRANCH   2   4
+ATOM      4  OG1 THR A 315      13.724  51.718  10.307  1.00 47.20    -0.393 OA
+ATOM      5  HG1 THR A 315      13.915  51.930  11.097  1.00 47.20     0.210 HD
+ENDBRANCH   2   4
+ENDBRANCH   1   2
+END_RES THR A 315
