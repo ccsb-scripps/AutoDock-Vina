@@ -176,9 +176,9 @@ class CustomBuildExt(build_ext):
         self.include_dirs.append(self.boost_include_dir)
         self.library_dirs.append(self.boost_library_dir)
         # Openbabel
-        self.ob_include_dir, self.ob_library_dir = locate_ob()
-        self.include_dirs.append(self.ob_include_dir)
-        self.library_dirs.append(self.ob_library_dir)
+        #self.ob_include_dir, self.ob_library_dir = locate_ob()
+        #self.include_dirs.append(self.ob_include_dir)
+        #self.library_dirs.append(self.ob_library_dir)
         # Vina
         self.include_dirs.append('../../src/lib')
         # SWIG
@@ -198,7 +198,7 @@ class CustomBuildExt(build_ext):
             print('\nError: SWIG failed. Is Open Babel installed?',
                   'You may need to manually specify the location of Open Babel include and library directories. '
                   'For example:',
-                  '  python setup.py build_ext -I{} -L{}'.format(self.ob_include_dir, self.ob_library_dir),
+                  '  python setup.py build_ext -I{} -L{}'.format(self.include_dirs, self.library_dir),
                   '  python setup.py install',
                   sep='\n')
             sys.exit(1)

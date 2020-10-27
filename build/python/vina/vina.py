@@ -27,14 +27,16 @@ class Vina:
 
         """
         sf_name = sf_name.lower()
-        if not sf_name in ('vina', 'ad4'):
-            raise ValueError('Error: Scoring function %s not recognized. (only vina or ad4)' % sf_name)
+        if not sf_name in ('vina', 'vinardo', 'ad4'):
+            raise ValueError('Error: Scoring function %s not recognized. (only vina, vinardo or ad4)' % sf_name)
 
         self._vina = _Vina(sf_name, cpu, seed, verbosity)
         
         self._sf_name = sf_name
         if sf_name == 'vina':
             self._weights = (-0.035579, -0.005156, 0.840245, -0.035069, -0.587439, 50, 0.05846)
+        elif sf_name == 'vinardo':
+            self._weights = (-0.045, 0.8, -0.035, -0.6, 50, 0.05846)
         else:
             self._weights = (0.1662, 0.1209, 0.1406, 0.1322, 50)
         self._rigid_receptor = None
@@ -106,8 +108,8 @@ class Vina:
         self._rigid_receptor = rigid_pdbqt_filename
         self._flex_receptor = flex_pdbqt_filename
 
-    def set_ligand(self, pdbqt_filename):
-        """Set ligand(s).
+    def set_ligand_from_file(self, pdbqt_filename):
+        """Set ligand(s) from a file. The chemical file format must be PDBQT.
 
         Args:
             pdbqt_filename (str or list): Name or list of PDBQT filename(s)
@@ -124,11 +126,32 @@ class Vina:
                 raise TypeError('Error: Vina requires a PDBQT file for the ligand.')
 
         if len(pdbqt_filename) == 1:
-            self._vina.set_ligand(pdbqt_filename[0])
+            self._vina.set_ligand_from_file(pdbqt_filename[0])
         else:
-            self._vina.set_ligand(pdbqt_filename)
+            self._vina.set_ligand_from_file(pdbqt_filename)
 
         self._ligands = pdbqt_filename
+    
+    def set_ligand_from_string(self, pdbqt_string):
+        """Set ligand(s) from a string. The chemical file format must be PDBQT.
+
+        Args:
+            pdbqt_string (str or list): string or list of PDBQT strings
+
+        """
+        if not isinstance(pdbqt_string, (list, tuple)):
+            pdbqt_string = [pdbqt_string]
+        
+        for ps in pdbqt_string:
+            if not isinstance(ps, str):
+                raise TypeError('Error: %s is not a string.' % ps)
+
+        if len(pdbqt_string) == 1:
+            self._vina.set_ligand_from_string(pdbqt_string[0])
+        else:
+            self._vina.set_ligand_from_string(pdbqt_string)
+
+        self._ligands = pdbqt_string
 
     def set_weights(self, weights):
         """Set potential weights for vina or ad4 scoring function.
@@ -145,8 +168,11 @@ class Vina:
             self._vina.set_vina_weights(list(weights))
         else:
             if len(weights) != 6:
-                raise ValueError('Error: Number of weights does not correspond to AD4 scoring function.')
-            self._vina.set_ad4_weights(list(weights))
+                raise ValueError('Error: Number of weights does not correspond to AD4 or Vinardo scoring function.')
+                if self._sf_name == 'ad4':
+                    self._vina.set_ad4_weights(list(weights))
+                else:
+                    self._vina.set_vinardo_weights(list(weights))
 
         self._weights = weights
 

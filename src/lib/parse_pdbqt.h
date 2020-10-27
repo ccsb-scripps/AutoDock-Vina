@@ -41,7 +41,7 @@
 #include "utils.h"
 
 model parse_receptor_pdbqt(const std::string &rigid=std::string(), const std::string &flex=std::string(), atom_type::t atype=atom_type::XS); // can throw parse_error
-model parse_ligand_pdbqt(const std::string& name, atom_type::t atype); // can throw parse_error
-//model parse_ligand_pdbqt(OpenBabel::OBMol* mol); // can throw parse_error
- 
+model parse_ligand_pdbqt_from_file(const std::string& name, atom_type::t atype); // can throw parse_error
+model parse_ligand_pdbqt_from_string(const std::string &string_name, atom_type::t atype);
+
 #endif

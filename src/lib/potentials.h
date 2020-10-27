@@ -54,6 +54,12 @@ inline fl smooth_div(fl x, fl y) {
     return x / y;
 }
 
+// Vinardo common functions
+inline fl optimal_distance_vinardo(sz xs_t1, sz xs_t2) {
+    if (is_glue_type(xs_t1) || is_glue_type(xs_t2)) return 0.0; // G0, G1, G2 or G3
+    return xs_vinardo_radius(xs_t1) + xs_vinardo_radius(xs_t2);
+}
+
 // AD42 common functions
 inline fl smoothen(fl r, fl rij, fl smoothing) {
     fl out;
@@ -218,6 +224,109 @@ public:
             return 0.0;
         if(xs_h_bond_possible(t1, t2))
             return slope_step(bad, good, r - optimal_distance(t1, t2));
+        return 0.0;
+    };
+    fl get_cutoff() { return cutoff; }
+private:
+    fl good;
+    fl bad;
+    fl cutoff;
+};
+
+// Vinardo
+class vinardo_gaussian : public Potential {
+public:
+    vinardo_gaussian(fl offset_, fl width_, fl cutoff_) : offset(offset_), width(width_), cutoff(cutoff_) { }
+    //~vina_gaussian() { }
+    fl eval(const atom& a, const atom& b, fl r) {
+        if (r >= cutoff)
+            return 0.0;
+        return gauss(r - (optimal_distance_vinardo(a.xs, b.xs) + offset)); // hard-coded to XS atom type
+    };
+    fl eval(sz t1, sz t2, fl r) {
+        if (r >= cutoff)
+            return 0.0;
+        return gauss(r - (optimal_distance_vinardo(t1, t2) + offset)); // hard-coded to XS atom type
+    };
+    fl get_cutoff() { return cutoff; }
+private:
+    fl offset; // added to optimal distance
+    fl width;
+    fl cutoff;
+
+    fl gauss(fl x) {
+        return std::exp(-sqr(x / width));
+    };
+};
+
+class vinardo_repulsion : public Potential {
+public:
+    vinardo_repulsion(fl offset_, fl cutoff_) : offset(offset_), cutoff(cutoff_) {}
+    //~vina_repulsion() { }
+    fl eval(const atom& a, const atom& b, fl r) {
+        if (r >= cutoff)
+            return 0.0;
+        fl d = r - (optimal_distance_vinardo(a.xs, b.xs) + offset); // hard-coded to XS atom type
+        if (d > 0.0)
+            return 0.0;
+        return d * d;
+    };
+    fl eval(sz t1, sz t2, fl r) {
+        if (r >= cutoff)
+            return 0.0;
+        fl d = r - (optimal_distance_vinardo(t1, t2) + offset); // hard-coded to XS atom type
+        if(d > 0.0)
+            return 0.0;
+        return d*d;
+    };
+    fl get_cutoff() { return cutoff; }
+private:
+    fl offset; // added to vdw
+    fl cutoff;
+};
+
+class vinardo_hydrophobic : public Potential {
+public:
+    vinardo_hydrophobic(fl good_, fl bad_, fl cutoff_) : good(good_), bad(bad_), cutoff(cutoff_) { }
+    //~vina_hydrophobic() { }
+    fl eval(const atom& a, const atom& b, fl r) {
+        if (r >= cutoff)
+            return 0.0;
+        if (xs_is_hydrophobic(a.xs) && xs_is_hydrophobic(b.xs))
+            return slope_step(bad, good, r - optimal_distance_vinardo(a.xs, b.xs));
+        else return 0.0;
+    };
+    fl eval(sz t1, sz t2, fl r) {
+        if (r >= cutoff)
+            return 0.0;
+        if(xs_is_hydrophobic(t1) && xs_is_hydrophobic(t2))
+            return slope_step(bad, good, r - optimal_distance_vinardo(t1, t2));
+        else
+            return 0.0;
+    };
+    fl get_cutoff() { return cutoff; }
+private:
+    fl good;
+    fl bad;
+    fl cutoff;
+};
+
+class vinardo_non_dir_h_bond : public Potential {
+public:
+    vinardo_non_dir_h_bond(fl good_, fl bad_, fl cutoff_) : good(good_), bad(bad_), cutoff(cutoff_) { }
+    //~vina_non_dir_h_bond() { }
+    fl eval(const atom& a, const atom& b, fl r) {
+        if (r >= cutoff)
+            return 0.0;
+        if (xs_h_bond_possible(a.xs, b.xs))
+            return slope_step(bad, good, r - optimal_distance_vinardo(a.xs, b.xs));
+        return 0.0;
+    };
+    fl eval(sz t1, sz t2, fl r) {
+        if (r >= cutoff)
+            return 0.0;
+        if(xs_h_bond_possible(t1, t2))
+            return slope_step(bad, good, r - optimal_distance_vinardo(t1, t2));
         return 0.0;
     };
     fl get_cutoff() { return cutoff; }

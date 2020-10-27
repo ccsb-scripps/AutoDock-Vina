@@ -84,11 +84,14 @@ public:
         if (sf_name.compare("vina") == 0) {
             m_sf_choice = SF_VINA;
             set_vina_weights();
+        } else if (sf_name.compare("vinardo") == 0) {
+            m_sf_choice = SF_VINARDO;
+            set_vinardo_weights();
         } else if (sf_name.compare("ad4") == 0) {
             m_sf_choice = SF_AD42;
             set_ad4_weights();
         } else {
-            std::cerr << "ERROR: Scoring function " << sf_name << " not implemented (choices: vina or ad4)\n";
+            std::cerr << "ERROR: Scoring function " << sf_name << " not implemented (choices: vina, vinardo or ad4)\n";
             exit (EXIT_FAILURE);
         }
     }
@@ -97,14 +100,20 @@ public:
 
     void cite();
     void set_receptor(const std::string &rigid_name=std::string(), const std::string &flex_name=std::string());
-    void set_ligand(const std::string& ligand_name);
-    void set_ligand(const std::vector<std::string>& ligand_name);
+    void set_ligand_from_string(const std::string &ligand_string);
+    void set_ligand_from_string(const std::vector<std::string> &ligand_string);
+    void set_ligand_from_file(const std::string& ligand_name);
+    void set_ligand_from_file(const std::vector<std::string>& ligand_name);
     //void set_ligand(OpenBabel::OBMol* mol);
     //void set_ligand(std::vector<OpenBabel::OBMol*> mol);
     void set_vina_weights(double weight_gauss1=-0.035579,  double weight_gauss2=-0.005156, 
                           double weight_repulsion=0.840245, double weight_hydrophobic=-0.035069, 
                           double weight_hydrogen=-0.587439, double weight_glue=50,
                           double weight_rot=0.05846);
+    void set_vinardo_weights(double weight_gauss1=-0.045,
+                             double weight_repulsion=0.8, double weight_hydrophobic=-0.035, 
+                             double weight_hydrogen=-0.600, double weight_glue=50,
+                             double weight_rot=0.05846);
     void set_ad4_weights(double weight_ad4_vdw=0.1662, double weight_ad4_hb=0.1209, 
                          double weight_ad4_elec=0.1406, double weight_ad4_dsolv=0.1322, 
                          double weight_glue=50, double weight_ad4_rot=0.2983);
@@ -122,11 +131,11 @@ public:
                     const std::string& fld_filename="NULL", const std::string& receptor_filename="NULL");
 
 private:
-    //OpenBabel::OBMol m_mol;
     // model and poses
     model m_receptor;
     model m_model;
     output_container m_poses;
+    //OpenBabel::OBMol m_mol;
     bool m_receptor_initialized;
     bool m_ligand_initialized;
     // scoring function

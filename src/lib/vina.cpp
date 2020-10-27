@@ -83,9 +83,9 @@ void Vina::set_receptor(const std::string& rigid_name, const std::string& flex_n
     m_receptor_initialized = true;
 }
 
-void Vina::set_ligand(const std::string& ligand_name) {
-    // Read ligand PDBQT file and add it to the model
-    if (ligand_name.empty()) {
+void Vina::set_ligand_from_string(const std::string& ligand_string) {
+    // Read ligand PDBQT string and add it to the model
+    if (ligand_string.empty()) {
         std::cerr << "ERROR: Cannot read ligand file. Ligand string is empty.\n";
         exit(EXIT_FAILURE);
     }
@@ -103,7 +103,7 @@ void Vina::set_ligand(const std::string& ligand_name) {
     }
 
     // ... and add ligand to the model
-    m_model.append(parse_ligand_pdbqt(ligand_name, atom_typing));
+    m_model.append(parse_ligand_pdbqt_from_string(ligand_string, atom_typing));
 
     // Because we precalculate ligand atoms interactions
     precalculate_byatom precalculated_byatom(m_scoring_function, m_model);
@@ -112,7 +112,7 @@ void Vina::set_ligand(const std::string& ligand_name) {
     if (m_map_initialized) {
         szv atom_types = m_model.get_movable_atom_types(atom_typing);
 
-        if (m_sf_choice == SF_VINA) {
+        if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
             if(!m_grid.are_atom_types_grid_initialized(atom_types))
                 exit(EXIT_FAILURE);
         } else {
@@ -128,9 +128,9 @@ void Vina::set_ligand(const std::string& ligand_name) {
     m_ligand_initialized = true;
 }
 
-void Vina::set_ligand(const std::vector<std::string>& ligand_name) {
-    // Read ligand PDBQT files and add them to the model
-    if (ligand_name.empty()) {
+void Vina::set_ligand_from_string(const std::vector<std::string>& ligand_string) {
+    // Read ligand PDBQT strings and add them to the model
+    if (ligand_string.empty()) {
         std::cerr << "ERROR: Cannot read ligand list. Ligands list is empty.\n";
         exit(EXIT_FAILURE);
     }
@@ -147,8 +147,8 @@ void Vina::set_ligand(const std::vector<std::string>& ligand_name) {
         m_model = m_receptor;
     }
 
-    VINA_RANGE(i, 0, ligand_name.size())
-        m_model.append(parse_ligand_pdbqt(ligand_name[i], atom_typing));
+    VINA_RANGE(i, 0, ligand_string.size())
+        m_model.append(parse_ligand_pdbqt_from_string(ligand_string[i], atom_typing));
 
     // Because we precalculate ligand atoms interactions
     precalculate_byatom precalculated_byatom(m_scoring_function, m_model);
@@ -157,7 +157,7 @@ void Vina::set_ligand(const std::vector<std::string>& ligand_name) {
     if (m_map_initialized) {
         szv atom_types = m_model.get_movable_atom_types(atom_typing);
 
-        if (m_sf_choice == SF_VINA) {
+        if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
             if(!m_grid.are_atom_types_grid_initialized(atom_types))
                 exit(EXIT_FAILURE);
         } else {
@@ -173,37 +173,38 @@ void Vina::set_ligand(const std::vector<std::string>& ligand_name) {
     m_ligand_initialized = true;
 }
 
+void Vina::set_ligand_from_file(const std::string& ligand_name) {
+    set_ligand_from_string(get_file_contents(ligand_name));
+}
+
+void Vina::set_ligand_from_file(const std::vector<std::string>& ligand_name) {
+    std::vector<std::string> ligand_string;
+
+    VINA_RANGE(i, 0, ligand_name.size())
+        ligand_string.push_back(get_file_contents(ligand_name[i]));
+
+    set_ligand_from_string(ligand_string);
+}
+
 /*
 void Vina::set_ligand(OpenBabel::OBMol* mol) {
-    // Read ligand PDBQT file and add it to the model
-    VINA_CHECK(m_receptor_initialized); // m_model
-    
-    // Replace current model with receptor and reinitialize poses
-    m_model = m_receptor;
-    output_container m_poses;
-
-    m_model.append(parse_ligand_pdbqt(mol));
-
-    // Store in Vina object
-    m_ligand_initialized = true;
+    // Add OBMol to the model
+    OpenBabel::OBConversion conv;
+    conv.SetOutFormat("PDBQT");
+    set_ligand_from_string(conv.WriteString(mol));
 }
-*/
 
-/*
 void Vina::set_ligand(std::vector<OpenBabel::OBMol*> mol) {
-    // Read ligand PDBQT files and add them to the model
-    VINA_CHECK(!mol.empty());
-    VINA_CHECK(m_receptor_initialized); // m_model
+    // Add OBMols to the model
+    std::vector<std::string> ligand_string;
 
-    // Replace current model with receptor and reinitialize poses
-    m_model = m_receptor;
-    output_container m_poses;
+    OpenBabel::OBConversion conv;
+    conv.SetOutFormat("PDBQT");
 
-    VINA_RANGE(i, 0, mol.size())
-        m_model.append(parse_ligand_pdbqt(mol[i]));
-
-    // Store in Vina object
-    m_ligand_initialized = true;
+    VINA_RANGE(i, 0, ligand_name.size())
+        ligand_string.push_back(conv.WriteString(mol[i]));
+    
+    set_ligand_from_string(ligand_string);
 }
 */
 
@@ -215,6 +216,27 @@ void Vina::set_vina_weights(double weight_gauss1, double weight_gauss2, double w
     if (m_sf_choice == SF_VINA) {
         weights.push_back(weight_gauss1);
         weights.push_back(weight_gauss2);
+        weights.push_back(weight_repulsion);
+        weights.push_back(weight_hydrophobic);
+        weights.push_back(weight_hydrogen);
+        weights.push_back(weight_glue);
+        weights.push_back(5 * weight_rot / 0.1 - 1);
+
+        // Store in Vina object
+        m_weights = weights;
+
+        // Since we set (different) weights, we automatically initialize the forcefield
+        set_forcefield();
+    }
+}
+
+void Vina::set_vinardo_weights(double weight_gauss1, double weight_repulsion, 
+                               double weight_hydrophobic, double weight_hydrogen, double weight_glue,
+                               double weight_rot) {
+    flv weights;
+
+    if (m_sf_choice == SF_VINARDO) {
+        weights.push_back(weight_gauss1);
         weights.push_back(weight_repulsion);
         weights.push_back(weight_hydrophobic);
         weights.push_back(weight_hydrogen);
@@ -295,7 +317,7 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
         exit(EXIT_FAILURE);
     } else if (!m_receptor_initialized) {
         // m_model
-        std::cerr << "ERROR: Cannot compute Vina affinity maps. The (rigid) receptor was not initialized.\n";
+        std::cerr << "ERROR: Cannot compute Vina or Vinardo affinity maps. The (rigid) receptor was not initialized.\n";
         exit(EXIT_FAILURE);
     }
 
@@ -308,7 +330,10 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
     else
         atom_types = m_scoring_function.get_atom_types();
 
-    doing("Computing Vina grid", m_verbosity, 0);
+    if (m_sf_choice == SF_VINA)
+        doing("Computing Vina grid", m_verbosity, 0);
+    else
+        doing("Computing Vinardo grid", m_verbosity, 0);
     // Initialize the vina box
     set_vina_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
     precalculate precalculated_sf(m_scoring_function);
@@ -325,7 +350,7 @@ void Vina::load_maps(std::string maps) {
     const fl slope = 1e6; // FIXME: too large? used to be 100
     grid_dims gd;
 
-    if (m_sf_choice == SF_VINA) {
+    if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
         doing("Reading Vina maps", m_verbosity, 0);
         cache grid(slope);
         gd = grid.read(maps);
@@ -344,7 +369,7 @@ void Vina::load_maps(std::string maps) {
         atom_type::t atom_typing = m_scoring_function.get_atom_typing();
         szv atom_types = m_model.get_movable_atom_types(atom_typing);
 
-        if (m_sf_choice == SF_VINA) {
+        if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
             if(!m_grid.are_atom_types_grid_initialized(atom_types))
                 exit(EXIT_FAILURE);
         } else {
@@ -378,7 +403,7 @@ void Vina::write_maps(const std::string& map_prefix, const std::string& gpf_file
     else
         atom_types = m_scoring_function.get_atom_types();
 
-    if (m_sf_choice == SF_VINA) {
+    if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
         doing("Writing Vina maps", m_verbosity, 0);
         m_grid.write(map_prefix, atom_types, gpf_filename, fld_filename, receptor_filename);
         done(m_verbosity, 0);
@@ -587,7 +612,7 @@ void Vina::show_score(const std::vector<double> energies) {
     std::cout << "    Flex   - Receptor              : " << std::fixed << std::setprecision(3) << energies[3] << " (kcal/mol)\n";
     std::cout << "    Flex   - Flex side chains      : " << std::fixed << std::setprecision(3) << energies[4] << " (kcal/mol)\n";
     std::cout << "(3) Torsional Free Energy          : " << std::fixed << std::setprecision(3) << energies[6] << " (kcal/mol)\n";
-    if (m_sf_choice == SF_VINA) {
+    if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
         std::cout << "(4) Unbound System's Energy        : " << std::fixed << std::setprecision(3) << energies[7] << " (kcal/mol)\n";
     } else {
         std::cout << "(4) Unbound System's Energy [=(2)] : " << std::fixed << std::setprecision(3) << energies[7] << " (kcal/mol)\n";
@@ -617,7 +642,7 @@ std::vector<double> Vina::score(double intramolecular_energy) {
     const vec authentic_v(1000, 1000, 1000);
     std::vector<double> energies;
 
-    if (m_sf_choice == SF_VINA) {
+    if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
         // Inter
         lig_grids = m_grid.eval(m_model, authentic_v[1]); // [1] ligand - grid
         inter_pairs = m_model.eval_inter(m_precalculated_byatom, authentic_v); // [1] ligand - flex
@@ -655,7 +680,7 @@ std::vector<double> Vina::score(double intramolecular_energy) {
     energies.push_back(lig_intra);
     energies.push_back(conf_independent);
 
-    if (m_sf_choice == SF_VINA) {
+    if (m_sf_choice == SF_VINA  || m_sf_choice == SF_VINARDO) {
         energies.push_back(intramolecular_energy);
     } else {
         energies.push_back(-intra);
@@ -678,7 +703,7 @@ std::vector<double> Vina::score() {
     double intramolecular_energy = 0;
     const vec authentic_v(1000, 1000, 1000);
 
-    if(m_sf_choice == SF_VINA) {
+    if(m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
         intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid, authentic_v);
     }
 
@@ -720,7 +745,7 @@ std::vector<double> Vina::optimize(output_type& out, int max_steps) {
     doing("Performing local search", m_verbosity, 0);
     // Try 5 five times to optimize locally the conformation
     VINA_FOR(p, 5) {
-        if (m_sf_choice == SF_VINA) {
+        if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
             quasi_newton_par(m_model, m_precalculated_byatom, m_grid,    out, g, authentic_v, evalcount);
             // Break if we succeed to bring (back) the ligand within the grid
             if (m_grid.is_in_grid(m_model))
@@ -818,7 +843,7 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
     // Docking search
     sstm << "Performing search (random seed: " << seed << ")";
     doing(sstm.str(), m_verbosity, 1);
-    if (m_sf_choice == SF_VINA) {
+    if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
         parallelmc(m_model, poses, m_precalculated_byatom,    m_grid, m_corner1, m_corner2, generator);
     } else {
         parallelmc(m_model, poses, m_precalculated_byatom, m_ad4grid, m_corner1, m_corner2, generator);
@@ -831,7 +856,7 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
     if (!poses.empty()) {
         // For the Vina scoring function, we take the intramolecular energy from the best pose
         // the order must not change because of non-decreasing g (see paper), but we'll re-sort in case g is non strictly increasing
-        if (m_sf_choice == SF_VINA) {
+        if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
             poses.sort();
             m_model.set(poses[0].c);
             intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid, authentic_v);

@@ -616,7 +616,7 @@ struct pdbqt_initializer {
 };
 
 
-model parse_ligand_pdbqt(const std::string& name, atom_type::t atype) { // can throw parse_error
+model parse_ligand_pdbqt_from_file(const std::string& name, atom_type::t atype) { // can throw parse_error
     non_rigid_parsed nrp;
     context c;
     parse_pdbqt_ligand(make_path(name), nrp, c);
@@ -627,26 +627,18 @@ model parse_ligand_pdbqt(const std::string& name, atom_type::t atype) { // can t
     return tmp.m;
 }
 
-/*
-model parse_ligand_pdbqt(OpenBabel::OBMol* mol) { // can throw parse_error
+model parse_ligand_pdbqt_from_string(const std::string& string_name, atom_type::t atype) { // can throw parse_error
     non_rigid_parsed nrp;
     context c;
 
-    // Get PDBQT string from OBMol
-    // Dirty trick to get a model object from an OBMol
-    OpenBabel::OBConversion conv;
-    conv.SetOutFormat("PDBQT");
-    std::string molstr = conv.WriteString(mol);
-    std::stringstream molstream(molstr);
-
+    std::stringstream molstream(string_name);
     parse_pdbqt_ligand(molstream, nrp, c);
 
-    pdbqt_initializer tmp; // missing atype
+    pdbqt_initializer tmp(atype);
     tmp.initialize_from_nrp(nrp, c, true);
     tmp.initialize(nrp.mobility_matrix());
     return tmp.m;
 }
-*/
 
 model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& flex_name, atom_type::t atype) { 
     // Parse PDBQT receptor with flex residues

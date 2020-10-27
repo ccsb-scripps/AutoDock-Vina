@@ -295,11 +295,53 @@ const fl xs_vdw_radii[] = {
     0.0  // W
 };
 
+const fl xs_vinardo_vdw_radii[] = {
+	2.0, // C_H
+	2.0, // C_P
+	1.7, // N_P
+	1.7, // N_D
+	1.7, // N_A
+	1.7, // N_DA
+	1.6, // O_P
+	1.6, // O_D
+	1.6, // O_A
+	1.6, // O_DA
+	2.0, // S_P
+	2.1, // P_P
+	1.5, // F_H
+	1.8, // Cl_H
+	2.0, // Br_H
+	2.2, // I_H
+	2.2, // Si
+	2.3, // At
+	1.2, // Met_D
+	2.0, // C_H_CG0
+	2.0, // C_P_CG0
+	2.0, // C_H_CG1
+	2.0, // C_P_CG1
+	2.0, // C_H_CG2
+	2.0, // C_P_CG2
+	2.0, // C_H_CG3
+	2.0, // C_P_CG3
+	0.0, // G0
+	0.0, // G1
+	0.0, // G2
+	0.0, // G3
+	0.0	 // W
+};
+
 inline fl xs_radius(sz t) {
 	const sz n = sizeof(xs_vdw_radii) / sizeof(const fl);
 	assert(n == XS_TYPE_SIZE);
 	assert(t < n);
 	return xs_vdw_radii[t];
+}
+
+inline fl xs_vinardo_radius(sz t) {
+	const sz n = sizeof(xs_vdw_radii) / sizeof(const fl);
+	assert(n == XS_TYPE_SIZE);
+	assert(t < n);
+	return xs_vinardo_vdw_radii[t];
 }
 
 const std::string non_ad_metal_names[] = { // expand as necessary

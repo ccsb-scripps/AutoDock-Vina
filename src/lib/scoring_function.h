@@ -58,8 +58,15 @@ public:
             }
             case SF_VINARDO:
             {
-                std::cout << "\n\nVinardo scoring function is not implemented yet.\n\nAborting.\n\n";
-                VINA_CHECK(false);
+                m_potentials.push_back(new vinardo_gaussian(0, 0.8, 8.0));
+                m_potentials.push_back(new vinardo_repulsion(0, 8.0));
+                m_potentials.push_back(new vinardo_hydrophobic(0, 2.5, 8.0));
+                m_potentials.push_back(new vinardo_non_dir_h_bond(-0.6, 0, 8.0));
+                m_potentials.push_back(new linearattraction(20.0));
+                m_conf_independents.push_back(new num_tors_div());
+                m_atom_typing = atom_type::XS;
+                m_cutoff = 8.0;
+                m_max_cutoff = 20.0;
                 break;
             }
             case SF_AD42:

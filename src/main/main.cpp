@@ -374,7 +374,7 @@ Thank you!\n";
         }
 
         if (vm.count("ligand")) {
-            v.set_ligand(ligand_names);
+            v.set_ligand_from_file(ligand_names);
 
             if (sf_name.compare("vina") == 0) {
                 if (vm.count("maps")) {
@@ -414,7 +414,7 @@ Thank you!\n";
             }
 
             VINA_RANGE(i, 0, batch_ligand_names.size()) {
-                v.set_ligand(batch_ligand_names[i]);
+                v.set_ligand_from_file(batch_ligand_names[i]);
 
                 out_name = default_output(get_filename(batch_ligand_names[i]), out_dir);
 
