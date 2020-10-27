@@ -330,8 +330,10 @@ Thank you!\n";
 
         if (verbosity > 0) {
             std::cout << "Scoring function : " << sf_name << "\n";
-            std::cout << "Rigid receptor: " << rigid_name << "\n";
-            std::cout << "Flex receptor: " << flex_name << "\n";
+            if (vm.count("receptor"))
+                std::cout << "Rigid receptor: " << rigid_name << "\n";
+            if (vm.count("flex"))
+                std::cout << "Flex receptor: " << flex_name << "\n";
             if (ligand_names.size() == 1) {
                 std::cout << "Ligand: " << ligand_names[0] << "\n";
             } else if (ligand_names.size() > 1) {
@@ -342,12 +344,15 @@ Thank you!\n";
             } else if (batch_ligand_names.size() > 1) {
                 std::cout << "Ligands (batch mode): " << batch_ligand_names.size() << " molecules\n";
             }
-            std::cout << "Center: X " << center_x << " Y " << center_y << " Z " << center_z << "\n";
-            std::cout << "Size: X " << size_x << " Y " << size_y << " Z " << size_z << "\n";
-            std::cout << "Grid space: " << grid_spacing << "\n";
+            if (!vm.count("maps")) {
+                std::cout << "Center: X " << center_x << " Y " << center_y << " Z " << center_z << "\n";
+                std::cout << "Size: X " << size_x << " Y " << size_y << " Z " << size_z << "\n";
+                std::cout << "Grid space: " << grid_spacing << "\n";
+            }
             std::cout << "Exhaustiveness: " << exhaustiveness << "\n";
             std::cout << "CPU: " << cpu << "\n";
-            std::cout << "Seed: " << seed << "\n";
+            if (!vm.count("seed"))
+                std::cout << "Seed: " << seed << "\n";
             std::cout << "Verbosity: " << verbosity << "\n";
             std::cout << "\n";
         }
@@ -355,7 +360,8 @@ Thank you!\n";
         Vina v(sf_name, cpu, seed, verbosity);
 
         // rigid_name variable can be ignored for AD4
-        v.set_receptor(rigid_name, flex_name);
+        if (vm.count("receptor") || vm.count("flex"))
+            v.set_receptor(rigid_name, flex_name);
 
         // Technically we don't have to initialize weights, 
         // because they are initialized during the Vina object creation with the default weights
