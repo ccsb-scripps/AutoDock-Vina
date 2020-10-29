@@ -9,7 +9,7 @@ Let's start with our first example of docking, where the typical usage pattern w
 	This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the raccoon Python package.
 
 .. note::
-	The materials present is this tutorial can be also found here: `https://www.nature.com/articles/nprot.2016.051 <https://www.nature.com/articles/nprot.2016.051>`_. If you are using this tutotial for your works, you can cite the following paper:
+	The materials present is this tutorial can be also found here: `https://www.nature.com/articles/nprot.2016.051 <https://www.nature.com/articles/nprot.2016.051>`_. If you are using this tutorial for your works, you can cite the following paper:
 
 	- Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.
 
@@ -28,7 +28,7 @@ Other options are available for ``prepare_receptor`` by typing ``prepare_recepto
 2. Preparing the ligand
 -----------------------
 
-This step is very similar to the previous step. We will also create a PDBQT file from a ligand molecule file (in MOL2 or PDB format). As well as for the receptor, the coordinate set must includes all hydrogen atoms according to the choosen protonation state. This may be obtained in a variety of ways, including with experimental coordinates from the `PDB <https://www.rcsb.org>`_ or `Cambridge Crystallographic Database <http://www.ccdc.cam.ac.uk>`_. The file ``1iep_ligandH.pdb`` is also provided (see ``<autodock-vina_directory>/example/basic_docking/data`` directory). This file includes ligand coordinates taken from PDB entry 1iep, to which all hydrogen atoms have been added and manually adjusted to the known protonation state.
+This step is very similar to the previous step. We will also create a PDBQT file from a ligand molecule file (in MOL2 or PDB format). As well as for the receptor, the coordinate set must includes all hydrogen atoms according to the choosen protonation state. This may be obtained in a variety of ways, including with experimental coordinates from the `PDB <https://www.rcsb.org>`_ or `Cambridge Crystallographic Database <http://www.ccdc.cam.ac.uk>`_. The file ``1iep_ligandH.pdb`` is also provided (see ``<autodock-vina_directory>/example/basic_docking/data`` directory). This file includes ligand coordinates taken from PDB entry ``1iep``, to which all hydrogen atoms have been added and manually adjusted to the known protonation state.
 
 .. code-block:: bash
 

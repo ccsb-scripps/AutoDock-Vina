@@ -1,0 +1,501 @@
+MODEL 1
+
+REMARK VINA RESULT:    -8.256      0.000      0.000
+
+REMARK ITER + INTRA:           -8.814
+
+REMARK INTER:                  -8.554
+
+REMARK INTRA:                  -0.260
+
+REMARK CONF_INDEPENDENT:        0.298
+
+REMARK UNBOUND:                 0.260
+
+REMARK  1 active torsions:
+
+REMARK  status: ('A' for Active; 'I' for Inactive)
+
+REMARK    1  A    between atoms: C6_2  and  C2_7 
+
+ROOT
+
+HETATM    1  N2  NCT E1206      84.771  70.474 -11.279  1.00 10.00           N 
+
+HETATM    2  C6  NCT E1206      84.374  69.168 -10.663  1.00 10.00           C 
+
+HETATM    3  C7  NCT E1206      85.504  68.782  -9.738  1.00 10.00           C 
+
+HETATM    4  C8  NCT E1206      86.680  69.684 -10.060  1.00 10.00           C 
+
+HETATM    5  C9  NCT E1206      86.145  70.809 -10.917  1.00 10.00           C 
+
+HETATM    6  H01 NCT E1206      84.119  71.169 -10.944  1.00 10.00           HD
+
+HETATM    8  C10 NCT E1206      84.750  70.382 -12.750  1.00 10.00           C 
+
+ENDROOT
+
+BRANCH 2 9
+
+HETATM    9  C2  NCT E1206      83.078  69.309  -9.928  1.00 10.00           A 
+
+HETATM   10  C3  NCT E1206      81.904  68.824 -10.479  1.00 10.00           A 
+
+HETATM   11  C4  NCT E1206      80.700  68.986  -9.787  1.00 10.00           A 
+
+HETATM   12  C5  NCT E1206      80.681  69.655  -8.557  1.00 10.00           A 
+
+HETATM   13  N1  NCT E1206      81.824  70.131  -8.031  1.00 10.00           NA
+
+HETATM   15  C1  NCT E1206      82.993  69.966  -8.688  1.00 10.00           A 
+
+ENDMDL
+
+MODEL 2
+
+REMARK VINA RESULT:    -8.202      1.418      1.752
+
+REMARK ITER + INTRA:           -8.765
+
+REMARK INTER:                  -8.500
+
+REMARK INTRA:                  -0.265
+
+REMARK CONF_INDEPENDENT:        0.298
+
+REMARK UNBOUND:                 0.265
+
+REMARK  1 active torsions:
+
+REMARK  status: ('A' for Active; 'I' for Inactive)
+
+REMARK    1  A    between atoms: C6_2  and  C2_7 
+
+ROOT
+
+HETATM    1  N2  NCT E1206      83.537  69.684 -10.562  1.00 10.00           N 
+
+HETATM    2  C6  NCT E1206      83.622  69.009  -9.227  1.00 10.00           C 
+
+HETATM    3  C7  NCT E1206      84.967  69.390  -8.652  1.00 10.00           C 
+
+HETATM    4  C8  NCT E1206      85.781  70.005  -9.775  1.00 10.00           C 
+
+HETATM    5  C9  NCT E1206      84.816  70.300 -10.902  1.00 10.00           C 
+
+HETATM    6  H01 NCT E1206      82.800  70.371 -10.499  1.00 10.00           HD
+
+HETATM    8  C10 NCT E1206      83.266  68.699 -11.624  1.00 10.00           C 
+
+ENDROOT
+
+BRANCH 2 9
+
+HETATM    9  C2  NCT E1206      82.497  69.451  -8.345  1.00 10.00           A 
+
+HETATM   10  C3  NCT E1206      81.227  68.925  -8.513  1.00 10.00           A 
+
+HETATM   11  C4  NCT E1206      80.185  69.368  -7.695  1.00 10.00           A 
+
+HETATM   12  C5  NCT E1206      80.419  70.354  -6.729  1.00 10.00           A 
+
+HETATM   13  N1  NCT E1206      81.653  70.866  -6.575  1.00 10.00           NA
+
+REMARK  STRONG water ( score: -0.92 )
+HETATM   14  W   WAT X  99      82.140  72.974  -4.497  1.00 30.00           W
+
+HETATM   15  C1  NCT E1206      82.669  70.433  -7.354  1.00 10.00           A 
+
+ENDMDL
+
+MODEL 3
+
+REMARK VINA RESULT:    -7.821      1.929      2.596
+
+REMARK ITER + INTRA:           -8.372
+
+REMARK INTER:                  -8.119
+
+REMARK INTRA:                  -0.252
+
+REMARK CONF_INDEPENDENT:        0.298
+
+REMARK UNBOUND:                 0.252
+
+REMARK  1 active torsions:
+
+REMARK  status: ('A' for Active; 'I' for Inactive)
+
+REMARK    1  A    between atoms: C6_2  and  C2_7 
+
+ROOT
+
+HETATM    1  N2  NCT E1206      84.941  70.296 -11.558  1.00 10.00           N 
+
+HETATM    2  C6  NCT E1206      84.547  69.028 -10.866  1.00 10.00           C 
+
+HETATM    3  C7  NCT E1206      85.577  68.807  -9.782  1.00 10.00           C 
+
+HETATM    4  C8  NCT E1206      86.731  69.753 -10.055  1.00 10.00           C 
+
+HETATM    5  C9  NCT E1206      86.241  70.755 -11.076  1.00 10.00           C 
+
+HETATM    6  H01 NCT E1206      84.216  70.973 -11.371  1.00 10.00           HD
+
+HETATM    8  C10 NCT E1206      85.104  70.068 -13.005  1.00 10.00           C 
+
+ENDROOT
+
+BRANCH 2 9
+
+HETATM    9  C2  NCT E1206      83.166  69.148 -10.302  1.00 10.00           A 
+
+HETATM   10  C3  NCT E1206      82.979  69.418  -8.957  1.00 10.00           A 
+
+HETATM   11  C4  NCT E1206      81.682  69.503  -8.445  1.00 10.00           A 
+
+HETATM   12  C5  NCT E1206      80.580  69.293  -9.283  1.00 10.00           A 
+
+HETATM   13  N1  NCT E1206      80.768  69.025 -10.588  1.00 10.00           NA
+
+REMARK  STRONG water ( score: -0.66 )
+HETATM   14  W   WAT X  99      78.397  68.582 -12.372  1.00 30.00           W
+
+HETATM   15  C1  NCT E1206      82.019  68.954 -11.092  1.00 10.00           A 
+
+ENDMDL
+
+MODEL 4
+
+REMARK VINA RESULT:    -7.589      2.135      2.494
+
+REMARK ITER + INTRA:           -8.139
+
+REMARK INTER:                  -7.887
+
+REMARK INTRA:                  -0.252
+
+REMARK CONF_INDEPENDENT:        0.298
+
+REMARK UNBOUND:                 0.252
+
+REMARK  1 active torsions:
+
+REMARK  status: ('A' for Active; 'I' for Inactive)
+
+REMARK    1  A    between atoms: C6_2  and  C2_7 
+
+ROOT
+
+HETATM    1  N2  NCT E1206      83.850  69.684 -10.942  1.00 10.00           N 
+
+HETATM    2  C6  NCT E1206      83.851  69.038  -9.590  1.00 10.00           C 
+
+HETATM    3  C7  NCT E1206      85.146  69.453  -8.931  1.00 10.00           C 
+
+HETATM    4  C8  NCT E1206      86.027  70.059 -10.007  1.00 10.00           C 
+
+HETATM    5  C9  NCT E1206      85.140  70.314 -11.204  1.00 10.00           C 
+
+HETATM    6  H01 NCT E1206      83.099  70.359 -10.945  1.00 10.00           HD
+
+HETATM    8  C10 NCT E1206      83.670  68.673 -11.999  1.00 10.00           C 
+
+ENDROOT
+
+BRANCH 2 9
+
+HETATM    9  C2  NCT E1206      82.660  69.478  -8.799  1.00 10.00           A 
+
+HETATM   10  C3  NCT E1206      82.794  70.428  -7.801  1.00 10.00           A 
+
+HETATM   11  C4  NCT E1206      81.674  70.809  -7.057  1.00 10.00           A 
+
+HETATM   12  C5  NCT E1206      80.430  70.215  -7.305  1.00 10.00           A 
+
+HETATM   13  N1  NCT E1206      80.308  69.288  -8.271  1.00 10.00           NA
+
+HETATM   15  C1  NCT E1206      81.384  68.924  -9.003  1.00 10.00           A 
+
+ENDMDL
+
+MODEL 5
+
+REMARK VINA RESULT:    -7.391      2.079      2.570
+
+REMARK ITER + INTRA:           -7.944
+
+REMARK INTER:                  -7.689
+
+REMARK INTRA:                  -0.255
+
+REMARK CONF_INDEPENDENT:        0.298
+
+REMARK UNBOUND:                 0.255
+
+REMARK  1 active torsions:
+
+REMARK  status: ('A' for Active; 'I' for Inactive)
+
+REMARK    1  A    between atoms: C6_2  and  C2_7 
+
+ROOT
+
+HETATM    1  N2  NCT E1206      86.100  68.948  -9.758  1.00 10.00           N 
+
+HETATM    2  C6  NCT E1206      85.157  70.075 -10.050  1.00 10.00           C 
+
+HETATM    3  C7  NCT E1206      85.323  70.387 -11.519  1.00 10.00           C 
+
+HETATM    4  C8  NCT E1206      86.574  69.675 -11.995  1.00 10.00           C 
+
+HETATM    5  C9  NCT E1206      86.948  68.683 -10.916  1.00 10.00           C 
+
+HETATM    6  H01 NCT E1206      85.536  68.145  -9.519  1.00 10.00           HD
+
+HETATM    8  C10 NCT E1206      87.015  69.309  -8.660  1.00 10.00           C 
+
+ENDROOT
+
+BRANCH 2 9
+
+HETATM    9  C2  NCT E1206      83.752  69.679  -9.721  1.00 10.00           A 
+
+HETATM   10  C3  NCT E1206      82.999  68.952 -10.628  1.00 10.00           A 
+
+HETATM   11  C4  NCT E1206      81.681  68.613 -10.312  1.00 10.00           A 
+
+HETATM   12  C5  NCT E1206      81.120  69.026  -9.097  1.00 10.00           A 
+
+HETATM   13  N1  NCT E1206      81.855  69.738  -8.224  1.00 10.00           NA
+
+HETATM   15  C1  NCT E1206      83.134  70.059  -8.517  1.00 10.00           A 
+
+ENDMDL
+
+MODEL 6
+
+REMARK VINA RESULT:    -7.349      2.362      4.763
+
+REMARK ITER + INTRA:           -7.906
+
+REMARK INTER:                  -7.647
+
+REMARK INTRA:                  -0.258
+
+REMARK CONF_INDEPENDENT:        0.298
+
+REMARK UNBOUND:                 0.258
+
+REMARK  1 active torsions:
+
+REMARK  status: ('A' for Active; 'I' for Inactive)
+
+REMARK    1  A    between atoms: C6_2  and  C2_7 
+
+ROOT
+
+HETATM    1  N2  NCT E1206      82.385  70.058  -9.338  1.00 10.00           N 
+
+HETATM    2  C6  NCT E1206      83.357  68.919  -9.379  1.00 10.00           C 
+
+HETATM    3  C7  NCT E1206      82.668  67.811 -10.141  1.00 10.00           C 
+
+HETATM    4  C8  NCT E1206      81.202  68.183 -10.255  1.00 10.00           C 
+
+HETATM    5  C9  NCT E1206      81.092  69.642  -9.873  1.00 10.00           C 
+
+HETATM    6  H01 NCT E1206      82.786  70.809  -9.881  1.00 10.00           HD
+
+HETATM    8  C10 NCT E1206      82.133  70.475  -7.947  1.00 10.00           C 
+
+ENDROOT
+
+BRANCH 2 9
+
+HETATM    9  C2  NCT E1206      84.629  69.342 -10.043  1.00 10.00           A 
+
+HETATM   10  C3  NCT E1206      84.640  69.684 -11.385  1.00 10.00           A 
+
+HETATM   11  C4  NCT E1206      85.843  70.053 -11.992  1.00 10.00           A 
+
+HETATM   12  C5  NCT E1206      87.032  70.054 -11.254  1.00 10.00           A 
+
+HETATM   13  N1  NCT E1206      87.017  69.714  -9.953  1.00 10.00           NA
+
+HETATM   15  C1  NCT E1206      85.855  69.368  -9.356  1.00 10.00           A 
+
+ENDMDL
+
+MODEL 7
+
+REMARK VINA RESULT:    -7.346      2.065      5.306
+
+REMARK ITER + INTRA:           -7.908
+
+REMARK INTER:                  -7.644
+
+REMARK INTRA:                  -0.264
+
+REMARK CONF_INDEPENDENT:        0.298
+
+REMARK UNBOUND:                 0.264
+
+REMARK  1 active torsions:
+
+REMARK  status: ('A' for Active; 'I' for Inactive)
+
+REMARK    1  A    between atoms: C6_2  and  C2_7 
+
+ROOT
+
+HETATM    1  N2  NCT E1206      82.752  70.066  -9.351  1.00 10.00           N 
+
+HETATM    2  C6  NCT E1206      83.452  68.856  -9.890  1.00 10.00           C 
+
+HETATM    3  C7  NCT E1206      82.463  68.177 -10.808  1.00 10.00           C 
+
+HETATM    4  C8  NCT E1206      81.105  68.801 -10.551  1.00 10.00           C 
+
+HETATM    5  C9  NCT E1206      81.348  70.059  -9.749  1.00 10.00           C 
+
+HETATM    6  H01 NCT E1206      83.237  70.874  -9.714  1.00 10.00           HD
+
+HETATM    8  C10 NCT E1206      82.756  70.054  -7.877  1.00 10.00           C 
+
+ENDROOT
+
+BRANCH 2 9
+
+HETATM    9  C2  NCT E1206      84.700  69.254 -10.614  1.00 10.00           A 
+
+HETATM   10  C3  NCT E1206      85.874  69.479  -9.915  1.00 10.00           A 
+
+HETATM   11  C4  NCT E1206      87.023  69.872 -10.606  1.00 10.00           A 
+
+HETATM   12  C5  NCT E1206      86.979  70.059 -11.993  1.00 10.00           A 
+
+HETATM   13  N1  NCT E1206      85.834  69.846 -12.666  1.00 10.00           NA
+
+REMARK  WEAK   water ( score: -0.50 )
+HETATM   14  W   WAT X  99      85.758  70.247 -15.638  1.00 80.00           W
+
+HETATM   15  C1  NCT E1206      84.723  69.453 -12.005  1.00 10.00           A 
+
+ENDMDL
+
+MODEL 8
+
+REMARK VINA RESULT:    -7.084      3.295      5.307
+
+REMARK ITER + INTRA:           -7.623
+
+REMARK INTER:                  -7.382
+
+REMARK INTRA:                  -0.241
+
+REMARK CONF_INDEPENDENT:        0.298
+
+REMARK UNBOUND:                 0.241
+
+REMARK  1 active torsions:
+
+REMARK  status: ('A' for Active; 'I' for Inactive)
+
+REMARK    1  A    between atoms: C6_2  and  C2_7 
+
+ROOT
+
+HETATM    1  N2  NCT E1206      82.497  68.696 -10.295  1.00 10.00           N 
+
+HETATM    2  C6  NCT E1206      83.486  69.715  -9.819  1.00 10.00           C 
+
+HETATM    3  C7  NCT E1206      83.393  69.715  -8.311  1.00 10.00           C 
+
+HETATM    4  C8  NCT E1206      82.141  68.946  -7.936  1.00 10.00           C 
+
+HETATM    5  C9  NCT E1206      81.691  68.211  -9.178  1.00 10.00           C 
+
+HETATM    6  H01 NCT E1206      83.025  67.949 -10.723  1.00 10.00           HD
+
+HETATM    8  C10 NCT E1206      81.548  69.300 -11.248  1.00 10.00           C 
+
+ENDROOT
+
+BRANCH 2 9
+
+HETATM    9  C2  NCT E1206      84.863  69.367 -10.290  1.00 10.00           A 
+
+HETATM   10  C3  NCT E1206      85.679  70.338 -10.847  1.00 10.00           A 
+
+HETATM   11  C4  NCT E1206      86.953  69.988 -11.303  1.00 10.00           A 
+
+HETATM   12  C5  NCT E1206      87.390  68.661 -11.218  1.00 10.00           A 
+
+HETATM   13  N1  NCT E1206      86.590  67.721 -10.683  1.00 10.00           NA
+
+REMARK  STRONG water ( score: -0.83 )
+HETATM   14  W   WAT X  99      87.543  64.882 -10.504  1.00 30.00           W
+
+HETATM   15  C1  NCT E1206      85.362  68.055 -10.228  1.00 10.00           A 
+
+ENDMDL
+
+MODEL 9
+
+REMARK VINA RESULT:    -6.994      3.102      5.487
+
+REMARK ITER + INTRA:           -7.537
+
+REMARK INTER:                  -7.292
+
+REMARK INTRA:                  -0.245
+
+REMARK CONF_INDEPENDENT:        0.298
+
+REMARK UNBOUND:                 0.245
+
+REMARK  1 active torsions:
+
+REMARK  status: ('A' for Active; 'I' for Inactive)
+
+REMARK    1  A    between atoms: C6_2  and  C2_7 
+
+ROOT
+
+HETATM    1  N2  NCT E1206      81.654  68.497  -9.465  1.00 10.00           N 
+
+HETATM    2  C6  NCT E1206      82.553  69.647  -9.799  1.00 10.00           C 
+
+HETATM    3  C7  NCT E1206      82.828  70.355  -8.492  1.00 10.00           C 
+
+HETATM    4  C8  NCT E1206      81.843  69.819  -7.472  1.00 10.00           C 
+
+HETATM    5  C9  NCT E1206      81.229  68.573  -8.070  1.00 10.00           C 
+
+HETATM    6  H01 NCT E1206      82.174  67.651  -9.648  1.00 10.00           HD
+
+HETATM    8  C10 NCT E1206      80.419  68.554 -10.268  1.00 10.00           C 
+
+ENDROOT
+
+BRANCH 2 9
+
+HETATM    9  C2  NCT E1206      83.812  69.156 -10.441  1.00 10.00           A 
+
+HETATM   10  C3  NCT E1206      85.045  69.612 -10.003  1.00 10.00           A 
+
+HETATM   11  C4  NCT E1206      86.208  69.159 -10.631  1.00 10.00           A 
+
+HETATM   12  C5  NCT E1206      86.126  68.270 -11.710  1.00 10.00           A 
+
+HETATM   13  N1  NCT E1206      84.925  67.837 -12.134  1.00 10.00           NA
+
+REMARK  STRONG water ( score: -0.99 )
+HETATM   14  W   WAT X  99      84.765  65.929 -14.444  1.00 30.00           W
+
+HETATM   15  C1  NCT E1206      83.797  68.261 -11.524  1.00 10.00           A 
+
+ENDMDL
+

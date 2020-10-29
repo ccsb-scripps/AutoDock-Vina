@@ -1,0 +1,24 @@
+npts 40 30 50                        # num.grid points in xyz
+parameter_file AD4Zn.dat             # force field default parameter file
+gridfld protein_tz.maps.fld          # grid_data_file
+spacing 0.375                        # spacing(A)
+receptor_types A C TZ NA ZN OA N P SA HD # receptor atom types
+ligand_types A C Cl NA OA N          # ligand atom types
+receptor protein_tz.pdbqt            # macromolecule
+gridcenter 18 134 -1                 # xyz-coordinates or auto
+smooth 0.5                           # store minimum energy w/in rad(A)
+map protein_tz.A.map                 # atom-specific affinity map
+map protein_tz.C.map                 # atom-specific affinity map
+map protein_tz.Cl.map                # atom-specific affinity map
+map protein_tz.NA.map                # atom-specific affinity map
+map protein_tz.OA.map                # atom-specific affinity map
+map protein_tz.N.map                 # atom-specific affinity map
+elecmap protein_tz.e.map             # electrostatic potential map
+dsolvmap protein_tz.d.map              # desolvation potential map
+dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
+nbp_r_eps 0.25 3.8581 12 6 NA TZ
+nbp_r_eps 2.1  0.6391 12 6 OA Zn
+nbp_r_eps 2.25 1.2617 12 6 SA Zn
+nbp_r_eps 1.0  0.0    12 6 HD Zn
+nbp_r_eps 2.0  0.001  12 6 NA Zn
+nbp_r_eps 2.0  0.0493 12 6  N Zn
