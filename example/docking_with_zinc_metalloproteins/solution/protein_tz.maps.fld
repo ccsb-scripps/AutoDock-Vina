@@ -2,7 +2,7 @@
 #
 # AutoDock Atomic Affinity and Electrostatic Grids
 #
-# Created by autogrid4.
+# Created by /home/eberhardt/Applications/adfr/bin/autogrid4 4.2.7.x.2019-07-11.
 #
 #SPACING 0.375
 #NELEMENTS 40 30 50
@@ -27,8 +27,8 @@ label=Cl-affinity	# component label for variable 3
 label=NA-affinity	# component label for variable 4
 label=OA-affinity	# component label for variable 5
 label=N-affinity	# component label for variable 6
-label=Electrostatics	# component label for variable 6
-label=Desolvation	# component label for variable 7
+label=Electrostatics	# component label for variable 7
+label=Desolvation	# component label for variable 8
 #
 # location of affinity grid files and how to read them
 #

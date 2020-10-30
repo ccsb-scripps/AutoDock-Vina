@@ -16,9 +16,9 @@ map protein_tz.N.map                 # atom-specific affinity map
 elecmap protein_tz.e.map             # electrostatic potential map
 dsolvmap protein_tz.d.map              # desolvation potential map
 dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
-nbp_r_eps 0.25 3.8581 12 6 NA TZ
-nbp_r_eps 2.1  0.6391 12 6 OA Zn
-nbp_r_eps 2.25 1.2617 12 6 SA Zn
-nbp_r_eps 1.0  0.0    12 6 HD Zn
-nbp_r_eps 2.0  0.001  12 6 NA Zn
-nbp_r_eps 2.0  0.0493 12 6  N Zn
+nbp_r_eps 0.25 23.2135 12 6 NA TZ
+nbp_r_eps 2.1   3.8453 12 6 OA Zn
+nbp_r_eps 2.25  7.5914 12 6 SA Zn
+nbp_r_eps 1.0   0.0    12 6 HD Zn
+nbp_r_eps 2.0   0.0060 12 6 NA Zn
+nbp_r_eps 2.0   0.2966 12 6  N Zn

@@ -3,10 +3,6 @@
 Docking with zinc metalloproteins
 =================================
 
-.. warning::
-
-    The current version of autogrid4 (AutoGrid 4.2.7.x.2019-07-11) shipped is not compatible with this tutorial. For this tutorial you will need autogrid 4.2.6 available here: `https://ccsb.scripps.edu/autodock/autodock4 <https://ccsb.scripps.edu/autodock/autodock4/>`_ 
-
 Introduction
 ------------
 
@@ -89,15 +85,19 @@ The ``-p`` flag is used to set the box center (``gridcenter``) and size (``npts`
     elecmap protein_tz.e.map             # electrostatic potential map
     dsolvmap protein_tz.d.map              # desolvation potential map
     dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
-    nbp_r_eps 0.25 3.8581 12 6 NA TZ
-    nbp_r_eps 2.1  0.6391 12 6 OA Zn
-    nbp_r_eps 2.25 1.2617 12 6 SA Zn
-    nbp_r_eps 1.0  0.0    12 6 HD Zn
-    nbp_r_eps 2.0  0.001  12 6 NA Zn
-    nbp_r_eps 2.0  0.0493 12 6  N Zn
+    nbp_r_eps 0.25 23.2135 12 6 NA TZ
+    nbp_r_eps 2.1   3.8453 12 6 OA Zn
+    nbp_r_eps 2.25  7.5914 12 6 SA Zn
+    nbp_r_eps 1.0   0.0    12 6 HD Zn
+    nbp_r_eps 2.0   0.0060 12 6 NA Zn
+    nbp_r_eps 2.0   0.2966 12 6  N Zn
 
 
-The AutoDock4Zn forcefield is mostly defined by non bonded pairwise potentials which are written to the GPF file ``protein_tz.gpf`` in the form of ``npb_r_eps`` keywords. The file ``AD4Zn.dat`` includes the definition of the TZ atom type for the AutoDock forcefield. The keyword ``parameter_file`` in the GPF file specifies ``AD4Zn.dat`` as the forcefield to be used, so AutoGrid requires a local copy of it in the working directory. Alternatively, the keyword ``parameter_file`` in the GPF can point to the full or relative path where ``AD4Zn.dat`` is located. 
+The AutoDock4Zn forcefield is mostly defined by non bonded pairwise potentials which are written to the GPF file ``protein_tz.gpf`` in the form of ``npb_r_eps`` keywords. The file ``AD4Zn.dat`` includes the definition of the TZ atom type for the AutoDock forcefield. The keyword ``parameter_file`` in the GPF file specifies ``AD4Zn.dat`` as the forcefield to be used, so AutoGrid requires a local copy of it in the working directory. Alternatively, the keyword ``parameter_file`` in the GPF can point to the full or relative path where ``AD4Zn.dat`` is located.
+
+.. warning::
+
+    The behavior of the ``npb_r_eps`` keyword changed between autogrid 4.2.6 and 4.2.7. Be sure that you are using the latest version (AutoGrid 4.2.7.x.2019-07-11) of autogrid4 shipped with the ADFR Suite.
 
 .. code-block:: bash
 
