@@ -229,7 +229,7 @@ class CustomBuildExt(build_ext):
         try:
             return build_ext.swig_sources(self, sources, extension)
         except DistutilsExecError:
-            print('\nError: SWIG failed. Is Open Babel installed?',
+            print('\nError: SWIG failed.',
                   'You may need to manually specify the location of Open Babel include and library directories. '
                   'For example:',
                   '  python setup.py build_ext -I{} -L{}'.format(self.include_dirs, self.library_dir),
@@ -243,10 +243,16 @@ class CustomBuildExt(build_ext):
         # Patch for macOS (libboost_thread)
         # Check if we have an include "system"
         include_system = set(self.include_dirs).intersection(['/usr/local/include', '/usr/include'])
-        if platform.system() == 'Darwin' and include_system:
-            # In a conda env on macOS there is no -mt suffix at -lboost_thread
-            idx = self.extensions[0].extra_link_args.index('-lboost_thread')
-            self.extensions[0].extra_link_args[idx] = '-lboost_thread-mt'
+        if platform.system() == 'Darwin':
+            if include_system:
+                # In a conda env on macOS there is no -mt suffix at -lboost_thread
+                idx = self.extensions[0].extra_link_args.index('-lboost_thread')
+                self.extensions[0].extra_link_args[idx] = '-lboost_thread-mt'
+            # To get the right @rpath on macos for libraries
+            self.extensions[0].extra_link_args.append('-Wl,-rpath,' + self.library_dirs[0])
+            self.extensions[0].extra_link_args.append('-Wl,-rpath,' + '/usr/lib')
+        
+        print('- extra link args: %s' % self.extensions[0].extra_link_args)
 
         try:
             self.compiler.compiler_so[0] = "g++"
@@ -287,6 +293,7 @@ setup(
     url='https://ccsb.scripps.edu/',
     description='Python interface to AutoDock Vina',
     long_description=open(os.path.join(base_dir, 'README.md')).read(),
+    long_description_content_type="text/markdown",
     zip_safe=False,
     cmdclass={'build': CustomBuild, 'build_ext': CustomBuildExt, 'install': CustomInstall, 'sdist': CustomSdist},
     packages=['vina'],
