@@ -2,12 +2,15 @@
 
 import os
 import glob
+import platform
 import re
+import shutil
 import subprocess
 import sys
 import sysconfig
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
+from distutils.command.clean import clean
 from setuptools import setup, Extension
 from distutils.command.build import build
 from distutils.command.sdist import sdist
@@ -51,7 +54,6 @@ def find_version():
                     return version_match.group(1)
             raise RuntimeError('Could not find version string in vina/__init__.py.')
     except IOError:
-        #return '1.2'
         raise RuntimeError('Could not find vina/__init__.py.')
 
 
@@ -116,34 +118,49 @@ def locate_ob():
 def locate_boost():
     """Try to locate boost."""
     if in_conda:
-        # It means that Boost was installed in an Anaconda env
         data_pathname = sysconfig.get_path('data')
         include_dirs = data_pathname + os.path.sep + 'include'
         library_dirs = data_pathname + os.path.sep + 'lib'
-
+        
         if os.path.isdir(include_dirs + os.path.sep + 'boost'):
-            print('Boost library location automatically determined in Anaconda.')
+            print('Boost library location automatically determined in this conda environment.')
             return include_dirs, library_dirs
-    else:
-        include_dirs = '/usr/include'
+        else:
+            print('Boost library is not installed in this conda environment.')
 
-        if os.path.isdir(include_dirs + os.path.sep + 'boost'):
-            print('Boost library location was automatically guessed.')
+    include_dirs = '/usr/local/include'
 
-            if glob.glob('usr/lib/x86_64-linux-gnu/libboost*.so'):
-                return include_dirs, 'usr/lib/x86_64-linux-gnu'
-            elif glob.glob('usr/lib64/libboost*.so'):
-                return include_dirs, 'usr/lib64'
-            elif glob.glob('usr/lib/libboost*.so'):
-                return include_dirs, 'usr/lib'
+    if os.path.isdir(include_dirs + os.path.sep + 'boost'):
+        if glob.glob('/usr/local/lib/x86_64-linux-gnu/libboost*'):
+            return include_dirs, '/usr/local/lib/x86_64-linux-gnu'
+        elif glob.glob('/usr/local/lib64/libboost*'):
+            return include_dirs, '/usr/local/lib64'
+        elif glob.glob('/usr/local/lib/libboost*'):
+            return include_dirs, '/usr/local/lib'
 
-    print('Boost library location was set to default location.')
-    return "/usr/local/include", "/usr/local/lib"
+    include_dirs = '/usr/include'
+
+    if os.path.isdir(include_dirs + os.path.sep + 'boost'):
+        if glob.glob('/usr/lib/x86_64-linux-gnu/libboost*'):
+            return include_dirs, '/usr/lib/x86_64-linux-gnu'
+        elif glob.glob('/usr/lib64/libboost*'):
+            return include_dirs, '/usr/lib64'
+        elif glob.glob('/usr/lib/libboost*'):
+            return include_dirs, '/usr/lib'
+
+    return None, None
 
 
 class CustomBuild(build):
     """Ensure build_ext runs first in build command."""
     def run(self):
+        # Fix to make it compatible with wheel
+        # We copy src directory only when it is not present already.
+        # If it is present, it means that we are creating linux wheels using the manylinux docker image
+        # The src copy is done outside setup.py before we start creating the wheels
+        # Source: https://github.com/pypa/pip/issues/3500
+        if not os.path.exists('src'):
+            shutil.copytree('../../src', 'src')
         self.run_command('build_ext')
         build.run(self)
 
@@ -151,8 +168,10 @@ class CustomBuild(build):
 class CustomInstall(install):
     """Ensure build_ext runs first in install command."""
     def run(self):
+        # This is not called when creating wheels for linux in the docker image
         self.run_command('build_ext')
         install.run(self)
+        shutil.rmtree('src')
 
 
 class CustomSdist(sdist):
@@ -161,7 +180,12 @@ class CustomSdist(sdist):
         sdist.make_release_tree(self, base_dir, files)
         link = 'hard' if hasattr(os, 'link') else None
         pkg_dir = os.path.join(base_dir, 'vina')
-        self.copy_file(os.path.join('.', 'vina-python.i'), pkg_dir, link=link)
+        self.copy_file(os.path.join('vina', 'vina.i'), pkg_dir, link=link)
+
+    def run(self):
+        shutil.copytree('../../src', 'src')
+        sdist.run(self)
+        shutil.rmtree('src')
 
 
 class CustomBuildExt(build_ext):
@@ -173,14 +197,24 @@ class CustomBuildExt(build_ext):
 
         # Boost
         self.boost_include_dir, self.boost_library_dir = locate_boost()
+
+        if self.boost_include_dir is None and self.boost_library_dir is None:
+            error_msg = 'Boost library location was not found!\n'
+            error_msg += 'Directories searched: conda env, /usr/local/include and /usr/include.'
+            raise ValueError(error_msg)
+        else:
+            print('Boost library location was automatically guessed at %s.' % self.boost_include_dir)
+
         self.include_dirs.append(self.boost_include_dir)
         self.library_dirs.append(self.boost_library_dir)
+
         # Openbabel
         #self.ob_include_dir, self.ob_library_dir = locate_ob()
         #self.include_dirs.append(self.ob_include_dir)
         #self.library_dirs.append(self.ob_library_dir)
+
         # Vina
-        self.include_dirs.append('../../src/lib')
+        self.include_dirs.append('src/lib')
         # SWIG
         # shadow, creates a pythonic wrapper around vina
         # castmode
@@ -206,6 +240,14 @@ class CustomBuildExt(build_ext):
     def build_extensions(self):
         customize_compiler(self.compiler)
 
+        # Patch for macOS (libboost_thread)
+        # Check if we have an include "system"
+        include_system = set(self.include_dirs).intersection(['/usr/local/include', '/usr/include'])
+        if platform.system() == 'Darwin' and include_system:
+            # In a conda env on macOS there is no -mt suffix at -lboost_thread
+            idx = self.extensions[0].extra_link_args.index('-lboost_thread')
+            self.extensions[0].extra_link_args[idx] = '-lboost_thread-mt'
+
         try:
             self.compiler.compiler_so[0] = "g++"
             self.compiler.compiler_so.insert(2, "-shared")
@@ -223,11 +265,16 @@ class CustomBuildExt(build_ext):
 
 obextension = Extension(
     'vina._vina_wrapper',
-    sources=glob.glob('../../src/lib/*.cpp') + ['vina/autodock_vina.i'],
+    sources=['src/lib/random.cpp', 'src/lib/utils.cpp', 'src/lib/vina.cpp', 
+             'src/lib/quaternion.cpp', 'src/lib/monte_carlo.cpp', 
+             'src/lib/mutate.cpp', 'src/lib/szv_grid.cpp', 'src/lib/quasi_newton.cpp', 
+             'src/lib/parallel_progress.cpp', 'src/lib/model.cpp', 'src/lib/coords.cpp', 
+             'src/lib/ad4cache.cpp', 'src/lib/grid.cpp', 'src/lib/parallel_mc.cpp', 
+             'src/lib/conf_independent.cpp', 'src/lib/parse_pdbqt.cpp', 
+             'src/lib/cache.cpp', 'vina/autodock_vina.i'],
     extra_link_args=['-lboost_system', '-lboost_thread', '-lboost_serialization',
                      '-lboost_filesystem', '-lboost_program_options'],
-    libraries=['openbabel'],
-    headers=glob.glob('../../src/lib/*.h'),
+    #libraries=['openbabel'],
 )
 
 
@@ -239,10 +286,12 @@ setup(
     license='Apache-2.0',
     url='https://ccsb.scripps.edu/',
     description='Python interface to AutoDock Vina',
-    long_description=open(os.path.join(base_dir, 'README.rst')).read(),
+    long_description=open(os.path.join(base_dir, 'README.md')).read(),
     zip_safe=False,
     cmdclass={'build': CustomBuild, 'build_ext': CustomBuildExt, 'install': CustomInstall, 'sdist': CustomSdist},
     packages=['vina'],
+    install_requires=['numpy>=1.18'],
+    python_requires='>=3.5.*',
     ext_modules=[obextension],
     classifiers=[
         'Environment :: Console',
@@ -256,7 +305,11 @@ setup(
         'Operating System :: OS Independent',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: C++',
-        'Programming Language :: Python',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
         'Topic :: Scientific/Engineering :: Chemistry',
         'Topic :: Software Development :: Libraries'

@@ -1,0 +1,2 @@
+include LICENSE *.md *.toml
+recursive-include src *.h *.cpp
