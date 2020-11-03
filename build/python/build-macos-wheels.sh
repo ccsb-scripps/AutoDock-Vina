@@ -21,3 +21,5 @@ for PYENV in "${PYENVS[@]}"; do
 	delocate-wheel -w wheelhouse -v dist/vina*"${PYENV}"*.whl
 	delocate-listdeps --all wheelhouse/vina*"${PYENV}"*.whl
 done
+
+rm -rf build dist vina.egg-info

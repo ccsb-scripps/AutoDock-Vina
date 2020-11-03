@@ -99,18 +99,21 @@ Building from Source
     Building Vina from source is NOT meant to be done by regular users!
 
 - Step 1: **Install a C++ compiler suite**
-    On Windows, you may want to install Visual Studio; on mac OS, Xcode; and on Linux, the GCC compiler suite.
+	- Ubuntu/Debian: ``sudo apt-get install build-essentials``
+	- macOS: Install Xcode from the `AppStore <https://apps.apple.com/fr/app/xcode/id497799835?mt=12>`_ and the Command Line Tools (CLT) from the terminal ``xcode-select --install``
 - Step 2: **Install Boost**
-    Then, build and run one of the example programs, such as the Regex example, to confirm that you have completed this step. If you can't do this, please seek help from the Boost community.
+    - Ubuntu/Debian: ``sudo apt-get install libboost-all-dev``
+    - macOS (with `Homebrew <https://brew.sh>`_): ``brew install boost``
+
 - Step 3: **Build Vina**
 
-    Start by downloading the last release of AutoDock Vina from github:
+    Start by downloading the lastest version of AutoDock Vina from github:
 
     .. code-block:: bash
     
         $ git clone https://github.com/ccsb-scripps/AutoDock-Vina
 
-    To compile the binary (you might need to customize the Makefile by setting the paths and the Boost version):
+    To compile the binary (you might need to customize the Makefile by setting the paths to the Boost library):
 
     .. code-block:: bash
 
