@@ -251,13 +251,41 @@ class Vina:
 
         self._vina.write_pose(pdbqt_filename, remarks)
     
+    def write_poses(self, pdbqt_filename, n_poses=9, energy_range=3.0, overwrite=False):
+        """Write poses from docking.
+
+        Args:
+            pdbqt_filename (str): PDBQT file containing poses found
+            n_pose (int): number of poses to write (default: 9)
+            energy_range (float): maximum energy difference from best pose (default: 3.0 kcal/mol)
+            overwrite (bool): allow overwriting (default: false)
+
+        """
+        if not utils.check_file_writable(pdbqt_filename):
+            raise RuntimeError(
+                'Error: Cannot write docking results at %s.' % pdbqt_filename)
+        elif not overwrite:
+            if os.path.exists(pdbqt_filename):
+                raise RuntimeError(
+                    'Error: Cannot overwrite %s, already exists.' % pdbqt_filename)
+        elif n_poses <= 0:
+            raise ValueError(
+                'Error: number of poses written must be greater than zero.')
+        elif energy_range <= 0:
+            raise ValueError('Error: energy range must be greater than zero.')
+
+        self._vina.write_poses(pdbqt_filename, n_poses, energy_range)
+    
     def poses(self, n_poses=9, energy_range=3.0, coordinates_only=False):
         """Get poses from docking.
 
         Args:
-            n_pose (int): number of poses to write (default: 9)
+            n_pose (int): number of poses to retrieve (default: 9)
             energy_range (float): maximum energy difference from best pose (default: 3.0 kcal/mol)
-            coordinates_only (bool): return coordinates for each pose only 
+            coordinates_only (bool): return coordinates for each pose only
+
+        Returns:
+            str/ndarray: PDBQT file string or Array of coordinates of poses if coordinates_only=True
 
         """
         if n_poses <= 0:
@@ -273,28 +301,30 @@ class Vina:
             return coordinates
         else:
             return self._vina.get_poses(n_poses, energy_range)
-
-    def write_poses(self, pdbqt_filename, n_poses=9, energy_range=3.0, overwrite=False):
-        """Write poses from docking.
+    
+    def energies(self, n_poses=9, energy_range=3.0):
+        """Get pose energies from docking.
 
         Args:
-            pdbqt_filename (str): PDBQT file containing poses found
-            n_pose (int): number of poses to write (default: 9)
+            n_pose (int): number of poses to retrieve (default: 9)
             energy_range (float): maximum energy difference from best pose (default: 3.0 kcal/mol)
-            overwrite (bool): allow overwriting (default: false)
+        
+        Returns:
+            ndarray: Array of energies from each pose (rows=poses, columns=energies) 
+            
+            Vina/Vinardo FF:
+                columns=[total, inter, intra, torsions, intra best pose]
+            
+            AutoDock FF:
+                columns=[total, inter, intra, torsions, -intra]
 
         """
-        if not utils.check_file_writable(pdbqt_filename):
-            raise RuntimeError('Error: Cannot write docking results at %s.' % pdbqt_filename)
-        elif not overwrite:
-            if os.path.exists(pdbqt_filename):
-                raise RuntimeError('Error: Cannot overwrite %s, already exists.' % pdbqt_filename)
-        elif n_poses <= 0:
+        if n_poses <= 0:
             raise ValueError('Error: number of poses written must be greater than zero.')
         elif energy_range <= 0:
             raise ValueError('Error: energy range must be greater than zero.')
 
-        self._vina.write_poses(pdbqt_filename, n_poses, energy_range)
+        return np.around(self._vina.get_poses_energies(n_poses, energy_range), decimals=3)
 
     def randomize(self):
         """Randomize the input ligand conformation."""
@@ -304,7 +334,13 @@ class Vina:
         """Score current pose.
 
         Returns:
-            list: list of energies (total, lig_inter, flex_inter, other_inter, lig_intra, conf_independent)
+            nadarray: Array of energies from current pose.
+
+            Vina/Vinardo FF:
+                columns=[total, lig_inter, flex_inter, other_inter, flex_intra, lig_intra, torsions, lig_intra best pose]
+            
+            AutoDock FF:
+                columns=[total, lig_inter, flex_inter, other_inter, flex_intra, lig_intra, torsions, -lig_intra]
 
         """
         # It does not make sense to report energies with a precision higher than 3
@@ -316,7 +352,13 @@ class Vina:
         """Quick local BFGS optimization.
 
         Returns:
-            list: list of energies (total, lig_inter, flex_inter, other_inter, lig_intra, conf_independent)
+            nadarray: Array of energies from optimized pose.
+
+            Vina/Vinardo FF:
+                columns=[total, lig_inter, flex_inter, other_inter, flex_intra, lig_intra, torsions, lig_intra best pose]
+            
+            AutoDock FF:
+                columns=[total, lig_inter, flex_inter, other_inter, flex_intra, lig_intra, torsions, -lig_intra]
 
         """
         # It does not make sense to report energies with a precision higher than 3

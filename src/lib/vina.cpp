@@ -455,10 +455,52 @@ std::vector< std::vector<double> > Vina::get_poses_coordinates(int how_many, dou
         // Push back the best conf in model
         m_model.set(m_poses[0].c);
     } else {
-        std::cerr << "WARNING: Could not find any conformations. No conformations were written.\n";
+        std::cerr << "WARNING: Could not find any pose coordinaates.\n";
     }
 
     return coordinates;
+}
+
+std::vector< std::vector<double> > Vina::get_poses_energies(int how_many, double energy_range) {
+    int n = 0;
+    double best_energy = 0;
+    std::vector< std::vector<double> > energies;
+
+    if (how_many < 0) {
+        std::cerr << "Error: number of poses asked must be greater than zero.\n";
+        exit(EXIT_FAILURE);
+    }
+
+    if (energy_range < 0) {
+        std::cerr << "Error: energy range must be greater than zero.\n";
+        exit(EXIT_FAILURE);
+    }
+
+    if (!m_poses.empty()) {
+        // Get energy from the best conf
+        best_energy = m_poses[0].e;
+
+        VINA_FOR_IN(i, m_poses) {
+            /* Stop if:
+                - We wrote the number of conf asked
+                - If there is no conf to write
+                - The energy of the current conf is superior than best_energy + energy_range
+            */
+            if (n >= how_many || !not_max(m_poses[i].e) || m_poses[i].e > best_energy + energy_range)
+                break; // check energy_range sanity FIXME
+
+            // Push the current pose to model
+            energies.push_back({m_poses[i].e, 
+                                m_poses[i].inter, m_poses[i].intra, 
+                                m_poses[i].conf_independent, m_poses[i].unbound});
+
+            n++;
+        }
+    } else {
+        std::cerr << "WARNING: Could not find any pose energies.\n";
+    }
+
+    return energies;
 }
 
 std::string Vina::vina_remarks(output_type &pose, fl lb, fl ub) {
@@ -526,7 +568,7 @@ std::string Vina::get_poses(int how_many, double energy_range) {
         m_model.set(m_poses[0].c);
 
     } else {
-        std::cerr << "WARNING: Could not find any conformations. No conformations were written.\n";
+        std::cerr << "WARNING: Could not find any poses. No poses were written.\n";
     }
 
     return out.str();
@@ -541,7 +583,7 @@ void Vina::write_poses(const std::string& output_name, int how_many, double ener
         out = get_poses(how_many, energy_range);
         f << out;
     } else {
-        std::cerr << "WARNING: Could not find any conformations. No conformations were written.\n";
+        std::cerr << "WARNING: Could not find any poses. No poses were written.\n";
     }
 }
 
