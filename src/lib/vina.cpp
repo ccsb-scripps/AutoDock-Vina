@@ -823,10 +823,18 @@ std::vector<double> Vina::optimize(int max_steps) {
         exit(EXIT_FAILURE);
     }
 
-    // We have to find a way to get rid of this out thing...
-    // And also get the current conf and not the initial conf
     double e = 0;
-    conf c = m_model.get_initial_conf();
+    conf c;
+
+    if (!m_poses.empty()) {
+        // if m_poses is not empty, it means that we did a docking before
+        // But it is really that useful to minimize after docking?
+        e = m_poses[0].e;
+        c = m_poses[0].c;
+    } else {
+        c = m_model.get_initial_conf();
+    }
+
     output_type out(c, e);
 
     std::vector<double> energies = optimize(out, max_steps);
@@ -859,7 +867,6 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
         std::cerr << "WARNING: At low exhaustiveness, it may be impossible to utilize all CPUs.\n";
     }
 
-    int seed = generate_seed();
     double e = 0;
     double intramolecular_energy = 0;
     const vec authentic_v(1000, 1000, 1000);
@@ -867,7 +874,7 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
     boost::optional<model> ref;
     output_container poses;
     std::stringstream sstm;
-    rng generator(static_cast<rng::result_type>(seed));
+    rng generator(static_cast<rng::result_type>(m_seed));
 
     // Setup Monte-Carlo search
     parallel_mc parallelmc;
@@ -883,8 +890,8 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
     parallelmc.display_progress = (m_verbosity > 0);
 
     // Docking search
-    sstm << "Performing search (random seed: " << seed << ")";
-    doing(sstm.str(), m_verbosity, 1);
+    sstm << "Performing docking (random seed: " << m_seed << ")";
+    doing(sstm.str(), m_verbosity, 0);
     if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
         parallelmc(m_model, poses, m_precalculated_byatom,    m_grid, m_corner1, m_corner2, generator);
     } else {

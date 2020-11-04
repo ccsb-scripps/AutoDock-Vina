@@ -45,6 +45,7 @@ class Vina:
         self._center = None
         self._box_size = None
         self._spacing = None
+        self._seed = self._vina.seed()
 
     def __str__(self):
         """Print basic information about Vina object."""
@@ -61,6 +62,7 @@ class Vina:
                 info += "Box center: %s\n" % " ".join(["%.3f" % i for i in self._center])
                 info += "Box dimensions: %s\n" % " ".join(["%.2f" % i for i in self._box_size])
                 info += "Box spacing: %.3f\n" % self._spacing
+            info += "Seed: %s" % self._seed
         except AttributeError:
             info = "Vina object is not defined."
 

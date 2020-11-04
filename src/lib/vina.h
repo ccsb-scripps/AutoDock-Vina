@@ -99,6 +99,7 @@ public:
     ~Vina();
 
     void cite();
+    int seed() { return m_seed; }
     void set_receptor(const std::string &rigid_name=std::string(), const std::string &flex_name=std::string());
     void set_ligand_from_string(const std::string &ligand_string);
     void set_ligand_from_string(const std::vector<std::string> &ligand_string);
