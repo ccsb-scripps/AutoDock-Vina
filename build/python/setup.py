@@ -300,6 +300,7 @@ setup(
     install_requires=['numpy>=1.18'],
     python_requires='>=3.5.*',
     ext_modules=[obextension],
+    entry_points={"console_scripts": ["vina = vina.vina_cli:main"]},
     classifiers=[
         'Environment :: Console',
         'Environment :: Other Environment',
