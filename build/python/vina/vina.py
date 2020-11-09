@@ -167,14 +167,14 @@ class Vina:
         if self._sf_name == 'vina':
             if len(weights) != 7:
                 raise ValueError('Error: Number of weights does not correspond to Vina scoring function.' )
-            self._vina.set_vina_weights(list(weights))
+            self._vina.set_vina_weights(*weights)
         else:
             if len(weights) != 6:
                 raise ValueError('Error: Number of weights does not correspond to AD4 or Vinardo scoring function.')
                 if self._sf_name == 'ad4':
-                    self._vina.set_ad4_weights(list(weights))
+                    self._vina.set_ad4_weights(*weights)
                 else:
-                    self._vina.set_vinardo_weights(list(weights))
+                    self._vina.set_vinardo_weights(*weights)
 
         self._weights = weights
 
@@ -350,8 +350,12 @@ class Vina:
         energies = np.around(self._vina.score(), decimals=3)
         return energies
 
-    def optimize(self):
-        """Quick local BFGS optimization.
+    def optimize(self, max_steps=0):
+        """Quick local BFGS energy optimization.
+
+        Args:
+            max_steps (int): Maximum number of local minimization steps (default: 0). When max_steps is equal to 0,
+                             the maximum number of steps will be equal to (25 + num_movable_atoms) / 3).
 
         Returns:
             nadarray: Array of energies from optimized pose.
@@ -363,9 +367,12 @@ class Vina:
                 columns=[total, lig_inter, flex_inter, other_inter, flex_intra, lig_intra, torsions, -lig_intra]
 
         """
+        if max_steps < 0:
+            raise ValueError('Error: max_steps cannot be negative.')
+
         # It does not make sense to report energies with a precision higher than 3
         # since the coordinates precision is 3.
-        energies = np.around(self._vina.optimize(), decimals=3)
+        energies = np.around(self._vina.optimize(max_steps), decimals=3)
         return energies
 
     def dock(self, exhaustiveness=8, n_poses=20, min_rmsd=1.0, max_evals=0):
