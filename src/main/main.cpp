@@ -143,6 +143,12 @@ Thank you!\n";
         double weight_hydrogen    = -0.587439;
         double weight_rot         =  0.05846;
 
+        // vinardo weights
+        double weight_vinardo_gauss1 = -0.045;
+        double weight_vinardo_repulsion = 0.8;
+        double weight_vinardo_hydrophobic = -0.035;
+        double weight_vinardo_hydrogen = -0.600;
+
         // macrocycle closure
         double weight_glue        = 50.000000; // linear attraction
 
@@ -162,7 +168,7 @@ Thank you!\n";
             ("flex", value<std::string>(&flex_name), "flexible side chains, if any (PDBQT)")
             ("ligand", value< std::vector<std::string> >(&ligand_names)->multitoken(), "ligand (PDBQT)")
             ("batch", value< std::vector<std::string> >(&batch_ligand_names)->multitoken(), "batch ligand (PDBQT)")
-            ("scoring", value<std::string>(&sf_name)->default_value(sf_name), "vina or ad4")
+            ("scoring", value<std::string>(&sf_name)->default_value(sf_name), "scoring function (ad4, vina or vinardo)")
         ;
         //options_description search_area("Search area (required, except with --score_only)");
         options_description search_area("Search space (required)");
@@ -195,11 +201,17 @@ Thank you!\n";
             ("weight_hydrogen", value<double>(&weight_hydrogen)->default_value(weight_hydrogen),          "Hydrogen bond weight")
             ("weight_rot", value<double>(&weight_rot)->default_value(weight_rot),                         "N_rot weight")
 
-            ("weight_ad4_vdw",   value<double>(&weight_ad4_vdw)  ->default_value(weight_ad4_vdw),   "ad4_vdw weight")
-            ("weight_ad4_hb",    value<double>(&weight_ad4_hb)   ->default_value(weight_ad4_hb),    "ad4_hb weight")
-            ("weight_ad4_elec",  value<double>(&weight_ad4_elec) ->default_value(weight_ad4_elec),  "ad4_elec weight")
+            ("weight_vinardo_gauss1", value<double>(&weight_vinardo_gauss1)->default_value(weight_vinardo_gauss1), "Vinardo gauss_1 weight")
+            ("weight_vinardo_repulsion", value<double>(&weight_vinardo_repulsion)->default_value(weight_vinardo_repulsion), "Vinardo repulsion weight")
+            ("weight_vinardo_hydrophobic", value<double>(&weight_vinardo_hydrophobic)->default_value(weight_vinardo_hydrophobic), "Vinardo hydrophobic weight")
+            ("weight_vinardo_hydrogen", value<double>(&weight_vinardo_hydrogen)->default_value(weight_vinardo_hydrogen), "Vinardo Hydrogen bond weight")
+            ("weight_vinardo_rot", value<double>(&weight_rot)->default_value(weight_rot), "Vinardo N_rot weight")
+
+            ("weight_ad4_vdw", value<double>(&weight_ad4_vdw)->default_value(weight_ad4_vdw), "ad4_vdw weight")
+            ("weight_ad4_hb", value<double>(&weight_ad4_hb)->default_value(weight_ad4_hb), "ad4_hb weight")
+            ("weight_ad4_elec", value<double>(&weight_ad4_elec)->default_value(weight_ad4_elec), "ad4_elec weight")
             ("weight_ad4_dsolv", value<double>(&weight_ad4_dsolv)->default_value(weight_ad4_dsolv), "ad4_dsolv weight")
-            ("weight_ad4_rot",   value<double>(&weight_ad4_rot)  ->default_value(weight_ad4_rot),   "ad4_rot weight")
+            ("weight_ad4_rot", value<double>(&weight_ad4_rot)->default_value(weight_ad4_rot), "ad4_rot weight")
 
             ("weight_glue", value<double>(&weight_glue)->default_value(weight_glue),                      "macrocycle glue weight")
         ;
@@ -281,7 +293,7 @@ Thank you!\n";
             exit(EXIT_FAILURE);
         }
 
-        if (sf_name.compare("vina") == 0) {
+        if (sf_name.compare("vina") == 0 || sf_name.compare("vinardo") == 0) {
             if (!vm.count("receptor") && !vm.count("maps")) {
                 std::cerr << desc_simple << "ERROR: The receptor or affinity maps must be specified.\n";
                 exit(EXIT_FAILURE);
@@ -369,6 +381,9 @@ Thank you!\n";
         if (sf_name.compare("vina") == 0) {
             v.set_vina_weights(weight_gauss1, weight_gauss2, weight_repulsion,
                                weight_hydrophobic, weight_hydrogen, weight_glue, weight_rot);
+        } else if (sf_name.compare("vinardo") == 0) {
+            v.set_vinardo_weights(weight_vinardo_gauss1, weight_vinardo_repulsion,
+                                  weight_vinardo_hydrophobic, weight_vinardo_hydrogen, weight_glue, weight_rot);
         } else {
             v.set_ad4_weights(weight_ad4_vdw, weight_ad4_hb, weight_ad4_elec,
                               weight_ad4_dsolv, weight_glue, weight_ad4_rot);
