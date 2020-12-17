@@ -26,7 +26,6 @@
 #include <exception>
 #include <boost/program_options.hpp>
 #include "parse_error.h"
-#include "tee.h"
 #include "vina.h"
 #include "utils.h"
 #include "scoring_function.h"

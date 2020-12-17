@@ -60,7 +60,6 @@
 #include "random.h"
 #include "scoring_function.h"
 #include "szv_grid.h"
-#include "tee.h"
 #include "tree.h"
 #include "triangular_matrix_index.h"
 #include "utils.h"

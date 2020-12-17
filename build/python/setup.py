@@ -262,6 +262,9 @@ class CustomBuildExt(build_ext):
             self.compiler.compiler_so.append("-std=c++11")
             self.compiler.compiler_so.append("-Wno-long-long")
             self.compiler.compiler_so.append("-pedantic")
+            # Source: https://stackoverflow.com/questions/9723793/undefined-reference-to-boostsystemsystem-category-when-compiling
+            self.compiler.compiler_so.append('-DBOOST_ERROR_CODE_HEADER_ONLY')
+
         except (AttributeError, ValueError):
             pass
 
@@ -278,7 +281,7 @@ obextension = Extension(
              'src/lib/ad4cache.cpp', 'src/lib/grid.cpp', 'src/lib/parallel_mc.cpp', 
              'src/lib/conf_independent.cpp', 'src/lib/parse_pdbqt.cpp', 
              'src/lib/cache.cpp', 'vina/autodock_vina.i'],
-    extra_link_args=['-lboost_system', '-lboost_thread', '-lboost_serialization',
+    extra_link_args=['-lboost_thread', '-lboost_serialization',
                      '-lboost_filesystem', '-lboost_program_options'],
     #libraries=['openbabel'],
 )

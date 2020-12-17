@@ -26,7 +26,7 @@
 #include <string>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "tee.h"
+#include "file.h"
 
 inline char separator();
 path make_path(const std::string& str);

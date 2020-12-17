@@ -49,7 +49,6 @@
 #include "ad4cache.h"
 #include "parse_error.h"
 #include "quasi_newton.h"
-#include "tee.h"
 #include "coords.h" // add_to_output_container
 #include "utils.h"
 #include "scoring_function.h"
