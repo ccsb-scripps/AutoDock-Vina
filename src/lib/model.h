@@ -170,6 +170,7 @@ public:
 
 private:
 	friend struct cache;
+	friend struct non_cache;
 	friend struct ad4cache;
 	friend struct szv_grid;
 	friend struct appender_info;

@@ -23,7 +23,7 @@
 #include "grid.h"
 
 void grid::init(const grid_dims& gd) {
-	m_data.resize(gd[0].n, gd[1].n, gd[2].n);
+	m_data.resize(gd[0].n_voxels + 1, gd[1].n_voxels + 1, gd[2].n_voxels + 1); // number of sample points == n_voxels + 1
 	m_init = vec(gd[0].begin, gd[1].begin, gd[2].begin);
 	m_range = vec(gd[0].span(), gd[1].span(), gd[2].span());
 	assert(m_range[0] > 0);

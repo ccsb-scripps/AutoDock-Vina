@@ -23,7 +23,7 @@
 #include "szv_grid.h"
 #include "brick.h"
 
-szv_grid::szv_grid(const model& m, const grid_dims& gd, fl cutoff_sqr) : m_data(gd[0].n, gd[1].n, gd[2].n) {
+szv_grid::szv_grid(const model& m, const grid_dims& gd, fl cutoff_sqr) : m_data(gd[0].n_voxels, gd[1].n_voxels, gd[2].n_voxels) {
 	vec end;
 	VINA_FOR_IN(i, gd) {
 		m_init[i] = gd[i].begin;
@@ -88,7 +88,7 @@ grid_dims szv_grid_dims(const grid_dims& gd) {
 		tmp[i].end   = gd[i].end;
 		fl n_fl = (gd[i].end - gd[i].begin) / 3; // 3A preferred size
 		int n_int = int(n_fl);
-		tmp[i].n     = (n_int < 1) ?  1 : sz(n_int);
+		tmp[i].n_voxels = (n_int < 1) ?  1 : sz(n_int);
 	}
 	return tmp;
 }

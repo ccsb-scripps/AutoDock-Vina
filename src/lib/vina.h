@@ -46,6 +46,7 @@
 #include "model.h"
 #include "common.h"
 #include "cache.h"
+#include "non_cache.h"
 #include "ad4cache.h"
 #include "parse_error.h"
 #include "quasi_newton.h"
@@ -58,12 +59,13 @@
 class Vina {
 public:
     // Constructor
-    Vina(const std::string &sf_name="vina", int cpu=0, int seed=0, int verbosity=1) {
+	Vina(const std::string &sf_name="vina", int cpu=0, int seed=0, int verbosity=1, bool use_receptor_atoms=false) {
         m_verbosity = verbosity;
         m_receptor_initialized = false;
         m_ligand_initialized = false;
         m_map_initialized = false;
         m_seed = generate_seed(seed);
+		m_use_receptor_atoms = use_receptor_atoms;
 
         // Look for the number of cpu
         if (cpu <= 0) {
@@ -145,8 +147,10 @@ private:
     flv m_weights;
     ScoringFunction m_scoring_function;
     precalculate_byatom m_precalculated_byatom;
+	precalculate m_precalculated_sf;
     // maps
     cache m_grid;
+	non_cache m_non_cache;
     ad4cache m_ad4grid;
     grid_dims m_gd;
     vec m_corner1;
@@ -157,12 +161,13 @@ private:
     int m_seed;
     // others
     int m_verbosity;
+	bool m_use_receptor_atoms;
 
     std::string vina_remarks(output_type& pose, fl lb, fl ub);
     output_container remove_redundant(const output_container& in, fl min_rmsd);
 
     void set_forcefield();
-    void set_vina_box(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.375);
+	void set_vina_box(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.375, bool force_odd_npts=false);
     std::vector<double> score(double intramolecular_energy);
     std::vector<double> optimize(output_type& out, const int max_steps=0);
     int generate_seed(const int seed=0);

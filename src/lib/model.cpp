@@ -617,8 +617,8 @@ grid_dims model::movable_atoms_box(fl add_to_each_dimension, fl granularity) con
 	{ // always doing this now FIXME ?
 		vec center; center = 0.5 * (corner2 + corner1);
 		VINA_FOR_IN(i, gd) {
-			gd[i].n = sz(std::ceil((corner2[i] - corner1[i]) / granularity));
-			fl real_span = granularity * gd[i].n;
+			gd[i].n_voxels = sz(std::ceil((corner2[i] - corner1[i]) / granularity));
+			fl real_span = granularity * gd[i].n_voxels;
 			gd[i].begin = center[i] - real_span/2;
 			gd[i].end = gd[i].begin + real_span;
 		}

@@ -153,6 +153,7 @@ Thank you!\n";
 
         bool score_only = false;
         bool local_only = false;
+		bool use_receptor_atoms = false;
         bool randomize_only = false;
         bool help = false;
         bool help_advanced = false;
@@ -191,6 +192,7 @@ Thank you!\n";
         advanced.add_options()
             ("score_only",     bool_switch(&score_only),     "score only - search space can be omitted")
             ("local_only",     bool_switch(&local_only),     "do local search only")
+			("use_receptor_atoms", bool_switch(&use_receptor_atoms), "use receptor atoms (not maps) for: (1) local optimization and scoring after docking, (2) --local_only jobs, and (3) --score_only jobs")
             ("randomize_only", bool_switch(&randomize_only), "randomize input, attempting to avoid clashes")
 
             ("weight_gauss1", value<double>(&weight_gauss1)->default_value(weight_gauss1),                "gauss_1 weight")
@@ -368,7 +370,7 @@ Thank you!\n";
             std::cout << "\n";
         }
 
-        Vina v(sf_name, cpu, seed, verbosity);
+		Vina v(sf_name, cpu, seed, verbosity, use_receptor_atoms);
 
         // rigid_name variable can be ignored for AD4
         if (vm.count("receptor") || vm.count("flex"))

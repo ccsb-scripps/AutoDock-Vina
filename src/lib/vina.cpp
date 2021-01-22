@@ -278,7 +278,7 @@ void Vina::set_forcefield() {
     m_scoring_function = scoring_function;
 }
 
-void Vina::set_vina_box(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity) {
+void Vina::set_vina_box(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity, bool force_odd_npts) {
     // Setup the search box
     if (size_x <= 0 || size_y <= 0 || size_z <= 0) {
         std::cerr << "ERROR: Search space dimensions should be positive.\n";
@@ -292,12 +292,18 @@ void Vina::set_vina_box(double center_x, double center_y, double center_z, doubl
     vec center(center_x, center_y, center_z);
 
     VINA_FOR_IN(i, gd) {
-        // Make sure that the number of grid points is an odd number
-        sz n = std::ceil(span[i] / granularity);
-        gd[i].n = std::ceil(n / 2) * 2 + 1;
-        fl real_span = granularity * (gd[i].n - 1) / 2.;
-        gd[i].begin = center[i] - real_span;
-        gd[i].end = center[i] + real_span;
+        // // Make sure that the number of grid points is an odd number
+        // sz n = std::ceil(span[i] / granularity);
+        // gd[i].n = std::ceil(n / 2) * 2 + 1;
+        // fl real_span = granularity * (gd[i].n - 1) / 2.;
+        // gd[i].begin = center[i] - real_span;
+        // gd[i].end = center[i] + real_span;
+		gd[i].n_voxels = sz(std::ceil(span[i] / granularity));
+		if (force_odd_npts && gd[i].n_voxels == 1) 	// if odd n_voxels increment by 1
+			gd[i].n_voxels += 1; 				  	// because sample points (npts) == n_voxels +1 
+		fl real_span = granularity * gd[i].n_voxels;
+		gd[i].begin = center[i] - real_span/2;
+		gd[i].end = gd[i].begin + real_span;
     }
 
     const vec corner1(gd[0].begin, gd[1].begin, gd[2].begin);
@@ -335,11 +341,18 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
     else
         doing("Computing Vinardo grid", m_verbosity, 0);
     // Initialize the vina box
-    set_vina_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity);
+    set_vina_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity, false);
     precalculate precalculated_sf(m_scoring_function);
+    m_precalculated_sf = precalculated_sf;
     cache grid(slope);
     grid.populate(m_model, precalculated_sf, m_gd, atom_types);
     done(m_verbosity, 0);
+
+    // create non_cache for scoring with receptor atoms (instead of grids)
+    if (m_use_receptor_atoms) {
+        non_cache nc(m_model, m_gd, &m_precalculated_sf, slope);
+        m_non_cache = nc;
+    }
 
     // Store in Vina object
     m_grid = grid;
@@ -686,11 +699,17 @@ std::vector<double> Vina::score(double intramolecular_energy) {
 
     if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
         // Inter
-        lig_grids = m_grid.eval(m_model, authentic_v[1]); // [1] ligand - grid
+        if (m_use_receptor_atoms)
+            lig_grids = m_non_cache.eval(m_model, authentic_v[1]); // [1] ligand - grid
+        else
+            lig_grids = m_grid.eval(m_model, authentic_v[1]); // [1] ligand - grid
         inter_pairs = m_model.eval_inter(m_precalculated_byatom, authentic_v); // [1] ligand - flex
         inter = lig_grids + inter_pairs;
         // Intra
-        flex_grids = m_grid.eval_intra(m_model, authentic_v[1]); // [1] flex - grid
+        if (m_use_receptor_atoms)
+            flex_grids = m_non_cache.eval_intra(m_model, authentic_v[1]); // [1] flex - grid
+        else
+            flex_grids = m_grid.eval_intra(m_model, authentic_v[1]); // [1] flex - grid
         intra_pairs = m_model.evalo(m_precalculated_byatom, authentic_v); // [1] flex_i - flex_i and flex_i - flex_j
         lig_intra = m_model.evali(m_precalculated_byatom, authentic_v); // [2] ligand_i - ligand_i
         intra = flex_grids + intra_pairs + lig_intra;
@@ -902,13 +921,49 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
     // Docking post-processing and rescoring
     poses = remove_redundant(poses, min_rmsd);
 
+	std::cout << "BEST SCORE BEFORE REFINE: " << poses[0].e << "\n";
+	
+	// Refine poses if use_receptor_atoms and got receptor
+	std::cout << "HERE m_use_receptor_atoms (before)\n";
+	if (m_use_receptor_atoms) {
+		std::cout << "HERE m_use_receptor_atoms\n";
+		change g(m_model.get_size());
+		quasi_newton quasi_newton_par;
+		const vec authentic_v(1000, 1000, 1000);
+		//std::vector<double> energies_before_opt;
+		//std::vector<double> energies_after_opt;
+		int evalcount = 0;
+		const fl slope = 1e6;
+		m_non_cache.slope = slope;
+		quasi_newton_par.max_steps = unsigned((25 + m_model.num_movable_atoms()) / 3);
+		
+		
+		VINA_FOR_IN(i, poses){
+			const fl slope_orig = m_non_cache.slope;
+			VINA_FOR(p, 5){
+				m_non_cache.slope = 100 * std::pow(10.0, 2.0*p); 
+				std::cout << "Starting minimization with slope: " << m_non_cache.slope << "\n";
+				quasi_newton_par(m_model, m_precalculated_byatom, m_non_cache, poses[i], g, authentic_v, evalcount);
+				if(m_non_cache.within(m_model))
+					break;
+			}
+			poses[i].coords = m_model.get_heavy_atom_movable_coords();
+			if (!m_non_cache.within(m_model))
+				poses[i].e = max_fl;
+			m_non_cache.slope = slope;
+		}
+	}
+
     if (!poses.empty()) {
         // For the Vina scoring function, we take the intramolecular energy from the best pose
         // the order must not change because of non-decreasing g (see paper), but we'll re-sort in case g is non strictly increasing
         if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
             poses.sort();
             m_model.set(poses[0].c);
-            intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid, authentic_v);
+			if (m_use_receptor_atoms)
+				intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_non_cache, authentic_v);
+			else
+				intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid, authentic_v);
         }
 
         VINA_FOR_IN(i, poses) {
@@ -987,9 +1042,11 @@ Vina::~Vina() {
     flv m_weights;
     ScoringFunction m_scoring_function;
     precalculate_byatom m_precalculated_byatom;
+	precalculate m_precalculated_sf;
     // maps
     cache m_grid;
     ad4cache m_ad4grid;
+	non_cache m_non_cache;
     grid_dims m_gd;
     vec m_corner1;
     vec m_corner2;

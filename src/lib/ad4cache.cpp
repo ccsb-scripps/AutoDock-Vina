@@ -185,7 +185,7 @@ bool ad4cache::is_in_grid(const model& m, fl margin) const {
 
 		const vec& a_coords = m.coords[i];
 		VINA_FOR_IN(j, gd) {
-			if(gd[j].n > 0)
+			if(gd[j].n_voxels > 0)
 				if(a_coords[j] < gd[j].begin - margin || a_coords[j] > gd[j].end + margin) 
 					return false;
 		}
@@ -252,7 +252,6 @@ void read_ad4_map(path& filename, std::vector<grid_dims>& gds, grid& g) {
     grid_dims gd;
     std::string line;
     fl spacing, center, halfspan;
-    sz nx, ny, nz;
 
     ifile in(filename);
 
@@ -264,20 +263,22 @@ void read_ad4_map(path& filename, std::vector<grid_dims>& gds, grid& g) {
         }
         if (line_counter == 5) {
             std::vector<std::string> fields = split(line);
-            nx = std::atoi(fields[1].c_str());
-            ny = std::atoi(fields[2].c_str());
-            nz = std::atoi(fields[3].c_str());
-            // You might have an even number of NELEMENTS, but it's always an odd number in AutoDock
-            gd[0].n = nx + sz(nx % 2 == 0); // n voxels, not sample points
-            gd[1].n = ny + sz(nx % 2 == 0);
-            gd[2].n = nz + sz(nx % 2 == 0);
-            // std::cout << nx << " " << ny << " " << nz << " " << spacing << " " << gd[0].n << " " << gd[1].n << " " << gd[2].n << "\n";
-        }
+			VINA_FOR(i, 3) {
+				// n_voxels must be EVEN
+				// because the number of sampled points in the grid is always ODD
+				// (number of sampled points == n_voxels + 1)
+            	gd[i].n_voxels = std::atoi(fields[i + 1].c_str());
+				if (gd[i].n_voxels % 2 == 1) {
+					std::cout << "number of voxels (NELEMENTS) must be even\n";
+			    	assert(false);
+				}
+			}
+		}
         if (line_counter == 6) {
             std::vector<std::string> fields = split(line);
             VINA_FOR(i, 3) {
                 center = std::atof(fields[i+1].c_str());
-                halfspan = (gd[i].n - 1) * spacing / 2.0;
+				halfspan = (gd[i].n_voxels - 1) * spacing / 2.0;
                 gd[i].begin = center - halfspan;
                 gd[i].end = center + halfspan;
                 // std::cout << center << " " << halfspan << " " << gd[i].begin << " " << gd[i].end << "\n";
@@ -288,10 +289,10 @@ void read_ad4_map(path& filename, std::vector<grid_dims>& gds, grid& g) {
         if (line_counter > 6) {
             // std::cout << pt_counter << " " << x << " " << y << " " << z << " " << std::atof(line.c_str()) << "\n";
             g.m_data(x, y, z) = std::atof(line.c_str());
-            y += sz(x == (gd[0].n));
-            z += sz(y == (gd[1].n));
-            x = x % (gd[0].n);
-            y = y % (gd[1].n);
+			y += sz(x == (gd[0].n_voxels + 1));
+			z += sz(y == (gd[1].n_voxels + 1));
+			x = x % (gd[0].n_voxels + 1);
+			y = y % (gd[1].n_voxels + 1);
             pt_counter++;
             x++;
         }
