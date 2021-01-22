@@ -165,8 +165,6 @@ fl non_cache::eval_deriv(      model& m, fl v) const { // clean up
 		m.minus_forces[i] = deriv + out_of_bounds_deriv;
 		e += this_e + out_of_bounds_penalty;
 	}
-    std::cout << std::setprecision(6) << "non_cache::eval_deriv, e = " << e << std::endl;
-    printf("e=%f\n", e);
 	return e;
 }
 

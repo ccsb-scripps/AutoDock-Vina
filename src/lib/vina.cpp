@@ -348,8 +348,8 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
     grid.populate(m_model, precalculated_sf, m_gd, atom_types);
     done(m_verbosity, 0);
 
-    // create non_cache for scoring with receptor atoms (instead of grids)
-    if (m_use_receptor_atoms) {
+    // create non_cache for scoring with explicit receptor atoms (instead of grids)
+    if (!m_no_refine) {
         non_cache nc(m_model, m_gd, &m_precalculated_sf, slope);
         m_non_cache = nc;
     }
@@ -699,17 +699,17 @@ std::vector<double> Vina::score(double intramolecular_energy) {
 
     if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
         // Inter
-        if (m_use_receptor_atoms)
-            lig_grids = m_non_cache.eval(m_model, authentic_v[1]); // [1] ligand - grid
-        else
+        if (m_no_refine || !m_receptor_initialized)
             lig_grids = m_grid.eval(m_model, authentic_v[1]); // [1] ligand - grid
+        else
+            lig_grids = m_non_cache.eval(m_model, authentic_v[1]); // [1] ligand - grid
         inter_pairs = m_model.eval_inter(m_precalculated_byatom, authentic_v); // [1] ligand - flex
         inter = lig_grids + inter_pairs;
         // Intra
-        if (m_use_receptor_atoms)
-            flex_grids = m_non_cache.eval_intra(m_model, authentic_v[1]); // [1] flex - grid
-        else
+        if (m_no_refine || !m_receptor_initialized)
             flex_grids = m_grid.eval_intra(m_model, authentic_v[1]); // [1] flex - grid
+        else
+            flex_grids = m_non_cache.eval_intra(m_model, authentic_v[1]); // [1] flex - grid
         intra_pairs = m_model.evalo(m_precalculated_byatom, authentic_v); // [1] flex_i - flex_i and flex_i - flex_j
         lig_intra = m_model.evali(m_precalculated_byatom, authentic_v); // [2] ligand_i - ligand_i
         intra = flex_grids + intra_pairs + lig_intra;
@@ -923,10 +923,8 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 
 	std::cout << "BEST SCORE BEFORE REFINE: " << poses[0].e << "\n";
 	
-	// Refine poses if use_receptor_atoms and got receptor
-	std::cout << "HERE m_use_receptor_atoms (before)\n";
-	if (m_use_receptor_atoms) {
-		std::cout << "HERE m_use_receptor_atoms\n";
+	// Refine poses if no_refine is false and got receptor
+	if (!m_no_refine & m_receptor_initialized) {
 		change g(m_model.get_size());
 		quasi_newton quasi_newton_par;
 		const vec authentic_v(1000, 1000, 1000);
@@ -960,10 +958,10 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
         if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
             poses.sort();
             m_model.set(poses[0].c);
-			if (m_use_receptor_atoms)
-				intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_non_cache, authentic_v);
-			else
+			if (m_no_refine || !m_receptor_initialized)
 				intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid, authentic_v);
+			else
+				intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_non_cache, authentic_v);
         }
 
         VINA_FOR_IN(i, poses) {
