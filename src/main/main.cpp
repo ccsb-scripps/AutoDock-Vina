@@ -154,6 +154,7 @@ Thank you!\n";
         bool score_only = false;
         bool local_only = false;
 		bool no_refine = false;
+		bool force_even_voxels = false;
         bool randomize_only = false;
         bool help = false;
         bool help_advanced = false;
@@ -186,13 +187,14 @@ Thank you!\n";
         outputs.add_options()
             ("out", value<std::string>(&out_name), "output models (PDBQT), the default is chosen based on the ligand file name")
             ("dir", value<std::string>(&out_dir), "output directory for batch mode")
-            ("write_maps", value<std::string>(&out_maps), "output filename (directory + prefix name) for maps")
+            ("write_maps", value<std::string>(&out_maps), "output filename (directory + prefix name) for maps. Option --force_even_voxels may be needed to comply with .map format")
         ;
         options_description advanced("Advanced options (see the manual)");
         advanced.add_options()
             ("score_only",     bool_switch(&score_only),     "score only - search space can be omitted")
             ("local_only",     bool_switch(&local_only),     "do local search only")
 			("no_refine", bool_switch(&no_refine),  "when --receptor is provided, do not use explicit receptor atoms (instead of precalculated grids) for: (1) local optimization and scoring after docking, (2) --local_only jobs, and (3) --score_only jobs")
+			("force_even_voxels", bool_switch(&force_even_voxels),  "calculated grid maps will have an even number of voxels (intervals) in each dimension (odd number of grid points)")
             ("randomize_only", bool_switch(&randomize_only), "randomize input, attempting to avoid clashes")
 
             ("weight_gauss1", value<double>(&weight_gauss1)->default_value(weight_gauss1),                "gauss_1 weight")
@@ -403,7 +405,7 @@ Thank you!\n";
                     v.load_maps(maps);
                 } else {
                     // Will compute maps only for Vina atom types in the ligand(s)
-                    v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing);
+                    v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing, force_even_voxels);
 
                     if (vm.count("write_maps"))
                         v.write_maps(out_maps);

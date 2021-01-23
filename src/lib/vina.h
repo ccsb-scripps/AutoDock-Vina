@@ -119,7 +119,7 @@ public:
     void set_ad4_weights(double weight_ad4_vdw=0.1662, double weight_ad4_hb=0.1209, 
                          double weight_ad4_elec=0.1406, double weight_ad4_dsolv=0.1322, 
                          double weight_glue=50, double weight_ad4_rot=0.2983);
-    void compute_vina_maps(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.5);
+    void compute_vina_maps(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.5, bool force_even_voxels=false);
     void load_maps(std::string maps);
     void randomize(const int max_steps=10000);
     std::vector<double> score();
@@ -167,7 +167,7 @@ private:
     output_container remove_redundant(const output_container& in, fl min_rmsd);
 
     void set_forcefield();
-	void set_vina_box(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.375, bool force_odd_npts=false);
+	void set_vina_box(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity=0.375, bool force_even_voxels=false);
     std::vector<double> score(double intramolecular_energy);
     std::vector<double> optimize(output_type& out, const int max_steps=0);
     int generate_seed(const int seed=0);

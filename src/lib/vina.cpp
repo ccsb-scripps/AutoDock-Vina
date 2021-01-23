@@ -278,7 +278,7 @@ void Vina::set_forcefield() {
     m_scoring_function = scoring_function;
 }
 
-void Vina::set_vina_box(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity, bool force_odd_npts) {
+void Vina::set_vina_box(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity, bool force_even_voxels) {
     // Setup the search box
     if (size_x <= 0 || size_y <= 0 || size_z <= 0) {
         std::cerr << "ERROR: Search space dimensions should be positive.\n";
@@ -299,7 +299,9 @@ void Vina::set_vina_box(double center_x, double center_y, double center_z, doubl
         // gd[i].begin = center[i] - real_span;
         // gd[i].end = center[i] + real_span;
 		gd[i].n_voxels = sz(std::ceil(span[i] / granularity));
-		if (force_odd_npts && gd[i].n_voxels == 1) 	// if odd n_voxels increment by 1
+		if (force_even_voxels)
+			std::cout << "\nFORCE EVEN VOXELS is TRUE, gd[i].n_voxels = " << gd[i].n_voxels << "\n\n";
+		if (force_even_voxels && (gd[i].n_voxels % 2 == 1)) 	// if odd n_voxels increment by 1
 			gd[i].n_voxels += 1; 				  	// because sample points (npts) == n_voxels +1 
 		fl real_span = granularity * gd[i].n_voxels;
 		gd[i].begin = center[i] - real_span/2;
@@ -315,7 +317,7 @@ void Vina::set_vina_box(double center_x, double center_y, double center_z, doubl
     m_corner2 = corner2;
 }
 
-void Vina::compute_vina_maps(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity) {
+void Vina::compute_vina_maps(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity, bool force_even_voxels) {
     // Setup the search box
     // Check first that the receptor was added
     if (m_sf_choice == SF_AD42) {
@@ -341,7 +343,7 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
     else
         doing("Computing Vinardo grid", m_verbosity, 0);
     // Initialize the vina box
-    set_vina_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity, false);
+    set_vina_box(center_x, center_y, center_z, size_x, size_y, size_z, granularity, force_even_voxels);
     precalculate precalculated_sf(m_scoring_function);
     m_precalculated_sf = precalculated_sf;
     cache grid(slope);
@@ -921,8 +923,6 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
     // Docking post-processing and rescoring
     poses = remove_redundant(poses, min_rmsd);
 
-	std::cout << "BEST SCORE BEFORE REFINE: " << poses[0].e << "\n";
-	
 	// Refine poses if no_refine is false and got receptor
 	if (!m_no_refine & m_receptor_initialized) {
 		change g(m_model.get_size());
@@ -940,7 +940,6 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 			const fl slope_orig = m_non_cache.slope;
 			VINA_FOR(p, 5){
 				m_non_cache.slope = 100 * std::pow(10.0, 2.0*p); 
-				std::cout << "Starting minimization with slope: " << m_non_cache.slope << "\n";
 				quasi_newton_par(m_model, m_precalculated_byatom, m_non_cache, poses[i], g, authentic_v, evalcount);
 				if(m_non_cache.within(m_model))
 					break;

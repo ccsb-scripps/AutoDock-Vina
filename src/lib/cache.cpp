@@ -381,53 +381,48 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 				break;
 		}
 		if (grids[t].initialized()) {
+
+			int nx = grids[t].m_data.dim0() - 1;
+			int ny = grids[t].m_data.dim1() - 1;
+			int nz = grids[t].m_data.dim2() - 1;
 			atom_type = convert_XS_to_string(t);
-			filename = out_prefix + "." + atom_type + ".map";
-			path p(filename);
-			ofile out(p);
 
-			// write header
-			out << "GRID_PARAMETER_FILE " << gpf_filename << "\n";
-			out << "GRID_DATA_FILE " << fld_filename << "\n";
-			out << "MACROMOLECULE " << receptor_filename << "\n";
+			// For writing a .map, the number of points in the grid must be odd, which means that the number
+			// of voxels (NELEMENTS) must be even... n_voxels = n_grid_points - 1
+			if (nx % 2 == 1 || ny % 2 == 1 || nz % 2 == 1){
+				std::cerr << "Can't write map. Number of voxels (NELEMENTS) is odd. Use --force_even_voxels.\n";
+			} else {
 
-			// m_factor_inv is spacing
-			// check that it's the same in every dimension (it must be)
-			// check that == operator is OK
-			/*if ((grids[t].m_factor_inv[0] != grids[t].m_factor_inv[1]) & (grids[t].m_factor_inv[0] != grids[t].m_factor_inv[2]))
-			{
-				printf("m_factor_inv x=%f, y=%f, z=%f\n", grids[t].m_factor_inv[0], grids[t].m_factor_inv[1], grids[t].m_factor_inv[2]);
-				return;
-			}*/
+				filename = out_prefix + "." + atom_type + ".map";
+				path p(filename);
+				ofile out(p);
 
-			out << "SPACING " << grids[t].m_factor_inv[0] << "\n";
+				// write header
+				out << "GRID_PARAMETER_FILE " << gpf_filename << "\n";
+				out << "GRID_DATA_FILE " << fld_filename << "\n";
+				out << "MACROMOLECULE " << receptor_filename << "\n";
+				out << "SPACING " << grids[t].m_factor_inv[0] << "\n";
+				
+				out << "NELEMENTS " << nx << " " << ny << " " << nz << "\n";
 
-			int size_x = grids[t].m_data.dim0();
-			int size_y = grids[t].m_data.dim1();
-			int size_z = grids[t].m_data.dim2();
-			// The number of elements in the grid is an odd number. But NELEMENTS has to be an even number.
-			size_x -= (size_x & 1);
-			size_y -= (size_y & 1);
-			size_z -= (size_z & 1);
-			out << "NELEMENTS " << size_x << " " << size_y << " " << size_z << "\n";
+				// center
+				fl cx = grids[t].m_init[0] + grids[t].m_range[0] * 0.5;
+				fl cy = grids[t].m_init[1] + grids[t].m_range[1] * 0.5;
+				fl cz = grids[t].m_init[2] + grids[t].m_range[2] * 0.5;
+				out << "CENTER " << cx << " " << cy << " " << cz << "\n";
 
-			// center
-			fl cx = grids[t].m_init[0] + grids[t].m_range[0] * 0.5;
-			fl cy = grids[t].m_init[1] + grids[t].m_range[1] * 0.5;
-			fl cz = grids[t].m_init[2] + grids[t].m_range[2] * 0.5;
-			out << "CENTER " << cx << " " << cy << " " << cz << "\n";
-
-			// write data
-			VINA_FOR(z, grids[t].m_data.dim2())
-			{
-				VINA_FOR(y, grids[t].m_data.dim1())
+				// write data
+				VINA_FOR(z, grids[t].m_data.dim2())
 				{
-					VINA_FOR(x, grids[t].m_data.dim0())
+					VINA_FOR(y, grids[t].m_data.dim1())
 					{
-						out << std::setprecision(4) << grids[t].m_data(x, y, z) << "\n"; // slow?
-					} // x
-				} // y
-			} // z
+						VINA_FOR(x, grids[t].m_data.dim0())
+						{
+							out << std::setprecision(4) << grids[t].m_data(x, y, z) << "\n"; // slow?
+						} // x
+					} // y
+				} // z
+			} // even voxels
 		} // map initialized
 	} // map atom type
 } // cache::write
