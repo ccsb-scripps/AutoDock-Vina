@@ -54,13 +54,13 @@ The option ``-y`` specifies that we want to center automatically the grid around
 .. code-block:: console
 	:caption: Content of the grid parameter file (**1iep_receptor.gpf**) for the receptor c-Abl (**1iep_receptor.pdbqt**)
 
-	npts 40 45 40                        # num.grid points in xyz
+	npts 54 54 54                        # num.grid points in xyz
 	gridfld 1iep_receptor.maps.fld       # grid_data_file
 	spacing 0.375                        # spacing(A)
 	receptor_types A C OA N SA HD        # receptor atom types
 	ligand_types A C NA OA N HD          # ligand atom types
 	receptor 1iep_receptor.pdbqt         # macromolecule
-	gridcenter 15.662 53.211 15.546      # xyz-coordinates or auto
+	gridcenter 15.190 53.903 16.917      # xyz-coordinates or auto
 	smooth 0.5                           # store minimum energy w/in rad(A)
 	map 1iep_receptor.A.map              # atom-specific affinity map
 	map 1iep_receptor.C.map              # atom-specific affinity map
@@ -69,7 +69,7 @@ The option ``-y`` specifies that we want to center automatically the grid around
 	map 1iep_receptor.N.map              # atom-specific affinity map
 	map 1iep_receptor.HD.map             # atom-specific affinity map
 	elecmap 1iep_receptor.e.map          # electrostatic potential map
-	dsolvmap 1iep_receptor.d.map              # desolvation potential map
+	dsolvmap 1iep_receptor.d.map         # desolvation potential map
 	dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
 
 After creating the GPF file, and now we can use the ``autogrid4`` command to generate the different map files that will be used for the molecular docking:
@@ -112,12 +112,12 @@ Contrary to AutoDock4, you don't need to precalculate the affinity grid maps wit
 .. code-block:: console
 	:caption: Content of the config file (**1iep_receptor_vina_box.txt**) for AutoDock Vina
 
-	center_x = 15.662
-	center_y = 53.211
-	center_z = 15.546
-	size_x = 15.0
-	size_y = 16.875
-	size_z = 15.0
+	center_x = 15.190
+	center_y = 53.903
+	center_z = 16.917
+	size_x = 20.0
+	size_y = 20.0
+	size_z = 20.0
 
 .. code-block:: bash
 
@@ -143,67 +143,67 @@ With ``exhaustiveness`` set to ``32``, Vina will most often give a single docked
 5.a. Using AutoDock forcefield
 ______________________________
 
-The predicted free energy of binding should be about ``-14 kcal/mol`` for poses that are similar to the crystallographic pose.
+The predicted free energy of binding should be about ``-15 kcal/mol`` for poses that are similar to the crystallographic pose.
 
 .. code-block:: console
 
-	Scoring function : ad4
-	Ligand: 1iep_ligand.pdbqt
-	Exhaustiveness: 32
-	CPU: 0
-	Verbosity: 1
+    Scoring function : ad4
+    Ligand: 1iep_ligand.pdbqt
+    Exhaustiveness: 32
+    CPU: 0
+    Verbosity: 1
 
-	Reading AD4.2 maps ... done.
+    Reading AD4.2 maps ... done.
+    Performing docking (random seed: -1563669800) ... 
+    0%   10   20   30   40   50   60   70   80   90   100%
+    |----|----|----|----|----|----|----|----|----|----|
+    ***************************************************
 
-	0%   10   20   30   40   50   60   70   80   90   100%
-	|----|----|----|----|----|----|----|----|----|----|
-	***************************************************
-
-	mode |   affinity | dist from best mode
-	     | (kcal/mol) | rmsd l.b.| rmsd u.b.
-	-----+------------+----------+----------
-	   1       -14.27          0          0
-	   2       -13.37      1.446      1.994
-	   3       -12.64      1.433      2.053
-	   4       -11.94       3.84      11.35
-	   5       -11.14       3.22      11.07
-	   6       -11.09      2.271      4.243
-	   7       -10.85      1.928      12.36
-	   8       -10.85      2.082      12.45
-	   9       -10.03      2.151      11.26
+    mode |   affinity | dist from best mode
+         | (kcal/mol) | rmsd l.b.| rmsd u.b.
+    -----+------------+----------+----------
+       1       -15.74          0          0
+       2       -14.44      1.309      1.798
+       3        -12.8      1.404       2.07
+       4       -12.61       3.98      12.18
+       5       -12.53      3.887      11.95
+       6       -12.21      4.963      11.38
+       7       -11.82       3.58      11.46
+       8       -11.56      1.717      2.615
+       9       -11.55      2.249      13.56
 
 5.b. Using Vina forcefield
 __________________________
 
-Using the vina forcefield, you should obtain a similar output from Vina with the best score around ``-10 kcal/mol``.
+Using the vina forcefield, you should obtain a similar output from Vina with the best score around ``-13 kcal/mol``.
 
 .. code-block:: console
 
-	Scoring function : vina
-	Rigid receptor: 1iep_receptor.pdbqt
-	Ligand: 1iep_ligand.pdbqt
-	Center: X 15.662 Y 53.211 Z 15.546
-	Size: X 15 Y 16.875 Z 15
-	Grid space: 0.375
-	Exhaustiveness: 32
-	CPU: 0
-	Verbosity: 1
+    Scoring function : vina
+    Rigid receptor: 1iep_receptor.pdbqt
+    Ligand: 1iep_ligand.pdbqt
+    Center: X 15.19 Y 53.903 Z 16.917
+    Size: X 20 Y 20 Z 20
+    Grid space: 0.375
+    Exhaustiveness: 32
+    CPU: 0
+    Verbosity: 1
 
-	Computing Vina grid ... done.
+    Computing Vina grid ... done.
+    Performing docking (random seed: -1763347052) ... 
+    0%   10   20   30   40   50   60   70   80   90   100%
+    |----|----|----|----|----|----|----|----|----|----|
+    ***************************************************
 
-	0%   10   20   30   40   50   60   70   80   90   100%
-	|----|----|----|----|----|----|----|----|----|----|
-	***************************************************
-
-	mode |   affinity | dist from best mode
-	     | (kcal/mol) | rmsd l.b.| rmsd u.b.
-	-----+------------+----------+----------
-	   1       -10.28          0          0
-	   2       -9.616      2.281      12.51
-	   3       -8.552      1.818      12.78
-	   4       -8.218      1.501      2.332
-	   5       -6.968      1.683      2.594
-	   6       -5.675      1.825      3.873
-	   7       -5.385      1.943      12.86
-	   8       -5.342      2.116      11.57
-	   9       -5.335        2.8      11.35
+    mode |   affinity | dist from best mode
+         | (kcal/mol) | rmsd l.b.| rmsd u.b.
+    -----+------------+----------+----------
+       1       -13.71          0          0
+       2       -11.73      2.985      12.42
+       3       -11.49      3.878      12.29
+       4       -11.07       2.53      12.62
+       5       -10.79       1.64      13.54
+       6       -10.26      2.968      12.54
+       7       -9.577      1.606      2.659
+       8       -9.573      2.508      12.77
+       9        -9.42      3.941      12.66

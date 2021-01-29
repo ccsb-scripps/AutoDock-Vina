@@ -60,13 +60,13 @@ Luckily for us, the structure ``1iep`` and ``1fpu`` are almost perfectly superpo
 .. code-block:: console
 	:caption: Content of the grid parameter file (**1fpu_receptor_rigid.gpf**) for the receptor c-Abl (**1fpu_receptor_rigid.pdbqt**)
 
-	npts 40 45 40                        # num.grid points in xyz
+	npts 54 54 54                        # num.grid points in xyz
 	gridfld 1fpu_receptor_rigid.maps.fld # grid_data_file
 	spacing 0.375                        # spacing(A)
 	receptor_types A C NA OA N SA HD     # receptor atom types
 	ligand_types A C NA OA N HD          # ligand atom types
 	receptor 1fpu_receptor_rigid.pdbqt   # macromolecule
-	gridcenter 15.662 53.211 15.546      # xyz-coordinates or auto
+	gridcenter 15.190 53.903 16.917      # xyz-coordinates or auto
 	smooth 0.5                           # store minimum energy w/in rad(A)
 	map 1fpu_receptor_rigid.A.map        # atom-specific affinity map
 	map 1fpu_receptor_rigid.C.map        # atom-specific affinity map
@@ -75,7 +75,7 @@ Luckily for us, the structure ``1iep`` and ``1fpu`` are almost perfectly superpo
 	map 1fpu_receptor_rigid.N.map        # atom-specific affinity map
 	map 1fpu_receptor_rigid.HD.map       # atom-specific affinity map
 	elecmap 1fpu_receptor_rigid.e.map    # electrostatic potential map
-	dsolvmap 1fpu_receptor_rigid.d.map              # desolvation potential map
+	dsolvmap 1fpu_receptor_rigid.d.map   # desolvation potential map
 	dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
 
 To execute ``autogrid4`` using ``1fpu_receptor_rigid.gpf``, run the folllowing command line:
@@ -118,12 +118,12 @@ As well as for the fully rigid molecular docking, you only need to specify the c
 .. code-block:: console
 	:caption: Content of the config file (**1fpu_receptor_rigid_vina_box.txt**) for AutoDock Vina
 
-	center_x = 15.662
-	center_y = 53.211
-	center_z = 15.546  
-	size_x = 15.0
-	size_y = 16.875
-	size_z = 15.0
+	center_x = 15.190
+	center_y = 53.903
+	center_z = 16.917
+	size_x = 20.0
+	size_y = 20.0
+	size_z = 20.0
 
 However, when using the Vina forcefield, you will need to specify both the rigid ``1fpu_receptor_rigid.pdbqt`` (needed to compute internally the affinity maps) and flex part ``1fpu_receptor_flex.pdbqt`` of the receptor. To perform the same docking experiment but using Vina forcefield run the following command line:
 
@@ -153,65 +153,65 @@ The predicted free energy of binding should be about ``-15 kcal/mol`` for poses 
 
 .. code-block:: console
 
-	Scoring function : ad4
-	Flex receptor: 1fpu_receptor_flex.pdbqt
-	Ligand: 1iep_ligand.pdbqt
-	Exhaustiveness: 32
-	CPU: 0
-	Verbosity: 1
+    Scoring function : ad4
+    Flex receptor: 1fpu_receptor_flex.pdbqt
+    Ligand: ../data/1iep_ligand.pdbqt
+    Exhaustiveness: 32
+    CPU: 0
+    Verbosity: 1
 
-	Reading AD4.2 maps ... done.
+    Reading AD4.2 maps ... done.
+    Performing docking (random seed: -1132104431) ... 
+    0%   10   20   30   40   50   60   70   80   90   100%
+    |----|----|----|----|----|----|----|----|----|----|
+    ***************************************************
 
-	0%   10   20   30   40   50   60   70   80   90   100%
-	|----|----|----|----|----|----|----|----|----|----|
-	***************************************************
-
-	mode |   affinity | dist from best mode
-	     | (kcal/mol) | rmsd l.b.| rmsd u.b.
-	-----+------------+----------+----------
-	   1       -15.09          0          0
-	   2       -13.09      1.491      1.974
-	   3        -12.5      3.443       6.58
-	   4       -12.11      2.696      10.59
-	   5       -11.92      1.718      2.274
-	   6        -11.4      2.307       3.74
-	   7       -11.06      2.082      10.91
-	   8       -10.76       2.69      11.57
-	   9       -10.27      2.104      11.08
+    mode |   affinity | dist from best mode
+         | (kcal/mol) | rmsd l.b.| rmsd u.b.
+    -----+------------+----------+----------
+       1       -15.41          0          0
+       2       -14.95      1.164      1.803
+       3       -13.92      1.112      1.744
+       4       -13.39      3.975      6.038
+       5       -13.08       1.48      2.166
+       6       -12.13      3.877      11.74
+       7       -12.13      5.806      9.094
+       8       -11.89      1.251      1.971
+       9       -11.55      2.804      10.81
 
 5.b. Using Vina forcefield
 __________________________
 
-Using the vina forcefield, you should obtain a similar output from Vina with the best score around ``-11 kcal/mol``.
+Using the vina forcefield, you should obtain a similar output from Vina with the best score around ``-12 kcal/mol``.
 
 .. code-block:: console
 
-	Scoring function : vina
-	Rigid receptor: 1fpu_receptor_rigid.pdbqt
-	Flex receptor: 1fpu_receptor_flex.pdbqt
-	Ligand: 1iep_ligand.pdbqt
-	Center: X 15.662 Y 53.211 Z 15.546
-	Size: X 15 Y 16.875 Z 15
-	Grid space: 0.375
-	Exhaustiveness: 32
-	CPU: 0
-	Verbosity: 1
+    Scoring function : vina
+    Rigid receptor: 1fpu_receptor_rigid.pdbqt
+    Flex receptor: 1fpu_receptor_flex.pdbqt
+    Ligand: ../data/1iep_ligand.pdbqt
+    Center: X 15.19 Y 53.903 Z 16.917
+    Size: X 20 Y 20 Z 20
+    Grid space: 0.375
+    Exhaustiveness: 32
+    CPU: 0
+    Verbosity: 1
 
-	Computing Vina grid ... done.
+    Computing Vina grid ... done.
+    Performing docking (random seed: 1973662971) ... 
+    0%   10   20   30   40   50   60   70   80   90   100%
+    |----|----|----|----|----|----|----|----|----|----|
+    ***************************************************
 
-	0%   10   20   30   40   50   60   70   80   90   100%
-	|----|----|----|----|----|----|----|----|----|----|
-	***************************************************
-
-	mode |   affinity | dist from best mode
-	     | (kcal/mol) | rmsd l.b.| rmsd u.b.
-	-----+------------+----------+----------
-	   1       -10.95          0          0
-	   2        -10.2      2.456      12.25
-	   3       -9.759       2.06      12.26
-	   4       -8.872      2.445      12.09
-	   5       -8.449      2.322      11.64
-	   6       -7.665      2.126      11.27
-	   7       -7.486      1.595      2.752
-	   8        -7.45      1.818      2.679
-	   9       -7.239      1.366      2.209
+    mode |   affinity | dist from best mode
+         | (kcal/mol) | rmsd l.b.| rmsd u.b.
+    -----+------------+----------+----------
+       1       -12.17          0          0
+       2       -11.41       3.23       12.1
+       3       -11.22      1.512      2.137
+       4       -11.19       4.07         12
+       5       -10.64      3.833      11.99
+       6        -10.2      2.537      12.12
+       7       -9.547      2.493      12.26
+       8       -9.367      2.476      12.41
+       9       -9.051      3.809      11.72
