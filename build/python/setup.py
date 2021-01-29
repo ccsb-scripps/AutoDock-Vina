@@ -274,12 +274,12 @@ class CustomBuildExt(build_ext):
 
 obextension = Extension(
     'vina._vina_wrapper',
-    sources=['src/lib/random.cpp', 'src/lib/utils.cpp', 'src/lib/vina.cpp', 
-             'src/lib/quaternion.cpp', 'src/lib/monte_carlo.cpp', 
-             'src/lib/mutate.cpp', 'src/lib/szv_grid.cpp', 'src/lib/quasi_newton.cpp', 
-             'src/lib/parallel_progress.cpp', 'src/lib/model.cpp', 'src/lib/coords.cpp', 
+    sources=['src/lib/random.cpp', 'src/lib/utils.cpp', 'src/lib/vina.cpp',
+             'src/lib/quaternion.cpp', 'src/lib/monte_carlo.cpp', 'src/lib/non_cache.cpp',
+             'src/lib/mutate.cpp', 'src/lib/szv_grid.cpp', 'src/lib/quasi_newton.cpp',
+             'src/lib/parallel_progress.cpp', 'src/lib/model.cpp', 'src/lib/coords.cpp',
              'src/lib/ad4cache.cpp', 'src/lib/grid.cpp', 'src/lib/parallel_mc.cpp', 
-             'src/lib/conf_independent.cpp', 'src/lib/parse_pdbqt.cpp', 
+             'src/lib/conf_independent.cpp', 'src/lib/parse_pdbqt.cpp',
              'src/lib/cache.cpp', 'vina/autodock_vina.i'],
     extra_link_args=['-lboost_thread', '-lboost_serialization',
                      '-lboost_filesystem', '-lboost_program_options'],

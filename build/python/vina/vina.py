@@ -16,13 +16,16 @@ from . import utils
 
 
 class Vina:
-    def __init__(self, sf_name='vina', cpu=0, seed=0, verbosity=1):
+    def __init__(self, sf_name='vina', cpu=0, seed=0, no_refine=False, verbosity=1):
         """Initialize a Vina object.
 
         Args:
             sf_name (str): Scoring function name to use (Vina or ad4) (default: vina)
             cpu (int): Number of CPU to use (default: 0; use all of them)
             seed (int): Random seed (default: 0; ramdomly choosed)
+            no_refine (boolean): when receptor is provided, do not use explicit receptor atoms
+                (instead of precalculated grids) for: (1) local optimization and scoring after docking,
+                (2) --local_only jobs, and (3) --score_only jobs (default: False)
             verbosity (int): verbosity 0: not output, 1: normal, 2: verbose (default: 1; some output)
 
         """
@@ -30,7 +33,7 @@ class Vina:
         if not sf_name in ('vina', 'vinardo', 'ad4'):
             raise ValueError('Error: Scoring function %s not recognized. (only vina, vinardo or ad4)' % sf_name)
 
-        self._vina = _Vina(sf_name, cpu, seed, verbosity)
+        self._vina = _Vina(sf_name, cpu, seed, verbosity, no_refine)
         
         self._sf_name = sf_name
         if sf_name == 'vina':
@@ -45,6 +48,8 @@ class Vina:
         self._center = None
         self._box_size = None
         self._spacing = None
+        self._even_nelements = True
+        self._no_refine = no_refine
         self._seed = self._vina.seed()
 
     def __str__(self):
@@ -178,13 +183,15 @@ class Vina:
 
         self._weights = weights
 
-    def compute_vina_maps(self, center, box_size, spacing=0.375):
+    def compute_vina_maps(self, center, box_size, spacing=0.375, force_even_voxels=False):
         """Compute affinity maps using Vina scoring function.
 
         Args:
             center (list): center position
             box_size (list): size of the box in Angstrom
             spacing (float): grid spacing (default: 0.375)
+            force_even_voxels (boolean): Force the number of voxels (NPTS/NELEMENTS) to be an even number
+                (and forcing the number of grid points to be odd) (default: False)
 
         """
         if len(center) != 3:
@@ -198,10 +205,19 @@ class Vina:
 
         x, y, z = center
         a, b, c = box_size
-        self._vina.compute_vina_maps(x, y, z, a, b, c, spacing)
+
+        self._vina.compute_vina_maps(x, y, z, a, b, c, spacing, force_even_voxels)
+
         self._center = center
         self._box_size = box_size
         self._spacing = spacing
+        self._voxels = np.ceil(np.array(box_size) / self._spacing).astype(np.int)
+
+        # Necessary step to know if we can write maps or not later
+        if force_even_voxels:
+            self._voxels[0] += int(self._voxels[0] % 2 == 1)
+            self._voxels[1] += int(self._voxels[1] % 2 == 1)
+            self._voxels[2] += int(self._voxels[2] % 2 == 1)
 
     def load_maps(self, map_prefix_filename):
         """Load vina or ad4 affinity maps.
@@ -233,6 +249,11 @@ class Vina:
             existing_maps = glob.glob('%s.*.map' % map_prefix_filename)
             if existing_maps:
                 raise RuntimeError('Error: Cannot overwrite existing affinity maps (%s)' % existing_maps)
+
+        if any(self._voxels % 2 == 1):
+            error_msg = 'Error: Can\'t write maps. Number of voxels (NPTS/NELEMENTS) is odd: %s.' % self._voxels
+            error_msg += ' Set \'force_even_voxels\' to True when computing vina maps.'
+            raise RuntimeError(error_msg)
 
         self._vina.write_maps(map_prefix_filename, gpf_filename, fld_filename, receptor_filename)
     

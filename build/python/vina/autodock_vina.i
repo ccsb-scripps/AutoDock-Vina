@@ -48,6 +48,7 @@
 #include "model.h"
 #include "monte_carlo.h"
 #include "mutate.h"
+#include "non_cache.h"
 #include "parallel.h"
 #include "parallel_mc.h"
 #include "parallel_progress.h"
