@@ -6,7 +6,7 @@
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+	   http://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,8 +15,8 @@
    limitations under the License.
 
    Author: Dr. Oleg Trott <ot14@columbia.edu>, 
-           The Olson Lab, 
-           The Scripps Research Institute
+		   The Olson Lab,
+		   The Scripps Research Institute
 
 */
 
@@ -97,7 +97,7 @@ fl cache::eval_intra(model& m, fl v) const {
 	sz nat = num_atom_types(atom_type::XS);
 
 	VINA_FOR(i, m.num_movable_atoms()) {
-        if(m.is_atom_in_ligand(i)) continue; // we only want flex-rigid interaction
+		if(m.is_atom_in_ligand(i)) continue; // we only want flex-rigid interaction
 		const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::XS);
 
@@ -187,7 +187,7 @@ bool cache::are_atom_types_grid_initialized(szv atom_types) const {
 
 	VINA_FOR_IN(i, atom_types) {
 		sz t = atom_types[i];
-		
+
 		if (t >= nat) { continue; }
 		switch (t)
 		{
@@ -254,14 +254,14 @@ void read_vina_map(path &filename, std::vector<grid_dims> &gds, grid &g)
 		if (line_counter == 5)
 		{
 			std::vector<std::string> fields = vina_split(line);
-            VINA_FOR(i, 3) {
+			VINA_FOR(i, 3) {
 				// n_voxels must be EVEN
-			    // because the number of sampled points in the grid is always ODD
+				// because the number of sampled points in the grid is always ODD
 				// (number of sampled points == n_voxels + 1)
-                gd[i].n_voxels = std::atoi(fields[i + 1].c_str());
-			    if (gd[i].n_voxels % 2 == 1) {
-					std::cout << "number of voxels (NELEMENTS) must be even\n";
-			    	assert(false);
+				gd[i].n_voxels = std::atoi(fields[i + 1].c_str());
+				if (gd[i].n_voxels % 2 == 1) {
+					std::cerr << "ERROR: number of voxels (NELEMENTS) must be even\n";
+					exit(EXIT_FAILURE);
 				}
 			}
 		}
@@ -344,7 +344,7 @@ grid_dims cache::read(const std::string &map_prefix)
 }
 
 void cache::write(const std::string& out_prefix, const szv& atom_types, const std::string& gpf_filename,
-                  const std::string& fld_filename, const std::string& receptor_filename) 
+				  const std::string& fld_filename, const std::string& receptor_filename)
 {
 	sz nat = num_atom_types(atom_type::XS);
 	std::string atom_type;
@@ -381,7 +381,6 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 				break;
 		}
 		if (grids[t].initialized()) {
-
 			int nx = grids[t].m_data.dim0() - 1;
 			int ny = grids[t].m_data.dim1() - 1;
 			int nz = grids[t].m_data.dim2() - 1;
@@ -390,7 +389,8 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 			// For writing a .map, the number of points in the grid must be odd, which means that the number
 			// of voxels (NELEMENTS) must be even... n_voxels = n_grid_points - 1
 			if (nx % 2 == 1 || ny % 2 == 1 || nz % 2 == 1){
-				std::cerr << "Can't write map. Number of voxels (NELEMENTS) is odd. Use --force_even_voxels.\n";
+				std::cerr << "ERROR: Can't write maps. Number of voxels (NELEMENTS) is odd. Use --force_even_voxels.\n";
+				exit(EXIT_FAILURE);
 			} else {
 
 				filename = out_prefix + "." + atom_type + ".map";
