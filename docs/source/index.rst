@@ -37,9 +37,10 @@ AutoDock Vina is **open source** and welcomes your contributions. `Fork the repo
    docking_requirements
    docking_basic
    docking_flexible
-   docking_macrocycle
-   docking_hydrated
+   docking_multiple_ligands
    docking_zinc
+   docking_hydrated
+   docking_macrocycle
    docking_python
 
 .. toctree::
