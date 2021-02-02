@@ -20,7 +20,7 @@ Zinc is present in a wide variety of proteins and is important in the metabolism
 1. Preparing the receptor
 -------------------------
 
-During this step we will create the PDBQT file of the receptor using the PDB file called ``proteinH.pdb``, containing all the hydrogen atoms, and add the tetrahedral zinc pseudo atoms (``TZ``) around the Zinc ion. TZ atoms represent the preferred position for tetrahedral coordination by the ligand. All the materials for this tutorial can be found here: ``<autodock-vina_directory>/example/docking_with_zinc_metalloproteins/data``.
+During this step we will create the PDBQT file of the receptor using the PDB file called ``proteinH.pdb``, containing all the hydrogen atoms, and add the tetrahedral zinc pseudo atoms (``TZ``) around the Zinc ion. TZ atoms represent the preferred position for tetrahedral coordination by the ligand. All the materials for this tutorial can be found here: ``<autodock-vina_directory>/example/docking_with_zinc_metalloproteins/data``. This file contains the receptor coordinates of chain A and B taken from the PDB entry ``1s63``.
 
 To prepare the receptor, execute the following command lines:
 
