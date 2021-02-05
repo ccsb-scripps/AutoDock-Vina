@@ -239,6 +239,7 @@ void parse_pdbqt_rigid(const path& name, rigid& r) {
         ++count;
         if(str.empty()) {} // ignore ""
         else if(starts_with(str, "TER")) {} // ignore 
+        else if(starts_with(str, "END")) {} // ignore
         else if(starts_with(str, "WARNING")) {} // ignore - AutoDockTools bug workaround
         else if(starts_with(str, "REMARK")) {} // ignore
         else if(starts_with(str, "ATOM  ") || starts_with(str, "HETATM")) {
