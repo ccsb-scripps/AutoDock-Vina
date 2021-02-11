@@ -81,6 +81,9 @@ void Vina::set_receptor(const std::string& rigid_name, const std::string& flex_n
 
 	m_model = m_receptor;
 	m_receptor_initialized = true;
+	// If we are reading another receptor we should not consider the ligand and the map as initialized anymore
+	m_ligand_initialized = false;
+	m_map_initialized = false;
 }
 
 void Vina::set_ligand_from_string(const std::string& ligand_string) {
