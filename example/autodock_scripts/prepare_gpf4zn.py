@@ -154,12 +154,12 @@ if __name__ == '__main__':
 if not output_gpf_filename:
     output_gpf_filename = receptor_filename.split('.pdbqt')[0] + '.gpf'
 gpf = open(output_gpf_filename, 'a')
-gpf.write('nbp_r_eps 0.25 3.8581 12 6 NA TZ\n')
-gpf.write('nbp_r_eps 2.1  0.6391 12 6 OA Zn\n')
-gpf.write('nbp_r_eps 2.25 1.2617 12 6 SA Zn\n')
-gpf.write('nbp_r_eps 1.0  0.0    12 6 HD Zn\n')
-gpf.write('nbp_r_eps 2.0  0.001  12 6 NA Zn\n')
-gpf.write('nbp_r_eps 2.0  0.0493 12 6  N Zn\n')
+gpf.write('nbp_r_eps 0.25 23.2135 12 6 NA TZ\n')
+gpf.write('nbp_r_eps 2.1   3.8453 12 6 OA Zn\n')
+gpf.write('nbp_r_eps 2.25  7.5914 12 6 SA Zn\n')
+gpf.write('nbp_r_eps 1.0   0.0    12 6 HD Zn\n')
+gpf.write('nbp_r_eps 2.0   0.0060 12 6 NA Zn\n')
+gpf.write('nbp_r_eps 2.0   0.2966 12 6  N Zn\n')
 gpf.close()
 
 
