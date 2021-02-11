@@ -14,7 +14,7 @@ The protein PDE in complex with two inhibitors (pdb id: `5x72 <https://www.rcsb.
 1. Preparing the flexible receptor
 ----------------------------------
 
-Exactly like the :ref:`basic_docking` tutorial, the method requires a receptor coordinate file that includes all hydrogen atoms. The file ``5x72_receptorH.pdb`` is provided (see ``<autodock-vina_directory>/example/multiple_ligands_docking/data`` directory). This file contains the receptor coordinates taken from the PDB entry ``5x72``. It was manually obtained by extracting the receptor coordinates (using an text editor) from the original PDB file ``5x72.pdb`` in the ``data`` directory, and the hydrogen atoms added using `reduce <http://kinemage.biochem.duke.edu/software/reduce.php>`_.
+Exactly like the :ref:`basic_docking` tutorial, the method requires a receptor coordinate file that includes all hydrogen atoms. The file ``5x72_receptorH.pdb`` is provided (see ``data`` directory located at ``<autodock-vina_directory>/example/multiple_ligands_docking/``). This file contains the receptor coordinates taken from the PDB entry ``5x72``. It was manually obtained by extracting the receptor coordinates (using an text editor) from the original PDB file ``5x72.pdb`` in the ``data`` directory, and the hydrogen atoms added using `reduce <http://kinemage.biochem.duke.edu/software/reduce.php>`_.
 
 .. code-block:: bash
     
@@ -41,13 +41,13 @@ The output PDBQT ``5x72_ligand_p59.pdbqt`` and ``5x72_ligand_p69.pdbqt`` can be 
 3. (Optional) Generating affinity maps for AutoDock FF
 ------------------------------------------------------
 
-As well as for the docking with a fully rigid receptor, we need to generate a GPF file to precalculate the affinity map for each atom types. However, instead of using the full receptor, affinity maps will be calculated only for the rigid part of the receptor (``5x72_receptor.pdbqt``).
+As well as for the docking with a fully rigid receptor, we need to generate a GPF file to precalculate the affinity map for each atom types. However, instead of using the full receptor, affinity maps will be calculated only for the rigid part of the receptor (``5x72_receptor.pdbqt``). The Python script ``prepare_gpf.py`` is available here: ``<autodock-vina_directory>/example/autodock_scripts``.
 
 To prepare the GPF file for the rigid part of the receptor:
 
 .. code-block:: bash
 
-    $ pythonsh prepare_gpf.py -l 5x72_ligand_p59.pdbqt -r 5x72_receptor.pdbqt \ 
+    $ pythonsh <script_directory>/prepare_gpf.py -l 5x72_ligand_p59.pdbqt -r 5x72_receptor.pdbqt \ 
                -p npts='80,64,64' -p gridcenter='-15 15 129' -o 5x72_receptor.gpf
 
 This time we manually specified the center of the grid ``-p gridcenter='-15 15 129'`` as well as its size ``-p npts='80,64,64'``. The python script ``prepare_gpf.py`` is located in the ``scripts`` directory for the :ref:`basic_docking` tutorial.
@@ -95,8 +95,8 @@ You should obtain as well the following files:
 4. Running AutoDock Vina
 ------------------------
 
-4.a. Using AutoDock forcefield
-______________________________
+4.a. Using AutoDock4 forcefield
+_______________________________
 
 When using the AutoDock4 forcefield, you only need to provide the affinity maps and the ligand, while specifying that the forcefield used will be AutoDock4 using the option ``--scoring ad4``.
 

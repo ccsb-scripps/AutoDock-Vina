@@ -3,13 +3,12 @@
 Docking with zinc metalloproteins
 =================================
 
-Introduction
-------------
+Zinc is present in a wide variety of proteins and is important in the metabolism of most organisms. Zinc metalloenzymes are therapeutically relevant targets in diseases such as cancer, heart disease, bacterial infection, and Alzheimer’s disease. In most cases a drug molecule targeting such enzymes establishes an interaction that coordinates with the zinc ion. Thus, accurate prediction of the interaction of ligands with zinc is an important aspect of computational docking and virtual screening against zinc containing proteins. 
 
-Zinc is present in a wide variety of proteins and is important in the metabolism of most organisms. Zinc metalloenzymes are therapeutically relevant targets in diseases such as cancer, heart disease, bacterial infection, and Alzheimer’s disease. In most cases a drug molecule targeting such enzymes establishes an interaction that coordinates with the zinc ion. Thus, accurate prediction of the interaction of ligands with zinc is an important aspect of computational docking and virtual screening against zinc containing proteins. The AutoDock force field was extended to include a specialized potential describing the interactions of zinc-coordinating ligands. This potential describes both the energetic and geometric components of the interaction. The new force field, named AutoDock4Zn, was calibrated on a data set of 292 crystal complexes containing zinc. Redocking experiments show that the force field provides significant improvement in performance in both free energy of binding estimation as well as in root-mean-square deviation from the crystal structure pose.
+The AutoDock4 force field was extended to include a specialized potential describing the interactions of zinc-coordinating ligands. This potential describes both the energetic and geometric components of the interaction. The new force field, named AutoDock4Zn, was calibrated on a data set of 292 crystal complexes containing zinc. Redocking experiments show that the force field provides significant improvement in performance in both free energy of binding estimation as well as in root-mean-square deviation from the crystal structure pose.
 
 .. note::
-    This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the raccoon Python package.
+    This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the meeko Python package.
 
 .. note::
 
@@ -20,7 +19,7 @@ Zinc is present in a wide variety of proteins and is important in the metabolism
 1. Preparing the receptor
 -------------------------
 
-During this step we will create the PDBQT file of the receptor using the PDB file called ``proteinH.pdb``, containing all the hydrogen atoms, and add the tetrahedral zinc pseudo atoms (``TZ``) around the Zinc ion. TZ atoms represent the preferred position for tetrahedral coordination by the ligand. All the materials for this tutorial can be found here: ``<autodock-vina_directory>/example/docking_with_zinc_metalloproteins/data``. This file contains the receptor coordinates of chain A and B taken from the PDB entry ``1s63``.
+During this step we will create the PDBQT file of the receptor using the PDB file called ``proteinH.pdb``, containing all the hydrogen atoms, and add the tetrahedral zinc pseudo atoms (``TZ``) around the Zinc ion. TZ atoms represent the preferred position for tetrahedral coordination by the ligand. All the materials for this tutorial can be found here: ``<autodock-vina_directory>/example/docking_with_zinc_metalloproteins/data``. This file contains the receptor coordinates of chain A and B taken from the PDB entry ``1s63``. The Python script ``zinc_pseudo.py`` is available here: ``<autodock-vina_directory>/example/autodock_scripts``.
 
 To prepare the receptor, execute the following command lines:
 
@@ -108,8 +107,8 @@ At this stage, all forcefield information has been encoded in the affinity maps,
 4. Running AutoDock Vina
 ------------------------
 
-4.a. Using AutoDock forcefield
-______________________________
+4.a. Using AutoDock4 forcefield
+_______________________________
 
 When using the AutoDock4 forcefield, you only need to provide the affinity maps and the ligand, while specifying that the forcefield used will be AutoDock4 using the option ``--scoring ad4``.
 
@@ -117,13 +116,6 @@ When using the AutoDock4 forcefield, you only need to provide the affinity maps 
 
     $ vina --ligand ligand.pdbqt --maps protein_tz --scoring ad4 \
            --exhaustiveness 32 --out ligand_ad4_out.pdbqt
-
-4.b. Using Vina forcefield
-__________________________
-
-.. warning::
-    
-    While this method was calibrated and validated with the AutoDock4 forcefield, we strongly advice you against using this protocol with the Vina and Vinardo forcefield.
 
 5. Results
 ----------

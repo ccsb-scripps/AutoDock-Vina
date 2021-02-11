@@ -1,0 +1,16 @@
+npts 54 54 54                        # num.grid points in xyz
+gridfld BACE_1_receptor.maps.fld     # grid_data_file
+spacing 0.375                        # spacing(A)
+receptor_types A C NA OA N SA HD     # receptor atom types
+ligand_types A C OA N HD             # ligand atom types
+receptor BACE_1_receptor.pdbqt       # macromolecule
+gridcenter 30.103 6.152 15.584       # xyz-coordinates or auto
+smooth 0.5                           # store minimum energy w/in rad(A)
+map BACE_1_receptor.A.map            # atom-specific affinity map
+map BACE_1_receptor.C.map            # atom-specific affinity map
+map BACE_1_receptor.OA.map           # atom-specific affinity map
+map BACE_1_receptor.N.map            # atom-specific affinity map
+map BACE_1_receptor.HD.map           # atom-specific affinity map
+elecmap BACE_1_receptor.e.map        # electrostatic potential map
+dsolvmap BACE_1_receptor.d.map              # desolvation potential map
+dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant

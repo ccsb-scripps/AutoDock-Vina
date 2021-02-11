@@ -3,18 +3,19 @@
 Hydrated docking
 ================
 
-Introduction
-------------
-
 In physiological environments, proteins and other biological structures are surrounded by water molecules. When a small-molecule binds to a protein, it must displace most of the waters occupying the binding cavity. However, rarely are all water molecules displaced. Some waters can be so strongly bound and conserved among similar proteins that from a ligand-docking perspective they are considered a part of the target structure, altering the binding site topography. 
 
-Thus a method was developed that uses the existing version of AutoDock but modifies the force field to model explicit bridging water molecules. The ligand is decorated with an ensemble of water molecules (by adding dummy atoms), which may or may not then contribute to the interactions. A modified AutoGrid map is then used during docking, giving a favorable score when the water is well placed and omitting the water if it overlaps with the receptor. A final script analyzes the docked results, retaining only those waters in appropriate positions. In tests, this method has shown improvement in the prediction of bound conformations of small fragment molecules, such as those used in fragment-based drug discovery.
+Thus a method was developed that uses the existing version of AutoDock4 and now the new version AutoDock Vina 1.2.x but modifies the force field to model explicit bridging water molecules. In tests, this method has shown improvement in the prediction of bound conformations of small fragment molecules, such as those used in fragment-based drug discovery. The protocol can be summarized by those steps:
+
+	1. The ligand is decorated with an ensemble of water molecules (represented by dummy atoms), which may or may not then contribute to the intermolecular interactions. 
+	2. A modified AutoGrid map is then used during docking, giving a favorable score when the water is well placed and omitting the water if it overlaps with the receptor. 
+	3. Finally, docked results are analyzing and poses are rescored using only water molecules that were retained.
 
 In this tutorial, we are going to dock a fragment-size ligand (nicotine) with explicit water molecules in the acetylcholine binding protein (AChBP) structure (PDB entry `1uw6 <https://www.rcsb.org/structure/1uw6>`_). It was shown that the absence of water molecules could have a dramatic influence in docking performance leading to either inaccurate scoring and/or incorrect pose. With hydrated docking, fragment-sized ligands show a overall RMSD improvement.
 
 .. note::
 
-	This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the raccoon Python package.
+	This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the meeko Python package.
 
 .. note::
 	
@@ -26,25 +27,25 @@ In this tutorial, we are going to dock a fragment-size ligand (nicotine) with ex
 1. Preparing the receptor
 -------------------------
 
-The receptor can be prepared using the method described earlier in the following tutorials: :ref:`basic_docking` or :ref:`flexible_docking` if one wants to incorporate some sidechain flexibility. The file ``1uw6_receptorH.pdb`` is provided (see ``<autodock-vina_directory>/example/hydrated_docking/data`` directory). This file contains the receptor coordinates of chain A and B taken from the PDB entry ``1uw6``.
+The receptor can be prepared using the method described earlier in the following tutorials: :ref:`basic_docking` or :ref:`flexible_docking` if one wants to incorporate some sidechain flexibility. The file ``1uw6_receptorH.pdb`` is provided (see ``data`` directory located at ``<autodock-vina_directory>/example/hydrated_docking/``). This file contains the receptor coordinates of chain A and B taken from the PDB entry ``1uw6``.
 
 .. code-block:: bash
 
 	$ prepare_receptor -r 1uw6_receptorH.pdb -o 1uw6_receptor.pdbqt
 
-The output PDBQT file ``1uw6_receptor.pdbqt`` is available in ``<autodock-vina_directory>/example/flexible_docking/solution`` directory if necessary.
+The output PDBQT file ``1uw6_receptor.pdbqt`` is available in ``solution`` directory if necessary.
 
 2. Preparing the ligand
 -----------------------
 
-For the hydrated docking, explicit water molecules (W atoms) must be added to a PDBQT file. And for that, we will use the ``wet.py`` command tool. For this step, the file ``1uw6_ligandH.pdb`` is also provided (see ``<autodock-vina_directory>/example/hydrated_docking/data`` directory). This file includes ligand coordinates taken from PDB entry ``1uw6`` with all hydrogen atoms already present.
+For the hydrated docking, explicit water molecules (W atoms) must be added to a PDBQT file. And for that, we will use the ``wet.py`` command tool. For this step, the file ``1uw6_ligandH.pdb`` is also provided (see ``data`` directory). This file includes ligand coordinates taken from PDB entry ``1uw6`` with all hydrogen atoms already present.
 
-We first need to generate the PDBQT file, and after add water positions to the ligand. For that, type and execute the following command lines:
+We first need to generate the PDBQT file, and after add water positions to the ligand using the ``wet.py`` python script, available here: ``<autodock-vina_directory>/example/autodock_scripts``.
 
 .. code-block:: bash
 	
 	$ prepare_ligand -l 1uw6_ligandH.pdb -o 1uw6_ligand.pdbqt
-	$ wet.py -i 1uw6_ligand.pdbqt -o 1uw6_ligand_hydro.pdbqt
+	$ pythonsh <script_directory>/wet.py -i 1uw6_ligand.pdbqt -o 1uw6_ligand_hydro.pdbqt
 
 From the ``wet.py`` command, you should obtain the following output:
 
@@ -112,7 +113,7 @@ You can now execute ``autogrid4`` using the GPF file called ``1uw6_receptor.gpf`
 .. code-block:: bash
 
 	$ autogrid4 -p 1uw6_receptor.gpf -l 1uw6_receptor.glg
-	$ mapwater.py -r 1uw6_receptor.pdbqt -s 1uw6_receptor.W.map
+	$ pythonsh <script_directory>/mapwater.py -r 1uw6_receptor.pdbqt -s 1uw6_receptor.W.map
 
 For more informations about the ``mapwater.py`` command tool and all the available options, just type ``mapwater.py``. After executing this command, you should obtain a new affinity map called ``1uw6_receptor.W.map`` and the following the output:
 
@@ -144,10 +145,10 @@ For more informations about the ``mapwater.py`` command tool and all the availab
 4. Running AutoDock Vina
 ------------------------
 
-4.a. Using AutoDock forcefield
-______________________________
+4.a. Using AutoDock4 forcefield
+_______________________________
 
-Now that you generated the ligand with explicit water molecules attached (``1uw6_ligand_hydro.pdbqt``) and the extra affinity map for the  ``W`` atom type (``1uw6_receptor.W.map``), you can do the molecular docking with AutoDock Vina using the AutoDock forcefield:
+Now that you generated the ligand with explicit water molecules attached (``1uw6_ligand_hydro.pdbqt``) and the extra affinity map for the ``W`` atom type (``1uw6_receptor.W.map``), you can do the molecular docking with Vina using the AutoDock4 forcefield:
 
 .. code-block:: bash
 
@@ -201,7 +202,7 @@ Docking results are filtered by using the receptor to remove displaced waters an
 
 .. code-block:: bash
 
-	$ dry.py -r 1uw6_receptor.pdbqt -m 1uw6_receptor.W.map -i 1uw6_ligand_hydro_ad4_out.pdbqt
+	$ pythonsh <script_directory>/dry.py -r 1uw6_receptor.pdbqt -m 1uw6_receptor.W.map -i 1uw6_ligand_hydro_ad4_out.pdbqt
 
 For more informations about the ``dry.py`` command tool and all the available options, just type ``dry.py``. Running the previous command should give you this output:
 

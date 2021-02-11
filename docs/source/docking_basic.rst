@@ -6,7 +6,7 @@ Basic docking
 Let's start with our first example of docking, where the typical usage pattern would be to dock a single molecule into a rigid receptor. In this example we will dock the approved anticancer drug `imatinib <https://en.wikipedia.org/wiki/Imatinib>`_ (Gleevec; PDB entry `1iep <https://www.rcsb.org/structure/1IEP>`_) in the structure of c-Abl using AutoDock Vina. The target for this protocol is the kinase domain of the proto-oncogene tyrosine protein kinase c-Abl. The protein is an important target for cancer chemotherapy—in particular, the treatment of chronic myelogenous leukemia.
 
 .. note::
-	This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the raccoon Python package.
+	This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the meeko Python package.
 
 .. note::
 	The materials present is this tutorial can be also found here: `https://www.nature.com/articles/nprot.2016.051 <https://www.nature.com/articles/nprot.2016.051>`_. If you are using this tutorial for your works, you can cite the following paper:
@@ -22,19 +22,19 @@ During this step, we will create a PDBQT file of our receptor containing only th
 
 	$ prepare_receptor -r 1iep_receptorH.pdb -o 1iep_receptor.pdbqt
 
-Other options are available for ``prepare_receptor`` by typing ``prepare_receptor -h``. If you are not sure about this step, the output PDBQT file ``1iep_receptor.pdbqt`` is available in ``<autodock-vina_directory>/example/basic_docking/solution`` directory.
+Other options are available for ``prepare_receptor`` by typing ``prepare_receptor -h``. If you are not sure about this step, the output PDBQT file ``1iep_receptor.pdbqt`` is available in ``solution`` directory.
 
 
 2. Preparing the ligand
 -----------------------
 
-This step is very similar to the previous step. We will also create a PDBQT file from a ligand molecule file (in MOL2 or PDB format). As well as for the receptor, the coordinate set must includes all hydrogen atoms according to the choosen protonation state. This may be obtained in a variety of ways, including with experimental coordinates from the `PDB <https://www.rcsb.org>`_ or `Cambridge Crystallographic Database <http://www.ccdc.cam.ac.uk>`_. The file ``1iep_ligandH.pdb`` is also provided (see ``<autodock-vina_directory>/example/basic_docking/data`` directory). This file includes ligand coordinates taken from PDB entry ``1iep``, to which all hydrogen atoms have been added and manually adjusted to the known protonation state.
+This step is very similar to the previous step. We will also create a PDBQT file from a ligand molecule file (in MOL2 or PDB format). As well as for the receptor, the coordinate set must includes all hydrogen atoms according to the choosen protonation state. This may be obtained in a variety of ways, including with experimental coordinates from the `PDB <https://www.rcsb.org>`_ or `Cambridge Crystallographic Database <http://www.ccdc.cam.ac.uk>`_. The file ``1iep_ligandH.pdb`` is also provided (see ``data`` directory). This file includes ligand coordinates taken from PDB entry ``1iep``, to which all hydrogen atoms have been added and manually adjusted to the known protonation state.
 
 .. code-block:: bash
 
 	$ prepare_ligand -r 1iep_ligandH.pdb -o 1iep_ligand.pdbqt
 
-As well, different options are available for ``prepare_ligand``, type  ``prepare_ligand -h`` for more details. If you are not sure about this step, the output PDBQT file ``1iep_ligand.pdbqt`` is available in ``<autodock-vina_directory>/example/basic_docking/solution`` directory.
+As well, different options are available for ``prepare_ligand``, type  ``prepare_ligand -h`` for more details. If you are not sure about this step, the output PDBQT file ``1iep_ligand.pdbqt`` is available in ``solution`` directory.
 
 
 3. (Optional) Generating affinity maps for AutoDock FF
@@ -42,7 +42,7 @@ As well, different options are available for ``prepare_ligand``, type  ``prepare
 
 Now, we have to define the grid space for the docking, typically, a 3D box around a the potential binding site of a receptor. During this step, we will create the input file for AutoGrid4, which will create an affinity map file for each atom types. The grid parameter file specifies an AutoGrid4 calculation, including the size and location of the grid, the atom types that will be used, the coordinate file for the rigid receptor, and other parameters for calculation of the grids.
 
-To prepare the gpf file for AutoGrid4, your can use the ``prepare_gpf.py`` command line tool. This Python script is available here: ``<autodock-vina_directory>/example/basic_docking/scripts``.
+To prepare the gpf file for AutoGrid4, your can use the ``prepare_gpf.py`` command line tool. This Python script is available here: ``<autodock-vina_directory>/example/autodock_scripts``.
 
 .. code-block:: bash
 
@@ -92,8 +92,8 @@ From this command you should have generated the following files:
 
 The imatinib ligand used in this protocol is challenging, and Vina will occasionally not find the correct pose with the default parameters. Vina provides a parameter called ``exhaustiveness`` to change the amount of computational effort used during a docking experiment. The default exhaustiveness value is ``8``; increasing this to ``32`` will give a more consistent docking result. At this point of the tutorial, you have the choice to decide to run the molecular docking using either the ``AutoDock`` forcefield (requires affinity maps, see previous step) or using the ``Vina`` forcefield (no need for affinity maps).
 
-4.a. Using AutoDock forcefield
-______________________________
+4.a. Using AutoDock4 forcefield
+_______________________________
 
 When using the AutoDock4 forcefield, you only need to provide the affinity maps and the ligand, while specifying that the forcefield used will be AutoDock4 using the option ``--scoring ad4``.
 

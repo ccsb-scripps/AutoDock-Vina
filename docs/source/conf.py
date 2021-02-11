@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.abspath('../build/python'))
 # -- Project information -----------------------------------------------------
 
 project = 'Autodock Vina'
-copyright = '2020, Center of Computational Structural Biology (CCSB) - Scripps Research'
+copyright = '2021, Center of Computational Structural Biology (CCSB) - Scripps Research'
 author = 'Center of Computational Structural Biology (CCSB) - Scripps Research'
 
 # The full version, including alpha/beta/rc tags

@@ -5,14 +5,8 @@ Flexible docking
 
 The lack of receptor flexibility is arguably the greatest limitation in these types of docking methods. However, AutoDock Vina allows some limited flexibility of selected receptor side chains. In this tutorial, we will describe the cross-docking of the `imatinib molecule <https://en.wikipedia.org/wiki/Imatinib>`_ to c-Abl in PDB entry `1fpu <https://www.rcsb.org/structure/1FPU>`_, treating Thr315 as flexible. 
 
-.. tip::
-
-	Some systems might experience larger motions of loops or domains, the relaxed complex method has shown success by sampling a variety of receptor conformations using molecular dynamics and then performing docking simulations on these snapshots.
-
-	- Lin, J. H., Perryman, A. L., Schames, J. R., & McCammon, J. A. (2003). The relaxed complex method: Accommodating receptor flexibility for drug design with an improved scoring scheme. Biopolymers: Original Research on Biomolecules, 68(1), 47-62.
-
 .. note::
-	This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the raccoon Python package.
+	This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the meeko Python package.
 
 .. note::
 	The materials present is this tutorial can be also found here: `https://www.nature.com/articles/nprot.2016.051 <https://www.nature.com/articles/nprot.2016.051>`_. If you are using this tutorial for your works, you can cite the following paper:
@@ -22,7 +16,7 @@ The lack of receptor flexibility is arguably the greatest limitation in these ty
 1. Preparing the flexible receptor
 ----------------------------------
 
-During this step, we are going to split the receptor coordinates into two PDBQT files: one for the rigid portion and one for the flexible side chains. As with the :ref:`basic_docking` tutorial, the method requires a receptor coordinate file that includes all hydrogen atoms. The file ``1fpu_receptorH.pdb`` is provided (see ``<autodock-vina_directory>/example/flexible_docking/data`` directory). This file contains the receptor coordinates taken from PDB entry ``1fpu``.
+During this step, we are going to split the receptor coordinates into two PDBQT files: one for the rigid portion and one for the flexible side chains. As with the :ref:`basic_docking` tutorial, the method requires a receptor coordinate file that includes all hydrogen atoms. The file ``1fpu_receptorH.pdb`` is provided (see ``<autodock-vina_directory>/example/flexible_docking/data`` directory). This file contains the receptor coordinates taken from PDB entry ``1fpu``. The Python script ``prepare_flexreceptor.py`` is available here: ``<autodock-vina_directory>/example/autodock_scripts``.
 
 .. code-block:: bash
 	
@@ -53,7 +47,7 @@ To prepare the GPF file for the rigid part of the receptor:
 
 .. code-block:: bash
 
-	$ pythonsh prepare_gpf.py -l 1iep_ligand.pdbqt -r 1fpu_receptor_rigid.pdbqt -y
+	$ pythonsh <script_directory>/prepare_gpf.py -l 1iep_ligand.pdbqt -r 1fpu_receptor_rigid.pdbqt -y
 
 Luckily for us, the structure ``1iep`` and ``1fpu`` are almost perfectly superposed already, so we can also center the grid around ``1iep_ligand.pdbqt``. Otherwise, the center of the grid can be specified using the option ``-p gridcenter='X,X,X'``.
 
@@ -97,8 +91,8 @@ You should obtain as well the following files:
 4. Running AutoDock Vina
 ------------------------
 
-4.a. Using AutoDock forcefield
-______________________________
+4.a. Using AutoDock4 forcefield
+_______________________________
 
 While using the AutoDock4 forcefield, only the flex part of the receptor is necessary, as well as the affinity maps. Once the receptor (flex part ``1fpu_receptor_flex.pdbqt``), ligand ``1iep_ligand.pdbqt`` and maps ``1fpu_receptor_rigid`` were prepared, you can perform the flexible side-chain docking by simply running the following command line:
 

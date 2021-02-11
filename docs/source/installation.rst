@@ -1,3 +1,5 @@
+.. _installation:
+
 Installation
 ============
 
@@ -22,10 +24,10 @@ Optionally, you can copy the binary files where you want.
 
 If the executable is in your PATH, you can just type "vina --help" instead.
 
-Mac OS
+macOS
 ------
 
-The 64 bit version is expected to work on Mac OS X 10.15 (Catalina) and newer. The 32 bit version of Vina is expected to work on Mac OS X from 10.4 (Tiger) through 10.14 (Mojave).
+The 64 bit version is expected to work on macOS 10.15 (Catalina) and newer. The 32 bit version of Vina is expected to work on Mac OS X from 10.4 (Tiger) through 10.14 (Mojave).
 
 **Installing**:
 
@@ -45,23 +47,6 @@ Optionally, you can copy the binary files where you want.
 
 If the executable is in your PATH, you can just type "vina --help" instead.
 
-Windows
--------
-
-Vina is expected to work on Windows XP and newer systems.
-
-**Installing**: 
-
-Double-click the downloaded MSI file and follow the instructions
-
-**Running**: 
-
-Open the Command Prompt and, if you installed Vina in the default location, type
-
-.. code-block:: bash
-
-    "\Program Files\The Scripps Research Institute\Vina\vina.exe" --help
-
 Python bindings
 ---------------
 
@@ -77,19 +62,19 @@ The `Conda package manager <https://docs.conda.io/en/latest/>`_ is included as p
     $ conda create -n vina python=3
     $ conda activate vina
     $ conda install -c conda-forge numpy openbabel swig boost-cpp sphinx sphinx_rtd_theme
-    $ conda install -c ccsb-scripps autodock-vina
+    $ conda install -c ccsb-scripps vina
 
 3. And type the following command
 
 .. code-block:: bash
 
-    $ conda install -c ccsb-scripps autodock-vina
+    $ conda install -c ccsb-scripps vina
 
 **AutoDock Vina installation using pip**:
 
 .. code-block:: bash
 
-    $ pip install autodock-vina
+    $ pip install vina
 
 Building from Source
 --------------------
