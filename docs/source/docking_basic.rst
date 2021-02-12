@@ -6,21 +6,21 @@ Basic docking
 Let's start with our first example of docking, where the typical usage pattern would be to dock a single molecule into a rigid receptor. In this example we will dock the approved anticancer drug `imatinib <https://en.wikipedia.org/wiki/Imatinib>`_ (Gleevec; PDB entry `1iep <https://www.rcsb.org/structure/1IEP>`_) in the structure of c-Abl using AutoDock Vina. The target for this protocol is the kinase domain of the proto-oncogene tyrosine protein kinase c-Abl. The protein is an important target for cancer chemotherapy—in particular, the treatment of chronic myelogenous leukemia.
 
 .. note::
-	This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the meeko Python package.
+    This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the meeko Python package.
 
 .. note::
-	The materials present is this tutorial can be also found here: `https://www.nature.com/articles/nprot.2016.051 <https://www.nature.com/articles/nprot.2016.051>`_. If you are using this tutorial for your works, you can cite the following paper:
+    The materials present is this tutorial can be also found here: `https://www.nature.com/articles/nprot.2016.051 <https://www.nature.com/articles/nprot.2016.051>`_. If you are using this tutorial for your works, you can cite the following paper:
 
-	- Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.
+    - Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.
 
 1. Preparing the receptor
 -------------------------
 
-During this step, we will create a PDBQT file of our receptor containing only the polar hydrogen atoms as well as partial charges. For this step, we will use the ``prepare_receptor`` command tool from the ADFR Suite. As a prerequisite, a receptor coordinate file must contain all hydrogen atoms. If hydrogen atoms are absent in the protein structure file, you can add the ``-A "hydrogens"`` flag. Many tools exist to add missing hydrogen atoms to a protein, one popular choice would be to use `REDUCE <http://kinemage.biochem.duke.edu/software/reduce.php>`_. If you are using experimental structures (for instance, from the PDB), use a text editor to remove waters, ligands, cofactors, ions deemed unnecessary for the docking. The file ``1iep_receptorH.pdb`` is provided (see ``<autodock-vina_directory>/example/basic_docking/data`` directory). This file contains the receptor coordinates taken from PDB entry ``1iep``.
+During this step, we will create a PDBQT file of our receptor containing only the polar hydrogen atoms as well as partial charges. For this step, we will use the ``prepare_receptor`` command tool from the ADFR Suite. As a prerequisite, a receptor coordinate file must contain all hydrogen atoms. If hydrogen atoms are absent in the protein structure file, you can add the ``-A "hydrogens"`` flag. Many tools exist to add missing hydrogen atoms to a protein, one popular choice would be to use `REDUCE <http://kinemage.biochem.duke.edu/software/reduce.php>`_. If you are using experimental structures (for instance, from the `Protein Data Bank <https://www.rcsb.org>`_), use a text editor to remove waters, ligands, cofactors, ions deemed unnecessary for the docking. The file ``1iep_receptorH.pdb`` is provided (see ``<autodock-vina_directory>/example/basic_docking/data`` directory). This file contains the receptor coordinates taken from PDB entry `1iep <https://www.rcsb.org/structure/1IEP>`_.
 
 .. code-block:: bash
 
-	$ prepare_receptor -r 1iep_receptorH.pdb -o 1iep_receptor.pdbqt
+    $ prepare_receptor -r 1iep_receptorH.pdb -o 1iep_receptor.pdbqt
 
 Other options are available for ``prepare_receptor`` by typing ``prepare_receptor -h``. If you are not sure about this step, the output PDBQT file ``1iep_receptor.pdbqt`` is available in ``solution`` directory.
 
@@ -28,13 +28,17 @@ Other options are available for ``prepare_receptor`` by typing ``prepare_recepto
 2. Preparing the ligand
 -----------------------
 
-This step is very similar to the previous step. We will also create a PDBQT file from a ligand molecule file (in MOL2 or PDB format). As well as for the receptor, the coordinate set must includes all hydrogen atoms according to the choosen protonation state. This may be obtained in a variety of ways, including with experimental coordinates from the `PDB <https://www.rcsb.org>`_ or `Cambridge Crystallographic Database <http://www.ccdc.cam.ac.uk>`_. The file ``1iep_ligandH.pdb`` is also provided (see ``data`` directory). This file includes ligand coordinates taken from PDB entry ``1iep``, to which all hydrogen atoms have been added and manually adjusted to the known protonation state.
+This step is very similar to the previous step. We will also create a PDBQT file from a ligand molecule file (in MOL/MOL2 or SDF format) using the ``Meeko`` python package (see installation instruction here: :ref:`docking_requirements`). For convenience, the file ``1iep_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1iep <https://www.rcsb.org/structure/1IEP>`_ (see ``Download instance Coordinates`` link for the STI molecule). Since the ligand file does not include the hydrogen atoms, we are going to automatically add them and correct the protonation for a pH of 7.4.
+
+.. warning::
+  
+  We strongly advice you against using PDB format for preparing small molecules, since it does not contain information about bond connections. Please don't forget to always check the protonation state of your molecules before docking. Your success can sometimes hang by just an hydrogen atom. ;-)
 
 .. code-block:: bash
 
-	$ prepare_ligand -r 1iep_ligandH.pdb -o 1iep_ligand.pdbqt
+    $ mk_prepare_ligand.py -i 1iep_ligand.sdf -o 1iep_ligand.pdbqt --add_hydrogen --pH 7.4
 
-As well, different options are available for ``prepare_ligand``, type  ``prepare_ligand -h`` for more details. If you are not sure about this step, the output PDBQT file ``1iep_ligand.pdbqt`` is available in ``solution`` directory.
+Other options are available for ``mk_prepare_ligand.py`` by typing ``mk_prepare_ligand.py --help``. If you are not sure about this step, the output PDBQT file ``1iep_ligand.pdbqt`` is available in ``solution`` directory.
 
 
 3. (Optional) Generating affinity maps for AutoDock FF
@@ -46,46 +50,46 @@ To prepare the gpf file for AutoGrid4, your can use the ``prepare_gpf.py`` comma
 
 .. code-block:: bash
 
-	$ pythonsh <script_directory>/prepare_gpf.py -l 1iep_ligand.pdbqt -r 1iep_receptor.pdbqt -y
+    $ pythonsh <script_directory>/prepare_gpf.py -l 1iep_ligand.pdbqt -r 1iep_receptor.pdbqt -y
 
 The option ``-y`` specifies that we want to center automatically the grid around the ligand. For more information about ``prepare_gpf.py``, type ``pythonsh prepare_gpf.py -h``. At the end you should obtain the following GPF file ``1iep_receptor.gpf`` containing those lines:
 
 
 .. code-block:: console
-	:caption: Content of the grid parameter file (**1iep_receptor.gpf**) for the receptor c-Abl (**1iep_receptor.pdbqt**)
+    :caption: Content of the grid parameter file (**1iep_receptor.gpf**) for the receptor c-Abl (**1iep_receptor.pdbqt**)
 
-	npts 54 54 54                        # num.grid points in xyz
-	gridfld 1iep_receptor.maps.fld       # grid_data_file
-	spacing 0.375                        # spacing(A)
-	receptor_types A C OA N SA HD        # receptor atom types
-	ligand_types A C NA OA N HD          # ligand atom types
-	receptor 1iep_receptor.pdbqt         # macromolecule
-	gridcenter 15.190 53.903 16.917      # xyz-coordinates or auto
-	smooth 0.5                           # store minimum energy w/in rad(A)
-	map 1iep_receptor.A.map              # atom-specific affinity map
-	map 1iep_receptor.C.map              # atom-specific affinity map
-	map 1iep_receptor.NA.map             # atom-specific affinity map
-	map 1iep_receptor.OA.map             # atom-specific affinity map
-	map 1iep_receptor.N.map              # atom-specific affinity map
-	map 1iep_receptor.HD.map             # atom-specific affinity map
-	elecmap 1iep_receptor.e.map          # electrostatic potential map
-	dsolvmap 1iep_receptor.d.map         # desolvation potential map
-	dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
+    npts 54 54 54                        # num.grid points in xyz
+    gridfld 1iep_receptor.maps.fld       # grid_data_file
+    spacing 0.375                        # spacing(A)
+    receptor_types A C OA N SA HD        # receptor atom types
+    ligand_types A C NA OA N HD          # ligand atom types
+    receptor 1iep_receptor.pdbqt         # macromolecule
+    gridcenter 15.190 53.903 16.917      # xyz-coordinates or auto
+    smooth 0.5                           # store minimum energy w/in rad(A)
+    map 1iep_receptor.A.map              # atom-specific affinity map
+    map 1iep_receptor.C.map              # atom-specific affinity map
+    map 1iep_receptor.NA.map             # atom-specific affinity map
+    map 1iep_receptor.OA.map             # atom-specific affinity map
+    map 1iep_receptor.N.map              # atom-specific affinity map
+    map 1iep_receptor.HD.map             # atom-specific affinity map
+    elecmap 1iep_receptor.e.map          # electrostatic potential map
+    dsolvmap 1iep_receptor.d.map         # desolvation potential map
+    dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
 
 After creating the GPF file, and now we can use the ``autogrid4`` command to generate the different map files that will be used for the molecular docking:
 
 .. code-block:: bash
 
-	$ autogrid4 -p 1iep.gpf -l 1iep.glg
+    $ autogrid4 -p 1iep.gpf -l 1iep.glg
 
 From this command you should have generated the following files:
 
 .. code-block:: console
 
-	1iep_receptor.maps.fld       # grid data file
-	1iep_receptor.*.map          # affinity maps for A, C, HD, H, NA, N, OA atom types
-	1iep_receptor.d.map          # desolvation map
-	1iep_receptor.e.map          # electrostatic map
+    1iep_receptor.maps.fld       # grid data file
+    1iep_receptor.*.map          # affinity maps for A, C, HD, H, NA, N, OA atom types
+    1iep_receptor.d.map          # desolvation map
+    1iep_receptor.e.map          # electrostatic map
 
 4. Running AutoDock Vina
 ------------------------
@@ -99,8 +103,8 @@ When using the AutoDock4 forcefield, you only need to provide the affinity maps 
 
 .. code-block:: bash
 
-	$ vina  --ligand 1iep_ligand.pdbqt --maps 1iep_receptor --scoring ad4 \
-	        --exhaustiveness 32 --out 1iep_ligand_ad4_out.pdbqt
+    $ vina  --ligand 1iep_ligand.pdbqt --maps 1iep_receptor --scoring ad4 \
+            --exhaustiveness 32 --out 1iep_ligand_ad4_out.pdbqt
 
 Running AutoDock Vina will write a PDBQT file called ``1iep_ligand_ad4_out.pdbqt`` contaning all the poses found during the molecular docking and also present docking information to the terminal window.
 
@@ -110,24 +114,24 @@ __________________________
 Contrary to AutoDock4, you don't need to precalculate the affinity grid maps with ``autogrid4`` when using the Vina forcefield. AutoDock Vina computes those maps internally before the docking. However, you still need to specify the center and dimensions (in Angstrom) of the grid space, as well as the receptor. Here, instead of specifying each parameters for the grid box using the arguments ``--center_x, --center_y, --center_z`` and ``--size_x, --size_y, --size_z``, we will store all those informations in a text file ``1iep_receptor_vina_box.txt``.
 
 .. code-block:: console
-	:caption: Content of the config file (**1iep_receptor_vina_box.txt**) for AutoDock Vina
+    :caption: Content of the config file (**1iep_receptor_vina_box.txt**) for AutoDock Vina
 
-	center_x = 15.190
-	center_y = 53.903
-	center_z = 16.917
-	size_x = 20.0
-	size_y = 20.0
-	size_z = 20.0
+    center_x = 15.190
+    center_y = 53.903
+    center_z = 16.917
+    size_x = 20.0
+    size_y = 20.0
+    size_z = 20.0
 
 .. code-block:: bash
 
-	$ vina --receptor 1iep_receptor.pdbqt --ligand 1iep_ligand.pdbqt \
-	       --config 1iep_receptor_vina_box.txt \
-	       --exhaustiveness=32 --out 1iep_ligand_vina_out.pdbqt
+    $ vina --receptor 1iep_receptor.pdbqt --ligand 1iep_ligand.pdbqt \
+           --config 1iep_receptor_vina_box.txt \
+           --exhaustiveness=32 --out 1iep_ligand_vina_out.pdbqt
 
 .. tip::
 
-	Alternatively, you can use the Vinardo forcefield by adding the ``--scoring vinardo`` option.
+    Alternatively, you can use the Vinardo forcefield by adding the ``--scoring vinardo`` option.
 
 Running AutoDock Vina will write a PDBQT file called ``1iep_ligand_vina_out.pdbqt``.
 
@@ -137,40 +141,40 @@ Running AutoDock Vina will write a PDBQT file called ``1iep_ligand_vina_out.pdbq
 With ``exhaustiveness`` set to ``32``, Vina will most often give a single docked pose with this energy. With the lower default exhaustiveness, several poses flipped end to end, with less favorable energy, may be reported.
 
 .. warning::
-	
-	Please don't forget that energy scores giving by the AutoDock and Vina forcefield are not comparable between each other.
+    
+    Please don't forget that energy scores giving by the AutoDock and Vina forcefield are not comparable between each other.
 
 5.a. Using AutoDock forcefield
 ______________________________
 
-The predicted free energy of binding should be about ``-15 kcal/mol`` for poses that are similar to the crystallographic pose.
+The predicted free energy of binding should be about ``-14 kcal/mol`` for poses that are similar to the crystallographic pose.
 
 .. code-block:: console
 
-    Scoring function : ad4
-    Ligand: 1iep_ligand.pdbqt
-    Exhaustiveness: 32
-    CPU: 0
-    Verbosity: 1
+  Scoring function : ad4
+  Ligand: 1iep_ligand.pdbqt
+  Exhaustiveness: 32
+  CPU: 0
+  Verbosity: 1
 
-    Reading AD4.2 maps ... done.
-    Performing docking (random seed: -1563669800) ... 
-    0%   10   20   30   40   50   60   70   80   90   100%
-    |----|----|----|----|----|----|----|----|----|----|
-    ***************************************************
+  Reading AD4.2 maps ... done.
+  Performing docking (random seed: -556654859) ... 
+  0%   10   20   30   40   50   60   70   80   90   100%
+  |----|----|----|----|----|----|----|----|----|----|
+  ***************************************************
 
-    mode |   affinity | dist from best mode
-         | (kcal/mol) | rmsd l.b.| rmsd u.b.
-    -----+------------+----------+----------
-       1       -15.74          0          0
-       2       -14.44      1.309      1.798
-       3        -12.8      1.404       2.07
-       4       -12.61       3.98      12.18
-       5       -12.53      3.887      11.95
-       6       -12.21      4.963      11.38
-       7       -11.82       3.58      11.46
-       8       -11.56      1.717      2.615
-       9       -11.55      2.249      13.56
+  mode |   affinity | dist from best mode
+       | (kcal/mol) | rmsd l.b.| rmsd u.b.
+  -----+------------+----------+----------
+     1       -14.62          0          0
+     2       -13.13      1.051      1.529
+     3       -12.26      1.442      2.158
+     4       -11.91      3.646       11.5
+     5       -11.89      3.859      11.99
+     6       -11.47      1.978      13.56
+     7       -11.33      1.727      2.585
+     8       -10.85      3.619      5.759
+     9       -10.23      7.057       12.7
 
 5.b. Using Vina forcefield
 __________________________
@@ -179,31 +183,31 @@ Using the vina forcefield, you should obtain a similar output from Vina with the
 
 .. code-block:: console
 
-    Scoring function : vina
-    Rigid receptor: 1iep_receptor.pdbqt
-    Ligand: 1iep_ligand.pdbqt
-    Center: X 15.19 Y 53.903 Z 16.917
-    Size: X 20 Y 20 Z 20
-    Grid space: 0.375
-    Exhaustiveness: 32
-    CPU: 0
-    Verbosity: 1
+  Scoring function : vina
+  Rigid receptor: 1iep_receptor.pdbqt
+  Ligand: 1iep_ligand.pdbqt
+  Center: X 15.19 Y 53.903 Z 16.917
+  Size: X 20 Y 20 Z 20
+  Grid space: 0.375
+  Exhaustiveness: 32
+  CPU: 0
+  Verbosity: 1
 
-    Computing Vina grid ... done.
-    Performing docking (random seed: -1763347052) ... 
-    0%   10   20   30   40   50   60   70   80   90   100%
-    |----|----|----|----|----|----|----|----|----|----|
-    ***************************************************
+  Computing Vina grid ... done.
+  Performing docking (random seed: -131415392) ... 
+  0%   10   20   30   40   50   60   70   80   90   100%
+  |----|----|----|----|----|----|----|----|----|----|
+  ***************************************************
 
-    mode |   affinity | dist from best mode
-         | (kcal/mol) | rmsd l.b.| rmsd u.b.
-    -----+------------+----------+----------
-       1       -13.71          0          0
-       2       -11.73      2.985      12.42
-       3       -11.49      3.878      12.29
-       4       -11.07       2.53      12.62
-       5       -10.79       1.64      13.54
-       6       -10.26      2.968      12.54
-       7       -9.577      1.606      2.659
-       8       -9.573      2.508      12.77
-       9        -9.42      3.941      12.66
+  mode |   affinity | dist from best mode
+       | (kcal/mol) | rmsd l.b.| rmsd u.b.
+  -----+------------+----------+----------
+     1       -12.92          0          0
+     2       -10.97      3.012      12.42
+     3       -10.79      3.713      12.19
+     4       -10.69      3.913      12.36
+     5       -10.32      2.538      12.64
+     6       -9.464      2.916      12.53
+     7       -9.204       1.35      2.025
+     8       -9.137      1.596      2.674
+     9       -8.637      3.969      12.69

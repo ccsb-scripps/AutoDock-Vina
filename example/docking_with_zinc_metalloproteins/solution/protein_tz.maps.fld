@@ -15,7 +15,7 @@ dim1=41			# number of x-elements
 dim2=31			# number of y-elements
 dim3=51			# number of z-elements
 nspace=3		# number of physical coordinates per point
-veclen=8		# number of affinity values at each point
+veclen=9		# number of affinity values at each point
 data=float		# data type (byte, integer, float, double)
 field=uniform		# field type (uniform, rectilinear, irregular)
 coord 1 file=protein_tz.maps.xyz filetype=ascii offset=0
@@ -27,8 +27,9 @@ label=Cl-affinity	# component label for variable 3
 label=NA-affinity	# component label for variable 4
 label=OA-affinity	# component label for variable 5
 label=N-affinity	# component label for variable 6
-label=Electrostatics	# component label for variable 7
-label=Desolvation	# component label for variable 8
+label=HD-affinity	# component label for variable 7
+label=Electrostatics	# component label for variable 8
+label=Desolvation	# component label for variable 9
 #
 # location of affinity grid files and how to read them
 #
@@ -38,5 +39,6 @@ variable 3 file=protein_tz.Cl.map filetype=ascii skip=6
 variable 4 file=protein_tz.NA.map filetype=ascii skip=6
 variable 5 file=protein_tz.OA.map filetype=ascii skip=6
 variable 6 file=protein_tz.N.map filetype=ascii skip=6
-variable 7 file=protein_tz.e.map filetype=ascii skip=6
-variable 8 file=protein_tz.d.map filetype=ascii skip=6
+variable 7 file=protein_tz.HD.map filetype=ascii skip=6
+variable 8 file=protein_tz.e.map filetype=ascii skip=6
+variable 9 file=protein_tz.d.map filetype=ascii skip=6

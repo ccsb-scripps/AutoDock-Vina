@@ -19,7 +19,7 @@ The AutoDock4 force field was extended to include a specialized potential descri
 1. Preparing the receptor
 -------------------------
 
-During this step we will create the PDBQT file of the receptor using the PDB file called ``proteinH.pdb``, containing all the hydrogen atoms, and add the tetrahedral zinc pseudo atoms (``TZ``) around the Zinc ion. TZ atoms represent the preferred position for tetrahedral coordination by the ligand. All the materials for this tutorial can be found here: ``<autodock-vina_directory>/example/docking_with_zinc_metalloproteins/data``. This file contains the receptor coordinates of chain A and B taken from the PDB entry ``1s63``. The Python script ``zinc_pseudo.py`` is available here: ``<autodock-vina_directory>/example/autodock_scripts``.
+During this step we will create the PDBQT file of the receptor using the PDB file called ``proteinH.pdb``, containing all the hydrogen atoms, and add the tetrahedral zinc pseudo atoms (``TZ``) around the Zinc ion. TZ atoms represent the preferred position for tetrahedral coordination by the ligand. All the materials for this tutorial can be found here: ``<autodock-vina_directory>/example/docking_with_zinc_metalloproteins/data``. This file contains the receptor coordinates of chain A and B taken from the PDB entry `1s63 <https://www.rcsb.org/structure/1S63>`_. The Python script ``zinc_pseudo.py`` is available here: ``<autodock-vina_directory>/example/autodock_scripts``.
 
 To prepare the receptor, execute the following command lines:
 
@@ -43,13 +43,13 @@ The second message is telling us that only one zinc pseudo atom (TZ) was added t
 2. Preparing the ligand
 -----------------------
 
-The second step consists to prepare the ligand, by converting the MOL2 file ``ligand.mol2`` to a PDBQT file readable by AutoDock Vina. As usual, we will use the ``prepare_ligand`` tool for this task. The MOL2 file is located in the ``data`` directory.
+The second step consists to prepare the ligand, by converting the SDF file ``1s63_ligand.msdf`` to a PDBQT file readable by AutoDock Vina. As usual, we will use the ``mk_prepare_ligand.py`` Python script from ``Meeko`` (see installation instruction here: :ref:`docking_requirements`) for this task. For your convenience, the molecule file ``1s63_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1s63 <https://www.rcsb.org/structure/1S63>`_ (see ``Download instance Coordinates`` link for the 778 molecule. Since the ligand file does not include the hydrogen atoms, we are going to automatically add them and correct the protonation for a pH of 7.4.
 
 .. code-block:: bash
 
-    $ prepare_ligand -l ligand.mol2 -o ligand.pdbqt
+    $ mk_prepare_ligand.py -i 1s63_ligand.sdf -o 1s63_ligand.pdbqt --add_hydrogen --pH 7.4
 
-The output PDBQT  ``ligand.pdbqt`` can be found in the ``solution`` directory.
+The output PDBQT  ``1s63_ligand.pdbqt`` can be found in the ``solution`` directory.
 
 3. Generating affinity maps
 ---------------------------
@@ -58,7 +58,7 @@ The preparation script ``prepare_gpf4zn.py`` will be used to generate a special 
 
 .. code-block:: bash
 
-    $ pythonsh <script_directory>/prepare_gpf4zn.py -l ligand.pdbqt -r protein_tz.pdbqt \
+    $ pythonsh <script_directory>/prepare_gpf4zn.py -l 1s63_ligand.pdbqt -r protein_tz.pdbqt \
     -o protein_tz.gpf  -p npts=40,30,50 -p gridcenter=18,134,-1 \
     –p parameter_file=AD4Zn.dat   
 
@@ -71,7 +71,7 @@ The ``-p`` flag is used to set the box center (``gridcenter``) and size (``npts`
     gridfld protein_tz.maps.fld          # grid_data_file
     spacing 0.375                        # spacing(A)
     receptor_types A C TZ NA ZN OA N P SA HD # receptor atom types
-    ligand_types A C Cl NA OA N          # ligand atom types
+    ligand_types A C Cl NA OA N HD       # ligand atom types
     receptor protein_tz.pdbqt            # macromolecule
     gridcenter 18 134 -1                 # xyz-coordinates or auto
     smooth 0.5                           # store minimum energy w/in rad(A)
@@ -81,6 +81,7 @@ The ``-p`` flag is used to set the box center (``gridcenter``) and size (``npts`
     map protein_tz.NA.map                # atom-specific affinity map
     map protein_tz.OA.map                # atom-specific affinity map
     map protein_tz.N.map                 # atom-specific affinity map
+    map protein_tz.HD.map                # atom-specific affinity map
     elecmap protein_tz.e.map             # electrostatic potential map
     dsolvmap protein_tz.d.map              # desolvation potential map
     dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
@@ -114,24 +115,24 @@ When using the AutoDock4 forcefield, you only need to provide the affinity maps 
 
 .. code-block:: bash
 
-    $ vina --ligand ligand.pdbqt --maps protein_tz --scoring ad4 \
-           --exhaustiveness 32 --out ligand_ad4_out.pdbqt
+    $ vina --ligand 1s63_ligand.pdbqt --maps protein_tz --scoring ad4 \
+           --exhaustiveness 32 --out 1s63_ligand_ad4_out.pdbqt
 
 5. Results
 ----------
 
-The predicted free energy of binding should be about ``-13 kcal/mol`` for the best pose and should corresponds to the crystallographic pose. The ligand coordinates for the crystallographic pose are in the PDB file called ``xray_ligand.pdb`` located in the ``data`` directory.
+The predicted free energy of binding should be about ``-13 kcal/mol`` for the best pose and should corresponds to the crystallographic pose.
 
 .. code-block:: console
 
     Scoring function : ad4
-    Ligand: ligand.pdbqt
+    Ligand: 1s63_ligand.pdbqt
     Exhaustiveness: 32
     CPU: 0
     Verbosity: 1
 
     Reading AD4.2 maps ... done.
-
+    Performing docking (random seed: 1984557646) ... 
     0%   10   20   30   40   50   60   70   80   90   100%
     |----|----|----|----|----|----|----|----|----|----|
     ***************************************************
@@ -139,12 +140,12 @@ The predicted free energy of binding should be about ``-13 kcal/mol`` for the be
     mode |   affinity | dist from best mode
          | (kcal/mol) | rmsd l.b.| rmsd u.b.
     -----+------------+----------+----------
-       1       -12.97          0          0
-       2       -12.63      2.439      4.662
-       3       -12.49      2.755      4.426
-       4       -12.36      2.008      2.962
-       5       -12.22      1.614      3.496
-       6       -11.59      2.165      3.451
-       7       -11.58      2.016      3.604
-       8       -11.33      2.813      3.908
-       9       -11.26      2.951      5.547
+       1        -13.5          0          0
+       2          -13      2.518      4.707
+       3       -12.56      2.116      2.499
+       4       -12.44      3.041      4.021
+       5       -12.12      2.975      6.211
+       6       -11.96      2.814      6.336
+       7       -11.91      3.244      6.477
+       8       -11.32      3.783      5.654
+       9       -11.31      2.856      3.867

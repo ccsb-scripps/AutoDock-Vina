@@ -25,16 +25,16 @@ If you are not sure about this step, the output PDBQT file ``5x72_receptor.pdbqt
 2. Prepare ligands
 ------------------
 
-This time, we will prepare two ligands instead of only one. We will start by the PDB files ``5x72_ligand_p59.pdb`` and ``5x72_ligand_p69.pdb``. They were also obtained by manually extracting their coordinates (using a text editor) in separate files. As usual, we will use the ``prepare_ligand`` tool for this task with the repair option ``-A`` to add hydrogen atoms to the ligands. The PDBQT files are located in the ``data`` directory.
+This time, we will prepare two ligands instead of only one. We will start from the SDF files ``5x72_ligand_p59.sdf`` and ``5x72_ligand_p69.sdf`` located in the ``data`` directory. They were also obtained directly from the `PDB <https://www.rcsb.org>`_ here: `5x72 <https://www.rcsb.org/structure/5X72>`_ (see ``Download instance Coordinates`` link for the P59 and P69 molecules). Since the ligand files do not include the hydrogen atoms, we are going to automatically add them.
+
+.. warning::
+  
+  We strongly advice you against using PDB format for preparing small molecules, since it does not contain information about bond connections. Please don't forget to always check the protonation state of your molecules before docking. Your success can sometimes hang by just an hydrogen atom. ;-)
 
 .. code-block:: bash
 
-    $ prepare_ligand -l 5x72_ligand_p59.pdb -o 5x72_ligand_p59.pdbqt -A 'hydrogens'
-    $ prepare_ligand -l 5x72_ligand_p69.pdb -o 5x72_ligand_p69.pdbqt -A 'hydrogens'
-
-.. warning::
-    
-    Please don't forget to always check the protonation states of your molecules before docking. Your success can sometimes hang by just an hydrogen atom. ;-)
+    $ mk_prepare_ligand.py -i 5x72_ligand_p59.sdf -o 5x72_ligand_p59.pdbqt --add_hydrogen
+    $ mk_prepare_ligand.py -i 5x72_ligand_p69.sdf -o 5x72_ligand_p69.pdbqt --add_hydrogen
 
 The output PDBQT ``5x72_ligand_p59.pdbqt`` and ``5x72_ligand_p69.pdbqt`` can be found in the ``solution`` directory.
 
@@ -124,7 +124,7 @@ However, when using the Vina forcefield, you will need to specify the receptor `
 
 .. code-block:: bash
 
-    $ vina --receptor 1fpu_receptor.pdbqt --ligand 5x72_ligand_p59.pdbqt 5x72_ligand_p69.pdbqt \
+    $ vina --receptor 5x72_receptor.pdbqt --ligand 5x72_ligand_p59.pdbqt 5x72_ligand_p69.pdbqt \
            --config 5x72_receptor_vina_box.txt \
            --exhaustiveness 32 --out 5x72_ligand_vina_out.pdbqt
 
@@ -157,7 +157,7 @@ The predicted free energy of binding should be about ``-18 kcal/mol`` for poses 
     Verbosity: 1
 
     Reading AD4.2 maps ... done.
-    Performing docking (random seed: 179561894) ... 
+    Performing docking (random seed: 1295744643) ... 
     0%   10   20   30   40   50   60   70   80   90   100%
     |----|----|----|----|----|----|----|----|----|----|
     ***************************************************
@@ -165,20 +165,20 @@ The predicted free energy of binding should be about ``-18 kcal/mol`` for poses 
     mode |   affinity | dist from best mode
          | (kcal/mol) | rmsd l.b.| rmsd u.b.
     -----+------------+----------+----------
-       1       -18.68          0          0
-       2       -18.45      1.585        3.3
-       3       -18.14      1.418      3.317
-       4       -17.89      1.501      4.041
-       5        -17.8      1.461      3.807
-       6       -17.77      1.611      9.282
-       7       -17.63      1.623      9.153
-       8       -17.44       1.74      8.899
-       9       -17.44      1.999      9.411
+       1       -18.94          0          0
+       2       -18.62      1.634      3.349
+       3        -18.4      1.413      3.312
+       4       -18.24      1.341      3.921
+       5       -18.03      1.599      9.262
+       6       -17.93      1.631      9.166
+       7       -17.84      1.928      4.933
+       8       -17.74       1.74      8.879
+       9       -17.74          2      9.433
 
 5.b. Using Vina forcefield
 __________________________
 
-Using the vina forcefield, you should obtain a similar output from Vina with the best score around ``-20 kcal/mol``. Using the Vina scoring function, the best set of poses (top 1) shows an excellent overlap with the crystallographic coordinates for one of the isomers.
+Using the vina forcefield, you should obtain a similar output from Vina with the best score around ``-21 kcal/mol``. Using the Vina scoring function, the best set of poses (top 1) shows an excellent overlap with the crystallographic coordinates for one of the isomers.
 
 .. code-block:: console
 
@@ -195,7 +195,7 @@ Using the vina forcefield, you should obtain a similar output from Vina with the
     Verbosity: 1
 
     Computing Vina grid ... done.
-    Performing docking (random seed: -815078986) ... 
+    Performing docking (random seed: -2141167371) ... 
     0%   10   20   30   40   50   60   70   80   90   100%
     |----|----|----|----|----|----|----|----|----|----|
     ***************************************************
@@ -203,12 +203,12 @@ Using the vina forcefield, you should obtain a similar output from Vina with the
     mode |   affinity | dist from best mode
          | (kcal/mol) | rmsd l.b.| rmsd u.b.
     -----+------------+----------+----------
-       1       -20.72          0          0
-       2       -20.35      1.057      3.645
-       3       -20.13      1.393      3.179
-       4       -19.33      1.739      4.839
-       5       -18.73      1.383      3.349
-       6       -18.49      1.191      9.204
-       7       -18.45      1.268      3.675
-       8       -18.28      1.199      3.571
-       9       -18.17      1.854          9
+       1       -21.32          0          0
+       2       -20.94      1.061      3.648
+       3       -20.73      1.392      3.181
+       4       -19.93      1.744      4.841
+       5       -19.34      1.384      3.352
+       6       -19.05      1.185      9.184
+       7        -18.9      1.198      3.586
+       8       -18.76      1.862      8.986
+       9       -18.63      1.749      9.194

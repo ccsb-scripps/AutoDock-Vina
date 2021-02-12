@@ -9,7 +9,7 @@ smooth 0.5                           # store minimum energy w/in rad(A)
 map 1uw6_receptor.A.map              # atom-specific affinity map
 map 1uw6_receptor.NA.map             # atom-specific affinity map
 map 1uw6_receptor.C.map              # atom-specific affinity map
-map 1uw6_receptor.HD.map             # atom-specific affinity map
+map 1uw6_receptor.HD.map             # atom-specific affinity map * ADD OA IF NOT PRESENT *
 map 1uw6_receptor.N.map              # atom-specific affinity map
 map 1uw6_receptor.OA.map             # atom-specific affinity map * ADD OA IF NOT PRESENT *
 elecmap 1uw6_receptor.e.map          # electrostatic potential map

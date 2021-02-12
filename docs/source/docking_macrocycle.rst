@@ -60,7 +60,6 @@ To prepare the gpf file for AutoGrid4, your can use the ``prepare_gpf.py`` comma
 
 The option ``-y`` specifies that we want to center automatically the grid around the ligand. For more information about ``prepare_gpf.py``, type ``pythonsh prepare_gpf.py -h``. At the end you should obtain the following GPF file ``1iep_receptor.gpf`` containing those lines:
 
-
 .. code-block:: console
     :caption: Content of the grid parameter file (**BACE_1_receptor.gpf**) for the receptor BACE (**BACE_1_receptor.pdbqt**)
 
