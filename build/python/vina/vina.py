@@ -49,33 +49,79 @@ class Vina:
         self._box_size = None
         self._spacing = None
         self._even_nelements = True
-        self._no_refine = no_refine
+        if sf_name in ('vina', 'vinardo'):
+            self._no_refine = no_refine
+        else:
+            self._no_refine = False
         self._seed = self._vina.seed()
 
     def __str__(self):
-        """Print basic information about Vina object."""
-        try:
-            info = "Receptor (rigid): %s\n" % self._rigid_receptor
-            info += "Receptor (flex): %s\n" % self._flex_receptor
-            if isinstance(self._ligands, (list, tuple)):
-                info += "Ligands: %s\n" % ", ".join(self._ligands)
-            else:
-                info += "Ligand: %s\n" % self._ligands
-            info += "Scoring function: %s\n" % self._sf_name
-            info += "Weights: %s\n" % " ".join(["%.6f" % i for i in self._weights])
-            if self._center is not None:
-                info += "Box center: %s\n" % " ".join(["%.3f" % i for i in self._center])
-                info += "Box dimensions: %s\n" % " ".join(["%.2f" % i for i in self._box_size])
-                info += "Box spacing: %.3f\n" % self._spacing
-            info += "Seed: %s" % self._seed
-        except AttributeError:
-            info = "Vina object is not defined."
+        """Print basic information about Docking configuration (rigid receptor, flex receptor, 
+            ligands, scoring function, weights, no_refine, box center, box dimensions, 
+            box spacing, box even nelements, seed).
+            
+        """
+        info = "Receptor (rigid): %s\n" % self._rigid_receptor
+        info += "Receptor (flex): %s\n" % self._flex_receptor
+
+        if isinstance(self._ligands, (list, tuple)):
+            info += "Ligands: %s\n" % ", ".join(self._ligands)
+        else:
+            info += "Ligand: %s\n" % self._ligands
+
+        info += "Scoring function: %s\n" % self._sf_name
+        info += "Weights: %s\n" % " ".join(["%.6f" % i for i in self._weights])
+        info += "No refinement with receptor atoms: %s\n" % self._no_refine
+
+        if self._center is not None:
+            info += "Box center: %s\n" % " ".join(["%.3f" % i for i in self._center])
+            info += "Box dimensions: %s\n" % " ".join(["%.2f" % i for i in self._box_size])
+            info += "Box spacing: %.3f\n" % self._spacing
+            info += "Box even NELEMENTS: %s\n" % self._even_nelements
+
+        info += "Seed: %s" % self._seed
 
         return info
     
     def cite(self):
         """Print citation message."""
         self._vina.cite()
+
+    def info(self):
+        """Return information about the docking configuration.
+        
+        Returns:
+            dict (str): Dictionary of information about the docking configuration.
+            
+            Information:
+                rigid_receptor (str),
+                flex_receptor (str),
+                ligands (list),
+                scoring_function (str),
+                weights (tuple),
+                no_refine (bool),
+                box_center (list),
+                box_size (list),
+                box_spacing (float),
+                box_even_elements (bool),
+                seed (int)
+        
+        """
+        info = {}
+
+        info['rigid_receptor'] = self._rigid_receptor
+        info['flex_receptor'] = self._flex_receptor
+        info['ligands'] = self._ligands
+        info['scoring_function'] = self._sf_name
+        info['weights'] = self._weights
+        info['no_refine'] = self._no_refine
+        info['box_center'] = self._center
+        info['box_size'] = self._box_size
+        info['box_spacing'] = self._spacing
+        info['box_even_elements'] = self._even_nelements
+        info['seed'] = self._seed
+        
+        return info
 
     def set_receptor(self, rigid_pdbqt_filename=None, flex_pdbqt_filename=None):
         """Set receptor.
