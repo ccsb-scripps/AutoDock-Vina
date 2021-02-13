@@ -23,4 +23,4 @@ python:
    install:
    - requirements: build/python/requirements.txt
    - method: pip
-     path: .
+     path: build/python
