@@ -303,7 +303,7 @@ setup(
     install_requires=['numpy>=1.18'],
     python_requires='>=3.5.*',
     ext_modules=[obextension],
-    entry_points={"console_scripts": ["vina = vina.vina_cli:main"]},
+    #entry_points={"console_scripts": ["vina = vina.vina_cli:main"]},
     classifiers=[
         'Environment :: Console',
         'Environment :: Other Environment',
@@ -312,7 +312,7 @@ setup(
         'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
         'Operating System :: MacOS :: MacOS X',
-        'Operating System :: Microsoft :: Windows',
+        #'Operating System :: Microsoft :: Windows',
         'Operating System :: OS Independent',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: C++',
