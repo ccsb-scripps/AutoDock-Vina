@@ -11,6 +11,8 @@
 eval "$(conda shell.bash hook)"
 conda activate base
 
+mkdir wheelhouse
+
 PYENVS=('cp37' 'cp38' 'cp39')
 
 for PYENV in "${PYENVS[@]}"; do
@@ -23,3 +25,5 @@ for PYENV in "${PYENVS[@]}"; do
 done
 
 rm -rf build dist vina.egg-info
+
+conda activate base
