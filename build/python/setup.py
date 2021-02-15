@@ -254,19 +254,23 @@ class CustomBuildExt(build_ext):
         
         print('- extra link args: %s' % self.extensions[0].extra_link_args)
 
-        try:
-            self.compiler.compiler_so[0] = "g++"
-            self.compiler.compiler_so.insert(2, "-shared")
-            self.compiler.compiler_so.remove("-Wstrict-prototypes")
-            self.compiler.compiler_so.remove("-Wall")
-            self.compiler.compiler_so.append("-std=c++11")
-            self.compiler.compiler_so.append("-Wno-long-long")
-            self.compiler.compiler_so.append("-pedantic")
-            # Source: https://stackoverflow.com/questions/9723793/undefined-reference-to-boostsystemsystem-category-when-compiling
-            self.compiler.compiler_so.append('-DBOOST_ERROR_CODE_HEADER_ONLY')
+        # Replace current compiler to g++
+        self.compiler.compiler_so[0] = "g++"
+        self.compiler.compiler_so.insert(2, "-shared")
 
-        except (AttributeError, ValueError):
-            pass
+        remove_flags = ["-Wstrict-prototypes", "-Wall"]
+        for remove_flag in remove_flags:
+            try:
+                self.compiler.compiler_so.remove(remove_flag)
+            except ValueError:
+                print('Warning: compiler flag %s is not present, cannot remove it.' % remove_flag)
+                pass
+
+        self.compiler.compiler_so.append("-std=c++11")
+        self.compiler.compiler_so.append("-Wno-long-long")
+        self.compiler.compiler_so.append("-pedantic")
+        # Source: https://stackoverflow.com/questions/9723793/undefined-reference-to-boostsystemsystem-category-when-compiling
+        self.compiler.compiler_so.append('-DBOOST_ERROR_CODE_HEADER_ONLY')
 
         print('- compiler options: %s' % self.compiler.compiler_so)
         build_ext.build_extensions(self)
