@@ -1,0 +1,12 @@
+name: vina
+channels:
+  - conda-forge
+  - anaconda
+  - defaults
+dependencies:
+  - python >=3.5
+  - numpy >=1.18
+  - boost-cpp >= 1.70.0
+  - swig
+  - sphinx
+  - sphinx_rtd_theme 
