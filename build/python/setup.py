@@ -161,6 +161,7 @@ class CustomBuild(build):
         # Source: https://github.com/pypa/pip/issues/3500
         if not os.path.exists('src'):
             shutil.copytree('../../src', 'src')
+
         self.run_command('build_ext')
         build.run(self)
 
@@ -169,8 +170,12 @@ class CustomInstall(install):
     """Ensure build_ext runs first in install command."""
     def run(self):
         # This is not called when creating wheels for linux in the docker image
+        if not os.path.exists('src'):
+            shutil.copytree('../../src', 'src')
+
         self.run_command('build_ext')
         install.run(self)
+
         # It means that we are in build/python, so we can safely remove src
         if not os.path.exists('build/python'):
             shutil.rmtree('src')
@@ -185,9 +190,11 @@ class CustomSdist(sdist):
         self.copy_file(os.path.join('vina', 'vina.i'), pkg_dir, link=link)
 
     def run(self):
-        if not os.path.exists('build/python'):
+        if not os.path.exists('src'):
             shutil.copytree('../../src', 'src')
+
         sdist.run(self)
+
         # It means that we are in build/python, so we can safely remove src
         if not os.path.exists('build/python'):
             shutil.rmtree('src')
@@ -281,6 +288,15 @@ class CustomBuildExt(build_ext):
         build_ext.build_extensions(self)
 
 
+# Dirty fix when the compilation is not done in build/python
+# Fix for readthedocs
+autodock_swig_interface = 'vina/autodock_vina.i'
+package_dir = {}
+if os.path.exists('build/python'):
+    autodock_swig_interface = 'build/python/' + autodock_swig_interface
+    package_dir = {'vina': 'build/python/vina'}
+
+
 obextension = Extension(
     'vina._vina_wrapper',
     sources=['src/lib/random.cpp', 'src/lib/utils.cpp', 'src/lib/vina.cpp',
@@ -289,18 +305,11 @@ obextension = Extension(
              'src/lib/parallel_progress.cpp', 'src/lib/model.cpp', 'src/lib/coords.cpp',
              'src/lib/ad4cache.cpp', 'src/lib/grid.cpp', 'src/lib/parallel_mc.cpp', 
              'src/lib/conf_independent.cpp', 'src/lib/parse_pdbqt.cpp',
-             'src/lib/cache.cpp', 'vina/autodock_vina.i'],
+             'src/lib/cache.cpp', autodock_swig_interface],
     extra_link_args=['-lboost_thread', '-lboost_serialization',
                      '-lboost_filesystem', '-lboost_program_options'],
     #libraries=['openbabel'],
 )
-
-
-# Dirty fix when the compilation is not done in build/python
-# Fix for readthedocs
-if os.path.exists('build/python'):
-    idx = obextension.sources.index('vina/autodock_vina.i')
-    obextension.sources[idx] = 'build/python/vina/autodock_vina.i'
 
 
 setup(
@@ -316,6 +325,7 @@ setup(
     zip_safe=False,
     cmdclass={'build': CustomBuild, 'build_ext': CustomBuildExt, 'install': CustomInstall, 'sdist': CustomSdist},
     packages=['vina'],
+    package_dir=package_dir,
     install_requires=['numpy>=1.18'],
     python_requires='>=3.5.*',
     ext_modules=[obextension],
