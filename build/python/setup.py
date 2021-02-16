@@ -171,7 +171,9 @@ class CustomInstall(install):
         # This is not called when creating wheels for linux in the docker image
         self.run_command('build_ext')
         install.run(self)
-        shutil.rmtree('src')
+        # It means that we are in build/python, so we can safely remove src
+        if not os.path.exists('build/python'):
+            shutil.rmtree('src')
 
 
 class CustomSdist(sdist):
@@ -183,9 +185,12 @@ class CustomSdist(sdist):
         self.copy_file(os.path.join('vina', 'vina.i'), pkg_dir, link=link)
 
     def run(self):
-        shutil.copytree('../../src', 'src')
+        if not os.path.exists('build/python'):
+            shutil.copytree('../../src', 'src')
         sdist.run(self)
-        shutil.rmtree('src')
+        # It means that we are in build/python, so we can safely remove src
+        if not os.path.exists('build/python'):
+            shutil.rmtree('src')
 
 
 class CustomBuildExt(build_ext):
@@ -289,6 +294,13 @@ obextension = Extension(
                      '-lboost_filesystem', '-lboost_program_options'],
     #libraries=['openbabel'],
 )
+
+
+# Dirty fix when the compilation is not done in build/python
+# Fix for readthedocs
+if os.path.exists('build/python'):
+    idx = obextension.sources.index('vina/autodock_vina.i')
+    obextension.sources[idx] = 'build/python/vina/autodock_vina.i'
 
 
 setup(
