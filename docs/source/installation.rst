@@ -101,7 +101,6 @@ Building from Source
     .. code-block:: bash
 
         $ cd AutoDock-Vina/build/linux/release
-        $ make depend
         $ make
 
     To compile the Python bindings:
