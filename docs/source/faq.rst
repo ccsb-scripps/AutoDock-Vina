@@ -1,37 +1,6 @@
 Frequently Asked Questions
 ==========================
 
-- **What is the meaning or significance of the name "Vina"? Why was it developed?**
-
-.. code-block:: console
-	
-	Tue Nov 27 14:27:13 PST 2012:
-
-	I wanted to make improvements to the search algorithm and make it parallel. I thought I could 
-	do better in the software engineering aspect of the design as well, so I decided to write the 
-	code from scratch, rather than trying to retrofit the improvements on AutoDock 4. Today, 
-	AutoDock/AutoGrid source code weighs in at 41k lines, and Vina at just 9k lines, despite Vina 
-	implementing a substantially more sophisticated algorithm, with gradient and parallelism (The 
-	number of lines of code is a flawed metric, of course, but it's objective)
-
-	I called the program "AutoBind" in its early development stages, following the naming pattern 
-	of other projects in MGL (AutoDock, AutoGrid, AutoLigand, AutoDock Tools), and I announced at 
-	a lab meeting that I was hoping to make vast algorithmic improvements with an independent 
-	implementation. The author of the original (20+ year old) FORTRAN AutoDock code, 
-	David Goodsell, then asked me to change the name to something that wasn't "Auto".
-
-	I then chose the name "Vina" because it's an English word and, at the same time, a 
-	self-referential acronym for "VINA Is Not Auto[Dock]". This is the name under which the 
-	program was initially released.
-
-	Later on, the head of the lab and the P.I. on the AutoDock grant, Arthur Olson, asked me to 
-	change the name from "Vina" to "AutoDock Vina".
-
-	--
-	Oleg Trott, Ph.D.
-
-	Source: http://mgldev.scripps.edu/pipermail/autodock/2012-November/008538.html
-
 - **How accurate is AutoDock Vina?**
 
 The predictive accuracy varies a lot depending on the target, so it makes sense to evaluate AutoDock Vina against your particular target first, if you have known actives, or a bound native ligand structure, before ordering compounds. While evaluating any docking engine in a retrospective virtual screen, it might make sense to select decoys of similar size, and perhaps other physical characteristics, to your known actives.
