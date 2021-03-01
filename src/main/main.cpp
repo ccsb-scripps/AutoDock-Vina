@@ -65,9 +65,10 @@ void check_occurrence(boost::program_options::variables_map& vm, boost::program_
 
 int main(int argc, char* argv[]) {
 	using namespace boost::program_options;
-	const std::string version_string = "AutoDock Vina 1.2.0 (September 11, 2020)";
+	const std::string version_string = "AutoDock Vina 1.2.0.dev3 (March 1, 2021)";
 	const std::string error_message = "\n\n\
-Please contact the author, Dr. Oleg Trott <ot14@columbia.edu>, so\n\
+Please report bugs through the Issue Tracker on GitHub \n\
+(https://github.com/ccsb-scripps/AutoDock-Vina/issues)., so\n\
 that this problem can be resolved. The reproducibility of the\n\
 error may be vital, so please remember to include the following in\n\
 your problem report:\n\
