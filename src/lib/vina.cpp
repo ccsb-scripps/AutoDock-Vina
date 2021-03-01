@@ -529,7 +529,7 @@ std::string Vina::vina_remarks(output_type &pose, fl lb, fl ub) {
 		   << "  " << std::setw(9) << std::setprecision(3) << ub
 		   << '\n';
 
-	remark << "REMARK ITER + INTRA:     " << std::setw(12) << std::setprecision(3) << pose.total << "\n";
+	remark << "REMARK INTER + INTRA:    " << std::setw(12) << std::setprecision(3) << pose.total << "\n";
 	remark << "REMARK INTER:            " << std::setw(12) << std::setprecision(3) << pose.inter << "\n";
 	remark << "REMARK INTRA:            " << std::setw(12) << std::setprecision(3) << pose.intra << "\n";
 	if (m_sf_choice == SF_AD42)

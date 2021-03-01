@@ -55,14 +55,12 @@ Python bindings
 The `Conda package manager <https://docs.conda.io/en/latest/>`_ is included as part of the Anaconda Python distribution, which can be download from `https://docs.continuum.io/anaconda/install <https://docs.continuum.io/anaconda/install/>`_. This is a Python distribution specially designed for scientific applications, with many of the most popular scientific packages preinstalled. Alternatively, you can use `Miniconda <https://conda.pydata.org/miniconda.html>`_, which includes only Python itself, plus the Conda package manager.
 
 1. Begin by installing the most recent 64 bit, Python 3.x version of either Anaconda or Miniconda
-2. (Optional, but highly suggested) If you want, you can create a dedicated environment for the `AutoDock Vina` package:
+2. (Optional, but highly suggested) If you want, you can create a dedicated environment for the ``AutoDock Vina`` package:
 
 .. code-block:: bash
 
     $ conda create -n vina python=3
     $ conda activate vina
-    $ conda install -c conda-forge numpy openbabel swig boost-cpp sphinx sphinx_rtd_theme
-    $ conda install -c ccsb-scripps vina
 
 3. And type the following command
 
@@ -84,11 +82,11 @@ Building from Source
     Building Vina from source is NOT meant to be done by regular users!
 
 - Step 1: **Install a C++ compiler suite**
-	- Ubuntu/Debian: ``sudo apt-get install build-essentials``
-	- macOS: Install Xcode from the `AppStore <https://apps.apple.com/fr/app/xcode/id497799835?mt=12>`_ and the Command Line Tools (CLT) from the terminal ``xcode-select --install``
-- Step 2: **Install Boost**
-    - Ubuntu/Debian: ``sudo apt-get install libboost-all-dev``
-    - macOS (with `Homebrew <https://brew.sh>`_): ``brew install boost``
+    - Ubuntu/Debian: ``sudo apt-get install build-essentials``
+    - macOS: Install Xcode from the `AppStore <https://apps.apple.com/fr/app/xcode/id497799835?mt=12>`_ and the Command Line Tools (CLT) from the terminal ``xcode-select --install``
+- Step 2: **Install Boost and SWIG**
+    - Ubuntu/Debian: ``sudo apt-get install libboost-all-dev swig``
+    - macOS (with `Homebrew <https://brew.sh>`_): ``brew install boost swig``
 
 - Step 3: **Build Vina**
 
@@ -103,7 +101,6 @@ Building from Source
     .. code-block:: bash
 
         $ cd AutoDock-Vina/build/linux/release
-        $ make depend
         $ make
 
     To compile the Python bindings:
