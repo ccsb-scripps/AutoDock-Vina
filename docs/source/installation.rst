@@ -6,44 +6,26 @@ Installation
 Unix- and Linux-based OS
 ------------------------
 
-Vina is expected to work on x86 and compatible 64-bit Linux systems.
-
-**Installing**: 
-
-.. code-block:: bash
-
-    tar xzvf autodock_vina_1_2_0_linux_x86.tgz
-
-Optionally, you can copy the binary files where you want.
+Vina is expected to work on x86 and compatible 64-bit Linux systems. The executable for the latest release are available here: `https://github.com/ccsb-scripps/AutoDock-Vina/releases <https://github.com/ccsb-scripps/AutoDock-Vina/releases>`_.
 
 **Running**:
 
 .. code-block:: bash
 
-    ./autodock_vina_1_2_0_linux_x86/bin/vina --help
+    ./vina_1.2.0_linux_x86_64 --help
 
 If the executable is in your PATH, you can just type "vina --help" instead.
 
 macOS
 ------
 
-The 64 bit version is expected to work on macOS 10.15 (Catalina) and newer. The 32 bit version of Vina is expected to work on Mac OS X from 10.4 (Tiger) through 10.14 (Mojave).
-
-**Installing**:
-
-.. code-block:: bash
-
-    tar xzvf autodock_vina_1_2_0_mac_64bit.tgz   # 64 bit
-    tar xzvf autodock_vina_1_2_0_mac.tgz         # 32 bit
-
-Optionally, you can copy the binary files where you want.
+Vina is expected to work on macOS 10.15 (Catalina) and newer. The executable for the latest release are available here: `https://github.com/ccsb-scripps/AutoDock-Vina/releases <https://github.com/ccsb-scripps/AutoDock-Vina/releases>`_.
 
 **Running**:
 
 .. code-block:: bash
 
-    ./autodock_vina_1_2_0_mac_64bit/bin/vina --help     # 64 bit
-    ./autodock_vina_1_2_0_mac/bin/vina --help           # 32 bit
+    ./vina_1.2.0_macos_x86_64 --help
 
 If the executable is in your PATH, you can just type "vina --help" instead.
 
