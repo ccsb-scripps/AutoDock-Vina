@@ -48,7 +48,7 @@ The `Conda package manager <https://docs.conda.io/en/latest/>`_ is included as p
 
 .. code-block:: bash
 
-    $ conda install -c ccsb-scripps vina
+    $ conda install -c conda-forge -c ccsb-scripps vina
 
 **AutoDock Vina installation using pip**:
 

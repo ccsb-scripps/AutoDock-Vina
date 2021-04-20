@@ -53,7 +53,7 @@ The `Conda package manager <https://docs.conda.io/en/latest/>`_ is included as p
 
     conda create -n vina python=3
     conda activate vina
-    conda install -c ccsb-scripps vina
+    conda install -c conda-forge -c ccsb-scripps vina
 
 3. And type the following command
 
