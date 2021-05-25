@@ -138,6 +138,8 @@ public:
     fl eval(const atom& a, const atom& b, fl r) {
         if (r >= cutoff)
             return 0.0;
+        if ((a.xs >= XS_TYPE_SIZE) || (b.xs >= XS_TYPE_SIZE))
+            return 0.0;
         return gauss(r - (optimal_distance(a.xs, b.xs) + offset)); // hard-coded to XS atom type
     };
     fl eval(sz t1, sz t2, fl r) {
@@ -162,6 +164,8 @@ public:
     //~vina_repulsion() { }
     fl eval(const atom& a, const atom& b, fl r) {
         if (r >= cutoff)
+            return 0.0;
+        if ((a.xs >= XS_TYPE_SIZE) || (b.xs >= XS_TYPE_SIZE))
             return 0.0;
         fl d = r - (optimal_distance(a.xs, b.xs) + offset); // hard-coded to XS atom type
         if (d > 0.0)
@@ -189,6 +193,8 @@ public:
     fl eval(const atom& a, const atom& b, fl r) {
         if (r >= cutoff)
             return 0.0;
+        if ((a.xs >= XS_TYPE_SIZE) || (b.xs >= XS_TYPE_SIZE))
+            return 0.0;
         if (xs_is_hydrophobic(a.xs) && xs_is_hydrophobic(b.xs))
             return slope_step(bad, good, r - optimal_distance(a.xs, b.xs));
         else return 0.0;
@@ -214,6 +220,8 @@ public:
     //~vina_non_dir_h_bond() { }
     fl eval(const atom& a, const atom& b, fl r) {
         if (r >= cutoff)
+            return 0.0;
+        if ((a.xs >= XS_TYPE_SIZE) || (b.xs >= XS_TYPE_SIZE))
             return 0.0;
         if (xs_h_bond_possible(a.xs, b.xs))
             return slope_step(bad, good, r - optimal_distance(a.xs, b.xs));
@@ -241,6 +249,8 @@ public:
     fl eval(const atom& a, const atom& b, fl r) {
         if (r >= cutoff)
             return 0.0;
+        if ((a.xs >= XS_TYPE_SIZE) || (b.xs >= XS_TYPE_SIZE))
+            return 0.0;
         return gauss(r - (optimal_distance_vinardo(a.xs, b.xs) + offset)); // hard-coded to XS atom type
     };
     fl eval(sz t1, sz t2, fl r) {
@@ -265,6 +275,8 @@ public:
     //~vina_repulsion() { }
     fl eval(const atom& a, const atom& b, fl r) {
         if (r >= cutoff)
+            return 0.0;
+        if ((a.xs >= XS_TYPE_SIZE) || (b.xs >= XS_TYPE_SIZE))
             return 0.0;
         fl d = r - (optimal_distance_vinardo(a.xs, b.xs) + offset); // hard-coded to XS atom type
         if (d > 0.0)
@@ -292,6 +304,8 @@ public:
     fl eval(const atom& a, const atom& b, fl r) {
         if (r >= cutoff)
             return 0.0;
+        if ((a.xs >= XS_TYPE_SIZE) || (b.xs >= XS_TYPE_SIZE))
+            return 0.0;
         if (xs_is_hydrophobic(a.xs) && xs_is_hydrophobic(b.xs))
             return slope_step(bad, good, r - optimal_distance_vinardo(a.xs, b.xs));
         else return 0.0;
@@ -317,6 +331,8 @@ public:
     //~vina_non_dir_h_bond() { }
     fl eval(const atom& a, const atom& b, fl r) {
         if (r >= cutoff)
+            return 0.0;
+        if ((a.xs >= XS_TYPE_SIZE) || (b.xs >= XS_TYPE_SIZE))
             return 0.0;
         if (xs_h_bond_possible(a.xs, b.xs))
             return slope_step(bad, good, r - optimal_distance_vinardo(a.xs, b.xs));
