@@ -801,7 +801,9 @@ std::vector<double> Vina::optimize(output_type& out, int max_steps) {
 	quasi_newton_par.max_steps = max_steps;
 
 	if (m_verbosity > 1) {
+		std::cout << "Before local optimization:\n";
 		energies_before_opt = score();
+		show_score(energies_before_opt);
 	}
 
 	doing("Performing local search", m_verbosity, 0);
@@ -821,13 +823,6 @@ std::vector<double> Vina::optimize(output_type& out, int max_steps) {
 	done(m_verbosity, 0);
 
 	energies_after_opt = score();
-
-	if (m_verbosity > 1) {
-		std::cout << "Before local optimization:\n";
-		show_score(energies_before_opt);
-		std::cout << "After local optimization:\n";
-		show_score(energies_after_opt);
-	}
 
 	return energies_after_opt;
 }

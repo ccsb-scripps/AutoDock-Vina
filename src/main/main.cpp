@@ -421,8 +421,10 @@ Thank you!\n";
 				energies = v.score();
 				v.show_score(energies);
 			} else if (local_only) {
-				v.optimize();
+				std::vector<double> energies;
+				energies = v.optimize();
 				v.write_pose(out_name);
+				v.show_score(energies);
 			} else {
 				v.global_search(exhaustiveness, num_modes, min_rmsd, max_evals);
 				v.write_poses(out_name, num_modes, energy_range);
