@@ -4,7 +4,10 @@ SPLITOBJ = split.o
 
 INCFLAGS = -I $(BOOST_INCLUDE)
 
-GIT_VERSION := $(shell git describe --abbrev=7 --dirty --always --tags 2>/dev/null)
+GIT_VERSION := $(shell git describe --abbrev=7 --dirty --always --tags | sed 's/dirty/mod/g')
+ifeq (,$(GIT_VERSION))
+GIT_VERSION := v1.2.0-release
+endif
 C_OPTIONS+=-DVERSION=\"$(GIT_VERSION)\"
 
 # -pedantic fails on Mac with Boost 1.41 (syntax problems in their headers)
