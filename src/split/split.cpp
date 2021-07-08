@@ -132,7 +132,8 @@ void write_multimodel_pdbqt(const models& m, const std::string& ligand_prefix, c
 int main(int argc, char* argv[]) {
 	using namespace boost::program_options;
 	const bool advanced = false;
-	const std::string version_string = "AutoDock Vina PDBQT Split 1.1.2 (May 11, 2011)";
+	const std::string git_version = VERSION;
+	const std::string version_string = "AutoDock Vina PDBQT Split " + git_version;
 
 	const std::string error_message = "\n\n\
 Please contact the author, Dr. Oleg Trott <ot14@columbia.edu>, so\n\
@@ -167,6 +168,7 @@ Thank you!\n";
 		options_description desc;
 		desc.add(inputs).add(outputs).add(info);
 
+		std::cout << version_string << '\n';
 		positional_options_description positional; // remains empty
 		variables_map vm;
 		try {
@@ -187,7 +189,6 @@ Thank you!\n";
 			return 0;
 		}
 		if(version) {
-			std::cout << version_string << '\n';
 			return 0;
 		}
 

@@ -4,6 +4,9 @@ SPLITOBJ = split.o
 
 INCFLAGS = -I $(BOOST_INCLUDE)
 
+GIT_VERSION := $(shell git describe --abbrev=7 --dirty --always --tags 2>/dev/null)
+C_OPTIONS+=-DVERSION=\"$(GIT_VERSION)\"
+
 # -pedantic fails on Mac with Boost 1.41 (syntax problems in their headers)
 #CC = ${GPP} ${C_PLATFORM} -ansi -pedantic -Wno-long-long ${C_OPTIONS} $(INCFLAGS)
 CC = ${GPP} ${C_PLATFORM} -ansi -Wno-long-long ${C_OPTIONS} $(INCFLAGS)
@@ -15,7 +18,7 @@ LDFLAGS = -L$(BASE)/lib -L.
 # install libboost_thread-mt, but not
 # libboost_thread (e.g. macOS)
 $(shell echo "int main(){ return 0; }" > linktest.cpp)
-$(shell $(GPP) $(LDFLAGS) -l boost_thread-mt linktest.cpp -o linktest >/dev/null 2>&1)
+$(shell $(CC) $(LDFLAGS) -l boost_thread-mt}${BOOST_LIB_VERSION} linktest.cpp -o linktest >/dev/null 2>&1)
 threadmt:=$(shell if [ -f ./linktest ]; then echo "-mt"; rm ./linktest; fi;)
 $(shell rm ./linktest.cpp)
 
