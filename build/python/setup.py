@@ -46,15 +46,16 @@ def in_conda():
 
 def find_version():
     """Extract the current version of these python bindings from the __init__.py file."""
-    git_version = subprocess.check_output(['git', 'describe', '--abbrev=7', '--dirty', '--always', '--tags']).strip().decode()
+    try:
+        git_output = subprocess.check_output(['git', 'describe', '--abbrev=7', '--dirty', '--always', '--tags'])
+        git_output = git_output.strip().decode()
 
-    if git_version:
-        # Normalize version to follow PEP 440 specifications
-        if git_version.startswith('v'):
-            git_version = git_version[1:]
-        git_version = git_version.replace('dirty', 'mod').replace('-', '+', 1).replace('-', '.')
+        if git_output.startswith('v'):
+            git_output = git_output[1:]
+        git_version = git_output.replace('dirty', 'mod').replace('-', '+', 1).replace('-', '.')
+
         return git_version
-    else:
+    except:
         try:
             with open(os.path.join(base_dir, 'vina', '__init__.py')) as fp:
                 for line in fp:
