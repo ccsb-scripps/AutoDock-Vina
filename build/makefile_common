@@ -6,7 +6,7 @@ INCFLAGS = -I $(BOOST_INCLUDE)
 
 GIT_VERSION := $(shell git describe --abbrev=7 --dirty --always --tags | sed 's/dirty/mod/g')
 ifeq (,$(GIT_VERSION))
-GIT_VERSION := v1.2.0-release
+GIT_VERSION := v1.2.0
 endif
 C_OPTIONS+=-DVERSION=\"$(GIT_VERSION)\"
 
