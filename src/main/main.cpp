@@ -65,7 +65,8 @@ void check_occurrence(boost::program_options::variables_map& vm, boost::program_
 
 int main(int argc, char* argv[]) {
 	using namespace boost::program_options;
-	const std::string version_string = "AutoDock Vina 1.2.0.dev3 (March 1, 2021)";
+	const std::string git_version = VERSION;
+	const std::string version_string = "AutoDock Vina " + git_version;
 	const std::string error_message = "\n\n\
 Please report bugs through the Issue Tracker on GitHub \n\
 (https://github.com/ccsb-scripps/AutoDock-Vina/issues)., so\n\
@@ -246,6 +247,7 @@ Thank you!\n";
 		desc_config.add(inputs).add(search_area).add(outputs).add(advanced).add(misc);
 		desc_simple.add(inputs).add(search_area).add(outputs).add(misc).add(config).add(info);
 
+		std::cout << version_string << '\n';
 		try {
 			//store(parse_command_line(argc, argv, desc, command_line_style::default_style ^ command_line_style::allow_guessing), vm);
 			store(command_line_parser(argc, argv)
@@ -284,7 +286,6 @@ Thank you!\n";
 		}
 
 		if (version) {
-			std::cout << version_string << '\n';
 			return 0;
 		}
 

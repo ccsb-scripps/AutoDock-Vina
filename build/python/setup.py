@@ -47,14 +47,26 @@ def in_conda():
 def find_version():
     """Extract the current version of these python bindings from the __init__.py file."""
     try:
-        with open(os.path.join(base_dir, 'vina', '__init__.py')) as fp:
-            for line in fp:
-                version_match = re.match(r'^__version__ = "(.+?)"$', line)
-                if version_match:
-                    return version_match.group(1)
-            raise RuntimeError('Could not find version string in vina/__init__.py.')
-    except IOError:
-        raise RuntimeError('Could not find vina/__init__.py.')
+        git_output = subprocess.check_output(['git', 'describe', '--abbrev=7', '--dirty', '--always', '--tags'])
+        git_output = git_output.strip().decode()
+
+        if git_output.startswith('v'):
+            git_output = git_output[1:]
+        git_version = git_output.replace('dirty', 'mod').replace('-', '+', 1).replace('-', '.')
+
+        return git_version
+    except:
+        try:
+            with open(os.path.join(base_dir, 'vina', '__init__.py')) as fp:
+                for line in fp:
+                    version_match = re.match(r'^__version__ = "(.+?)"$', line)
+
+                    if version_match:
+                        version = version_match.group(1)
+                        return version
+                raise RuntimeError('Could not find version string in vina/__init__.py.')
+        except IOError:
+            raise RuntimeError('Could not find vina/__init__.py.')
 
 
 def execute_command(cmd_line):
