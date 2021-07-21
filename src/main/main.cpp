@@ -91,15 +91,19 @@ Thank you!\n";
 #################################################################\n\
 # If you used AutoDock Vina in your work, please cite:          #\n\
 #                                                               #\n\
+# J. Eberhardt, D. Santos-Martins, A. F. Tillack, and S. Forli  #\n\
+# AutoDock Vina 1.2.0: New Docking Methods, Expanded Force      #\n\
+# Field, and Python Bindings, J. Chem. Inf. Model. (2021)       #\n\
+# DOI 10.1021/acs.jcim.1c00203                                  #\n\
+#                                                               #\n\
 # O. Trott, A. J. Olson,                                        #\n\
 # AutoDock Vina: improving the speed and accuracy of docking    #\n\
 # with a new scoring function, efficient optimization and       #\n\
-# multithreading, Journal of Computational Chemistry 31 (2010)  #\n\
-# 455-461                                                       #\n\
-#                                                               #\n\
+# multithreading, J. Comp. Chem. (2010)                         #\n\
 # DOI 10.1002/jcc.21334                                         #\n\
 #                                                               #\n\
-# Please see http://vina.scripps.edu for more information.      #\n\
+# Please see https://github.com/ccsb-scripps/AutoDock-Vina for  #\n\
+# more information.                                             #\n\
 #################################################################\n";
 
 	try {
