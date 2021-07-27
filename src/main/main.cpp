@@ -406,7 +406,7 @@ Thank you!\n";
 		if (vm.count("ligand")) {
 			v.set_ligand_from_file(ligand_names);
 
-			if (sf_name.compare("vina") == 0) {
+			if (sf_name.compare("vina") == 0 || sf_name.compare("vinardo") == 0) {
 				if (vm.count("maps")) {
 					v.load_maps(maps);
 				} else {
