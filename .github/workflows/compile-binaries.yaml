@@ -1,0 +1,55 @@
+name: Compile AutoDock-Vina binaries
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+    paths-ignore:
+      - 'example/**'
+      - 'docs/**'
+      - 'data/**'
+  pull_request:
+    branches:
+      - master
+      - develop
+    paths-ignore:
+      - 'example/**'
+      - 'docs/**'
+      - 'data/**'
+  release:
+    types:
+      - published
+
+jobs:
+  compile_binaries:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with: 
+          fetch-depth: 0
+      - name: Compile Vina for linux x86-64
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get install -y libboost-all-dev swig
+          cd ./build/linux/release
+          make
+      - name: Compile Vina for macOS
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install boost swig
+          cd ./build/mac/release
+          make
+      - name: Upload artifacts for inspection
+        uses: actions/upload-artifact@v2
+        with:
+          name: binaries
+          path: |
+            ./**/release/vina
+            ./**/release/vina_split
