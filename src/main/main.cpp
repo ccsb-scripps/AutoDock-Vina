@@ -25,7 +25,6 @@
 #include <vector> // ligand paths
 #include <exception>
 #include <boost/program_options.hpp>
-#include "parse_error.h"
 #include "vina.h"
 #include "utils.h"
 #include "scoring_function.h"
@@ -478,10 +477,6 @@ Thank you!\n";
 	}
 	catch(usage_error& e) {
 		std::cerr << "\n\nUsage error: " << e.what() << ".\n";
-		return 1;
-	}
-	catch(parse_error& e) {
-		std::cerr << "\n\nParse error on line " << e.line << " in file \"" << e.file.string() << "\": " << e.reason << '\n';
 		return 1;
 	}
 	catch(std::bad_alloc&) {
