@@ -73,30 +73,30 @@ models parse_multimodel_pdbqt(const std::string& input) {
 		++count;
 		if(starts_with(str, "MODEL")) {
 			if(parsing_model == true || parsing_ligand == false) 
-				throw pdbqt_parse_error("Misplaced MODEL tag at line " + std::to_string(count) + ".\n");
+				throw pdbqt_parse_error("Misplaced MODEL tag at line " + std::to_string(count) + ".");
 			tmp.push_back(model());
 			parsing_model = true;
 		}
 		else if(starts_with(str, "ENDMDL")) {
 			if(parsing_model == false || parsing_ligand == false)
-				throw pdbqt_parse_error("Misplaced ENDMDL tag at line " + std::to_string(count) + ".\n");
+				throw pdbqt_parse_error("Misplaced ENDMDL tag at line " + std::to_string(count) + ".");
 			parsing_model = false;
 		}
 		else if(starts_with(str, "BEGIN_RES")) {
 			if(parsing_model == false || parsing_ligand == false)
-				throw pdbqt_parse_error("Misplaced BEGIN_RES tag at line " + std::to_string(count) + ".\n");
+				throw pdbqt_parse_error("Misplaced BEGIN_RES tag at line " + std::to_string(count) + ".");
 			parsing_ligand = false;
 			tmp.back().flex.push_back(str);
 		}
 		else if(starts_with(str, "END_RES")) {
 			if(parsing_model == false || parsing_ligand == true)
-				throw pdbqt_parse_error("Misplaced END_RES tag at line " + std::to_string(count) + ".\n");
+				throw pdbqt_parse_error("Misplaced END_RES tag at line " + std::to_string(count) + ".");
 			parsing_ligand = true;
 			tmp.back().flex.push_back(str);
 		}
 		else {
 			if(parsing_model == false)
-				throw pdbqt_parse_error("Input occurs outside MODEL at line " + std::to_string(count) + ".\n");
+				throw pdbqt_parse_error("Input occurs outside MODEL at line " + std::to_string(count) + ".");
 			if(parsing_ligand) {
 				tmp.back().ligand.push_back(str);
 			}
@@ -106,7 +106,7 @@ models parse_multimodel_pdbqt(const std::string& input) {
 		}
 	}
 	if(parsing_model == true)
-		throw pdbqt_parse_error("Missing ENDMDL tag at line " + std::to_string(count + 1) + ".\n");
+		throw pdbqt_parse_error("Missing ENDMDL tag at line " + std::to_string(count + 1) + ".");
 	return tmp;
 }
 

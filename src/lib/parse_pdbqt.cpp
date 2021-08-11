@@ -268,7 +268,8 @@ void parse_pdbqt_rigid(const path& name, rigid& r) {
         else if(starts_with(str, "ATOM  ") || starts_with(str, "HETATM"))
             r.atoms.push_back(parse_pdbqt_atom_string(str));
         else if(starts_with(str, "MODEL"))
-            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in rigid receptor.");
+            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in rigid receptor. "
+                                    "Only one model can be used for the rigid receptor.");
         else 
             throw pdbqt_parse_error("Unknown or inappropriate tag found in rigid receptor.", str);
     }
@@ -288,7 +289,8 @@ void parse_pdbqt_root_aux(std::istream& in, parsing_struct& p, context& c) {
         else if(starts_with(str, "ENDROOT"))
             return;
         else if(starts_with(str, "MODEL"))
-            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue or ligand. Use \"vina_split\" first.");
+            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue or ligand PDBQT file. "
+                                    "Use \"vina_split\" to split flex residues or ligands in multiple PDBQT files.");
         else 
             throw pdbqt_parse_error("Unknown or inappropriate tag found in flex residue or ligand.", str);
     }
@@ -308,7 +310,8 @@ void parse_pdbqt_root(std::istream& in, parsing_struct& p, context& c) {
             break;
         }
         else if(starts_with(str, "MODEL"))
-            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue or ligand. Use \"vina_split\" first.");
+            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue or ligand PDBQT file. "
+                                    "Use \"vina_split\" to split flex residues or ligands in multiple PDBQT files.");
         else 
             throw pdbqt_parse_error("Unknown or inappropriate tag found in flex residue or ligand.", str);
     }
@@ -318,7 +321,7 @@ void parse_pdbqt_branch(std::istream& in, parsing_struct& p, context& c, unsigne
 
 void parse_pdbqt_branch_aux(std::istream& in, const std::string& str, parsing_struct& p, context& c) {
     unsigned first, second;
-    parse_two_unsigneds(str, "BRANCH", first, second); 
+    parse_two_unsigneds(str, "BRANCH", first, second);
     sz i = 0;
 
     for(; i < p.atoms.size(); ++i)
@@ -329,7 +332,7 @@ void parse_pdbqt_branch_aux(std::istream& in, const std::string& str, parsing_st
         }
 
     if(i == p.atoms.size())
-        throw pdbqt_parse_error("No atom number in this branch.", str);
+        throw pdbqt_parse_error("Atom number " + std::to_string(first) + " is missing in this branch.", str);
 }
 
 void parse_pdbqt_aux(std::istream& in, parsing_struct& p, context& c, boost::optional<unsigned>& torsdof, bool residue) {
@@ -352,7 +355,8 @@ void parse_pdbqt_aux(std::istream& in, parsing_struct& p, context& c, boost::opt
         else if(residue && starts_with(str, "END_RES"))
             return; 
         else if(starts_with(str, "MODEL"))
-            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue or ligand. Use \"vina_split\" first.");
+            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue or ligand PDBQT file. "
+                                    "Use \"vina_split\" to split flex residues or ligands in multiple PDBQT files.");
         else 
             throw pdbqt_parse_error("Unknown or inappropriate tag found in flex residue or ligand.", str);
     }
@@ -516,7 +520,8 @@ void parse_pdbqt_flex(const path& name, non_rigid_parsed& nr, context& c) {
             postprocess_residue(nr, p, c);
         }
         else if(starts_with(str, "MODEL"))
-            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue.");
+            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue PDBQT file. "
+                                    "Use \"vina_split\" to split flex residues in multiple PDBQT files.");
         else 
             throw pdbqt_parse_error("Unknown or inappropriate tag found in flex residue.", str);
     }
@@ -550,7 +555,8 @@ void parse_pdbqt_branch(std::istream& in, parsing_struct& p, context& c, unsigne
             p.add(a, c);
         }
         else if(starts_with(str, "MODEL"))
-            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue or ligand. Use \"vina_split\" first.");
+            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue or ligand PDBQT file. "
+                                    "Use \"vina_split\" to split flex residues or ligands in multiple PDBQT files.");
         else 
             throw pdbqt_parse_error("Unknown or inappropriate tag found in flex residue or ligand.", str);
     }
@@ -641,7 +647,7 @@ model parse_ligand_pdbqt_from_string(const std::string& string_name, atom_type::
         parse_pdbqt_ligand(molstream, nrp, c);
     }
     catch(pdbqt_parse_error& e) {
-        std::cerr << e.what();
+        std::cerr << e.what() << '\n';
         exit(EXIT_FAILURE);
     }
 
@@ -669,7 +675,7 @@ model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& fle
             parse_pdbqt_rigid(make_path(rigid_name), r);
         }
         catch(pdbqt_parse_error& e) {
-            std::cerr << e.what();
+            std::cerr << e.what() << '\n';
             exit(EXIT_FAILURE);
         }
     }
@@ -679,7 +685,7 @@ model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& fle
             parse_pdbqt_flex(make_path(flex_name), nrp, c);
         }
         catch(pdbqt_parse_error& e) {
-            std::cerr << e.what();
+            std::cerr << e.what() << '\n';
             exit(EXIT_FAILURE);
         }
     }
