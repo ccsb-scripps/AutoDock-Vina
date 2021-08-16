@@ -20,7 +20,24 @@
 
 */
 
+#include <string>
+#include <fstream> // for getline ?
+#include <sstream> // in parse_two_unsigneds
+#include <cctype> // isspace
+#include <exception>
+#include <boost/utility.hpp> // for noncopyable 
+#include <boost/optional.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/lexical_cast.hpp>
+//#include <openbabel/mol.h>
+//#include <openbabel/obconversion.h>
+#include "model.h"
+#include "atom_constants.h"
+#include "file.h"
+#include "convert_substring.h"
+#include "utils.h"
 #include "parse_pdbqt.h"
+#include "parse_error.h"
 
 
 struct parsed_atom : public atom {
@@ -59,7 +76,9 @@ template<typename T>
 T checked_convert_substring(const std::string& str, sz i, sz j, const std::string& dest_nature) {
     VINA_CHECK(i >= 1);
     VINA_CHECK(i <= j+1);
-    if(j > str.size()) throw atom_syntax_error("The line is too short");
+
+    if(j > str.size()) 
+        throw pdbqt_parse_error("This line is too short.", str);
 
     // omit leading whitespace
     while(i <= j && std::isspace(str[i-1]))
@@ -70,27 +89,28 @@ T checked_convert_substring(const std::string& str, sz i, sz j, const std::strin
         return boost::lexical_cast<T>(substr);
     }
     catch(...) {
-        throw atom_syntax_error(std::string("\"") + substr + "\" is not a valid " + dest_nature);
+        throw pdbqt_parse_error(dest_nature + std::string(" \"") + substr + "\" is not valid.", str);
     }
 }
 
 parsed_atom parse_pdbqt_atom_string(const std::string& str) {
-    unsigned number = checked_convert_substring<unsigned>(str, 7, 11, "atom number");
-    vec coords(checked_convert_substring<fl>(str, 31, 38, "coordinate"),
-               checked_convert_substring<fl>(str, 39, 46, "coordinate"),
-               checked_convert_substring<fl>(str, 47, 54, "coordinate"));
+    unsigned number = checked_convert_substring<unsigned>(str, 7, 11, "Atom number");
+    vec coords(checked_convert_substring<fl>(str, 31, 38, "Coordinate"),
+               checked_convert_substring<fl>(str, 39, 46, "Coordinate"),
+               checked_convert_substring<fl>(str, 47, 54, "Coordinate"));
     fl charge = 0;
     if(!substring_is_blank(str, 69, 76))
-        charge = checked_convert_substring<fl>(str, 69, 76, "charge");
+        charge = checked_convert_substring<fl>(str, 69, 76, "Charge");
     std::string name = omit_whitespace(str, 78, 79);
     sz ad = string_to_ad_type(name);
     parsed_atom tmp(ad, charge, coords, number);
+
     if(is_non_ad_metal_name(name))
         tmp.xs = XS_TYPE_Met_D;
     if(tmp.acceptable_type()) 
         return tmp;
-    else 
-        throw atom_syntax_error(std::string("\"") + name + "\" is not a valid AutoDock type. Note that AutoDock atom types are case-sensitive.");
+    else
+        throw pdbqt_parse_error("Atom type " + name + " is not a valid AutoDock type (atom types are case-sensitive).", str);
 }
 
 struct atom_reference {
@@ -211,134 +231,134 @@ struct parsing_struct {
     }
 };
 
-unsigned parse_one_unsigned(const std::string& str, const std::string& start, unsigned count) {
+unsigned parse_one_unsigned(const std::string& str, const std::string& start) {
     std::istringstream in_str(str.substr(start.size()));
     int tmp;
     in_str >> tmp;
+
     if(!in_str || tmp < 0) 
-        throw stream_parse_error(count, "Syntax error");
+        throw pdbqt_parse_error("Syntax error.", str);
+
     return unsigned(tmp);
 }
 
-void parse_two_unsigneds(const std::string& str, const std::string& start, unsigned count, unsigned& first, unsigned& second) {
+void parse_two_unsigneds(const std::string& str, const std::string& start, unsigned& first, unsigned& second) {
     std::istringstream in_str(str.substr(start.size()));
     int tmp1, tmp2;
     in_str >> tmp1;
     in_str >> tmp2;
+
     if(!in_str || tmp1 < 0 || tmp2 < 0) 
-        throw stream_parse_error(count, "Syntax error");
+        throw pdbqt_parse_error("Syntax error.", str);
+
     first = unsigned(tmp1);
     second = unsigned(tmp2);
 }
 
 void parse_pdbqt_rigid(const path& name, rigid& r) {
     ifile in(name);
-    unsigned count = 0;
     std::string str;
+
     while(std::getline(in, str)) {
-        ++count;
         if(str.empty()) {} // ignore ""
         else if(starts_with(str, "TER")) {} // ignore 
         else if(starts_with(str, "END")) {} // ignore
         else if(starts_with(str, "WARNING")) {} // ignore - AutoDockTools bug workaround
         else if(starts_with(str, "REMARK")) {} // ignore
-        else if(starts_with(str, "ATOM  ") || starts_with(str, "HETATM")) {
-            try {
-                r.atoms.push_back(parse_pdbqt_atom_string(str));
-            }
-            catch(atom_syntax_error& e) {
-                throw parse_error(name, count, "ATOM syntax incorrect: " + e.nature);
-            }
-            catch(...) { 
-                throw parse_error(name, count, "ATOM syntax incorrect");
-            }
-        }
+        else if(starts_with(str, "ATOM  ") || starts_with(str, "HETATM"))
+            r.atoms.push_back(parse_pdbqt_atom_string(str));
         else if(starts_with(str, "MODEL"))
-            throw stream_parse_error(count, "Unexpected multi-MODEL input. Use \"vina_split\" first?");
-        else throw parse_error(name, count, "Unknown or inappropriate tag");
+            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in rigid receptor. "
+                                    "Only one model can be used for the rigid receptor.");
+        else 
+            throw pdbqt_parse_error("Unknown or inappropriate tag found in rigid receptor.", str);
     }
 }
 
-
-void parse_pdbqt_root_aux(std::istream& in, unsigned& count, parsing_struct& p, context& c) {
+void parse_pdbqt_root_aux(std::istream& in, parsing_struct& p, context& c) {
     std::string str;
+
     while(std::getline(in, str)) {
         add_context(c, str);
-        ++count;
+
         if(str.empty()) {} // ignore ""
         else if(starts_with(str, "WARNING")) {} // ignore - AutoDockTools bug workaround
         else if(starts_with(str, "REMARK")) {} // ignore
-        else if(starts_with(str, "ATOM  ") || starts_with(str, "HETATM")) {
-            try {
-                p.add(parse_pdbqt_atom_string(str), c);
-            }
-            catch(atom_syntax_error& e) {
-                throw stream_parse_error(count, "ATOM syntax incorrect: " + e.nature);
-            }
-            catch(...) { 
-                throw stream_parse_error(count, "ATOM syntax incorrect");
-            }
-        }
-        else if(starts_with(str, "ENDROOT")) return;
+        else if(starts_with(str, "ATOM  ") || starts_with(str, "HETATM"))
+            p.add(parse_pdbqt_atom_string(str), c);
+        else if(starts_with(str, "ENDROOT"))
+            return;
         else if(starts_with(str, "MODEL"))
-            throw stream_parse_error(count, "Unexpected multi-MODEL input. Use \"vina_split\" first?");
-        else throw stream_parse_error(count, "Unknown or inappropriate tag");
+            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue or ligand PDBQT file. "
+                                    "Use \"vina_split\" to split flex residues or ligands in multiple PDBQT files.");
+        else 
+            throw pdbqt_parse_error("Unknown or inappropriate tag found in flex residue or ligand.", str);
     }
 }
 
-void parse_pdbqt_root(std::istream& in, unsigned& count, parsing_struct& p, context& c) {
+void parse_pdbqt_root(std::istream& in, parsing_struct& p, context& c) {
     std::string str;
+
     while(std::getline(in, str)) {
         add_context(c, str);
-        ++count;
+
         if(str.empty()) {} // ignore
         else if(starts_with(str, "WARNING")) {} // ignore - AutoDockTools bug workaround
         else if(starts_with(str, "REMARK")) {} // ignore
         else if(starts_with(str, "ROOT")) {
-            parse_pdbqt_root_aux(in, count, p, c);
+            parse_pdbqt_root_aux(in, p, c);
             break;
         }
         else if(starts_with(str, "MODEL"))
-            throw stream_parse_error(count, "Unexpected multi-MODEL input. Use \"vina_split\" first?");
-        else throw stream_parse_error(count, "Unknown or inappropriate tag");
+            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue or ligand PDBQT file. "
+                                    "Use \"vina_split\" to split flex residues or ligands in multiple PDBQT files.");
+        else 
+            throw pdbqt_parse_error("Unknown or inappropriate tag found in flex residue or ligand.", str);
     }
 }
 
-void parse_pdbqt_branch(std::istream& in, unsigned& count, parsing_struct& p, context& c, unsigned from, unsigned to); // forward declaration
+void parse_pdbqt_branch(std::istream& in, parsing_struct& p, context& c, unsigned from, unsigned to); // forward declaration
 
-void parse_pdbqt_branch_aux(std::istream& in, unsigned& count, const std::string& str, parsing_struct& p, context& c) {
+void parse_pdbqt_branch_aux(std::istream& in, const std::string& str, parsing_struct& p, context& c) {
     unsigned first, second;
-    parse_two_unsigneds(str, "BRANCH", count, first, second); 
+    parse_two_unsigneds(str, "BRANCH", first, second);
     sz i = 0;
+
     for(; i < p.atoms.size(); ++i)
         if(p.atoms[i].a.number == first) {
             p.atoms[i].ps.push_back(parsing_struct());
-            parse_pdbqt_branch(in, count, p.atoms[i].ps.back(), c, first, second);
+            parse_pdbqt_branch(in, p.atoms[i].ps.back(), c, first, second);
             break;
         }
+
     if(i == p.atoms.size())
-        throw stream_parse_error(count, "No atom number " + boost::lexical_cast<std::string>(first) + " in this branch");
+        throw pdbqt_parse_error("Atom number " + std::to_string(first) + " is missing in this branch.", str);
 }
 
-void parse_pdbqt_aux(std::istream& in, unsigned& count, parsing_struct& p, context& c, boost::optional<unsigned>& torsdof, bool residue) {
-    parse_pdbqt_root(in, count, p, c);
+void parse_pdbqt_aux(std::istream& in, parsing_struct& p, context& c, boost::optional<unsigned>& torsdof, bool residue) {
+    parse_pdbqt_root(in, p, c);
 
     std::string str;
+
     while(std::getline(in, str)) {
         add_context(c, str);
-        ++count;
+
         if(str.empty()) {} // ignore ""
         else if(starts_with(str, "WARNING")) {} // ignore - AutoDockTools bug workaround
         else if(starts_with(str, "REMARK")) {} // ignore
-        else if(starts_with(str, "BRANCH")) parse_pdbqt_branch_aux(in, count, str, p, c);
+        else if(starts_with(str, "BRANCH")) parse_pdbqt_branch_aux(in, str, p, c);
         else if(!residue && starts_with(str, "TORSDOF")) {
-            if(torsdof) throw stream_parse_error(count, "TORSDOF can occur only once");
-            torsdof = parse_one_unsigned(str, "TORSDOF", count);
+            if(torsdof)
+                throw pdbqt_parse_error("TORSDOF keyword can be defined only once.");
+            torsdof = parse_one_unsigned(str, "TORSDOF");
         }
-        else if(residue && starts_with(str, "END_RES")) return; 
+        else if(residue && starts_with(str, "END_RES"))
+            return; 
         else if(starts_with(str, "MODEL"))
-            throw stream_parse_error(count, "Unexpected multi-MODEL input. Use \"vina_split\" first?");
-        else throw stream_parse_error(count, "Unknown or inappropriate tag");
+            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue or ligand PDBQT file. "
+                                    "Use \"vina_split\" to split flex residues or ligands in multiple PDBQT files.");
+        else 
+            throw pdbqt_parse_error("Unknown or inappropriate tag found in flex residue or ligand.", str);
     }
 }
 
@@ -447,120 +467,103 @@ void postprocess_residue(non_rigid_parsed& nr, parsing_struct& p, context& c) {
 
 //dkoes, stream version
 void parse_pdbqt_ligand(std::istream& in, non_rigid_parsed& nr, context& c) {
-    unsigned count = 0;
     parsing_struct p;
     boost::optional<unsigned> torsdof;
 
-    try {
-        parse_pdbqt_aux(in, count, p, c, torsdof, false);
-        if(p.atoms.empty())
-            throw stream_parse_error(count, "No atoms in the ligand (OBMol)");
-        if(!torsdof)
-            throw stream_parse_error(count, "Missing TORSDOF (OBMol)");
+    parse_pdbqt_aux(in, p, c, torsdof, false);
 
-        postprocess_ligand(nr, p, c, unsigned(torsdof.get())); // bizarre size_t -> unsigned compiler complaint
-    }
-    catch(stream_parse_error& e) {
-        throw stream_parse_error(count, e.reason);
-    }
+    if(p.atoms.empty()) 
+        throw pdbqt_parse_error("No atoms in this ligand.");
+    if(!torsdof)
+        throw pdbqt_parse_error("Missing TORSDOF keyword.");
+
+    postprocess_ligand(nr, p, c, unsigned(torsdof.get())); // bizarre size_t -> unsigned compiler complaint
 
     VINA_CHECK(nr.atoms_atoms_bonds.dim() == nr.atoms.size());
 }
 
 void parse_pdbqt_ligand(const path& name, non_rigid_parsed& nr, context& c) {
     ifile in(name);
-    unsigned count = 0;
     parsing_struct p;
     boost::optional<unsigned> torsdof;
-    try {
-        parse_pdbqt_aux(in, count, p, c, torsdof, false);
-        if(p.atoms.empty()) 
-            throw parse_error(name, count, "No atoms in the ligand");
-        if(!torsdof)
-            throw parse_error(name, count, "Missing TORSDOF");
-        postprocess_ligand(nr, p, c, unsigned(torsdof.get())); // bizarre size_t -> unsigned compiler complaint
-    }
-    catch(stream_parse_error& e) {
-        throw e.to_parse_error(name);
-    }
+
+    parse_pdbqt_aux(in, p, c, torsdof, false);
+
+    if(p.atoms.empty()) 
+        throw pdbqt_parse_error("No atoms in this ligand.");
+    if(!torsdof)
+        throw pdbqt_parse_error("Missing TORSDOF keyword in this ligand.");
+
+    postprocess_ligand(nr, p, c, unsigned(torsdof.get())); // bizarre size_t -> unsigned compiler complaint
+
     VINA_CHECK(nr.atoms_atoms_bonds.dim() == nr.atoms.size());
 }
 
-void parse_pdbqt_residue(std::istream& in, unsigned& count, parsing_struct& p, context& c) { 
+void parse_pdbqt_residue(std::istream& in, parsing_struct& p, context& c) { 
     boost::optional<unsigned> dummy;
-    parse_pdbqt_aux(in, count, p, c, dummy, true);
+    parse_pdbqt_aux(in, p, c, dummy, true);
 }
 
 void parse_pdbqt_flex(const path& name, non_rigid_parsed& nr, context& c) {
     ifile in(name);
-    unsigned count = 0;
     std::string str;
 
     while(std::getline(in, str)) {
         add_context(c, str);
-        ++count;
+
         if(str.empty()) {} // ignore ""
         else if(starts_with(str, "WARNING")) {} // ignore - AutoDockTools bug workaround
         else if(starts_with(str, "REMARK")) {} // ignore
         else if(starts_with(str, "BEGIN_RES")) {
-            try {
-                parsing_struct p;
-                parse_pdbqt_residue(in, count, p, c);
-                postprocess_residue(nr, p, c);
-            }
-            catch(stream_parse_error& e) {
-                throw e.to_parse_error(name);
-            }
+            parsing_struct p;
+            parse_pdbqt_residue(in, p, c);
+            postprocess_residue(nr, p, c);
         }
         else if(starts_with(str, "MODEL"))
-            throw stream_parse_error(count, "Unexpected multi-MODEL input. Use \"vina_split\" first?");
-        else throw parse_error(name, count, "Unknown or inappropriate tag");
+            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue PDBQT file. "
+                                    "Use \"vina_split\" to split flex residues in multiple PDBQT files.");
+        else 
+            throw pdbqt_parse_error("Unknown or inappropriate tag found in flex residue.", str);
     }
+
     VINA_CHECK(nr.atoms_atoms_bonds.dim() == nr.atoms.size());
 }
 
-void parse_pdbqt_branch(std::istream& in, unsigned& count, parsing_struct& p, context& c, unsigned from, unsigned to) {
+void parse_pdbqt_branch(std::istream& in, parsing_struct& p, context& c, unsigned from, unsigned to) {
     std::string str;
+
     while(std::getline(in, str)) {
         add_context(c, str);
-        ++count;
+
         if(str.empty()) {} //ignore ""
         else if(starts_with(str, "WARNING")) {} // ignore - AutoDockTools bug workaround
         else if(starts_with(str, "REMARK")) {} // ignore
-        else if(starts_with(str, "BRANCH")) parse_pdbqt_branch_aux(in, count, str, p, c);
+        else if(starts_with(str, "BRANCH")) parse_pdbqt_branch_aux(in, str, p, c);
         else if(starts_with(str, "ENDBRANCH")) {
             unsigned first, second;
-            parse_two_unsigneds(str, "ENDBRANCH", count, first, second);
+            parse_two_unsigneds(str, "ENDBRANCH", first, second);
             if(first != from || second != to) 
-                throw stream_parse_error(count, "Inconsistent branch numbers");
+                throw pdbqt_parse_error("Inconsistent branch numbers.");
             if(!p.immobile_atom) 
-                throw stream_parse_error(count, "Atom " + boost::lexical_cast<std::string>(to) + " has not been found in this branch");
+                throw pdbqt_parse_error("Atom " + boost::lexical_cast<std::string>(to) + " has not been found in this branch.");
             return;
         }
         else if(starts_with(str, "ATOM  ") || starts_with(str, "HETATM")) {
-            try {
-                parsed_atom a = parse_pdbqt_atom_string(str);
-                if(a.number == to)
-                    p.immobile_atom = p.atoms.size();
-                p.add(a, c);
-            }
-            catch(atom_syntax_error& e) {
-                throw stream_parse_error(count, "ATOM syntax incorrect: " + e.nature);
-            }
-            catch(...) { 
-                throw stream_parse_error(count, "ATOM syntax incorrect");
-            }
+            parsed_atom a = parse_pdbqt_atom_string(str);
+            if(a.number == to)
+                p.immobile_atom = p.atoms.size();
+            p.add(a, c);
         }
         else if(starts_with(str, "MODEL"))
-            throw stream_parse_error(count, "Unexpected multi-MODEL input. Use \"vina_split\" first?");
-        else throw stream_parse_error(count, "Unknown or inappropriate tag");
+            throw pdbqt_parse_error("Unexpected multi-MODEL tag found in flex residue or ligand PDBQT file. "
+                                    "Use \"vina_split\" to split flex residues or ligands in multiple PDBQT files.");
+        else 
+            throw pdbqt_parse_error("Unknown or inappropriate tag found in flex residue or ligand.", str);
     }
 }
 
 
 //////////// new stuff //////////////////
-
-
 struct pdbqt_initializer {
 
     atom_type::t atom_typing_used;
@@ -620,7 +623,14 @@ struct pdbqt_initializer {
 model parse_ligand_pdbqt_from_file(const std::string& name, atom_type::t atype) { // can throw parse_error
     non_rigid_parsed nrp;
     context c;
-    parse_pdbqt_ligand(make_path(name), nrp, c);
+
+    try {
+        parse_pdbqt_ligand(make_path(name), nrp, c);
+    }
+    catch(pdbqt_parse_error& e) {
+        std::cerr << e.what();
+        exit(EXIT_FAILURE);
+    }
 
     pdbqt_initializer tmp(atype);
     tmp.initialize_from_nrp(nrp, c, true);
@@ -632,8 +642,14 @@ model parse_ligand_pdbqt_from_string(const std::string& string_name, atom_type::
     non_rigid_parsed nrp;
     context c;
 
-    std::stringstream molstream(string_name);
-    parse_pdbqt_ligand(molstream, nrp, c);
+    try {
+        std::stringstream molstream(string_name);
+        parse_pdbqt_ligand(molstream, nrp, c);
+    }
+    catch(pdbqt_parse_error& e) {
+        std::cerr << e.what() << '\n';
+        exit(EXIT_FAILURE);
+    }
 
     pdbqt_initializer tmp(atype);
     tmp.initialize_from_nrp(nrp, c, true);
@@ -655,11 +671,23 @@ model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& fle
     pdbqt_initializer tmp(atype);
 
     if (!rigid_name.empty()) {
-        parse_pdbqt_rigid(make_path(rigid_name), r);
+        try {
+            parse_pdbqt_rigid(make_path(rigid_name), r);
+        }
+        catch(pdbqt_parse_error& e) {
+            std::cerr << e.what() << '\n';
+            exit(EXIT_FAILURE);
+        }
     }
     
     if (!flex_name.empty()) {
-        parse_pdbqt_flex(make_path(flex_name), nrp, c);
+        try {
+            parse_pdbqt_flex(make_path(flex_name), nrp, c);
+        }
+        catch(pdbqt_parse_error& e) {
+            std::cerr << e.what() << '\n';
+            exit(EXIT_FAILURE);
+        }
     }
 
     if (!rigid_name.empty()) {

@@ -24,24 +24,10 @@
 #define VINA_PARSE_PDBQT_H
 
 #include <string>
-#include <fstream> // for getline ?
-#include <sstream> // in parse_two_unsigneds
-#include <cctype> // isspace
-#include <boost/utility.hpp> // for noncopyable 
-#include <boost/optional.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/lexical_cast.hpp>
-//#include <openbabel/mol.h>
-//#include <openbabel/obconversion.h>
 #include "model.h"
-#include "atom_constants.h"
-#include "file.h"
-#include "convert_substring.h"
-#include "parse_error.h"
-#include "utils.h"
 
-model parse_receptor_pdbqt(const std::string &rigid=std::string(), const std::string &flex=std::string(), atom_type::t atype=atom_type::XS); // can throw parse_error
-model parse_ligand_pdbqt_from_file(const std::string& name, atom_type::t atype); // can throw parse_error
+model parse_receptor_pdbqt(const std::string &rigid=std::string(), const std::string &flex=std::string(), atom_type::t atype=atom_type::XS); // can throw pdbqt_parse_error
+model parse_ligand_pdbqt_from_file(const std::string& name, atom_type::t atype); // can throw pdbqt_parse_error
 model parse_ligand_pdbqt_from_string(const std::string &string_name, atom_type::t atype);
 
 #endif

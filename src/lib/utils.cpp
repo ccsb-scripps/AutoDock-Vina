@@ -89,11 +89,10 @@ std::string get_filename(const std::string& s) {
     return("");
 }
 
-std::string get_file_contents(const std::string& filename)
-{
-    std::ifstream in(filename, std::ios::in | std::ios::binary);
-    if (in)
-    {
+std::string get_file_contents(const std::string& filename) {   
+    ifile in(make_path(filename));
+
+    if (in) {
         std::string contents;
         in.seekg(0, std::ios::end);
         contents.resize(in.tellg());
@@ -102,5 +101,5 @@ std::string get_file_contents(const std::string& filename)
         in.close();
         return (contents);
     }
-    throw(errno);
+    throw file_error(filename, true);
 }
