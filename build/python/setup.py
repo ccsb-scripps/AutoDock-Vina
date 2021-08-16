@@ -45,28 +45,47 @@ def in_conda():
 
 
 def find_version():
-    """Extract the current version of these python bindings from the __init__.py file."""
+    """Extract the current version of AutoDock Vina.
+    
+    The version will be obtained from (in priority order):
+    1. version.py (file created only when using GitHub Actions)
+    2. git describe
+    3. __init__.py (as failback)
+
+    """
+    version_file = os.path.join(base_dir, 'vina', 'version.py')
+    if os.path.isfile(version_file):
+        with open(version_file) as f:
+            version = f.read().strip()
+        
+        print('Version found: %s (from version.py)' % version)
+        return version
+
     try:
         git_output = subprocess.check_output(['git', 'describe', '--abbrev=7', '--dirty', '--always', '--tags'])
         git_output = git_output.strip().decode()
 
         if git_output.startswith('v'):
             git_output = git_output[1:]
-        git_version = git_output.replace('dirty', 'mod').replace('-', '+', 1).replace('-', '.')
+        version = git_output.replace('dirty', 'mod').replace('-', '+', 1).replace('-', '.')
 
-        return git_version
+        print('Version found %s (from git describe)' % version)
+        return version
     except:
-        try:
-            with open(os.path.join(base_dir, 'vina', '__init__.py')) as fp:
-                for line in fp:
-                    version_match = re.match(r'^__version__ = "(.+?)"$', line)
+        pass
+    
+    init_file = os.path.join(base_dir, 'vina', '__init__.py') 
+    with open(init_file) as f:
+        for line in f:
+            version_match = re.match(r'^__version__ = "(.+?)"$', line)
 
-                    if version_match:
-                        version = version_match.group(1)
-                        return version
-                raise RuntimeError('Could not find version string in vina/__init__.py.')
-        except IOError:
-            raise RuntimeError('Could not find vina/__init__.py.')
+            if version_match:
+                version = version_match.group(1)
+
+                print('Version found %s (from __init__.py)' % version)
+                return version
+    
+    raise RuntimeError('Could not find version string for AutoDock Vina.')
 
 
 def execute_command(cmd_line):
