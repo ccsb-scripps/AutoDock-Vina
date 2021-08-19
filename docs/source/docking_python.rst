@@ -6,7 +6,7 @@ Python scripting
 Materials for this tutorial
 ---------------------------
 
-For this tutorial, all the basic material will be provided and can be found in the ``AutoDock-Vina/example/python_scripting`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/python_scripting>`_).
+For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/python_scripting`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/python_scripting>`_).
 
 First example
 -------------

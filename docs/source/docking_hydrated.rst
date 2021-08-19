@@ -27,7 +27,7 @@ In this tutorial, we are going to dock a fragment-size ligand (nicotine) with ex
 Materials for this tutorial
 ---------------------------
 
-For this tutorial, all the basic material will be provided and can be found in the ``AutoDock-Vina/example/hydrated_docking/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/hydrated_docking>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/hydrated_docking/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
+For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/hydrated_docking/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/hydrated_docking>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/hydrated_docking/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
 
 1. Preparing the receptor
 -------------------------

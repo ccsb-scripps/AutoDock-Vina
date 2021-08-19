@@ -13,7 +13,7 @@ The protein PDE in complex with two inhibitors (pdb id: `5x72 <https://www.rcsb.
 Materials for this tutorial
 ---------------------------
 
-For this tutorial, all the basic material will be provided and can be found in the ``AutoDock-Vina/example/mulitple_ligands_docking/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/mulitple_ligands_docking>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/mulitple_ligands_docking/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
+For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/mulitple_ligands_docking/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/mulitple_ligands_docking>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/mulitple_ligands_docking/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
 
 1. Preparing the flexible receptor
 ----------------------------------
@@ -29,7 +29,7 @@ If you are not sure about this step, the output PDBQT file ``5x72_receptor.pdbqt
 2. Prepare ligands
 ------------------
 
-This time, we will prepare two ligands instead of only one. We will start from the SDF files ``5x72_ligand_p59.sdf`` and ``5x72_ligand_p69.sdf`` located in the ``data`` directory. They were also obtained directly from the `PDB <https://www.rcsb.org>`_ here: `5x72 <https://www.rcsb.org/structure/5X72>`_ (see ``Download instance Coordinates`` link for the P59 and P69 molecules). Since the ligand files do not include the hydrogen atoms, we are going to automatically add them.
+Here, we will prepare two ligands instead of only one. We will start from the SDF files ``5x72_ligand_p59.sdf`` and ``5x72_ligand_p69.sdf`` located in the ``data`` directory. They were also obtained directly from the `PDB <https://www.rcsb.org>`_ here: `5x72 <https://www.rcsb.org/structure/5X72>`_ (see ``Download instance Coordinates`` link for the P59 and P69 molecules). Since the ligand files do not include the hydrogen atoms, we are going to automatically add them.
 
 .. warning::
   
@@ -45,7 +45,7 @@ The output PDBQT ``5x72_ligand_p59.pdbqt`` and ``5x72_ligand_p69.pdbqt`` can be 
 3. (Optional) Generating affinity maps for AutoDock FF
 ------------------------------------------------------
 
-As well as for the docking with a fully rigid receptor, we need to generate a GPF file to precalculate the affinity map for each atom types. However, instead of using the full receptor, affinity maps will be calculated only for the rigid part of the receptor (``5x72_receptor.pdbqt``).
+As well as for the docking with a fully rigid receptor, we need to generate a GPF file to precalculate the affinity maps for each atom type. However, instead of using the full receptor, affinity maps will be calculated only for the rigid part of the receptor (``5x72_receptor.pdbqt``).
 
 To prepare the GPF file for the rigid part of the receptor:
 
