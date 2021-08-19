@@ -24,6 +24,7 @@
 #define VINA_FORCEFIELD_H
 
 
+#include <sstream>
 #include <iostream>
 #include <fstream>
 #include <string>
