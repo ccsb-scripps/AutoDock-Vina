@@ -16,10 +16,15 @@ The AutoDock4 force field was extended to include a specialized potential descri
 
     - Santos-Martins, D., Forli, S., Ramos, M. J., & Olson, A. J. (2014). AutoDock4Zn: an improved AutoDock force field for small-molecule docking to zinc metalloproteins. Journal of chemical information and modeling, 54(8), 2371-2379.
 
+Materials for this tutorial
+---------------------------
+
+For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/docking_with_zinc_metalloproteins/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/docking_with_zinc_metalloproteins>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/docking_with_zinc_metalloproteins/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
+
 1. Preparing the receptor
 -------------------------
 
-During this step we will create the PDBQT file of the receptor using the PDB file called ``proteinH.pdb``, containing all the hydrogen atoms, and add the tetrahedral zinc pseudo atoms (``TZ``) around the Zinc ion. TZ atoms represent the preferred position for tetrahedral coordination by the ligand. All the materials for this tutorial can be found here: ``<autodock-vina_directory>/example/docking_with_zinc_metalloproteins/data``. This file contains the receptor coordinates of chain A and B taken from the PDB entry `1s63 <https://www.rcsb.org/structure/1S63>`_. The Python script ``zinc_pseudo.py`` is available here: ``<autodock-vina_directory>/example/autodock_scripts``.
+During this step we will create the PDBQT file of the receptor using the PDB file called ``proteinH.pdb``, containing all the hydrogen atoms, and add the tetrahedral zinc pseudo atoms (``TZ``) around the zinc ion. TZ atoms represent the preferred position for tetrahedral coordination by the ligand. This file contains the receptor coordinates of chain A and B taken from the PDB entry `1s63 <https://www.rcsb.org/structure/1S63>`_.
 
 To prepare the receptor, execute the following command lines:
 

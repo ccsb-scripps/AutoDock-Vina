@@ -10,6 +10,10 @@ The protein PDE in complex with two inhibitors (pdb id: `5x72 <https://www.rcsb.
 .. note::
     This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the meeko Python package.
 
+Materials for this tutorial
+---------------------------
+
+For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/mulitple_ligands_docking/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/mulitple_ligands_docking>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/mulitple_ligands_docking/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
 
 1. Preparing the flexible receptor
 ----------------------------------
@@ -25,7 +29,7 @@ If you are not sure about this step, the output PDBQT file ``5x72_receptor.pdbqt
 2. Prepare ligands
 ------------------
 
-This time, we will prepare two ligands instead of only one. We will start from the SDF files ``5x72_ligand_p59.sdf`` and ``5x72_ligand_p69.sdf`` located in the ``data`` directory. They were also obtained directly from the `PDB <https://www.rcsb.org>`_ here: `5x72 <https://www.rcsb.org/structure/5X72>`_ (see ``Download instance Coordinates`` link for the P59 and P69 molecules). Since the ligand files do not include the hydrogen atoms, we are going to automatically add them.
+Here, we will prepare two ligands instead of only one. We will start from the SDF files ``5x72_ligand_p59.sdf`` and ``5x72_ligand_p69.sdf`` located in the ``data`` directory. They were also obtained directly from the `PDB <https://www.rcsb.org>`_ here: `5x72 <https://www.rcsb.org/structure/5X72>`_ (see ``Download instance Coordinates`` link for the P59 and P69 molecules). Since the ligand files do not include the hydrogen atoms, we are going to automatically add them.
 
 .. warning::
   
@@ -41,7 +45,7 @@ The output PDBQT ``5x72_ligand_p59.pdbqt`` and ``5x72_ligand_p69.pdbqt`` can be 
 3. (Optional) Generating affinity maps for AutoDock FF
 ------------------------------------------------------
 
-As well as for the docking with a fully rigid receptor, we need to generate a GPF file to precalculate the affinity map for each atom types. However, instead of using the full receptor, affinity maps will be calculated only for the rigid part of the receptor (``5x72_receptor.pdbqt``). The Python script ``prepare_gpf.py`` is available here: ``<autodock-vina_directory>/example/autodock_scripts``.
+As well as for the docking with a fully rigid receptor, we need to generate a GPF file to precalculate the affinity maps for each atom type. However, instead of using the full receptor, affinity maps will be calculated only for the rigid part of the receptor (``5x72_receptor.pdbqt``).
 
 To prepare the GPF file for the rigid part of the receptor:
 
@@ -50,7 +54,7 @@ To prepare the GPF file for the rigid part of the receptor:
     $ pythonsh <script_directory>/prepare_gpf.py -l 5x72_ligand_p59.pdbqt -r 5x72_receptor.pdbqt \ 
                -p npts='80,64,64' -p gridcenter='-15 15 129' -o 5x72_receptor.gpf
 
-This time we manually specified the center of the grid ``-p gridcenter='-15 15 129'`` as well as its size ``-p npts='80,64,64'``. The python script ``prepare_gpf.py`` is located in the ``scripts`` directory for the :ref:`basic_docking` tutorial.
+This time we manually specified the center of the grid ``-p gridcenter='-15 15 129'`` as well as its size ``-p npts='80,64,64'``.
 
 .. code-block:: console
     :caption: Content of the grid parameter file (**5x72_receptor.gpf**) for the receptor (**5x72_receptor.pdbqt**)

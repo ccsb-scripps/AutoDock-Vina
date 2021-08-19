@@ -22,6 +22,10 @@ The current implementation is described in our paper on the D3R Grand Challenge 
 
 For this tutorial, we are going to use the dataset from the Drug Design Data Resource (D3R) Grand Challenge 4 (GC4) organized in 2018. For more information about the D3R organization and it role in the computer-aided drug discovery community: `https://drugdesigndata.org <https://drugdesigndata.org/>`_. In second stage (1b) of this challenge, participants were asked to predict the bound poses of 20 BACE1 ligands knowing the crystallographic structure of the protein. A macrocycle is present in 19 out of 20 ligands, making pose predictions particularly challenging for the reasons described earlier. The docking procedure being the same for all 20 ligands, we are going to redock only one of the macrocycle in this tutorial.
 
+Materials for this tutorial
+---------------------------
+
+For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/docking_with_macrocycles/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/docking_with_macrocycles>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/docking_with_macrocycles/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
 
 1. Preparing the receptor
 -------------------------

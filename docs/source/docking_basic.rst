@@ -13,10 +13,16 @@ Let's start with our first example of docking, where the typical usage pattern w
 
     - Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.
 
+Materials for this tutorial
+---------------------------
+
+For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/basic_docking/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/basic_docking>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/basic_docking/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
+
+
 1. Preparing the receptor
 -------------------------
 
-During this step, we will create a PDBQT file of our receptor containing only the polar hydrogen atoms as well as partial charges. For this step, we will use the ``prepare_receptor`` command tool from the ADFR Suite. As a prerequisite, a receptor coordinate file must contain all hydrogen atoms. If hydrogen atoms are absent in the protein structure file, you can add the ``-A "hydrogens"`` flag. Many tools exist to add missing hydrogen atoms to a protein, one popular choice would be to use `REDUCE <http://kinemage.biochem.duke.edu/software/reduce.php>`_. If you are using experimental structures (for instance, from the `Protein Data Bank <https://www.rcsb.org>`_), use a text editor to remove waters, ligands, cofactors, ions deemed unnecessary for the docking. The file ``1iep_receptorH.pdb`` is provided (see ``<autodock-vina_directory>/example/basic_docking/data`` directory). This file contains the receptor coordinates taken from PDB entry `1iep <https://www.rcsb.org/structure/1IEP>`_.
+During this step, we will create a PDBQT file of our receptor containing only the polar hydrogen atoms as well as partial charges. For this step, we will use the ``prepare_receptor`` command tool from the ADFR Suite. As a prerequisite, a receptor coordinate file must contain all hydrogen atoms. If hydrogen atoms are absent in the protein structure file, you can add the ``-A "hydrogens"`` flag. Many tools exist to add missing hydrogen atoms to a protein, one popular choice would be to use `REDUCE <http://kinemage.biochem.duke.edu/software/reduce.php>`_. If you are using experimental structures (for instance, from the `Protein Data Bank <https://www.rcsb.org>`_), use a text editor to remove waters, ligands, cofactors, ions deemed unnecessary for the docking. This file contains the receptor coordinates taken from PDB entry `1iep <https://www.rcsb.org/structure/1IEP>`_.
 
 .. code-block:: bash
 
@@ -46,7 +52,7 @@ Other options are available for ``mk_prepare_ligand.py`` by typing ``mk_prepare_
 
 Now, we have to define the grid space for the docking, typically, a 3D box around a the potential binding site of a receptor. During this step, we will create the input file for AutoGrid4, which will create an affinity map file for each atom types. The grid parameter file specifies an AutoGrid4 calculation, including the size and location of the grid, the atom types that will be used, the coordinate file for the rigid receptor, and other parameters for calculation of the grids.
 
-To prepare the gpf file for AutoGrid4, your can use the ``prepare_gpf.py`` command line tool. This Python script is available here: ``<autodock-vina_directory>/example/autodock_scripts``.
+To prepare the gpf file for AutoGrid4, you can use the ``prepare_gpf.py`` command line tool.
 
 .. code-block:: bash
 

@@ -24,6 +24,11 @@ In this tutorial, we are going to dock a fragment-size ligand (nicotine) with ex
     - Forli, S., & Olson, A. J. (2012). A force field with discrete displaceable waters and desolvation entropy for hydrated ligand docking. Journal of medicinal chemistry, 55(2), 623-638.
     - Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.
 
+Materials for this tutorial
+---------------------------
+
+For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/hydrated_docking/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/hydrated_docking>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/hydrated_docking/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
+
 1. Preparing the receptor
 -------------------------
 
@@ -88,7 +93,7 @@ You can now execute ``autogrid4`` using the GPF file called ``1uw6_receptor.gpf`
 .. code-block:: bash
 
     $ autogrid4 -p 1uw6_receptor.gpf -l 1uw6_receptor.glg
-    $ pythonsh <script_directory>/mapwater.py -r 1uw6_receptor.pdbqt -s 1uw6_receptor.W.map
+    $ python <script_directory>/mapwater.py -r 1uw6_receptor.pdbqt -s 1uw6_receptor.W.map
 
 For more informations about the ``mapwater.py`` command tool and all the available options, just type ``mapwater.py``. After executing this command, you should obtain a new affinity map called ``1uw6_receptor.W.map`` and the following the output:
 
@@ -177,7 +182,7 @@ Docking results are filtered by using the receptor to remove displaced waters an
 
 .. code-block:: bash
 
-    $ pythonsh <script_directory>/dry.py -r 1uw6_receptor.pdbqt -m 1uw6_receptor.W.map -i 1uw6_ligand_ad4_out.pdbqt
+    $ python <script_directory>/dry.py -r 1uw6_receptor.pdbqt -m 1uw6_receptor.W.map -i 1uw6_ligand_ad4_out.pdbqt
 
 For more informations about the ``dry.py`` command tool and all the available options, just type ``dry.py``. Running the previous command should give you this output:
 

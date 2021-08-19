@@ -13,10 +13,15 @@ The lack of receptor flexibility is arguably the greatest limitation in these ty
 
     - Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.
 
+Materials for this tutorial
+---------------------------
+
+For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/flexible_docking/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/flexible_docking>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/flexible_docking/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
+
 1. Preparing the flexible receptor
 ----------------------------------
 
-During this step, we are going to split the receptor coordinates into two PDBQT files: one for the rigid portion and one for the flexible side chains. As with the :ref:`basic_docking` tutorial, the method requires a receptor coordinate file that includes all hydrogen atoms. The file ``1fpu_receptorH.pdb`` is provided (see ``<autodock-vina_directory>/example/flexible_docking/data`` directory). This file contains the receptor coordinates taken from PDB entry ``1fpu``. The Python script ``prepare_flexreceptor.py`` is available here: ``<autodock-vina_directory>/example/autodock_scripts``.
+During this step, we are going to split the receptor coordinates into two PDBQT files: one for the rigid portion and one for the flexible side chains. As with the :ref:`basic_docking` tutorial, the method requires a receptor coordinate file that includes all hydrogen atoms. The file ``1fpu_receptorH.pdb`` is provided (see ``<autodock-vina_directory>/example/flexible_docking/data`` directory). It contains the receptor coordinates taken from PDB entry ``1fpu``.
 
 .. code-block:: bash
     
