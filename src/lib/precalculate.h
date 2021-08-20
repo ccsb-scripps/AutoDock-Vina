@@ -30,7 +30,7 @@
 //Forward declaration
 struct model;
 
-class precalculate_element
+struct precalculate_element
 {
 public:
     precalculate_element(sz n, fl factor_) : fast(n, 0), smooth(n, pr(0, 0)), factor(factor_) { }
@@ -121,7 +121,7 @@ private:
     fl factor;
 };
 
-class precalculate 
+struct precalculate 
 {
 public:
     precalculate() { }
@@ -190,7 +190,7 @@ private:
     triangular_matrix<precalculate_element> m_data;
 };
 
-class precalculate_byatom
+struct precalculate_byatom
 {
 public:
     precalculate_byatom() { }
