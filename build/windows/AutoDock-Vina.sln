@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vina", "vina.vcxproj", "{BD14B0A8-7492-40D1-9B33-D4BDE55708D0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vina-split", "vina-split.vcxproj", "{BD14B0A8-7492-40D1-9B33-D4BDE55708D2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vina_split", "vina_split.vcxproj", "{BD14B0A8-7492-40D1-9B33-D4BDE55708D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
