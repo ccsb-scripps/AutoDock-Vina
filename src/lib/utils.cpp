@@ -86,7 +86,7 @@ std::string get_filename(const std::string& s) {
         return(s.substr(i + 1, s.length() - i));
     }
 
-    return("");
+    return(s);
 }
 
 std::string get_file_contents(const std::string& filename) {   
