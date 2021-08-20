@@ -24,6 +24,8 @@
     <ProjectGuid>{bd14b0a8-7492-40d1-9b33-d4bde55708d0}</ProjectGuid>
     <RootNamespace>AutoDockVina</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>vina</ProjectName>
+	<IntDirSharingDetected>None</IntDirSharingDetected>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -94,6 +96,9 @@
       <AdditionalIncludeDirectories>C:\local\boost_1_77_0;..\..\src\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DisableSpecificWarnings>4244;4267</DisableSpecificWarnings>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -111,6 +116,9 @@
       <AdditionalIncludeDirectories>C:\local\boost_1_77_0;..\..\src\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DisableSpecificWarnings>4244;4267</DisableSpecificWarnings>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,6 +136,9 @@
       <AdditionalIncludeDirectories>C:\local\boost_1_77_0;..\..\src\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DisableSpecificWarnings>4244;4267</DisableSpecificWarnings>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,6 +156,9 @@
       <AdditionalIncludeDirectories>C:\local\boost_1_77_0;..\..\src\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DisableSpecificWarnings>4244;4267</DisableSpecificWarnings>
+      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
