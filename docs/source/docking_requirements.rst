@@ -12,7 +12,7 @@ ADFR software suite
 
     macOS users please note that ADFR software suite is NOT working under Catalina (10.15). We will send email to the mailing list if and when ADFR software suite or an alternative will be available for this version of macOS. If you already are using Catalina, we recommend install VirtualBox and running ADFR software suite inside the virtual box.
 
-Thew ADFR software suite was developed in the Sanner lab at the `Center for Computational Structural Biology (CCSB) <https://ccsb.scripps.edu>`_ formerly known as the Molecular Graphics Laboratory (MGL) of The Scripps Research Institute for visualization and analysis of molecular structures. You can find more information about the ADFR software suite installation process here: `https://ccsb.scripps.edu/adfr/downloads <https://ccsb.scripps.edu/adfr/downloads/>`_. The current version contains the following tools for docking:
+The ADFR software suite was developed in the Sanner lab at the `Center for Computational Structural Biology (CCSB) <https://ccsb.scripps.edu>`_ formerly known as the Molecular Graphics Laboratory (MGL) of The Scripps Research Institute for visualization and analysis of molecular structures. You can find more information about the ADFR software suite installation process here: `https://ccsb.scripps.edu/adfr/downloads <https://ccsb.scripps.edu/adfr/downloads/>`_. The current version contains the following tools for docking:
     
     - ADFR v1.2 and associate scripts
     - AGFR v1.2
