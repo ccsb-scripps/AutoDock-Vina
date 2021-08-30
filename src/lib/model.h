@@ -87,6 +87,7 @@ public:
 
 	bool is_atom_in_ligand(sz a) const;
 	bool is_movable_atom(sz a) const;
+	std::vector<double> center() const;
 	sz find_ligand(sz a) const;
 	sz num_atoms() const { return atoms.size(); }
 	sz num_movable_atoms() const { return m_num_movable_atoms; }
@@ -104,7 +105,6 @@ public:
 	vecv get_heavy_atom_movable_coords() const;
 	conf_size get_size() const;
 	conf get_initial_conf() const; // torsions = 0, orientations = identity, ligand positions = current
-	grid_dims movable_atoms_box(fl add_to_each_dimension, fl granularity = 0.375) const;
 
 	void write_flex  (                  const path& name, const std::string& remark) const { write_context(flex_context, name, remark); }
 	void write_ligand(sz ligand_number, const path& name, const std::string& remark) const { VINA_CHECK(ligand_number < ligands.size()); write_context(ligands[ligand_number].cont, name, remark); }

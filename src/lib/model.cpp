@@ -601,37 +601,12 @@ conf model::get_initial_conf() const { // torsions = 0, orientations = identity,
 	return tmp;
 }
 
-grid_dims model::movable_atoms_box(fl add_to_each_dimension, fl granularity) const {
-	vec corner1(0, 0, 0), corner2(0, 0, 0);
-	VINA_FOR(i, num_movable_atoms()) {
-		const vec& v = movable_coords(i);
-		VINA_FOR_IN(j, v) {
-			if(i == 0 || v[j] < corner1[j]) corner1[j] = v[j];
-			if(i == 0 || v[j] > corner2[j]) corner2[j] = v[j];
-		}
-	}
-	corner1 -= add_to_each_dimension / 2;
-	corner2 += add_to_each_dimension / 2;
-
-	grid_dims gd;
-	{ // always doing this now FIXME ?
-		vec center; center = 0.5 * (corner2 + corner1);
-		VINA_FOR_IN(i, gd) {
-			gd[i].n_voxels = sz(std::ceil((corner2[i] - corner1[i]) / granularity));
-			fl real_span = granularity * gd[i].n_voxels;
-			gd[i].begin = center[i] - real_span/2;
-			gd[i].end = gd[i].begin + real_span;
-		}
-	}
-	return gd;
-}
-
 vecv model::get_ligand_coords() const { // FIXME rm
 	VINA_CHECK(ligands.size() == 1);
 	vecv tmp;
 	const ligand &lig = ligands.front();
 	VINA_RANGE(i, lig.begin, lig.end)
-	tmp.push_back(coords[i]);
+		tmp.push_back(coords[i]);
 	return tmp;
 }
 
@@ -640,8 +615,7 @@ std::vector<double> model::get_ligand_coords() {
 	VINA_CHECK(ligands.size() == 1);
 	std::vector<double> tmp;
 	const ligand &lig = ligands.front();
-	VINA_RANGE(i, lig.begin, lig.end)
-	{
+	VINA_RANGE(i, lig.begin, lig.end) {
 		tmp.push_back(coords[i][0]);
 		tmp.push_back(coords[i][1]);
 		tmp.push_back(coords[i][2]);
@@ -651,16 +625,19 @@ std::vector<double> model::get_ligand_coords() {
 
 vecv model::get_heavy_atom_movable_coords() const { // FIXME mv
 	vecv tmp;
-	VINA_FOR(i, num_movable_atoms())
-	if (atoms[i].el != EL_TYPE_H)
-		tmp.push_back(coords[i]);
+
+	VINA_FOR(i, num_movable_atoms()) {
+		if (atoms[i].el != EL_TYPE_H)
+			tmp.push_back(coords[i]);
+	}
 	return tmp;
 }
 
 sz model::find_ligand(sz a) const {
-	VINA_FOR_IN(i, ligands)
+	VINA_FOR_IN(i, ligands) {
 		if(a >= ligands[i].begin && a < ligands[i].end)
 			return i;
+	}
 	return ligands.size();
 }
 
@@ -677,6 +654,22 @@ bool model::is_movable_atom(sz a) const {
 		return true;
 	else
 		return false;
+}
+
+std::vector<double> model::center() const {
+	std::vector<double> center(3, 0);
+
+	VINA_FOR(i, num_movable_atoms()) {
+		center[0] += coords[i][0];
+		center[1] += coords[i][1];
+		center[2] += coords[i][2];
+	}
+
+	center[0] /= num_movable_atoms();
+	center[1] /= num_movable_atoms();
+	center[2] /= num_movable_atoms();
+
+	return center;
 }
 
 void string_write_coord(sz i, fl x, std::string& str) {
