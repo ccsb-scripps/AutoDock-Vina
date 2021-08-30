@@ -298,11 +298,11 @@ std::vector<double> Vina::grid_dimensions_from_ligand(double buffer_size) {
 		const vec& atom_coords = m_model.get_coords(i);
 
 		VINA_FOR_IN(j, atom_coords) {
-			double distance = std::sqrt(std::pow((box_center[j] - atom_coords[j]), 2));
+			double distance = std::fabs(box_center[j] - atom_coords[j]);
 
 			if (max_distance[j] < distance)
 				max_distance[j] = distance;
-		}	
+		}
 	}
 
 	// Get the final dimensions of the box
@@ -327,10 +327,10 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
 		std::cerr << "ERROR: Cannot compute Vina or Vinardo affinity maps. The (rigid) receptor was not initialized.\n";
 		exit(EXIT_FAILURE);
 	} else if (size_x <= 0 || size_y <= 0 || size_z <= 0) {
-		std::cerr << "ERROR: Grid box dimensions must be superior than 0 Angstrom.\n";
+		std::cerr << "ERROR: Grid box dimensions must be greater than 0 Angstrom.\n";
 		exit(EXIT_FAILURE);
 	} else if (size_x * size_y * size_z > 27e3) {
-		std::cerr << "WARNING: The search space volume > 27000 Angstrom^3 (See FAQ)\n";
+		std::cerr << "WARNING: Search space volume is greater than 27000 Angstrom^3 (See FAQ)\n";
 	}
 
 	grid_dims gd;
