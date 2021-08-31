@@ -188,7 +188,7 @@ Thank you!\n";
 			("size_x", value<double>(&size_x), "size in the X dimension (Angstrom)")
 			("size_y", value<double>(&size_y), "size in the Y dimension (Angstrom)")
 			("size_z", value<double>(&size_z), "size in the Z dimension (Angstrom)")
-			("autobox", bool_switch(&autobox), "box dimensions automatically defined based on the input ligand(s) (score and local only, expect in batch mode.")
+			("autobox", bool_switch(&autobox), "set maps dimensions based on input ligand(s) (for --score_only and --local_only)")
 		;
 		//options_description outputs("Output prefixes (optional - by default, input names are stripped of .pdbqt\nare used as prefixes. _001.pdbqt, _002.pdbqt, etc. are appended to the prefixes to produce the output names");
 		options_description outputs("Output (optional)");
