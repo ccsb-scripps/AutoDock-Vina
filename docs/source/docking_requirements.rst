@@ -69,5 +69,5 @@ Type the following command to install ``NumPy``, ``OpenBabel`` and ``meeko``:
 .. code-block:: bash
     
     $ conda activate vina
-    $ conda install numpy openbabel
+    $ conda install -c conda-forge numpy openbabel
     $ pip install meeko

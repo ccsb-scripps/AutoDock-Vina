@@ -105,6 +105,6 @@ Building from Source
 
         $ conda activate vina
         $ cd AutoDock-Vina/build/python
-        $ conda install numpy boost-cpp swig
+        $ conda install -c conda-forge numpy boost-cpp swig
         $ rm -rf build dist *.egg-info (to clean previous installation)
         $ python setup.py build install
