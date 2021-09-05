@@ -53,8 +53,6 @@ std::string convert_XS_to_string(sz t) {
 	}
 }
 
-cache::cache(fl slope_) : slope(slope_), grids(XS_TYPE_SIZE) {}
-
 fl cache::eval(const model& m, fl v) const { // needs m.coords
 	fl e = 0;
 	sz nat = num_atom_types(atom_type::XS);
@@ -86,8 +84,8 @@ fl cache::eval(const model& m, fl v) const { // needs m.coords
 				break;
 		}
 
-		const grid& g = grids[t];
-		e += g.evaluate(m.coords[i], slope, v);
+		const grid& g = m_grids[t];
+		e += g.evaluate(m.coords[i], m_slope, v);
 	}
 	return e;
 }
@@ -123,8 +121,8 @@ fl cache::eval_intra(model& m, fl v) const {
 				break;
 		}
 
-		const grid& g = grids[t];
-		e += g.evaluate(m.coords[i], slope, v);
+		const grid& g = m_grids[t];
+		e += g.evaluate(m.coords[i], m_slope, v);
 	}
 	return e;
 }
@@ -161,8 +159,8 @@ fl cache::eval_deriv(model& m, fl v) const { // needs m.coords, sets m.minus_for
 		}
 
 		vec deriv;
-		const grid& g = grids[t];
-		e += g.evaluate(m.coords[i], slope, v, deriv);
+		const grid& g = m_grids[t];
+		e += g.evaluate(m.coords[i], m_slope, v, deriv);
 		m.minus_forces[i] = deriv;
 	}
 	return e;
@@ -170,15 +168,19 @@ fl cache::eval_deriv(model& m, fl v) const { // needs m.coords, sets m.minus_for
 
 bool cache::is_in_grid(const model& m, fl margin) const {
 	VINA_FOR(i, m.num_movable_atoms()) {
-		if(m.atoms[i].is_hydrogen()) continue;
+		if (m.atoms[i].is_hydrogen()) continue;
 
 		const vec& a_coords = m.coords[i];
-		VINA_FOR_IN(j, gd) {
-			if(gd[j].n_voxels > 0)
-				if(a_coords[j] < gd[j].begin - margin || a_coords[j] > gd[j].end + margin) 
+
+		VINA_FOR_IN(j, m_gd) {
+			if (m_gd[j].n_voxels > 0) {
+				if (a_coords[j] < m_gd[j].begin - margin || a_coords[j] > m_gd[j].end + margin) {
 					return false;
+				}
+			}
 		}
 	}
+
 	return true;
 }
 
@@ -218,8 +220,7 @@ bool cache::are_atom_types_grid_initialized(szv atom_types) const {
 	return true;
 }
 
-std::vector<std::string> vina_split(std::string str)
-{
+std::vector<std::string> vina_split(std::string str) {
 	std::vector<std::string> fields;
 	std::string field;
 	std::istringstream iss(str);
@@ -230,8 +231,7 @@ std::vector<std::string> vina_split(std::string str)
 	return fields;
 }
 
-void read_vina_map(path &filename, std::vector<grid_dims> &gds, grid &g)
-{
+void read_vina_map(path &filename, std::vector<grid_dims> &gds, grid &g) {
 	sz line_counter = 0;
 	sz pt_counter = 0;
 	sz x = 0;
@@ -294,8 +294,7 @@ void read_vina_map(path &filename, std::vector<grid_dims> &gds, grid &g)
 	} // line loop
 }
 
-grid_dims cache::read(const std::string &map_prefix)
-{
+void cache::read(const std::string &map_prefix) {
 	sz nat = num_atom_types(atom_type::XS);
 	std::string type, filename;
 	std::vector<grid_dims> gds; // to check all maps have same dims (TODO)
@@ -336,16 +335,16 @@ grid_dims cache::read(const std::string &map_prefix)
 		filename = map_prefix + "." + type + ".map";
 		path p(filename);
 		if (fs::exists(p)) {
-			read_vina_map(p, gds, grids[t]);
+			read_vina_map(p, gds, m_grids[t]);
 		}
 	} // map loop
 
-	return gds[0];
+	// Store in Cache object
+	m_gd = gds[0];
 }
 
 void cache::write(const std::string& out_prefix, const szv& atom_types, const std::string& gpf_filename,
-				  const std::string& fld_filename, const std::string& receptor_filename)
-{
+				      const std::string& fld_filename, const std::string& receptor_filename) {
 	sz nat = num_atom_types(atom_type::XS);
 	std::string atom_type;
 	std::string filename;
@@ -380,10 +379,10 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 				got_C_P_already = true;
 				break;
 		}
-		if (grids[t].initialized()) {
-			int nx = grids[t].m_data.dim0() - 1;
-			int ny = grids[t].m_data.dim1() - 1;
-			int nz = grids[t].m_data.dim2() - 1;
+		if (m_grids[t].initialized()) {
+			int nx = m_grids[t].m_data.dim0() - 1;
+			int ny = m_grids[t].m_data.dim1() - 1;
+			int nz = m_grids[t].m_data.dim2() - 1;
 			atom_type = convert_XS_to_string(t);
 
 			// For writing a .map, the number of points in the grid must be odd, which means that the number
@@ -401,24 +400,24 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 				out << "GRID_PARAMETER_FILE " << gpf_filename << "\n";
 				out << "GRID_DATA_FILE " << fld_filename << "\n";
 				out << "MACROMOLECULE " << receptor_filename << "\n";
-				out << "SPACING " << grids[t].m_factor_inv[0] << "\n";
+				out << "SPACING " << m_grids[t].m_factor_inv[0] << "\n";
 				
 				out << "NELEMENTS " << nx << " " << ny << " " << nz << "\n";
 
 				// center
-				fl cx = grids[t].m_init[0] + grids[t].m_range[0] * 0.5;
-				fl cy = grids[t].m_init[1] + grids[t].m_range[1] * 0.5;
-				fl cz = grids[t].m_init[2] + grids[t].m_range[2] * 0.5;
+				fl cx = m_grids[t].m_init[0] + m_grids[t].m_range[0] * 0.5;
+				fl cy = m_grids[t].m_init[1] + m_grids[t].m_range[1] * 0.5;
+				fl cz = m_grids[t].m_init[2] + m_grids[t].m_range[2] * 0.5;
 				out << "CENTER " << cx << " " << cy << " " << cz << "\n";
 
 				// write data
-				VINA_FOR(z, grids[t].m_data.dim2())
+				VINA_FOR(z, m_grids[t].m_data.dim2())
 				{
-					VINA_FOR(y, grids[t].m_data.dim1())
+					VINA_FOR(y, m_grids[t].m_data.dim1())
 					{
-						VINA_FOR(x, grids[t].m_data.dim0())
+						VINA_FOR(x, m_grids[t].m_data.dim0())
 						{
-							out << std::setprecision(4) << grids[t].m_data(x, y, z) << "\n"; // slow?
+							out << std::setprecision(4) << m_grids[t].m_data(x, y, z) << "\n"; // slow?
 						} // x
 					} // y
 				} // z
@@ -427,8 +426,7 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 	} // map atom type
 } // cache::write
 
-void cache::populate(const model &m, const precalculate &p, const grid_dims &gd, const szv &atom_types_needed)
-{
+void cache::populate(const model &m, const precalculate &p, const szv &atom_types_needed) {
 	szv needed;
 	bool got_C_H_already = false;
 	bool got_C_P_already = false;
@@ -459,9 +457,9 @@ void cache::populate(const model &m, const precalculate &p, const grid_dims &gd,
 				got_C_P_already = true;
 				break;
 		}
-		if(!grids[t].initialized()) {
+		if(!m_grids[t].initialized()) {
 			needed.push_back(t);
-			grids[t].init(gd);
+			m_grids[t].init(m_gd);
 		}
 	}
 	if(needed.empty())
@@ -470,11 +468,11 @@ void cache::populate(const model &m, const precalculate &p, const grid_dims &gd,
 
 	sz nat = num_atom_types(atom_type::XS);
 
-	grid& g = grids[needed.front()];
+	grid& g = m_grids[needed.front()];
 
 	const fl cutoff_sqr = p.cutoff_sqr();
 
-	grid_dims gd_reduced = szv_grid_dims(gd);
+	grid_dims gd_reduced = szv_grid_dims(m_gd);
 	szv_grid ig(m, gd_reduced, cutoff_sqr);
 
 	VINA_FOR(x, g.m_data.dim0()) {
@@ -501,7 +499,7 @@ void cache::populate(const model &m, const precalculate &p, const grid_dims &gd,
 				VINA_FOR_IN(j, needed) {
 					sz t = needed[j];
 					assert(t < nat);
-					grids[t].m_data(x, y, z) = affinities[j];
+					m_grids[t].m_data(x, y, z) = affinities[j];
 				}
 			}
 		}

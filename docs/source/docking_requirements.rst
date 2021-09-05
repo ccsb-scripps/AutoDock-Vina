@@ -40,33 +40,34 @@ The Python package ``meeko`` is a new type of package developped in the Forli la
     - Hydrated docking
     - Macrocycles
 
-This new tool can be easily installed with all its depencies using `pip` or `conda` package managers.
-
-**Meeko installation using Conda**:
-
-The `Conda package manager <https://docs.conda.io/en/latest/>`_ is included as part of the Anaconda Python distribution, which can be download from `https://docs.continuum.io/anaconda/install <https://docs.continuum.io/anaconda/install/>`_. This is a Python distribution specially designed for scientific applications, with many of the most popular scientific packages preinstalled. Alternatively, you can use `Miniconda <https://conda.pydata.org/miniconda.html>`_, which includes only Python itself, plus the Conda package manager.
-
-1. Begin by installing the most recent 64 bit, Python 3.x version of either Anaconda or Miniconda
-2. (Optional, but highly suggested) If you want, you can create a dedicated environment for ``meeko`` and ``AutoDock Vina`` packages (see :ref:`installation`):
-
-.. code-block:: bash
-
-    conda create -n vina python=3
-    conda activate vina
-    conda install -c conda-forge -c ccsb-scripps vina
-
-3. And type the following command
-
-.. code-block:: bash
-
-    conda install -c ccsb-scripps meeko
-
 **Meeko installation using pip**:
 
-.. code-block:: bash
+.. note::
 
-    pip install meeko
+    When using ``pip``, it's good pratice to use a virtual environment and also the easiest solution. An example with the `Conda package manager <https://docs.conda.io/en/latest/>`_ is available further down.
+
+.. warning::
+    
+    OpenBabel executable and library must be installed first, see `installation instruction <https://open-babel.readthedocs.io/en/latest/Installation/install.html#install-binaries>`_.
+
+.. code-block:: bash
+    
+    $ pip install -U numpy openbabel meeko
 
 If the installation was successful, you should now be able to access to the following command from your terminal by typing:
 
     - mk_prepare_ligand.py
+
+**Meeko installation in a Conda environment**:
+
+.. note::
+
+    See instructions in :ref:`installation` on how to setup and create an dedicated ``Conda`` environment.
+
+Type the following command to install ``NumPy``, ``OpenBabel`` and ``meeko``:
+
+.. code-block:: bash
+    
+    $ conda activate vina
+    $ conda install -c conda-forge numpy openbabel
+    $ pip install meeko

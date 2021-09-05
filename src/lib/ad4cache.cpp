@@ -54,8 +54,6 @@ std::string get_adtype_str(sz& t) {
 	}
 }
 
-ad4cache::ad4cache(fl slope_): slope(slope_), grids(AD_TYPE_SIZE + 2) {}
-
 fl ad4cache::eval(const model& m, fl v) const {
 	fl e = 0;
 	sz nat = num_atom_types(atom_type::AD);
@@ -81,16 +79,16 @@ fl ad4cache::eval(const model& m, fl v) const {
 		}
 
 		// HB + vdW
-		const grid& g = grids[t];
-		e += g.evaluate(m.coords[i], slope, v);
+		const grid& g = m_grids[t];
+		e += g.evaluate(m.coords[i], m_slope, v);
 
 		// elec
-		const grid& ge = grids[AD_TYPE_SIZE];
-		e += ge.evaluate(m.coords[i], slope, v) * a.charge;
+		const grid& ge = m_grids[AD_TYPE_SIZE];
+		e += ge.evaluate(m.coords[i], m_slope, v) * a.charge;
 
 		// desolv
-		const grid& gd = grids[AD_TYPE_SIZE + 1];
-		e += gd.evaluate(m.coords[i], slope, v) * std::abs(a.charge);
+		const grid& gd = m_grids[AD_TYPE_SIZE + 1];
+		e += gd.evaluate(m.coords[i], m_slope, v) * std::abs(a.charge);
 	}
 	return e;
 }
@@ -120,16 +118,16 @@ fl ad4cache::eval_intra(model& m, fl v) const {
 		}
 
 		// HB + vdW
-		const grid& g = grids[t];
-		e += g.evaluate(m.coords[i], slope, v);
+		const grid& g = m_grids[t];
+		e += g.evaluate(m.coords[i], m_slope, v);
 
 		// elec
-		const grid& ge = grids[AD_TYPE_SIZE];
-		e += ge.evaluate(m.coords[i], slope, v) * a.charge;
+		const grid& ge = m_grids[AD_TYPE_SIZE];
+		e += ge.evaluate(m.coords[i], m_slope, v) * a.charge;
 
 		// desolv
-		const grid& gd = grids[AD_TYPE_SIZE + 1];
-		e += gd.evaluate(m.coords[i], slope, v) * std::abs(a.charge);
+		const grid& gd = m_grids[AD_TYPE_SIZE + 1];
+		e += gd.evaluate(m.coords[i], m_slope, v) * std::abs(a.charge);
 	}
 	return e;
 }
@@ -160,19 +158,19 @@ fl ad4cache::eval_deriv(model& m, fl v) const { // sets m.minus_forces
 
 		// HB + vdW
 		vec deriv;
-		const grid& g = grids[t];
-		e += g.evaluate(m.coords[i], slope, v, deriv);
+		const grid& g = m_grids[t];
+		e += g.evaluate(m.coords[i], m_slope, v, deriv);
 		m.minus_forces[i] = deriv;
 
 		// elec
-		const grid& ge = grids[AD_TYPE_SIZE];
-		e += ge.evaluate(m.coords[i], slope, v, deriv) * a.charge;
+		const grid& ge = m_grids[AD_TYPE_SIZE];
+		e += ge.evaluate(m.coords[i], m_slope, v, deriv) * a.charge;
 		deriv *= a.charge;
 		m.minus_forces[i] += deriv;
 
 		// desolv
-		const grid& gd = grids[AD_TYPE_SIZE + 1];
-		e += gd.evaluate(m.coords[i], slope, v, deriv) * std::abs(a.charge);
+		const grid& gd = m_grids[AD_TYPE_SIZE + 1];
+		e += gd.evaluate(m.coords[i], m_slope, v, deriv) * std::abs(a.charge);
 		deriv *= std::abs(a.charge);
 		m.minus_forces[i] += deriv;
 	}
@@ -184,9 +182,9 @@ bool ad4cache::is_in_grid(const model& m, fl margin) const {
 		if(m.atoms[i].is_hydrogen()) continue;
 
 		const vec& a_coords = m.coords[i];
-		VINA_FOR_IN(j, gd) {
-			if(gd[j].n_voxels > 0)
-				if(a_coords[j] < gd[j].begin - margin || a_coords[j] > gd[j].end + margin) 
+		VINA_FOR_IN(j, m_gd) {
+			if(m_gd[j].n_voxels > 0)
+				if(a_coords[j] < m_gd[j].begin - margin || a_coords[j] > m_gd[j].end + margin) 
 					return false;
 		}
 	}
@@ -243,7 +241,6 @@ std::vector<std::string> split(std::string str) {
 }
 
 void read_ad4_map(path& filename, std::vector<grid_dims>& gds, grid& g) {
-
 	sz line_counter = 0;
 	sz pt_counter = 0;
 	sz x = 0;
@@ -299,7 +296,7 @@ void read_ad4_map(path& filename, std::vector<grid_dims>& gds, grid& g) {
 	} // line loop
 }
 
-grid_dims ad4cache::read(const std::string& map_prefix) {
+void ad4cache::read(const std::string& map_prefix) {
 
 	std::string type, filename;
 	std::vector<grid_dims> gds; // to check all maps have same dims (TODO)
@@ -330,7 +327,7 @@ grid_dims ad4cache::read(const std::string& map_prefix) {
 		filename = map_prefix + "." + type + ".map";
 		path p(filename);
 		if (fs::exists(p)) {
-			read_ad4_map(p, gds, grids[t]);
+			read_ad4_map(p, gds, m_grids[t]);
 
 		} // if file exists
 	} // map loop
@@ -338,20 +335,19 @@ grid_dims ad4cache::read(const std::string& map_prefix) {
 	//  elec map
 	filename = map_prefix + ".e.map";
 	path pe(filename);
-	read_ad4_map(pe, gds, grids[AD_TYPE_SIZE]);
+	read_ad4_map(pe, gds, m_grids[AD_TYPE_SIZE]);
 
 	//  dsolv map
 	filename = map_prefix + ".d.map";
 	path pd(filename);
-	read_ad4_map(pd, gds, grids[AD_TYPE_SIZE + 1]);
+	read_ad4_map(pd, gds, m_grids[AD_TYPE_SIZE + 1]);
 
-	// TODO verify grid_dims consistency
-
-	return gds[0];
+	// Store in Ad4cache object
+	m_gd = gds[0];
 }
 
 void ad4cache::write(const std::string& out_prefix, const szv& atom_types, const std::string& gpf_filename,
-					 const std::string& fld_filename, const std::string& receptor_filename) {
+					      const std::string& fld_filename, const std::string& receptor_filename) {
 	std::string atom_type;
 	std::string filename;
 	bool got_C_already = false;
@@ -379,7 +375,7 @@ void ad4cache::write(const std::string& out_prefix, const szv& atom_types, const
 		if (t == AD_TYPE_C)
 			got_C_already = true;
 
-		if (grids[t].initialized()) {
+		if (m_grids[t].initialized()) {
 			if (t < AD_TYPE_SIZE)
 				atom_type = get_adtype_str(t);
 			else if (t == AD_TYPE_SIZE)
@@ -400,30 +396,30 @@ void ad4cache::write(const std::string& out_prefix, const szv& atom_types, const
 			// m_factor_inv is spacing
 			// check that it's the same in every dimension (it must be)
 			// check that == operator is OK
-			if ((grids[t].m_factor_inv[0] != grids[t].m_factor_inv[1]) & (grids[t].m_factor_inv[0] != grids[t].m_factor_inv[2])) {
-				printf("m_factor_inv x=%f, y=%f, z=%f\n", grids[t].m_factor_inv[0], grids[t].m_factor_inv[1], grids[t].m_factor_inv[2]);
+			if ((m_grids[t].m_factor_inv[0] != m_grids[t].m_factor_inv[1]) & (m_grids[t].m_factor_inv[0] != m_grids[t].m_factor_inv[2])) {
+				printf("m_factor_inv x=%f, y=%f, z=%f\n", m_grids[t].m_factor_inv[0], m_grids[t].m_factor_inv[1], m_grids[t].m_factor_inv[2]);
 				return;
 			}
 
-			out << "SPACING " << grids[t].m_factor_inv[0] << "\n";
+			out << "SPACING " << m_grids[t].m_factor_inv[0] << "\n";
 
 			// The number of elements in the grid is an odd number. But NELEMENTS has to be an even number.
-			int size_x = (grids[t].m_data.dim0() % 2 == 0) ? grids[t].m_data.dim0() : grids[t].m_data.dim0() - 1;
-			int size_y = (grids[t].m_data.dim1() % 2 == 0) ? grids[t].m_data.dim1() : grids[t].m_data.dim1() - 1;
-			int size_z = (grids[t].m_data.dim2() % 2 == 0) ? grids[t].m_data.dim2() : grids[t].m_data.dim2() - 1;
+			int size_x = (m_grids[t].m_data.dim0() % 2 == 0) ? m_grids[t].m_data.dim0() : m_grids[t].m_data.dim0() - 1;
+			int size_y = (m_grids[t].m_data.dim1() % 2 == 0) ? m_grids[t].m_data.dim1() : m_grids[t].m_data.dim1() - 1;
+			int size_z = (m_grids[t].m_data.dim2() % 2 == 0) ? m_grids[t].m_data.dim2() : m_grids[t].m_data.dim2() - 1;
 			out << "NELEMENTS " << size_x << " " << size_y  << " " << size_z << "\n";
 
 			// center
-			fl cx = grids[t].m_init[0] + grids[t].m_range[0] * 0.5;
-			fl cy = grids[t].m_init[1] + grids[t].m_range[1] * 0.5;
-			fl cz = grids[t].m_init[2] + grids[t].m_range[2] * 0.5;
+			fl cx = m_grids[t].m_init[0] + m_grids[t].m_range[0] * 0.5;
+			fl cy = m_grids[t].m_init[1] + m_grids[t].m_range[1] * 0.5;
+			fl cz = m_grids[t].m_init[2] + m_grids[t].m_range[2] * 0.5;
 			out << "CENTER " << cx << " " << cy << " " << cz << "\n";
 
 			// write data
-			VINA_FOR(z, grids[t].m_data.dim2()) {
-				VINA_FOR(y, grids[t].m_data.dim1()) {
-					VINA_FOR(x, grids[t].m_data.dim0()) {
-						out << std::setprecision(4) << grids[t].m_data(x, y, z) << "\n"; // slow?
+			VINA_FOR(z, m_grids[t].m_data.dim2()) {
+				VINA_FOR(y, m_grids[t].m_data.dim1()) {
+					VINA_FOR(x, m_grids[t].m_data.dim0()) {
+						out << std::setprecision(4) << m_grids[t].m_data(x, y, z) << "\n"; // slow?
 					} // x
 				} // y
 			} // z

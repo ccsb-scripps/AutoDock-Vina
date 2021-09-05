@@ -3,6 +3,10 @@
 Installation
 ============
 
+.. warning::
+
+    Currently, the python bindings and the binary installation are two separate processes. The installation of the python bindings does not include the Vina executable, and vice versa.
+
 Unix- and Linux-based OS
 ------------------------
 
@@ -32,28 +36,34 @@ If the executable is in your PATH, you can just type "vina --help" instead.
 Python bindings
 ---------------
 
-**AutoDock Vina installation using Conda**:
+**AutoDock Vina installation using pip**:
 
-The `Conda package manager <https://docs.conda.io/en/latest/>`_ is included as part of the Anaconda Python distribution, which can be download from `https://docs.continuum.io/anaconda/install <https://docs.continuum.io/anaconda/install/>`_. This is a Python distribution specially designed for scientific applications, with many of the most popular scientific packages preinstalled. Alternatively, you can use `Miniconda <https://conda.pydata.org/miniconda.html>`_, which includes only Python itself, plus the Conda package manager.
+.. note::
+
+    When using ``pip``, it's good pratice to use a virtual environment and also the easiest solution (see ``meeko`` in :ref:`docking_requirements`). An example with the `Conda package manager <https://docs.conda.io/en/latest/>`_ is available further down.
+
+.. code-block:: bash
+    
+    $ pip install -U numpy vina
+
+**AutoDock Vina installation in a Conda environment**:
+
+The Anaconda Python distribution, which can be download from `https://docs.continuum.io/anaconda/install <https://docs.continuum.io/anaconda/install/>`_. This is a Python distribution specially designed for scientific applications, with many of the most popular scientific packages preinstalled. Alternatively, you can use `Miniconda <https://conda.pydata.org/miniconda.html>`_, which includes only Python itself, plus the Conda package manager.
 
 1. Begin by installing the most recent 64 bit, Python 3.x version of either Anaconda or Miniconda
-2. (Optional, but highly suggested) If you want, you can create a dedicated environment for the ``AutoDock Vina`` package:
+2. Create a dedicated environment for ``AutoDock Vina``. This environment can be re-used for installing ``meeko`` (see :ref:`docking_requirements`):
 
 .. code-block:: bash
 
     $ conda create -n vina python=3
     $ conda activate vina
+    $ conda config --env --add channels conda-forge
 
-3. And type the following command
-
-.. code-block:: bash
-
-    $ conda install -c conda-forge -c ccsb-scripps vina
-
-**AutoDock Vina installation using pip**:
+3. And type the following command to install ``NumPy`` and ``AutoDock Vina``:
 
 .. code-block:: bash
 
+    $ conda install numpy
     $ pip install vina
 
 Building from Source
@@ -72,7 +82,7 @@ Building from Source
 
 - Step 3: **Build Vina**
 
-    Start by downloading the lastest version of AutoDock Vina from github:
+    Start by downloading the lastest version of ``AutoDock Vina`` from github:
 
     .. code-block:: bash
     
@@ -87,7 +97,14 @@ Building from Source
 
     To compile the Python bindings:
 
+    .. note::
+
+        The ``Conda`` package manager is used here to easily install the several dependencies needed to build the ``Autodock-Vina`` python bindings (see above how to create a dedicated environment).
+
     .. code-block:: bash
 
+        $ conda activate vina
         $ cd AutoDock-Vina/build/python
-        $ python setup.py clean --all build install
+        $ conda install -c conda-forge numpy boost-cpp swig
+        $ rm -rf build dist *.egg-info (to clean previous installation)
+        $ python setup.py build install

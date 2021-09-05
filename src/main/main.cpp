@@ -131,6 +131,7 @@ Thank you!\n";
 		double min_rmsd = 1.0;
 		double energy_range = 3.0;
 		double grid_spacing = 0.375;
+		double buffer_size = 4;
 
 		// autodock4.2 weights
 		double weight_ad4_vdw   = 0.1662;
@@ -164,6 +165,7 @@ Thank you!\n";
 		bool help = false;
 		bool help_advanced = false;
 		bool version = false; // FIXME
+		bool autobox = false;
 		variables_map vm;
 
 		positional_options_description positional; // remains empty
@@ -186,6 +188,7 @@ Thank you!\n";
 			("size_x", value<double>(&size_x), "size in the X dimension (Angstrom)")
 			("size_y", value<double>(&size_y), "size in the Y dimension (Angstrom)")
 			("size_z", value<double>(&size_z), "size in the Z dimension (Angstrom)")
+			("autobox", bool_switch(&autobox), "set maps dimensions based on input ligand(s) (for --score_only and --local_only)")
 		;
 		//options_description outputs("Output prefixes (optional - by default, input names are stripped of .pdbqt\nare used as prefixes. _001.pdbqt, _002.pdbqt, etc. are appended to the prefixes to produce the output names");
 		options_description outputs("Output (optional)");
@@ -364,10 +367,14 @@ Thank you!\n";
 			} else if (batch_ligand_names.size() > 1) {
 				std::cout << "Ligands (batch mode): " << batch_ligand_names.size() << " molecules\n";
 			}
-			if (!vm.count("maps")) {
-				std::cout << "Center: X " << center_x << " Y " << center_y << " Z " << center_z << "\n";
-				std::cout << "Size: X " << size_x << " Y " << size_y << " Z " << size_z << "\n";
-				std::cout << "Grid space: " << grid_spacing << "\n";
+			if (!vm.count("maps") & !autobox) {
+				std::cout << "Grid center: X " << center_x << " Y " << center_y << " Z " << center_z << "\n";
+				std::cout << "Grid size  : X " << size_x << " Y " << size_y << " Z " << size_z << "\n";
+				std::cout << "Grid space : " << grid_spacing << "\n";
+			} else if (autobox) {
+				std::cout << "Grid center: ligand center (autobox)\n";
+				std::cout << "Grid size  : ligand size + " << buffer_size << " A in each dimension (autobox)\n";
+				std::cout << "Grid space : " << grid_spacing << "\n";
 			}
 			std::cout << "Exhaustiveness: " << exhaustiveness << "\n";
 			std::cout << "CPU: " << cpu << "\n";
@@ -410,7 +417,13 @@ Thank you!\n";
 					v.load_maps(maps);
 				} else {
 					// Will compute maps only for Vina atom types in the ligand(s)
-					v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing, force_even_voxels);
+					// In the case users ask for score and local only with the autobox arg, we compute the optimal box size for it/them.
+					if ((score_only || local_only) & autobox) {
+						std::vector<double> dim = v.grid_dimensions_from_ligand(buffer_size);
+						v.compute_vina_maps(dim[0], dim[1], dim[2], dim[3], dim[4], dim[5], grid_spacing, force_even_voxels);
+					} else {
+						v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing, force_even_voxels);
+					}
 
 					if (vm.count("write_maps"))
 						v.write_maps(out_maps);
