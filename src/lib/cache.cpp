@@ -301,6 +301,7 @@ void cache::read(const std::string &map_prefix) {
 
 	bool got_C_H_already = false;
 	bool got_C_P_already = false;
+	bool found_at_least_1_map = false;
 
 	VINA_FOR(atom_type, XS_TYPE_SIZE)
 	{
@@ -336,8 +337,14 @@ void cache::read(const std::string &map_prefix) {
 		path p(filename);
 		if (fs::exists(p)) {
 			read_vina_map(p, gds, m_grids[t]);
+			found_at_least_1_map = true;
 		}
 	} // map loop
+
+	if (!found_at_least_1_map){
+		std::cerr << "\nERROR: No *.map files with prefix \"" << map_prefix << "\"\n";
+		exit(EXIT_FAILURE) ;
+	}
 
 	// Store in Cache object
 	m_gd = gds[0];
