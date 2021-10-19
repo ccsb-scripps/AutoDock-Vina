@@ -275,7 +275,7 @@ void read_ad4_map(path& filename, std::vector<grid_dims>& gds, grid& g) {
 			std::vector<std::string> fields = split(line);
 			VINA_FOR(i, 3) {
 				center = std::atof(fields[i+1].c_str());
-				halfspan = (gd[i].n_voxels - 1) * spacing / 2.0;
+				halfspan = (gd[i].n_voxels) * spacing / 2.0;
 				gd[i].begin = center - halfspan;
 				gd[i].end = center + halfspan;
 				// std::cout << center << " " << halfspan << " " << gd[i].begin << " " << gd[i].end << "\n";
