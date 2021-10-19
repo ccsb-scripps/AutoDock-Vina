@@ -704,7 +704,7 @@ std::vector<double> Vina::score(double intramolecular_energy) {
 	double total = 0;
 	double inter = 0;
 	double intra = 0;
-	double all_grids = 0; // ligand + flex
+	double all_grids = 0; // ligand & flex
 	double lig_grids = 0;
 	double flex_grids = 0;
 	double lig_intra = 0;
@@ -717,19 +717,19 @@ std::vector<double> Vina::score(double intramolecular_energy) {
 	if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
 		// Inter
 		if (m_no_refine || !m_receptor_initialized)
-			all_grids = m_grid.eval(m_model, authentic_v[1]); // [1] ligand + flex - grid
+			all_grids = m_grid.eval(m_model, authentic_v[1]); // [1] ligand & flex -- grid
 		else
-			all_grids = m_non_cache.eval(m_model, authentic_v[1]); // [1] ligand + flex - grid
-		inter_pairs = m_model.eval_inter(m_precalculated_byatom, authentic_v); // [1] ligand - flex
+			all_grids = m_non_cache.eval(m_model, authentic_v[1]); // [1] ligand & flex -- grid
+		inter_pairs = m_model.eval_inter(m_precalculated_byatom, authentic_v); // [1] ligand -- flex
 		// Intra
 		if (m_no_refine || !m_receptor_initialized)
-			flex_grids = m_grid.eval_intra(m_model, authentic_v[1]); // [1] flex - grid
+			flex_grids = m_grid.eval_intra(m_model, authentic_v[1]); // [1] flex -- grid
 		else
-			flex_grids = m_non_cache.eval_intra(m_model, authentic_v[1]); // [1] flex - grid
-		intra_pairs = m_model.evalo(m_precalculated_byatom, authentic_v); // [1] flex_i - flex_i and flex_i - flex_j
+			flex_grids = m_non_cache.eval_intra(m_model, authentic_v[1]); // [1] flex -- grid
+		intra_pairs = m_model.evalo(m_precalculated_byatom, authentic_v); // [1] flex_i -- flex_i and flex_i -- flex_j
 		lig_grids = all_grids - flex_grids;
 		inter = lig_grids + inter_pairs;
-		lig_intra = m_model.evali(m_precalculated_byatom, authentic_v); // [2] ligand_i - ligand_i
+		lig_intra = m_model.evali(m_precalculated_byatom, authentic_v); // [2] ligand_i -- ligand_i
 		intra = flex_grids + intra_pairs + lig_intra;
 		// Total
 		total = m_scoring_function.conf_independent(m_model, inter + intra - intramolecular_energy); // we pass intermolecular energy from the best pose
@@ -737,13 +737,13 @@ std::vector<double> Vina::score(double intramolecular_energy) {
 		conf_independent = total - (inter + intra - intramolecular_energy);
 	} else {
 		// Inter
-		lig_grids = m_ad4grid.eval(m_model, authentic_v[1]); // [1] ligand - grid
-		inter_pairs = m_model.eval_inter(m_precalculated_byatom, authentic_v); // [1] ligand - flex
+		lig_grids = m_ad4grid.eval(m_model, authentic_v[1]); // [1] ligand -- grid
+		inter_pairs = m_model.eval_inter(m_precalculated_byatom, authentic_v); // [1] ligand -- flex
 		inter = lig_grids + inter_pairs;
 		// Intra
-		flex_grids = m_ad4grid.eval_intra(m_model, authentic_v[1]); // [1] flex - grid
-		intra_pairs = m_model.evalo(m_precalculated_byatom, authentic_v); // [1] flex_i - flex_i and flex_i - flex_j
-		lig_intra = m_model.evali(m_precalculated_byatom, authentic_v); // [2] ligand_i - ligand_i
+		flex_grids = m_ad4grid.eval_intra(m_model, authentic_v[1]); // [1] flex -- grid
+		intra_pairs = m_model.evalo(m_precalculated_byatom, authentic_v); // [1] flex_i -- flex_i and flex_i -- flex_j
+		lig_intra = m_model.evali(m_precalculated_byatom, authentic_v); // [2] ligand_i -- ligand_i
 		intra = flex_grids + intra_pairs + lig_intra;
 		// Torsion
 		conf_independent = m_scoring_function.conf_independent(m_model, 0); // [3] we can pass e=0 because we do not modify the energy like in vina
