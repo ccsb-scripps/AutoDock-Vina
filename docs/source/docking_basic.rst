@@ -42,7 +42,7 @@ This step is very similar to the previous step. We will also create a PDBQT file
 
 .. code-block:: bash
 
-    $ mk_prepare_ligand.py -i 1iep_ligand.sdf -o 1iep_ligand.pdbqt --add_hydrogen --pH 7.4
+    $ mk_prepare_ligand.py -i 1iep_ligand.sdf -o 1iep_ligand.pdbqt --pH 7.4
 
 Other options are available for ``mk_prepare_ligand.py`` by typing ``mk_prepare_ligand.py --help``. If you are not sure about this step, the output PDBQT file ``1iep_ligand.pdbqt`` is available in ``solution`` directory.
 
