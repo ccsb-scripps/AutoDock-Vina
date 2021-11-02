@@ -27,7 +27,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
       - name: Checkout
@@ -46,6 +46,15 @@ jobs:
           brew install boost swig
           cd ./build/mac/release
           make
+      - name: Compile Vina for Windows x64
+        if: matrix.os == 'windows-latest'
+        run: |
+          $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.77.0/boost_1_77_0-msvc-14.2-64.exe"
+          (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost.exe")
+          Start-Process -Wait -FilePath "$env:TEMP\boost.exe" "/SILENT","/SP-","/SUPPRESSMSGBOXES"
+          cd .\build\windows
+          .\compile.bat
+        shell: powershell
       - name: Upload artifacts for inspection
         uses: actions/upload-artifact@v2
         with:
@@ -53,3 +62,5 @@ jobs:
           path: |
             ./**/release/vina
             ./**/release/vina_split
+            ./**/release/vina.exe
+            ./**/release/vina_split.exe

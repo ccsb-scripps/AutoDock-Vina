@@ -352,6 +352,7 @@ void parse_pdbqt_aux(std::istream& in, parsing_struct& p, context& c, boost::opt
                 throw pdbqt_parse_error("TORSDOF keyword can be defined only once.");
             torsdof = parse_one_unsigned(str, "TORSDOF");
         }
+        else if (str.find_first_not_of(" \t\v\r") != std::string::npos) {} // ignore lines only consisting of spaces, tabs, vertical tabs, and/or carriage returns
         else if(residue && starts_with(str, "END_RES"))
             return; 
         else if(starts_with(str, "MODEL"))
