@@ -60,8 +60,8 @@ void merge_output_containers(const parallel_mc_task_container& many, output_cont
 	out.sort();
 }
 
-void parallel_mc::operator()(const model& m, output_container& out, const precalculate_byatom& p, const igrid& ig, const vec& corner1, const vec& corner2, rng& generator) const {
-	parallel_progress pp;
+void parallel_mc::operator()(const model& m, output_container& out, const precalculate_byatom& p, const igrid& ig, const vec& corner1, const vec& corner2, rng& generator, std::function<void(double)>* progress_callback) const {
+	parallel_progress pp (progress_callback);
 	parallel_mc_aux parallel_mc_aux_instance(&mc, &p, &ig, &corner1, &corner2, (display_progress ? (&pp) : NULL));
 	parallel_mc_task_container task_container;
 	VINA_FOR(i, num_tasks)

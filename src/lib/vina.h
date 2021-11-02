@@ -58,13 +58,14 @@
 class Vina {
 public:
 	// Constructor
-	Vina(const std::string &sf_name="vina", int cpu=0, int seed=0, int verbosity=1, bool no_refine=false) {
+	Vina(const std::string &sf_name="vina", int cpu=0, int seed=0, int verbosity=1, bool no_refine=false, std::function<void(double)>* progress_callback = NULL) {
 		m_verbosity = verbosity;
 		m_receptor_initialized = false;
 		m_ligand_initialized = false;
 		m_map_initialized = false;
 		m_seed = generate_seed(seed);
 		m_no_refine = no_refine;
+		m_progress_callback = progress_callback;
 
 		// Look for the number of cpu
 		if (cpu <= 0) {
@@ -161,6 +162,7 @@ private:
 	// others
 	int m_verbosity;
 	bool m_no_refine;
+	std::function<void(double)>* m_progress_callback;
 
 	std::string vina_remarks(output_type& pose, fl lb, fl ub);
 	output_container remove_redundant(const output_container& in, fl min_rmsd);
