@@ -26,21 +26,30 @@
 #include <boost/progress.hpp>
 #include <boost/thread/mutex.hpp>
 
+#include <functional>
+
 #include "incrementable.h"
 
 struct parallel_progress : public incrementable {
-	parallel_progress() : p(NULL) {}
-	void init(unsigned long n) { p = new boost::progress_display(n); }
+	parallel_progress(std::function<void(double)>* c = NULL) : p(NULL), callback(c) {}
+	void init(unsigned long n) {
+        count = n;
+        p = new boost::progress_display(count);
+    }
 	void operator++() {
 		if(p) {
 			boost::mutex::scoped_lock self_lk(self);
-			++(*p);
+			const unsigned long value = ++(*p);
+            if(callback)
+                (*callback)(static_cast<double>(value) / count);
 		}
 	}
 	virtual ~parallel_progress() { delete p; }
 private:
 	boost::mutex self;
 	boost::progress_display* p;
+    std::function<void(double)>* callback;
+    unsigned long count;
 };
 
 #endif
