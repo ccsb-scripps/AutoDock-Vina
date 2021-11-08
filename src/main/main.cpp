@@ -367,7 +367,7 @@ Thank you!\n";
 			} else if (batch_ligand_names.size() > 1) {
 				std::cout << "Ligands (batch mode): " << batch_ligand_names.size() << " molecules\n";
 			}
-			if (!vm.count("maps") & !autobox) {
+			if (!vm.count("maps") && !autobox) {
 				std::cout << "Grid center: X " << center_x << " Y " << center_y << " Z " << center_z << "\n";
 				std::cout << "Grid size  : X " << size_x << " Y " << size_y << " Z " << size_z << "\n";
 				std::cout << "Grid space : " << grid_spacing << "\n";
@@ -418,7 +418,7 @@ Thank you!\n";
 				} else {
 					// Will compute maps only for Vina atom types in the ligand(s)
 					// In the case users ask for score and local only with the autobox arg, we compute the optimal box size for it/them.
-					if ((score_only || local_only) & autobox) {
+					if ((score_only || local_only) && autobox) {
 						std::vector<double> dim = v.grid_dimensions_from_ligand(buffer_size);
 						v.compute_vina_maps(dim[0], dim[1], dim[2], dim[3], dim[4], dim[5], grid_spacing, force_even_voxels);
 					} else {
