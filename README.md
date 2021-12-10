@@ -13,7 +13,7 @@ AutoDock Vina: Docking and virtual screening program
 * Support of macrocycle molecules
 * Hydrated docking protocol
 * Can write and load external AutoDock maps
-* Python bindings for Python 3
+* Python bindings for Python 3 (Linux and Mac)
 
 AutoDock Vina is distributed under the Apache License, Version 2.0.
 

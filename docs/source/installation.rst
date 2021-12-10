@@ -36,6 +36,8 @@ If the executable is in your PATH, you can just type "vina --help" instead.
 Python bindings
 ---------------
 
+Currently working on Linux and Mac. We did not test on Windows.
+
 **AutoDock Vina installation using pip**:
 
 .. note::
