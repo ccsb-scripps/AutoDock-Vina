@@ -106,7 +106,7 @@ The AutoDock4Zn forcefield is mostly defined by non bonded pairwise potentials w
 
 .. code-block:: bash
 
-    $ autogrid4 -p protein_tz.gpf -o protein_tz.glg
+    $ autogrid4 -p protein_tz.gpf -l protein_tz.glg
 
 At this stage, all forcefield information has been encoded in the affinity maps, and the remaining steps are the same as in the standard AutoDock protocol.
 
