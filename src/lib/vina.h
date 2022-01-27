@@ -126,6 +126,7 @@ public:
 	void load_maps(std::string maps);
 	void randomize(const int max_steps=10000);
 	std::vector<double> score();
+	std::vector<double> score(double intramolecular_energy);
 	std::vector<double> optimize(const int max_steps=0);
 	void global_search(const int exhaustiveness=8, const int n_poses=20, const double min_rmsd=1.0, const int max_evals=0);
 	std::string get_poses(int how_many=9, double energy_range=3.0);
@@ -168,7 +169,6 @@ private:
 	output_container remove_redundant(const output_container& in, fl min_rmsd);
 
 	void set_forcefield();
-	std::vector<double> score(double intramolecular_energy);
 	std::vector<double> optimize(output_type& out, const int max_steps=0);
 	int generate_seed(const int seed=0);
 };

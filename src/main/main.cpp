@@ -132,6 +132,7 @@ Thank you!\n";
 		double energy_range = 3.0;
 		double grid_spacing = 0.375;
 		double buffer_size = 4;
+                double unbound_energy = NAN;
 
 		// autodock4.2 weights
 		double weight_ad4_vdw   = 0.1662;
@@ -201,6 +202,7 @@ Thank you!\n";
 		advanced.add_options()
 			("score_only",     bool_switch(&score_only),     "score only - search space can be omitted")
 			("local_only",     bool_switch(&local_only),     "do local search only")
+			("unbound_energy", value<double>(&unbound_energy)->default_value(unbound_energy), "Explicitly set the Unbound System's Energy for --score_only jobs")
 			("no_refine", bool_switch(&no_refine),  "when --receptor is provided, do not use explicit receptor atoms (instead of precalculated grids) for: (1) local optimization and scoring after docking, (2) --local_only jobs, and (3) --score_only jobs")
 			("force_even_voxels", bool_switch(&force_even_voxels),  "calculated grid maps will have an even number of voxels (intervals) in each dimension (odd number of grid points)")
 			("randomize_only", bool_switch(&randomize_only), "randomize input, attempting to avoid clashes")
@@ -435,7 +437,11 @@ Thank you!\n";
 				v.write_pose(out_name);
 			} else if (score_only) {
 				std::vector<double> energies;
-				energies = v.score();
+                                if (std::isnan(unbound_energy)) {
+				        energies = v.score();
+                                } else {
+				        energies = v.score(unbound_energy);
+                                }
 				v.show_score(energies);
 			} else if (local_only) {
 				std::vector<double> energies;
@@ -468,7 +474,11 @@ Thank you!\n";
 					v.randomize();
 					v.write_pose(out_name);
 				} else if (score_only) {
-					v.score();
+                                        if (std::isnan(unbound_energy)) {
+                                                v.score();
+                                        } else {
+				                v.score(unbound_energy);
+                                        }
 				} else if (local_only) {
 					v.optimize();
 					v.write_pose(out_name);
