@@ -964,6 +964,7 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 				}
 			}
 
+			m_model.set(poses[0].c);
 			if (m_no_refine || !m_receptor_initialized)
 				intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid, authentic_v);
 			else
