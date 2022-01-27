@@ -132,7 +132,7 @@ Thank you!\n";
 		double energy_range = 3.0;
 		double grid_spacing = 0.375;
 		double buffer_size = 4;
-                double unbound_energy = NAN;
+		double unbound_energy = NAN;
 
 		// autodock4.2 weights
 		double weight_ad4_vdw   = 0.1662;
@@ -437,11 +437,11 @@ Thank you!\n";
 				v.write_pose(out_name);
 			} else if (score_only) {
 				std::vector<double> energies;
-                                if (std::isnan(unbound_energy)) {
-				        energies = v.score();
-                                } else {
-				        energies = v.score(unbound_energy);
-                                }
+				if (std::isnan(unbound_energy)) {
+					energies = v.score();
+				} else {
+					energies = v.score(unbound_energy);
+				}
 				v.show_score(energies);
 			} else if (local_only) {
 				std::vector<double> energies;
@@ -474,11 +474,11 @@ Thank you!\n";
 					v.randomize();
 					v.write_pose(out_name);
 				} else if (score_only) {
-                                        if (std::isnan(unbound_energy)) {
-                                                v.score();
-                                        } else {
-				                v.score(unbound_energy);
-                                        }
+					if (std::isnan(unbound_energy)) {
+						v.score();
+					} else {
+						v.score(unbound_energy);
+					}
 				} else if (local_only) {
 					v.optimize();
 					v.write_pose(out_name);
