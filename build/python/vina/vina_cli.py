@@ -210,7 +210,7 @@ def main():
             print('Seed: %d' % args.seed)
         print('Verbosity: %d' % args.verbosity)
 
-    v = Vina(args.sf_name, args.cpu, args.seed, args.verbosity)
+    v = Vina(sf_name=args.sf_name, cpu=args.cpu, seed=args.seed, verbosity=args.verbosity)
 
     # rigid_name variable can be ignored for AD4
     if args.receptor is not None or args.flex is not None:
