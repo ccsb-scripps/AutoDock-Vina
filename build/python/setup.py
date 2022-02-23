@@ -41,7 +41,7 @@ def is_package_installed(package_name):
 
 
 def in_conda():
-    return os.path.exists(os.path.join(sys.prefix, 'conda-meta'))
+    return 'CONDA_DEFAULT_ENV' in os.environ.keys()
 
 
 def find_version():
