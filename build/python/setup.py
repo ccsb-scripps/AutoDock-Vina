@@ -105,7 +105,7 @@ def locate_ob():
     py_ver = StrictVersion(find_package_version('openbabel'))
     py_major_ver, py_minor_ver = py_ver.version[:2]
 
-    if in_conda:
+    if in_conda():
         # It means that Openbabel was installed in an Anaconda env
         data_pathname = sysconfig.get_path('data')
         include_dirs = data_pathname + os.path.sep + 'include' + os.path.sep + 'openbabel{}'.format(py_major_ver)
@@ -148,7 +148,7 @@ def locate_ob():
 
 def locate_boost():
     """Try to locate boost."""
-    if in_conda:
+    if in_conda():
         data_pathname = sysconfig.get_path('data')
         include_dirs = data_pathname + os.path.sep + 'include'
         library_dirs = data_pathname + os.path.sep + 'lib'
