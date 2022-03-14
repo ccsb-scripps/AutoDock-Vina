@@ -43,7 +43,7 @@ The output PDBQT file ``1uw6_receptor.pdbqt`` is available in ``solution`` direc
 2. Preparing the ligand
 -----------------------
 
-For the hydrated docking, explicit water molecules (W atoms) must be added to the molecule. And for that, we will use ``Meeko`` (see installation instruction here: :ref:`docking_requirements`). For convenience, the molecule file ``1uw6_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1uw6 <https://www.rcsb.org/structure/1UW6>`_ (see ``Download instance Coordinates`` link for the NCT molecule (chain U [A])). Since the ligand file does not include the hydrogen atoms, we are going to automatically add them and correct the protonation for a pH of 7.4. The option ``-w`` is use to add explicit water molecule to the molecule.
+For the hydrated docking, explicit water molecules (W atoms) must be added to the molecule. And for that, we will use ``Meeko`` (see installation instruction here: :ref:`docking_requirements`). For convenience, the molecule file ``1uw6_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1uw6 <https://www.rcsb.org/structure/1UW6>`_ (see ``Download instance Coordinates`` link for the NCT molecule (chain U [A])). Since the ligand file does not include the hydrogen atoms, we are going to automatically add them. The option ``-w`` is use to add explicit water molecule to the molecule.
 
 .. warning::
   
@@ -51,7 +51,7 @@ For the hydrated docking, explicit water molecules (W atoms) must be added to th
 
 .. code-block:: bash
     
-    $ mk_prepare_ligand.py -i 1uw6_ligand.sdf -o 1uw6_ligand.pdbqt --add_hydrogen --pH 7.4 -w
+    $ mk_prepare_ligand.py -i 1uw6_ligand.sdf -o 1uw6_ligand.pdbqt -w
 
 In total, 2 water molecules were added to the fragment. If you were not able to generate the ``1uw6_ligand.pdbqt`` file, you can look at the ``solution`` directory.
 

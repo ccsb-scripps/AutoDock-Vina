@@ -37,8 +37,8 @@ Here, we will prepare two ligands instead of only one. We will start from the SD
 
 .. code-block:: bash
 
-    $ mk_prepare_ligand.py -i 5x72_ligand_p59.sdf -o 5x72_ligand_p59.pdbqt --add_hydrogen
-    $ mk_prepare_ligand.py -i 5x72_ligand_p69.sdf -o 5x72_ligand_p69.pdbqt --add_hydrogen
+    $ mk_prepare_ligand.py -i 5x72_ligand_p59.sdf -o 5x72_ligand_p59.pdbqt
+    $ mk_prepare_ligand.py -i 5x72_ligand_p69.sdf -o 5x72_ligand_p69.pdbqt
 
 The output PDBQT ``5x72_ligand_p59.pdbqt`` and ``5x72_ligand_p69.pdbqt`` can be found in the ``solution`` directory.
 

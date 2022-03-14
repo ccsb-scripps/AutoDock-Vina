@@ -48,11 +48,11 @@ The second message is telling us that only one zinc pseudo atom (TZ) was added t
 2. Preparing the ligand
 -----------------------
 
-The second step consists to prepare the ligand, by converting the SDF file ``1s63_ligand.msdf`` to a PDBQT file readable by AutoDock Vina. As usual, we will use the ``mk_prepare_ligand.py`` Python script from ``Meeko`` (see installation instruction here: :ref:`docking_requirements`) for this task. For your convenience, the molecule file ``1s63_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1s63 <https://www.rcsb.org/structure/1S63>`_ (see ``Download instance Coordinates`` link for the 778 molecule. Since the ligand file does not include the hydrogen atoms, we are going to automatically add them and correct the protonation for a pH of 7.4.
+The second step consists to prepare the ligand, by converting the SDF file ``1s63_ligand.msdf`` to a PDBQT file readable by AutoDock Vina. As usual, we will use the ``mk_prepare_ligand.py`` Python script from ``Meeko`` (see installation instruction here: :ref:`docking_requirements`) for this task. For your convenience, the molecule file ``1s63_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1s63 <https://www.rcsb.org/structure/1S63>`_ (see ``Download instance Coordinates`` link for the 778 molecule. Since the ligand file does not include the hydrogen atoms, we are going to automatically add them.
 
 .. code-block:: bash
 
-    $ mk_prepare_ligand.py -i 1s63_ligand.sdf -o 1s63_ligand.pdbqt --add_hydrogen --pH 7.4
+    $ mk_prepare_ligand.py -i 1s63_ligand.sdf -o 1s63_ligand.pdbqt
 
 The output PDBQT  ``1s63_ligand.pdbqt`` can be found in the ``solution`` directory.
 
