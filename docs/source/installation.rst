@@ -65,8 +65,7 @@ The Anaconda Python distribution, which can be download from `https://docs.conti
 
 .. code-block:: bash
 
-    $ conda install numpy
-    $ mamba install swig
+    $ conda install -c conda-forge numpy swig boost-cpp sphinx sphinx_rtd_theme
     $ pip install vina
 
 Building from Source
