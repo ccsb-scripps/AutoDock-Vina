@@ -625,13 +625,13 @@ model parse_ligand_pdbqt_from_file(const std::string& name, atom_type::t atype) 
     non_rigid_parsed nrp;
     context c;
 
-    try {
+    // try {
         parse_pdbqt_ligand(make_path(name), nrp, c);
-    }
-    catch(pdbqt_parse_error& e) {
-        std::cerr << e.what();
-        exit(EXIT_FAILURE);
-    }
+    // }
+    // catch(pdbqt_parse_error& e) {
+    //     std::cerr << e.what();
+    //     exit(EXIT_FAILURE);
+    // }
 
     pdbqt_initializer tmp(atype);
     tmp.initialize_from_nrp(nrp, c, true);
@@ -643,14 +643,14 @@ model parse_ligand_pdbqt_from_string(const std::string& string_name, atom_type::
     non_rigid_parsed nrp;
     context c;
 
-    try {
+    // try {
         std::stringstream molstream(string_name);
         parse_pdbqt_ligand(molstream, nrp, c);
-    }
-    catch(pdbqt_parse_error& e) {
-        std::cerr << e.what() << '\n';
-        exit(EXIT_FAILURE);
-    }
+    // }
+    // catch(pdbqt_parse_error& e) {
+    //     std::cerr << e.what() << '\n';
+    //     exit(EXIT_FAILURE);
+    // }
 
     pdbqt_initializer tmp(atype);
     tmp.initialize_from_nrp(nrp, c, true);

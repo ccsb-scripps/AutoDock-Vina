@@ -64,6 +64,7 @@
 #include "tree.h"
 #include "triangular_matrix_index.h"
 #include "utils.h"
+SWIGRUNTIME PyObject* pPDBQT_PARSE_ERROR;
 %}
 
 // Set and reset dlopenflags so that plugin loading works fine for "import _openbabel"
@@ -75,17 +76,41 @@ if sys.platform.find("linux") != -1:
     sys.setdlopenflags(dlflags | ctypes.RTLD_GLOBAL)
 %}
 %pythoncode %{
+PDBQT_PARSE_ERROR = _vina_wrapper.PDBQT_PARSE_ERROR
 if sys.platform.find("linux") != -1:
     sys.setdlopenflags(dlflags)
 %}
-
+%init %{
+    pPDBQT_PARSE_ERROR = PyErr_NewException("_vina_wrapper.PDBQT_PARSE_ERROR", NULL, NULL);
+    Py_INCREF(pPDBQT_PARSE_ERROR);
+    PyModule_AddObject(m, "PDBQT_PARSE_ERROR", pPDBQT_PARSE_ERROR);
+%}
 // Add standard C++ library
 %include "std_array.i"
 %include "std_list.i"
 %include "std_map.i"
 %include "std_vector.i"
 %include "std_string.i"
-
+%include "stl.i"
+%include "exception.i"
+%exception set_ligand_from_string{
+    try {
+        $action
+    }
+    catch (const pdbqt_parse_error & e) {
+        PyErr_SetString(pPDBQT_PARSE_ERROR, e.what());
+        SWIG_fail;
+    }
+}
+%exception set_ligand_from_file{
+    try {
+        $action
+    }
+    catch (const pdbqt_parse_error & e) {
+        PyErr_SetString(pPDBQT_PARSE_ERROR, e.what());
+        SWIG_fail;
+    }
+}
 // Help SWIG to understand some special types, like list of strings
 namespace std {
     %template(IntVector) vector<int>;
