@@ -57,7 +57,7 @@ jobs:
             --volume "${PWD}:/vina"
           install: |
             apt-get update -q -y
-            apt-get install -q -y make libboost-all-dev swig
+            apt-get install -q -y git build-essentials make libboost-all-dev swig
           run: |
             cd /vina/build/linux/release
             make
