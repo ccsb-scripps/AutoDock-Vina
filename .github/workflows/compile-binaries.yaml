@@ -27,7 +27,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            arch: x86_64
+          - os: ubuntu-latest
+            arch: aarch64
+          - os: macos-latest
+          - os: windows-latest
 
     steps:
       - name: Checkout
@@ -35,11 +41,28 @@ jobs:
         with: 
           fetch-depth: 0
       - name: Compile Vina for linux x86-64
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         run: |
           sudo apt-get install -y libboost-all-dev swig
           cd ./build/linux/release
           make
+      - name: Compile Vina for linux ${{ matrix.arch }}
+        if: matrix.os == 'ubuntu-latest' && matrix.arch != 'x86_64'
+        uses: uraimo/run-on-arch-action@v2
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ubuntu20.04
+          githubToken: ${{ github.token }}
+          dockerRunArgs: |
+            --volume "${PWD}:/vina"
+          install: |
+            apt-get update -q -y
+            apt-get install -q -y libboost-all-dev swig
+          run: |
+            cd /vina/build/linux/release
+            make
+            mv vina vina-${{ matrix.arch }}
+            mv vina_split vina_split-${{ matrix.arch }}
       - name: Compile Vina for macOS
         if: matrix.os == 'macos-latest'
         run: |
@@ -61,6 +84,8 @@ jobs:
           name: binaries
           path: |
             ./**/release/vina
+            ./**/release/vina-${{ matrix.arch }}
             ./**/release/vina_split
+            ./**/release/vina_split-${{ matrix.arch }}
             ./**/release/vina.exe
             ./**/release/vina_split.exe
