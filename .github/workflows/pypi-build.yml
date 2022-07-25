@@ -39,6 +39,11 @@ jobs:
         with:
           python-version: '3.x'
           architecture: 'x64'
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v1
+        with:
+          platforms: arm64
       - name: Add tag to version.py file
         run: |
           git describe --abbrev=7 --dirty --always --tags | \
@@ -56,6 +61,7 @@ jobs:
         env:
           CIBW_SKIP: pp*
           CIBW_ARCHS: auto64
+          CIBW_ARCHS_LINUX: auto64 aarch64
           CIBW_BEFORE_BUILD: |
             pip install --upgrade pip setuptools
           CIBW_BEFORE_ALL_MACOS: |
