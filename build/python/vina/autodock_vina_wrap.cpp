@@ -2711,16 +2711,17 @@ SWIGINTERN PyObject *SWIG_PyStaticMethod_New(PyObject *SWIGUNUSEDPARM(self), PyO
 #define SWIGTYPE_p_std__allocatorT_int_t swig_types[8]
 #define SWIGTYPE_p_std__allocatorT_std__string_t swig_types[9]
 #define SWIGTYPE_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t swig_types[10]
-#define SWIGTYPE_p_std__invalid_argument swig_types[11]
-#define SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t swig_types[12]
-#define SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t swig_types[13]
-#define SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t swig_types[14]
-#define SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t swig_types[15]
-#define SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t swig_types[16]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[17]
-#define SWIGTYPE_p_value_type swig_types[18]
-static swig_type_info *swig_types[20];
-static swig_module_info swig_module = {swig_types, 19, 0, 0, 0, 0};
+#define SWIGTYPE_p_std__functionT_void_fdoubleF_t swig_types[11]
+#define SWIGTYPE_p_std__invalid_argument swig_types[12]
+#define SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t swig_types[13]
+#define SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t swig_types[14]
+#define SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t swig_types[15]
+#define SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t swig_types[16]
+#define SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t swig_types[17]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[18]
+#define SWIGTYPE_p_value_type swig_types[19]
+static swig_type_info *swig_types[21];
+static swig_module_info swig_module = {swig_types, 20, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -9242,6 +9243,30 @@ SWIGINTERN PyObject *ConstCharVector_swiginit(PyObject *SWIGUNUSEDPARM(self), Py
 }
 
 SWIGINTERN PyObject *_wrap_new_Vina__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0; std::string *arg1 = 0 ; int arg2 ; int arg3 ; int arg4 ; bool arg5 ;
+  std::function< void (double) > *arg6 = (std::function< void (double) > *) 0 ; int res1 = SWIG_OLDOBJ ; int val2 ;
+  int ecode2 = 0 ; int val3 ; int ecode3 = 0 ; int val4 ; int ecode4 = 0 ; bool val5 ; int ecode5 = 0 ; void *argp6 = 0 ;
+  int res6 = 0 ; Vina *result = 0 ; if ((nobjs < 6) || (nobjs > 6)) SWIG_fail; { std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr); if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Vina" "', argument " "1"" of type '" "std::string const &""'"); }
+     if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_Vina" "', argument " "1"" of type '" "std::string const &""'"); }
+     arg1 = ptr; }  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_Vina" "', argument " "2"" of type '" "int""'"); }  
+  arg2 = static_cast< int >(val2); ecode3 = SWIG_AsVal_int(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_Vina" "', argument " "3"" of type '" "int""'"); }  
+  arg3 = static_cast< int >(val3); ecode4 = SWIG_AsVal_int(swig_obj[3], &val4); if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "new_Vina" "', argument " "4"" of type '" "int""'"); }  
+  arg4 = static_cast< int >(val4); ecode5 = SWIG_AsVal_bool(swig_obj[4], &val5); if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "new_Vina" "', argument " "5"" of type '" "bool""'"); }  
+  arg5 = static_cast< bool >(val5);
+  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6,SWIGTYPE_p_std__functionT_void_fdoubleF_t, 0 |  0 ); if (!SWIG_IsOK(res6)) {
+    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "new_Vina" "', argument " "6"" of type '" "std::function< void (double) > *""'");  }
+   arg6 = reinterpret_cast< std::function< void (double) > * >(argp6);
+  result = (Vina *)new Vina((std::string const &)*arg1,arg2,arg3,arg4,arg5,arg6);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 );
+  if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
+SWIGINTERN PyObject *_wrap_new_Vina__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::string *arg1 = 0 ; int arg2 ; int arg3 ; int arg4 ; bool arg5 ; int res1 = SWIG_OLDOBJ ;
   int val2 ; int ecode2 = 0 ; int val3 ; int ecode3 = 0 ; int val4 ; int ecode4 = 0 ; bool val5 ; int ecode5 = 0 ;
   Vina *result = 0 ; if ((nobjs < 5) || (nobjs > 5)) SWIG_fail; { std::string *ptr = (std::string *)0;
@@ -9260,7 +9285,7 @@ SWIGINTERN PyObject *_wrap_new_Vina__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_s
   arg5 = static_cast< bool >(val5); result = (Vina *)new Vina((std::string const &)*arg1,arg2,arg3,arg4,arg5);
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
-SWIGINTERN PyObject *_wrap_new_Vina__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_new_Vina__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::string *arg1 = 0 ; int arg2 ; int arg3 ; int arg4 ; int res1 = SWIG_OLDOBJ ; int val2 ;
   int ecode2 = 0 ; int val3 ; int ecode3 = 0 ; int val4 ; int ecode4 = 0 ; Vina *result = 0 ;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail; { std::string *ptr = (std::string *)0;
@@ -9277,7 +9302,7 @@ SWIGINTERN PyObject *_wrap_new_Vina__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_s
   arg4 = static_cast< int >(val4); result = (Vina *)new Vina((std::string const &)*arg1,arg2,arg3,arg4);
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
-SWIGINTERN PyObject *_wrap_new_Vina__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_new_Vina__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::string *arg1 = 0 ; int arg2 ; int arg3 ; int res1 = SWIG_OLDOBJ ; int val2 ; int ecode2 = 0 ;
   int val3 ; int ecode3 = 0 ; Vina *result = 0 ; if ((nobjs < 3) || (nobjs > 3)) SWIG_fail; {
     std::string *ptr = (std::string *)0; res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr); if (!SWIG_IsOK(res1)) {
@@ -9291,7 +9316,7 @@ SWIGINTERN PyObject *_wrap_new_Vina__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_s
   arg3 = static_cast< int >(val3); result = (Vina *)new Vina((std::string const &)*arg1,arg2,arg3);
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
-SWIGINTERN PyObject *_wrap_new_Vina__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_new_Vina__SWIG_4(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::string *arg1 = 0 ; int arg2 ; int res1 = SWIG_OLDOBJ ; int val2 ; int ecode2 = 0 ;
   Vina *result = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail; { std::string *ptr = (std::string *)0;
     res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr); if (!SWIG_IsOK(res1)) {
@@ -9303,7 +9328,7 @@ SWIGINTERN PyObject *_wrap_new_Vina__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_s
   arg2 = static_cast< int >(val2); result = (Vina *)new Vina((std::string const &)*arg1,arg2);
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
-SWIGINTERN PyObject *_wrap_new_Vina__SWIG_4(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_new_Vina__SWIG_5(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::string *arg1 = 0 ; int res1 = SWIG_OLDOBJ ; Vina *result = 0 ;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail; { std::string *ptr = (std::string *)0;
     res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr); if (!SWIG_IsOK(res1)) {
@@ -9313,25 +9338,28 @@ SWIGINTERN PyObject *_wrap_new_Vina__SWIG_4(PyObject *SWIGUNUSEDPARM(self), Py_s
      arg1 = ptr; }  result = (Vina *)new Vina((std::string const &)*arg1);
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
-SWIGINTERN PyObject *_wrap_new_Vina__SWIG_5(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+SWIGINTERN PyObject *_wrap_new_Vina__SWIG_6(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
   PyObject *resultobj = 0; Vina *result = 0 ; if ((nobjs < 0) || (nobjs > 0)) SWIG_fail; result = (Vina *)new Vina();
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 ); return resultobj; fail:
   return NULL; }
-SWIGINTERN PyObject *_wrap_new_Vina(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[6] = { 0} ;
-  if (!(argc = SWIG_Python_UnpackTuple(args, "new_Vina", 0, 5, argv))) SWIG_fail; --argc; if (argc == 0) {
-    PyObject *retobj = _wrap_new_Vina__SWIG_5(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
-    SWIG_fail;}  if (argc == 1) { PyObject *retobj = _wrap_new_Vina__SWIG_4(self, argc, argv);
+SWIGINTERN PyObject *_wrap_new_Vina(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[7] = { 0} ;
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_Vina", 0, 6, argv))) SWIG_fail; --argc; if (argc == 0) {
+    PyObject *retobj = _wrap_new_Vina__SWIG_6(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
+    SWIG_fail;}  if (argc == 1) { PyObject *retobj = _wrap_new_Vina__SWIG_5(self, argc, argv);
     if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  if (argc == 2) {
-    PyObject *retobj = _wrap_new_Vina__SWIG_3(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
-    SWIG_fail;}  if (argc == 3) { PyObject *retobj = _wrap_new_Vina__SWIG_2(self, argc, argv);
+    PyObject *retobj = _wrap_new_Vina__SWIG_4(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
+    SWIG_fail;}  if (argc == 3) { PyObject *retobj = _wrap_new_Vina__SWIG_3(self, argc, argv);
     if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  if (argc == 4) {
-    PyObject *retobj = _wrap_new_Vina__SWIG_1(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
-    SWIG_fail;}  if (argc == 5) { PyObject *retobj = _wrap_new_Vina__SWIG_0(self, argc, argv);
-    if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  fail:
+    PyObject *retobj = _wrap_new_Vina__SWIG_2(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
+    SWIG_fail;}  if (argc == 5) { PyObject *retobj = _wrap_new_Vina__SWIG_1(self, argc, argv);
+    if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  if (argc == 6) {
+    PyObject *retobj = _wrap_new_Vina__SWIG_0(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
+    SWIG_fail;}  fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_Vina'.\n"
-  "  Possible C/C++ prototypes are:\n" "    Vina::Vina(std::string const &,int,int,int,bool)\n"
-  "    Vina::Vina(std::string const &,int,int,int)\n" "    Vina::Vina(std::string const &,int,int)\n"
-  "    Vina::Vina(std::string const &,int)\n" "    Vina::Vina(std::string const &)\n" "    Vina::Vina()\n"); return 0; }
+  "  Possible C/C++ prototypes are:\n" "    Vina::Vina(std::string const &,int,int,int,bool,std::function< void (double) > *)\n"
+  "    Vina::Vina(std::string const &,int,int,int,bool)\n" "    Vina::Vina(std::string const &,int,int,int)\n"
+  "    Vina::Vina(std::string const &,int,int)\n" "    Vina::Vina(std::string const &,int)\n"
+  "    Vina::Vina(std::string const &)\n" "    Vina::Vina()\n"); return 0; }
 SWIGINTERN PyObject *_wrap_delete_Vina(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, SWIG_POINTER_DISOWN |  0 ); if (!SWIG_IsOK(res1)) {
@@ -9840,6 +9868,34 @@ SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights(PyObject *self, PyObject *args) 
   "    Vina::set_ad4_weights(double,double,double,double,double)\n" "    Vina::set_ad4_weights(double,double,double,double)\n"
   "    Vina::set_ad4_weights(double,double,double)\n" "    Vina::set_ad4_weights(double,double)\n"
   "    Vina::set_ad4_weights(double)\n" "    Vina::set_ad4_weights()\n"); return 0; }
+SWIGINTERN PyObject *_wrap_Vina_grid_dimensions_from_ligand__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ;
+  int ecode2 = 0 ; std::vector< double,std::allocator< double > > result; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_grid_dimensions_from_ligand" "', argument " "1"" of type '" "Vina *""'");  }
+   arg1 = reinterpret_cast< Vina * >(argp1); ecode2 = SWIG_AsVal_double(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_grid_dimensions_from_ligand" "', argument " "2"" of type '" "double""'"); }
+    arg2 = static_cast< double >(val2); result = (arg1)->grid_dimensions_from_ligand(arg2);
+  resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(result)); return resultobj; fail:
+  return NULL; }
+SWIGINTERN PyObject *_wrap_Vina_grid_dimensions_from_ligand__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
+  std::vector< double,std::allocator< double > > result; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_grid_dimensions_from_ligand" "', argument " "1"" of type '" "Vina *""'");  }
+   arg1 = reinterpret_cast< Vina * >(argp1); result = (arg1)->grid_dimensions_from_ligand();
+  resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(result)); return resultobj; fail:
+  return NULL; }
+SWIGINTERN PyObject *_wrap_Vina_grid_dimensions_from_ligand(PyObject *self, PyObject *args) { Py_ssize_t argc;
+  PyObject *argv[3] = { 0} ;
+  if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_grid_dimensions_from_ligand", 0, 2, argv))) SWIG_fail; --argc;
+  if (argc == 1) { PyObject *retobj = _wrap_Vina_grid_dimensions_from_ligand__SWIG_1(self, argc, argv);
+    if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  if (argc == 2) {
+    PyObject *retobj = _wrap_Vina_grid_dimensions_from_ligand__SWIG_0(self, argc, argv);
+    if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Vina_grid_dimensions_from_ligand'.\n"
+  "  Possible C/C++ prototypes are:\n" "    Vina::grid_dimensions_from_ligand(double)\n"
+  "    Vina::grid_dimensions_from_ligand()\n"); return 0; }
 SWIGINTERN PyObject *_wrap_Vina_compute_vina_maps__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; double arg5 ; double arg6 ;
   double arg7 ; double arg8 ; bool arg9 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ; int ecode2 = 0 ; double val3 ;
@@ -9953,14 +10009,31 @@ SWIGINTERN PyObject *_wrap_Vina_randomize(PyObject *self, PyObject *args) { Py_s
     if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Vina_randomize'.\n"
   "  Possible C/C++ prototypes are:\n" "    Vina::randomize(int const)\n" "    Vina::randomize()\n"); return 0; }
-SWIGINTERN PyObject *_wrap_Vina_score(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
-  Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
-  std::vector< double,std::allocator< double > > result; if (!args) SWIG_fail; swig_obj[0] = args;
+SWIGINTERN PyObject *_wrap_Vina_score__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
+  std::vector< double,std::allocator< double > > result; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_score" "', argument " "1"" of type '" "Vina *""'");  } 
   arg1 = reinterpret_cast< Vina * >(argp1); result = (arg1)->score();
   resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(result)); return resultobj; fail:
   return NULL; }
+SWIGINTERN PyObject *_wrap_Vina_score__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ;
+  int ecode2 = 0 ; std::vector< double,std::allocator< double > > result; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_score" "', argument " "1"" of type '" "Vina *""'");  } 
+  arg1 = reinterpret_cast< Vina * >(argp1); ecode2 = SWIG_AsVal_double(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_score" "', argument " "2"" of type '" "double""'"); }  
+  arg2 = static_cast< double >(val2); result = (arg1)->score(arg2);
+  resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(result)); return resultobj; fail:
+  return NULL; }
+SWIGINTERN PyObject *_wrap_Vina_score(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0} ;
+  if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_score", 0, 2, argv))) SWIG_fail; --argc; if (argc == 1) {
+    PyObject *retobj = _wrap_Vina_score__SWIG_0(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
+    SWIG_fail;}  if (argc == 2) { PyObject *retobj = _wrap_Vina_score__SWIG_1(self, argc, argv);
+    if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Vina_score'.\n"
+  "  Possible C/C++ prototypes are:\n" "    Vina::score()\n" "    Vina::score(double)\n"); return 0; }
 SWIGINTERN PyObject *_wrap_Vina_optimize__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; int arg2 ; void *argp1 = 0 ; int res1 = 0 ; int val2 ; int ecode2 = 0 ;
   std::vector< double,std::allocator< double > > result; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -10617,10 +10690,11 @@ static PyMethodDef SwigMethods[] = {
 	 { "Vina_set_vina_weights", _wrap_Vina_set_vina_weights, METH_VARARGS, NULL},
 	 { "Vina_set_vinardo_weights", _wrap_Vina_set_vinardo_weights, METH_VARARGS, NULL},
 	 { "Vina_set_ad4_weights", _wrap_Vina_set_ad4_weights, METH_VARARGS, NULL},
+	 { "Vina_grid_dimensions_from_ligand", _wrap_Vina_grid_dimensions_from_ligand, METH_VARARGS, NULL},
 	 { "Vina_compute_vina_maps", _wrap_Vina_compute_vina_maps, METH_VARARGS, NULL},
 	 { "Vina_load_maps", _wrap_Vina_load_maps, METH_VARARGS, NULL},
 	 { "Vina_randomize", _wrap_Vina_randomize, METH_VARARGS, NULL},
-	 { "Vina_score", _wrap_Vina_score, METH_O, NULL},
+	 { "Vina_score", _wrap_Vina_score, METH_VARARGS, NULL},
 	 { "Vina_optimize", _wrap_Vina_optimize, METH_VARARGS, NULL},
 	 { "Vina_global_search", _wrap_Vina_global_search, METH_VARARGS, NULL},
 	 { "Vina_get_poses", _wrap_Vina_get_poses, METH_VARARGS, NULL},
@@ -10653,6 +10727,7 @@ static swig_type_info _swigt__p_std__allocatorT_double_t = {"_p_std__allocatorT_
 static swig_type_info _swigt__p_std__allocatorT_int_t = {"_p_std__allocatorT_int_t", "std::vector< int >::allocator_type *|std::allocator< int > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__allocatorT_std__string_t = {"_p_std__allocatorT_std__string_t", "std::vector< std::string >::allocator_type *|std::allocator< std::string > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t = {"_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t", "std::vector< std::vector< double > >::allocator_type *|std::allocator< std::vector< double,std::allocator< double > > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__functionT_void_fdoubleF_t = {"_p_std__functionT_void_fdoubleF_t", "std::function< void (double) > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__invalid_argument = {"_p_std__invalid_argument", "std::invalid_argument *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t = {"_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t", "std::vector< char const *,std::allocator< char const * > > *|std::vector< char const * > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_double_std__allocatorT_double_t_t = {"_p_std__vectorT_double_std__allocatorT_double_t_t", "std::vector< double,std::allocator< double > > *|std::vector< double > *", 0, 0, (void*)0, 0};
@@ -10674,6 +10749,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__allocatorT_int_t,
   &_swigt__p_std__allocatorT_std__string_t,
   &_swigt__p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t,
+  &_swigt__p_std__functionT_void_fdoubleF_t,
   &_swigt__p_std__invalid_argument,
   &_swigt__p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t,
   &_swigt__p_std__vectorT_double_std__allocatorT_double_t_t,
@@ -10695,6 +10771,7 @@ static swig_cast_info _swigc__p_std__allocatorT_double_t[] = {  {&_swigt__p_std_
 static swig_cast_info _swigc__p_std__allocatorT_int_t[] = {  {&_swigt__p_std__allocatorT_int_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_std__string_t[] = {  {&_swigt__p_std__allocatorT_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t[] = {  {&_swigt__p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__functionT_void_fdoubleF_t[] = {  {&_swigt__p_std__functionT_void_fdoubleF_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__invalid_argument[] = {  {&_swigt__p_std__invalid_argument, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t[] = {  {&_swigt__p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_double_std__allocatorT_double_t_t[] = {  {&_swigt__p_std__vectorT_double_std__allocatorT_double_t_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -10716,6 +10793,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__allocatorT_int_t,
   _swigc__p_std__allocatorT_std__string_t,
   _swigc__p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t,
+  _swigc__p_std__functionT_void_fdoubleF_t,
   _swigc__p_std__invalid_argument,
   _swigc__p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t,
   _swigc__p_std__vectorT_double_std__allocatorT_double_t_t,

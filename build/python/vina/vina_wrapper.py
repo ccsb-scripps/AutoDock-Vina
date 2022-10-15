@@ -714,6 +714,9 @@ class Vina(object):
     def set_ad4_weights(self, weight_ad4_vdw: "double"=0.1662, weight_ad4_hb: "double"=0.1209, weight_ad4_elec: "double"=0.1406, weight_ad4_dsolv: "double"=0.1322, weight_glue: "double"=50, weight_ad4_rot: "double"=0.2983) -> "void":
         return _vina_wrapper.Vina_set_ad4_weights(self, weight_ad4_vdw, weight_ad4_hb, weight_ad4_elec, weight_ad4_dsolv, weight_glue, weight_ad4_rot)
 
+    def grid_dimensions_from_ligand(self, buffer_size: "double"=4) -> "std::vector< double,std::allocator< double > >":
+        return _vina_wrapper.Vina_grid_dimensions_from_ligand(self, buffer_size)
+
     def compute_vina_maps(self, center_x: "double", center_y: "double", center_z: "double", size_x: "double", size_y: "double", size_z: "double", granularity: "double"=0.5, force_even_voxels: "bool"=False) -> "void":
         return _vina_wrapper.Vina_compute_vina_maps(self, center_x, center_y, center_z, size_x, size_y, size_z, granularity, force_even_voxels)
 
@@ -723,8 +726,8 @@ class Vina(object):
     def randomize(self, max_steps: "int const"=10000) -> "void":
         return _vina_wrapper.Vina_randomize(self, max_steps)
 
-    def score(self) -> "std::vector< double,std::allocator< double > >":
-        return _vina_wrapper.Vina_score(self)
+    def score(self, *args) -> "std::vector< double,std::allocator< double > >":
+        return _vina_wrapper.Vina_score(self, *args)
 
     def optimize(self, max_steps: "int const"=0) -> "std::vector< double,std::allocator< double > >":
         return _vina_wrapper.Vina_optimize(self, max_steps)
