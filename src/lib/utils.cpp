@@ -61,8 +61,8 @@ std::string default_output(const std::string& input_name) {
 }
 
 
-std::string default_output(const std::string& input_name, const std::string& directory_pathname) {
-    return directory_pathname + separator() + default_output(input_name);
+std::string default_output(int i, const std::string& input_name, const std::string& directory_pathname) {
+    return directory_pathname + separator() + std::to_string(i) + "_" + default_output(input_name);
 }
 
 

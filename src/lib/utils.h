@@ -33,7 +33,7 @@ path make_path(const std::string& str);
 void doing(const std::string& str, int verbosity, int level=0);
 void done(int verbosity, int level=0);
 std::string default_output(const std::string& input_name);
-std::string default_output(const std::string& input_name, const std::string& directory_pathname);
+std::string default_output(int i, const std::string& input_name, const std::string& directory_pathname);
 bool is_directory(const std::string& directory_pathname);
 std::string get_filename(const std::string& s);
 std::string get_file_contents(const std::string& filename);

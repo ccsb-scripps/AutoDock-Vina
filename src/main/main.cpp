@@ -468,7 +468,7 @@ Thank you!\n";
 			VINA_RANGE(i, 0, batch_ligand_names.size()) {
 				v.set_ligand_from_file(batch_ligand_names[i]);
 
-				out_name = default_output(get_filename(batch_ligand_names[i]), out_dir);
+				out_name = default_output(i, get_filename(batch_ligand_names[i]), out_dir);
 
 				if (randomize_only) {
 					v.randomize();

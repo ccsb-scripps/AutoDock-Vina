@@ -275,11 +275,11 @@ def main():
                 if args.write_maps is not None:
                     v.write_maps(args.write_maps)
 
-        for ligand in args.batch:
+        for i, ligand in enumerate(args.batch):
             v.set_ligand_from_file(ligand)
 
             molecule_name = os.path.splitext(os.path.basename(ligand))[0]
-            out_name = '%s%s%s_out.pdbqt' % (args.dir, os.path.sep(), molecule_name)
+            out_name = '%s%s%s_%s_out.pdbqt' % (args.dir, os.path.sep(), i, molecule_name)
 
             if args.randomize_only:
                 v.randomize()
