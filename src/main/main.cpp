@@ -21,10 +21,12 @@
 */
 
 #include <iostream>
+#include <set>
 #include <string>
 #include <vector> // ligand paths
 #include <exception>
 #include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
 #include "vina.h"
 #include "utils.h"
 #include "scoring_function.h"
@@ -465,10 +467,20 @@ Thank you!\n";
 				}
 			}
 
+			std::set<std::string> out_names;
 			VINA_RANGE(i, 0, batch_ligand_names.size()) {
 				v.set_ligand_from_file(batch_ligand_names[i]);
 
-				out_name = default_output(i, get_filename(batch_ligand_names[i]), out_dir);
+				out_name = default_output(get_filename(batch_ligand_names[i]), out_dir);
+				if (out_names.count(out_name)) {
+					// Detect filename collisions, but overwrite the first instance.
+					int idx=2;
+					while (boost::filesystem::exists(out_name)) {
+						out_name = default_output(get_filename(batch_ligand_names[i]), out_dir, idx);
+						idx++;
+					}
+				}
+				out_names.insert(out_name);
 
 				if (randomize_only) {
 					v.randomize();

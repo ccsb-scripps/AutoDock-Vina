@@ -61,8 +61,21 @@ std::string default_output(const std::string& input_name) {
 }
 
 
-std::string default_output(int i, const std::string& input_name, const std::string& directory_pathname) {
-    return directory_pathname + separator() + std::to_string(i) + "_" + default_output(input_name);
+std::string default_output(const std::string& input_name, int idx) {
+    std::string tmp = input_name;
+    if (tmp.size() >= 6 && tmp.substr(tmp.size()-6, 6) == ".pdbqt")
+        tmp.resize(tmp.size() - 6); // FIXME?
+    return tmp + "_" + std::to_string(idx) + "_out.pdbqt";
+}
+
+
+std::string default_output(const std::string& input_name, const std::string& directory_pathname) {
+    return directory_pathname + separator() + default_output(input_name);
+}
+
+
+std::string default_output(const std::string& input_name, const std::string& directory_pathname, int idx) {
+    return directory_pathname + separator() + default_output(input_name, idx);
 }
 
 

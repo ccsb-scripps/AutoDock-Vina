@@ -6,6 +6,7 @@
 
 import argparse
 import os
+import os.path
 
 import numpy as np
 
@@ -275,11 +276,19 @@ def main():
                 if args.write_maps is not None:
                     v.write_maps(args.write_maps)
 
-        for i, ligand in enumerate(args.batch):
+        out_names = set()
+        for ligand in args.batch:
             v.set_ligand_from_file(ligand)
 
             molecule_name = os.path.splitext(os.path.basename(ligand))[0]
-            out_name = '%s%s%s_%s_out.pdbqt' % (args.dir, os.path.sep(), i, molecule_name)
+            out_name = '%s%s%s_out.pdbqt' % (args.dir, os.path.sep(), molecule_name)
+            if out_name in out_names:
+                # Detect filename collisions, but overwrite the first instance.
+                idx = 2
+                while os.path.exists(out_name):
+                    out_name = '%s%s%s_%s_out.pdbqt' % (args.dir, os.path.sep(), idx, molecule_name)
+                    idx += 1
+            out_names.add(out_name)
 
             if args.randomize_only:
                 v.randomize()
