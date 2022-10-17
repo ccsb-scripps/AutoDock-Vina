@@ -980,12 +980,8 @@ SWIG_Python_RaiseOrModifyTypeError(const char *message)
 #    define SWIG_PYTHON_USE_GIL
 #  endif
 #  if defined(SWIG_PYTHON_USE_GIL) /* Use PyGILState threads calls */
-#    if !defined(SWIG_PYTHON_INITIALIZE_THREADS)
-#      if PY_VERSION_HEX < 0x03070000
-#        define SWIG_PYTHON_INITIALIZE_THREADS PyEval_InitThreads()
-#      else
-#        define SWIG_PYTHON_INITIALIZE_THREADS
-#      endif
+#    ifndef SWIG_PYTHON_INITIALIZE_THREADS
+#     define SWIG_PYTHON_INITIALIZE_THREADS  PyEval_InitThreads() 
 #    endif
 #    ifdef __cplusplus /* C++ code */
        class SWIG_Python_Thread_Block {
@@ -2711,16 +2707,17 @@ SWIGINTERN PyObject *SWIG_PyStaticMethod_New(PyObject *SWIGUNUSEDPARM(self), PyO
 #define SWIGTYPE_p_std__allocatorT_int_t swig_types[8]
 #define SWIGTYPE_p_std__allocatorT_std__string_t swig_types[9]
 #define SWIGTYPE_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t swig_types[10]
-#define SWIGTYPE_p_std__invalid_argument swig_types[11]
-#define SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t swig_types[12]
-#define SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t swig_types[13]
-#define SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t swig_types[14]
-#define SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t swig_types[15]
-#define SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t swig_types[16]
-#define SWIGTYPE_p_swig__SwigPyIterator swig_types[17]
-#define SWIGTYPE_p_value_type swig_types[18]
-static swig_type_info *swig_types[20];
-static swig_module_info swig_module = {swig_types, 19, 0, 0, 0, 0};
+#define SWIGTYPE_p_std__functionT_void_fdoubleF_t swig_types[11]
+#define SWIGTYPE_p_std__invalid_argument swig_types[12]
+#define SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t swig_types[13]
+#define SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t swig_types[14]
+#define SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t swig_types[15]
+#define SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t swig_types[16]
+#define SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t swig_types[17]
+#define SWIGTYPE_p_swig__SwigPyIterator swig_types[18]
+#define SWIGTYPE_p_value_type swig_types[19]
+static swig_type_info *swig_types[21];
+static swig_module_info swig_module = {swig_types, 20, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -5546,17 +5543,17 @@ SWIGINTERN PyObject *_wrap_delete_SwigPyIterator(PyObject *SWIGUNUSEDPARM(self),
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_SwigPyIterator" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");  }
-   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); delete arg1; resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); { try { delete arg1; }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator_value(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   PyObject *result = 0 ; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_value" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'");  }
-   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); try {
-    result = (PyObject *)((swig::SwigPyIterator const *)arg1)->value();}  catch(swig::stop_iteration &_e) { { (void)_e;
-      SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  resultobj = result; return resultobj; fail:
-  return NULL; }
+   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); { try { try {
+        result = (PyObject *)((swig::SwigPyIterator const *)arg1)->value();}  catch(swig::stop_iteration &_e) { { (void)_e;
+          SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = result; return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator_incr__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *) 0 ; size_t arg2 ; void *argp1 = 0 ;
   int res1 = 0 ; size_t val2 ; int ecode2 = 0 ; swig::SwigPyIterator *result = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -5565,8 +5562,9 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_incr__SWIG_0(PyObject *SWIGUNUSEDPARM(
    arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator_incr" "', argument " "2"" of type '" "size_t""'"); }
-    arg2 = static_cast< size_t >(val2); try { result = (swig::SwigPyIterator *)(arg1)->incr(arg2);}
-   catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  } 
+    arg2 = static_cast< size_t >(val2); { try { try { result = (swig::SwigPyIterator *)(arg1)->incr(arg2);}
+       catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 ); return resultobj; fail:
   return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator_incr__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -5574,8 +5572,9 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_incr__SWIG_1(PyObject *SWIGUNUSEDPARM(
   swig::SwigPyIterator *result = 0 ; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_incr" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");  }
-   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); try { result = (swig::SwigPyIterator *)(arg1)->incr();}
-   catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  } 
+   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); { try { try { result = (swig::SwigPyIterator *)(arg1)->incr();}
+       catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 ); return resultobj; fail:
   return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator_incr(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0} ;
@@ -5595,8 +5594,9 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_decr__SWIG_0(PyObject *SWIGUNUSEDPARM(
    arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator_decr" "', argument " "2"" of type '" "size_t""'"); }
-    arg2 = static_cast< size_t >(val2); try { result = (swig::SwigPyIterator *)(arg1)->decr(arg2);}
-   catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  } 
+    arg2 = static_cast< size_t >(val2); { try { try { result = (swig::SwigPyIterator *)(arg1)->decr(arg2);}
+       catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 ); return resultobj; fail:
   return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator_decr__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -5604,8 +5604,9 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_decr__SWIG_1(PyObject *SWIGUNUSEDPARM(
   swig::SwigPyIterator *result = 0 ; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_decr" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");  }
-   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); try { result = (swig::SwigPyIterator *)(arg1)->decr();}
-   catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  } 
+   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); { try { try { result = (swig::SwigPyIterator *)(arg1)->decr();}
+       catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 ); return resultobj; fail:
   return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator_decr(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0} ;
@@ -5628,11 +5629,12 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_distance(PyObject *SWIGUNUSEDPARM(self
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator_distance" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");  }
    if (!argp2) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SwigPyIterator_distance" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); }
-   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2); try {
-    result = ((swig::SwigPyIterator const *)arg1)->distance((swig::SwigPyIterator const &)*arg2);}
-   catch(std::invalid_argument &_e) {
-    SWIG_Python_Raise(SWIG_NewPointerObj((new std::invalid_argument(static_cast< const std::invalid_argument& >(_e))),SWIGTYPE_p_std__invalid_argument,SWIG_POINTER_OWN), "std::invalid_argument", SWIGTYPE_p_std__invalid_argument); SWIG_fail; }
-   resultobj = SWIG_From_ptrdiff_t(static_cast< ptrdiff_t >(result)); return resultobj; fail: return NULL; }
+   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2); { try { try {
+        result = ((swig::SwigPyIterator const *)arg1)->distance((swig::SwigPyIterator const &)*arg2);}
+       catch(std::invalid_argument &_e) {
+        SWIG_Python_Raise(SWIG_NewPointerObj((new std::invalid_argument(static_cast< const std::invalid_argument& >(_e))),SWIGTYPE_p_std__invalid_argument,SWIG_POINTER_OWN), "std::invalid_argument", SWIGTYPE_p_std__invalid_argument); SWIG_fail; }
+       }  catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
+  resultobj = SWIG_From_ptrdiff_t(static_cast< ptrdiff_t >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator_equal(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *) 0 ; swig::SwigPyIterator *arg2 = 0 ; void *argp1 = 0 ; int res1 = 0 ;
   void *argp2 = 0 ; int res2 = 0 ; PyObject *swig_obj[2] ; bool result;
@@ -5644,18 +5646,20 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_equal(PyObject *SWIGUNUSEDPARM(self), 
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator_equal" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");  }
    if (!argp2) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SwigPyIterator_equal" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); }
-   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2); try {
-    result = (bool)((swig::SwigPyIterator const *)arg1)->equal((swig::SwigPyIterator const &)*arg2);}
-   catch(std::invalid_argument &_e) {
-    SWIG_Python_Raise(SWIG_NewPointerObj((new std::invalid_argument(static_cast< const std::invalid_argument& >(_e))),SWIGTYPE_p_std__invalid_argument,SWIG_POINTER_OWN), "std::invalid_argument", SWIGTYPE_p_std__invalid_argument); SWIG_fail; }
-   resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
+   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2); { try { try {
+        result = (bool)((swig::SwigPyIterator const *)arg1)->equal((swig::SwigPyIterator const &)*arg2);}
+       catch(std::invalid_argument &_e) {
+        SWIG_Python_Raise(SWIG_NewPointerObj((new std::invalid_argument(static_cast< const std::invalid_argument& >(_e))),SWIGTYPE_p_std__invalid_argument,SWIG_POINTER_OWN), "std::invalid_argument", SWIGTYPE_p_std__invalid_argument); SWIG_fail; }
+       }  catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
+  resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator_copy(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   swig::SwigPyIterator *result = 0 ; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_copy" "', argument " "1"" of type '" "swig::SwigPyIterator const *""'");  }
-   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1);
-  result = (swig::SwigPyIterator *)((swig::SwigPyIterator const *)arg1)->copy();
+   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); { try {
+      result = (swig::SwigPyIterator *)((swig::SwigPyIterator const *)arg1)->copy(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator_next(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -5663,25 +5667,28 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_next(PyObject *SWIGUNUSEDPARM(self), P
   PyObject *result = 0 ; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_next" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");  }
-   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); try { result = (PyObject *)(arg1)->next();}
-   catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  } 
-  resultobj = result; return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); { try { try { result = (PyObject *)(arg1)->next();}
+       catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = result; return resultobj;
+  fail: return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator___next__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   PyObject *result = 0 ; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator___next__" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");  }
-   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); try { result = (PyObject *)(arg1)->__next__();}
-   catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  } 
-  resultobj = result; return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); { try { try { result = (PyObject *)(arg1)->__next__();}
+       catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = result; return resultobj;
+  fail: return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator_previous(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   PyObject *result = 0 ; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "SwigPyIterator_previous" "', argument " "1"" of type '" "swig::SwigPyIterator *""'");  }
-   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); try { result = (PyObject *)(arg1)->previous();}
-   catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  } 
-  resultobj = result; return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); { try { try { result = (PyObject *)(arg1)->previous();}
+       catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = result; return resultobj;
+  fail: return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator_advance(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   swig::SwigPyIterator *arg1 = (swig::SwigPyIterator *) 0 ; ptrdiff_t arg2 ; void *argp1 = 0 ; int res1 = 0 ; ptrdiff_t val2 ;
   int ecode2 = 0 ; PyObject *swig_obj[2] ; swig::SwigPyIterator *result = 0 ;
@@ -5691,8 +5698,9 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator_advance(PyObject *SWIGUNUSEDPARM(self)
    arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator_advance" "', argument " "2"" of type '" "ptrdiff_t""'"); }
-    arg2 = static_cast< ptrdiff_t >(val2); try { result = (swig::SwigPyIterator *)(arg1)->advance(arg2);}
-   catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  } 
+    arg2 = static_cast< ptrdiff_t >(val2); { try { try { result = (swig::SwigPyIterator *)(arg1)->advance(arg2);}
+       catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, 0 |  0 ); return resultobj; fail:
   return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator___eq__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -5706,8 +5714,9 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___eq__(PyObject *SWIGUNUSEDPARM(self),
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator___eq__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");  }
    if (!argp2) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SwigPyIterator___eq__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); }
-   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2);
-  result = (bool)((swig::SwigPyIterator const *)arg1)->operator ==((swig::SwigPyIterator const &)*arg2);
+   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2); { try {
+      result = (bool)((swig::SwigPyIterator const *)arg1)->operator ==((swig::SwigPyIterator const &)*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: PyErr_Clear(); Py_INCREF(Py_NotImplemented);
   return Py_NotImplemented; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator___ne__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -5721,8 +5730,9 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___ne__(PyObject *SWIGUNUSEDPARM(self),
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator___ne__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");  }
    if (!argp2) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SwigPyIterator___ne__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); }
-   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2);
-  result = (bool)((swig::SwigPyIterator const *)arg1)->operator !=((swig::SwigPyIterator const &)*arg2);
+   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2); { try {
+      result = (bool)((swig::SwigPyIterator const *)arg1)->operator !=((swig::SwigPyIterator const &)*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: PyErr_Clear(); Py_INCREF(Py_NotImplemented);
   return Py_NotImplemented; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator___iadd__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -5735,8 +5745,9 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___iadd__(PyObject *SWIGUNUSEDPARM(self
    arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator___iadd__" "', argument " "2"" of type '" "ptrdiff_t""'"); }
-    arg2 = static_cast< ptrdiff_t >(val2); try { result = (swig::SwigPyIterator *) &(arg1)->operator +=(arg2);}
-   catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  } 
+    arg2 = static_cast< ptrdiff_t >(val2); { try { try { result = (swig::SwigPyIterator *) &(arg1)->operator +=(arg2);}
+       catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator___isub__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -5749,8 +5760,9 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___isub__(PyObject *SWIGUNUSEDPARM(self
    arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator___isub__" "', argument " "2"" of type '" "ptrdiff_t""'"); }
-    arg2 = static_cast< ptrdiff_t >(val2); try { result = (swig::SwigPyIterator *) &(arg1)->operator -=(arg2);}
-   catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  } 
+    arg2 = static_cast< ptrdiff_t >(val2); { try { try { result = (swig::SwigPyIterator *) &(arg1)->operator -=(arg2);}
+       catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator___add__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -5762,9 +5774,10 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___add__(PyObject *SWIGUNUSEDPARM(self)
    arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator___add__" "', argument " "2"" of type '" "ptrdiff_t""'"); }
-    arg2 = static_cast< ptrdiff_t >(val2); try {
-    result = (swig::SwigPyIterator *)((swig::SwigPyIterator const *)arg1)->operator +(arg2);}  catch(swig::stop_iteration &_e) {
-    { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  } 
+    arg2 = static_cast< ptrdiff_t >(val2); { try { try {
+        result = (swig::SwigPyIterator *)((swig::SwigPyIterator const *)arg1)->operator +(arg2);}
+       catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: PyErr_Clear(); Py_INCREF(Py_NotImplemented); return Py_NotImplemented; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator___sub____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -5775,9 +5788,10 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___sub____SWIG_0(PyObject *SWIGUNUSEDPA
    arg1 = reinterpret_cast< swig::SwigPyIterator * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "SwigPyIterator___sub__" "', argument " "2"" of type '" "ptrdiff_t""'"); }
-    arg2 = static_cast< ptrdiff_t >(val2); try {
-    result = (swig::SwigPyIterator *)((swig::SwigPyIterator const *)arg1)->operator -(arg2);}  catch(swig::stop_iteration &_e) {
-    { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  } 
+    arg2 = static_cast< ptrdiff_t >(val2); { try { try {
+        result = (swig::SwigPyIterator *)((swig::SwigPyIterator const *)arg1)->operator -(arg2);}
+       catch(swig::stop_iteration &_e) { { (void)_e; SWIG_SetErrorObj(PyExc_StopIteration, SWIG_Py_Void()); SWIG_fail; }  }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: PyErr_Clear(); Py_INCREF(Py_NotImplemented); return Py_NotImplemented; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator___sub____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -5790,8 +5804,9 @@ SWIGINTERN PyObject *_wrap_SwigPyIterator___sub____SWIG_1(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "SwigPyIterator___sub__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'");  }
    if (!argp2) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "SwigPyIterator___sub__" "', argument " "2"" of type '" "swig::SwigPyIterator const &""'"); }
-   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2);
-  result = ((swig::SwigPyIterator const *)arg1)->operator -((swig::SwigPyIterator const &)*arg2);
+   arg2 = reinterpret_cast< swig::SwigPyIterator * >(argp2); { try {
+      result = ((swig::SwigPyIterator const *)arg1)->operator -((swig::SwigPyIterator const &)*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_ptrdiff_t(static_cast< ptrdiff_t >(result)); return resultobj; fail: PyErr_Clear();
   Py_INCREF(Py_NotImplemented); return Py_NotImplemented; }
 SWIGINTERN PyObject *_wrap_SwigPyIterator___sub__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0} ;
@@ -5814,8 +5829,9 @@ SWIGINTERN PyObject *_wrap_IntVector_iterator(PyObject *SWIGUNUSEDPARM(self), Py
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_iterator" "', argument " "1"" of type '" "std::vector< int > *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1);
-  result = (swig::SwigPyIterator *)std_vector_Sl_int_Sg__iterator(arg1,arg2);
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try {
+      result = (swig::SwigPyIterator *)std_vector_Sl_int_Sg__iterator(arg1,arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___nonzero__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -5824,8 +5840,9 @@ SWIGINTERN PyObject *_wrap_IntVector___nonzero__(PyObject *SWIGUNUSEDPARM(self),
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector___nonzero__" "', argument " "1"" of type '" "std::vector< int > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1);
-  result = (bool)std_vector_Sl_int_Sg____nonzero__((std::vector< int > const *)arg1);
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try {
+      result = (bool)std_vector_Sl_int_Sg____nonzero__((std::vector< int > const *)arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___bool__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ; bool result;
@@ -5833,18 +5850,20 @@ SWIGINTERN PyObject *_wrap_IntVector___bool__(PyObject *SWIGUNUSEDPARM(self), Py
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector___bool__" "', argument " "1"" of type '" "std::vector< int > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1);
-  result = (bool)std_vector_Sl_int_Sg____bool__((std::vector< int > const *)arg1);
-  resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try {
+      result = (bool)std_vector_Sl_int_Sg____bool__((std::vector< int > const *)arg1); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj;
+  fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___len__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   std::vector< int >::size_type result; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector___len__" "', argument " "1"" of type '" "std::vector< int > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1);
-  result = std_vector_Sl_int_Sg____len__((std::vector< int > const *)arg1);
-  resultobj = SWIG_From_size_t(static_cast< size_t >(result)); return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try {
+      result = std_vector_Sl_int_Sg____len__((std::vector< int > const *)arg1); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___getslice__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ; std::vector< int >::difference_type arg2 ;
   std::vector< int >::difference_type arg3 ; void *argp1 = 0 ; int res1 = 0 ; ptrdiff_t val2 ; int ecode2 = 0 ; ptrdiff_t val3 ;
@@ -5859,10 +5878,11 @@ SWIGINTERN PyObject *_wrap_IntVector___getslice__(PyObject *SWIGUNUSEDPARM(self)
     arg2 = static_cast< std::vector< int >::difference_type >(val2); ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "IntVector___getslice__" "', argument " "3"" of type '" "std::vector< int >::difference_type""'"); }
-    arg3 = static_cast< std::vector< int >::difference_type >(val3); try {
-    result = (std::vector< int,std::allocator< int > > *)std_vector_Sl_int_Sg____getslice__(arg1,arg2,arg3);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); } 
+    arg3 = static_cast< std::vector< int >::difference_type >(val3); { try { try {
+        result = (std::vector< int,std::allocator< int > > *)std_vector_Sl_int_Sg____getslice__(arg1,arg2,arg3);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___setslice____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -5878,10 +5898,11 @@ SWIGINTERN PyObject *_wrap_IntVector___setslice____SWIG_0(PyObject *SWIGUNUSEDPA
     arg2 = static_cast< std::vector< int >::difference_type >(val2); ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "IntVector___setslice__" "', argument " "3"" of type '" "std::vector< int >::difference_type""'"); }
-    arg3 = static_cast< std::vector< int >::difference_type >(val3); try {
-    std_vector_Sl_int_Sg____setslice____SWIG_0(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg3 = static_cast< std::vector< int >::difference_type >(val3); { try { try {
+        std_vector_Sl_int_Sg____setslice____SWIG_0(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___setslice____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< int > *arg1 = (std::vector< int > *) 0 ; std::vector< int >::difference_type arg2 ;
   std::vector< int >::difference_type arg3 ; std::vector< int,std::allocator< int > > *arg4 = 0 ; void *argp1 = 0 ;
@@ -5902,10 +5923,11 @@ SWIGINTERN PyObject *_wrap_IntVector___setslice____SWIG_1(PyObject *SWIGUNUSEDPA
       SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "IntVector___setslice__" "', argument " "4"" of type '" "std::vector< int,std::allocator< int > > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IntVector___setslice__" "', argument " "4"" of type '" "std::vector< int,std::allocator< int > > const &""'"); }
-     arg4 = ptr; }  try {
-    std_vector_Sl_int_Sg____setslice____SWIG_1(arg1,arg2,arg3,(std::vector< int,std::allocator< int > > const &)*arg4);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res4)) delete arg4;
+     arg4 = ptr; }  { try { try {
+        std_vector_Sl_int_Sg____setslice____SWIG_1(arg1,arg2,arg3,(std::vector< int,std::allocator< int > > const &)*arg4);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res4)) delete arg4;
   return resultobj; fail: if (SWIG_IsNewObj(res4)) delete arg4; return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___setslice__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[5] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "IntVector___setslice__", 0, 4, argv))) SWIG_fail; --argc; if (argc == 3) {
@@ -5932,9 +5954,11 @@ SWIGINTERN PyObject *_wrap_IntVector___delslice__(PyObject *SWIGUNUSEDPARM(self)
     arg2 = static_cast< std::vector< int >::difference_type >(val2); ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "IntVector___delslice__" "', argument " "3"" of type '" "std::vector< int >::difference_type""'"); }
-    arg3 = static_cast< std::vector< int >::difference_type >(val3); try { std_vector_Sl_int_Sg____delslice__(arg1,arg2,arg3);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg3 = static_cast< std::vector< int >::difference_type >(val3); { try { try {
+        std_vector_Sl_int_Sg____delslice__(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___delitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< int > *arg1 = (std::vector< int > *) 0 ; std::vector< int >::difference_type arg2 ;
   void *argp1 = 0 ; int res1 = 0 ; ptrdiff_t val2 ; int ecode2 = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -5944,9 +5968,11 @@ SWIGINTERN PyObject *_wrap_IntVector___delitem____SWIG_0(PyObject *SWIGUNUSEDPAR
    arg1 = reinterpret_cast< std::vector< int > * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "IntVector___delitem__" "', argument " "2"" of type '" "std::vector< int >::difference_type""'"); }
-    arg2 = static_cast< std::vector< int >::difference_type >(val2); try { std_vector_Sl_int_Sg____delitem____SWIG_0(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg2 = static_cast< std::vector< int >::difference_type >(val2); { try { try {
+        std_vector_Sl_int_Sg____delitem____SWIG_0(arg1,arg2);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___getitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< int > *arg1 = (std::vector< int > *) 0 ; PySliceObject *arg2 = (PySliceObject *) 0 ;
   void *argp1 = 0 ; int res1 = 0 ; std::vector< int,std::allocator< int > > *result = 0 ;
@@ -5956,10 +5982,11 @@ SWIGINTERN PyObject *_wrap_IntVector___getitem____SWIG_0(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector___getitem__" "', argument " "1"" of type '" "std::vector< int > *""'");  }
    arg1 = reinterpret_cast< std::vector< int > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "IntVector___getitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try {
-    result = (std::vector< int,std::allocator< int > > *)std_vector_Sl_int_Sg____getitem____SWIG_0(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); } 
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try {
+        result = (std::vector< int,std::allocator< int > > *)std_vector_Sl_int_Sg____getitem____SWIG_0(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___setitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -5977,10 +6004,11 @@ SWIGINTERN PyObject *_wrap_IntVector___setitem____SWIG_0(PyObject *SWIGUNUSEDPAR
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IntVector___setitem__" "', argument " "3"" of type '" "std::vector< int,std::allocator< int > > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IntVector___setitem__" "', argument " "3"" of type '" "std::vector< int,std::allocator< int > > const &""'"); }
-     arg3 = ptr; }  try {
-    std_vector_Sl_int_Sg____setitem____SWIG_0(arg1,arg2,(std::vector< int,std::allocator< int > > const &)*arg3);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res3)) delete arg3;
+     arg3 = ptr; }  { try { try {
+        std_vector_Sl_int_Sg____setitem____SWIG_0(arg1,arg2,(std::vector< int,std::allocator< int > > const &)*arg3);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res3)) delete arg3;
   return resultobj; fail: if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___setitem____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< int > *arg1 = (std::vector< int > *) 0 ; PySliceObject *arg2 = (PySliceObject *) 0 ;
@@ -5990,9 +6018,10 @@ SWIGINTERN PyObject *_wrap_IntVector___setitem____SWIG_1(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector___setitem__" "', argument " "1"" of type '" "std::vector< int > *""'");  }
    arg1 = reinterpret_cast< std::vector< int > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "IntVector___setitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try { std_vector_Sl_int_Sg____setitem____SWIG_1(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try { std_vector_Sl_int_Sg____setitem____SWIG_1(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___delitem____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< int > *arg1 = (std::vector< int > *) 0 ; PySliceObject *arg2 = (PySliceObject *) 0 ;
   void *argp1 = 0 ; int res1 = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -6001,9 +6030,10 @@ SWIGINTERN PyObject *_wrap_IntVector___delitem____SWIG_1(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector___delitem__" "', argument " "1"" of type '" "std::vector< int > *""'");  }
    arg1 = reinterpret_cast< std::vector< int > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "IntVector___delitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try { std_vector_Sl_int_Sg____delitem____SWIG_1(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try { std_vector_Sl_int_Sg____delitem____SWIG_1(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___delitem__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "IntVector___delitem__", 0, 2, argv))) SWIG_fail; --argc; if (argc == 2) {
     int _v = 0; { { _v = PySlice_Check(argv[1]); } }  if (!_v) goto check_1;
@@ -6023,9 +6053,10 @@ SWIGINTERN PyObject *_wrap_IntVector___getitem____SWIG_1(PyObject *SWIGUNUSEDPAR
    arg1 = reinterpret_cast< std::vector< int > * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "IntVector___getitem__" "', argument " "2"" of type '" "std::vector< int >::difference_type""'"); }
-    arg2 = static_cast< std::vector< int >::difference_type >(val2); try {
-    result = (std::vector< int >::value_type *) &std_vector_Sl_int_Sg____getitem____SWIG_1((std::vector< int > const *)arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); } 
+    arg2 = static_cast< std::vector< int >::difference_type >(val2); { try { try {
+        result = (std::vector< int >::value_type *) &std_vector_Sl_int_Sg____getitem____SWIG_1((std::vector< int > const *)arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_int(static_cast< int >(*result));
   (void)swig::container_owner<swig::traits<std::vector< int >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj; fail: return NULL; }
@@ -6051,9 +6082,10 @@ SWIGINTERN PyObject *_wrap_IntVector___setitem____SWIG_2(PyObject *SWIGUNUSEDPAR
     arg2 = static_cast< std::vector< int >::difference_type >(val2); ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "IntVector___setitem__" "', argument " "3"" of type '" "std::vector< int >::value_type""'"); }
-    temp3 = static_cast< std::vector< int >::value_type >(val3); arg3 = &temp3; try {
-    std_vector_Sl_int_Sg____setitem____SWIG_2(arg1,arg2,(int const &)*arg3);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    temp3 = static_cast< std::vector< int >::value_type >(val3); arg3 = &temp3; { try { try {
+        std_vector_Sl_int_Sg____setitem____SWIG_2(arg1,arg2,(int const &)*arg3);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector___setitem__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "IntVector___setitem__", 0, 3, argv))) SWIG_fail; --argc; if (argc == 2) {
     PyObject *retobj = _wrap_IntVector___setitem____SWIG_1(self, argc, argv);
@@ -6075,10 +6107,11 @@ SWIGINTERN PyObject *_wrap_IntVector_pop(PyObject *SWIGUNUSEDPARM(self), PyObjec
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_pop" "', argument " "1"" of type '" "std::vector< int > *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1); try {
-    result = (std::vector< int >::value_type)std_vector_Sl_int_Sg__pop(arg1);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try { try {
+        result = (std::vector< int >::value_type)std_vector_Sl_int_Sg__pop(arg1);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_int(static_cast< int >(result)); return resultobj;
+  fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_append(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ; std::vector< int >::value_type *arg2 = 0 ; void *argp1 = 0 ;
   int res1 = 0 ; std::vector< int >::value_type temp2 ; int val2 ; int ecode2 = 0 ; PyObject *swig_obj[2] ;
@@ -6089,11 +6122,13 @@ SWIGINTERN PyObject *_wrap_IntVector_append(PyObject *SWIGUNUSEDPARM(self), PyOb
    arg1 = reinterpret_cast< std::vector< int > * >(argp1); ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "IntVector_append" "', argument " "2"" of type '" "std::vector< int >::value_type""'"); }
-    temp2 = static_cast< std::vector< int >::value_type >(val2); arg2 = &temp2;
-  std_vector_Sl_int_Sg__append(arg1,(int const &)*arg2); resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    temp2 = static_cast< std::vector< int >::value_type >(val2); arg2 = &temp2; { try {
+      std_vector_Sl_int_Sg__append(arg1,(int const &)*arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_IntVector__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
-  PyObject *resultobj = 0; std::vector< int > *result = 0 ; if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
-  result = (std::vector< int > *)new std::vector< int >();
+  PyObject *resultobj = 0; std::vector< int > *result = 0 ; if ((nobjs < 0) || (nobjs > 0)) SWIG_fail; { try {
+      result = (std::vector< int > *)new std::vector< int >(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, SWIG_POINTER_NEW |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_IntVector__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -6104,7 +6139,8 @@ SWIGINTERN PyObject *_wrap_new_IntVector__SWIG_1(PyObject *SWIGUNUSEDPARM(self),
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_IntVector" "', argument " "1"" of type '" "std::vector< int > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_IntVector" "', argument " "1"" of type '" "std::vector< int > const &""'"); }
-     arg1 = ptr; }  result = (std::vector< int > *)new std::vector< int >((std::vector< int > const &)*arg1);
+     arg1 = ptr; }  { try { result = (std::vector< int > *)new std::vector< int >((std::vector< int > const &)*arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_empty(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -6113,7 +6149,8 @@ SWIGINTERN PyObject *_wrap_IntVector_empty(PyObject *SWIGUNUSEDPARM(self), PyObj
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_empty" "', argument " "1"" of type '" "std::vector< int > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1); result = (bool)((std::vector< int > const *)arg1)->empty();
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try { result = (bool)((std::vector< int > const *)arg1)->empty(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_size(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
@@ -6121,7 +6158,8 @@ SWIGINTERN PyObject *_wrap_IntVector_size(PyObject *SWIGUNUSEDPARM(self), PyObje
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_size" "', argument " "1"" of type '" "std::vector< int > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1); result = ((std::vector< int > const *)arg1)->size();
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try { result = ((std::vector< int > const *)arg1)->size(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_size_t(static_cast< size_t >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_swap(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ; std::vector< int > *arg2 = 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -6135,15 +6173,16 @@ SWIGINTERN PyObject *_wrap_IntVector_swap(PyObject *SWIGUNUSEDPARM(self), PyObje
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "IntVector_swap" "', argument " "2"" of type '" "std::vector< int > &""'");  }
    if (!argp2) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IntVector_swap" "', argument " "2"" of type '" "std::vector< int > &""'"); }
-   arg2 = reinterpret_cast< std::vector< int > * >(argp2); (arg1)->swap(*arg2); resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+   arg2 = reinterpret_cast< std::vector< int > * >(argp2); { try { (arg1)->swap(*arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_begin(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   std::vector< int >::iterator result; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_begin" "', argument " "1"" of type '" "std::vector< int > *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1); result = (arg1)->begin();
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try { result = (arg1)->begin(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< int >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_end(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -6152,7 +6191,8 @@ SWIGINTERN PyObject *_wrap_IntVector_end(PyObject *SWIGUNUSEDPARM(self), PyObjec
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_end" "', argument " "1"" of type '" "std::vector< int > *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1); result = (arg1)->end();
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try { result = (arg1)->end(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< int >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_rbegin(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -6161,7 +6201,8 @@ SWIGINTERN PyObject *_wrap_IntVector_rbegin(PyObject *SWIGUNUSEDPARM(self), PyOb
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_rbegin" "', argument " "1"" of type '" "std::vector< int > *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1); result = (arg1)->rbegin();
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try { result = (arg1)->rbegin(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< int >::reverse_iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_rend(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -6170,7 +6211,8 @@ SWIGINTERN PyObject *_wrap_IntVector_rend(PyObject *SWIGUNUSEDPARM(self), PyObje
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_rend" "', argument " "1"" of type '" "std::vector< int > *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1); result = (arg1)->rend();
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try { result = (arg1)->rend(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< int >::reverse_iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_clear(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -6179,22 +6221,26 @@ SWIGINTERN PyObject *_wrap_IntVector_clear(PyObject *SWIGUNUSEDPARM(self), PyObj
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_clear" "', argument " "1"" of type '" "std::vector< int > *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1); (arg1)->clear(); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try { (arg1)->clear(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_get_allocator(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   SwigValueWrapper< std::allocator< int > > result; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_get_allocator" "', argument " "1"" of type '" "std::vector< int > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1); result = ((std::vector< int > const *)arg1)->get_allocator();
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try {
+      result = ((std::vector< int > const *)arg1)->get_allocator(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj((new std::vector< int >::allocator_type(static_cast< const std::vector< int >::allocator_type& >(result))), SWIGTYPE_p_std__allocatorT_int_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_IntVector__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< int >::size_type arg1 ; size_t val1 ; int ecode1 = 0 ; std::vector< int > *result = 0 ;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail; ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1); if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_IntVector" "', argument " "1"" of type '" "std::vector< int >::size_type""'"); }
-    arg1 = static_cast< std::vector< int >::size_type >(val1); result = (std::vector< int > *)new std::vector< int >(arg1);
+    arg1 = static_cast< std::vector< int >::size_type >(val1); { try {
+      result = (std::vector< int > *)new std::vector< int >(arg1); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, SWIG_POINTER_NEW |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_pop_back(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -6203,8 +6249,8 @@ SWIGINTERN PyObject *_wrap_IntVector_pop_back(PyObject *SWIGUNUSEDPARM(self), Py
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_pop_back" "', argument " "1"" of type '" "std::vector< int > *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1); (arg1)->pop_back(); resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try { (arg1)->pop_back(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_resize__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< int > *arg1 = (std::vector< int > *) 0 ; std::vector< int >::size_type arg2 ;
   void *argp1 = 0 ; int res1 = 0 ; size_t val2 ; int ecode2 = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -6214,7 +6260,8 @@ SWIGINTERN PyObject *_wrap_IntVector_resize__SWIG_0(PyObject *SWIGUNUSEDPARM(sel
    arg1 = reinterpret_cast< std::vector< int > * >(argp1); ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "IntVector_resize" "', argument " "2"" of type '" "std::vector< int >::size_type""'"); }
-    arg2 = static_cast< std::vector< int >::size_type >(val2); (arg1)->resize(arg2); resultobj = SWIG_Py_Void();
+    arg2 = static_cast< std::vector< int >::size_type >(val2); { try { (arg1)->resize(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_erase__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< int > *arg1 = (std::vector< int > *) 0 ; std::vector< int >::iterator arg2 ;
@@ -6231,7 +6278,8 @@ SWIGINTERN PyObject *_wrap_IntVector_erase__SWIG_0(PyObject *SWIGUNUSEDPARM(self
     swig::SwigPyIterator_T<std::vector< int >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< int >::iterator > *>(iter2);
     if (iter_t) { arg2 = iter_t->get_current(); }  else {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "IntVector_erase" "', argument " "2"" of type '" "std::vector< int >::iterator""'"); }
-     }  result = std_vector_Sl_int_Sg__erase__SWIG_0(arg1,arg2);
+     }  { try { result = std_vector_Sl_int_Sg__erase__SWIG_0(arg1,arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< int >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_erase__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -6256,7 +6304,8 @@ SWIGINTERN PyObject *_wrap_IntVector_erase__SWIG_1(PyObject *SWIGUNUSEDPARM(self
     swig::SwigPyIterator_T<std::vector< int >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< int >::iterator > *>(iter3);
     if (iter_t) { arg3 = iter_t->get_current(); }  else {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "IntVector_erase" "', argument " "3"" of type '" "std::vector< int >::iterator""'"); }
-     }  result = std_vector_Sl_int_Sg__erase__SWIG_1(arg1,arg2,arg3);
+     }  { try { result = std_vector_Sl_int_Sg__erase__SWIG_1(arg1,arg2,arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< int >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_erase(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0} ;
@@ -6276,8 +6325,9 @@ SWIGINTERN PyObject *_wrap_new_IntVector__SWIG_3(PyObject *SWIGUNUSEDPARM(self),
     arg1 = static_cast< std::vector< int >::size_type >(val1); ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_IntVector" "', argument " "2"" of type '" "std::vector< int >::value_type""'"); }
-    temp2 = static_cast< std::vector< int >::value_type >(val2); arg2 = &temp2;
-  result = (std::vector< int > *)new std::vector< int >(arg1,(std::vector< int >::value_type const &)*arg2);
+    temp2 = static_cast< std::vector< int >::value_type >(val2); arg2 = &temp2; { try {
+      result = (std::vector< int > *)new std::vector< int >(arg1,(std::vector< int >::value_type const &)*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, SWIG_POINTER_NEW |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_IntVector(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0} ;
@@ -6303,17 +6353,18 @@ SWIGINTERN PyObject *_wrap_IntVector_push_back(PyObject *SWIGUNUSEDPARM(self), P
    arg1 = reinterpret_cast< std::vector< int > * >(argp1); ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "IntVector_push_back" "', argument " "2"" of type '" "std::vector< int >::value_type""'"); }
-    temp2 = static_cast< std::vector< int >::value_type >(val2); arg2 = &temp2;
-  (arg1)->push_back((std::vector< int >::value_type const &)*arg2); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+    temp2 = static_cast< std::vector< int >::value_type >(val2); arg2 = &temp2; { try {
+      (arg1)->push_back((std::vector< int >::value_type const &)*arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_front(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   std::vector< int >::value_type *result = 0 ; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_front" "', argument " "1"" of type '" "std::vector< int > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1);
-  result = (std::vector< int >::value_type *) &((std::vector< int > const *)arg1)->front();
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try {
+      result = (std::vector< int >::value_type *) &((std::vector< int > const *)arg1)->front(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_int(static_cast< int >(*result));
   (void)swig::container_owner<swig::traits<std::vector< int >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj; fail: return NULL; }
@@ -6323,8 +6374,9 @@ SWIGINTERN PyObject *_wrap_IntVector_back(PyObject *SWIGUNUSEDPARM(self), PyObje
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_back" "', argument " "1"" of type '" "std::vector< int > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1);
-  result = (std::vector< int >::value_type *) &((std::vector< int > const *)arg1)->back();
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try {
+      result = (std::vector< int >::value_type *) &((std::vector< int > const *)arg1)->back(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_int(static_cast< int >(*result));
   (void)swig::container_owner<swig::traits<std::vector< int >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj; fail: return NULL; }
@@ -6342,9 +6394,9 @@ SWIGINTERN PyObject *_wrap_IntVector_assign(PyObject *SWIGUNUSEDPARM(self), PyOb
     arg2 = static_cast< std::vector< int >::size_type >(val2); ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "IntVector_assign" "', argument " "3"" of type '" "std::vector< int >::value_type""'"); }
-    temp3 = static_cast< std::vector< int >::value_type >(val3); arg3 = &temp3;
-  (arg1)->assign(arg2,(std::vector< int >::value_type const &)*arg3); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+    temp3 = static_cast< std::vector< int >::value_type >(val3); arg3 = &temp3; { try {
+      (arg1)->assign(arg2,(std::vector< int >::value_type const &)*arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_resize__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< int > *arg1 = (std::vector< int > *) 0 ; std::vector< int >::size_type arg2 ;
   std::vector< int >::value_type *arg3 = 0 ; void *argp1 = 0 ; int res1 = 0 ; size_t val2 ; int ecode2 = 0 ;
@@ -6358,9 +6410,9 @@ SWIGINTERN PyObject *_wrap_IntVector_resize__SWIG_1(PyObject *SWIGUNUSEDPARM(sel
     arg2 = static_cast< std::vector< int >::size_type >(val2); ecode3 = SWIG_AsVal_int(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "IntVector_resize" "', argument " "3"" of type '" "std::vector< int >::value_type""'"); }
-    temp3 = static_cast< std::vector< int >::value_type >(val3); arg3 = &temp3;
-  (arg1)->resize(arg2,(std::vector< int >::value_type const &)*arg3); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+    temp3 = static_cast< std::vector< int >::value_type >(val3); arg3 = &temp3; { try {
+      (arg1)->resize(arg2,(std::vector< int >::value_type const &)*arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_resize(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "IntVector_resize", 0, 3, argv))) SWIG_fail; --argc; if (argc == 2) {
     PyObject *retobj = _wrap_IntVector_resize__SWIG_0(self, argc, argv);
@@ -6388,8 +6440,9 @@ SWIGINTERN PyObject *_wrap_IntVector_insert__SWIG_0(PyObject *SWIGUNUSEDPARM(sel
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "IntVector_insert" "', argument " "2"" of type '" "std::vector< int >::iterator""'"); }
      }  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "IntVector_insert" "', argument " "3"" of type '" "std::vector< int >::value_type""'"); }
-    temp3 = static_cast< std::vector< int >::value_type >(val3); arg3 = &temp3;
-  result = std_vector_Sl_int_Sg__insert__SWIG_0(arg1,arg2,(int const &)*arg3);
+    temp3 = static_cast< std::vector< int >::value_type >(val3); arg3 = &temp3; { try {
+      result = std_vector_Sl_int_Sg__insert__SWIG_0(arg1,arg2,(int const &)*arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< int >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_insert__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -6413,9 +6466,9 @@ SWIGINTERN PyObject *_wrap_IntVector_insert__SWIG_1(PyObject *SWIGUNUSEDPARM(sel
     arg3 = static_cast< std::vector< int >::size_type >(val3); ecode4 = SWIG_AsVal_int(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "IntVector_insert" "', argument " "4"" of type '" "std::vector< int >::value_type""'"); }
-    temp4 = static_cast< std::vector< int >::value_type >(val4); arg4 = &temp4;
-  std_vector_Sl_int_Sg__insert__SWIG_1(arg1,arg2,arg3,(int const &)*arg4); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+    temp4 = static_cast< std::vector< int >::value_type >(val4); arg4 = &temp4; { try {
+      std_vector_Sl_int_Sg__insert__SWIG_1(arg1,arg2,arg3,(int const &)*arg4); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_insert(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[5] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "IntVector_insert", 0, 4, argv))) SWIG_fail; --argc; if (argc == 3) {
     PyObject *retobj = _wrap_IntVector_insert__SWIG_0(self, argc, argv);
@@ -6437,7 +6490,8 @@ SWIGINTERN PyObject *_wrap_IntVector_reserve(PyObject *SWIGUNUSEDPARM(self), PyO
    arg1 = reinterpret_cast< std::vector< int > * >(argp1); ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "IntVector_reserve" "', argument " "2"" of type '" "std::vector< int >::size_type""'"); }
-    arg2 = static_cast< std::vector< int >::size_type >(val2); (arg1)->reserve(arg2); resultobj = SWIG_Py_Void();
+    arg2 = static_cast< std::vector< int >::size_type >(val2); { try { (arg1)->reserve(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_IntVector_capacity(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
@@ -6445,7 +6499,8 @@ SWIGINTERN PyObject *_wrap_IntVector_capacity(PyObject *SWIGUNUSEDPARM(self), Py
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntVector_capacity" "', argument " "1"" of type '" "std::vector< int > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1); result = ((std::vector< int > const *)arg1)->capacity();
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try { result = ((std::vector< int > const *)arg1)->capacity(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_size_t(static_cast< size_t >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_delete_IntVector(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< int > *arg1 = (std::vector< int > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
@@ -6453,8 +6508,8 @@ SWIGINTERN PyObject *_wrap_delete_IntVector(PyObject *SWIGUNUSEDPARM(self), PyOb
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_int_std__allocatorT_int_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_IntVector" "', argument " "1"" of type '" "std::vector< int > *""'");  }
-   arg1 = reinterpret_cast< std::vector< int > * >(argp1); delete arg1; resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+   arg1 = reinterpret_cast< std::vector< int > * >(argp1); { try { delete arg1; }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *IntVector_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
@@ -6473,8 +6528,9 @@ SWIGINTERN PyObject *_wrap_DoubleVector_iterator(PyObject *SWIGUNUSEDPARM(self),
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_iterator" "', argument " "1"" of type '" "std::vector< double > *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1);
-  result = (swig::SwigPyIterator *)std_vector_Sl_double_Sg__iterator(arg1,arg2);
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try {
+      result = (swig::SwigPyIterator *)std_vector_Sl_double_Sg__iterator(arg1,arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___nonzero__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -6483,8 +6539,9 @@ SWIGINTERN PyObject *_wrap_DoubleVector___nonzero__(PyObject *SWIGUNUSEDPARM(sel
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector___nonzero__" "', argument " "1"" of type '" "std::vector< double > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1);
-  result = (bool)std_vector_Sl_double_Sg____nonzero__((std::vector< double > const *)arg1);
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try {
+      result = (bool)std_vector_Sl_double_Sg____nonzero__((std::vector< double > const *)arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___bool__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
@@ -6492,8 +6549,9 @@ SWIGINTERN PyObject *_wrap_DoubleVector___bool__(PyObject *SWIGUNUSEDPARM(self),
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector___bool__" "', argument " "1"" of type '" "std::vector< double > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1);
-  result = (bool)std_vector_Sl_double_Sg____bool__((std::vector< double > const *)arg1);
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try {
+      result = (bool)std_vector_Sl_double_Sg____bool__((std::vector< double > const *)arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___len__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
@@ -6501,9 +6559,10 @@ SWIGINTERN PyObject *_wrap_DoubleVector___len__(PyObject *SWIGUNUSEDPARM(self), 
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector___len__" "', argument " "1"" of type '" "std::vector< double > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1);
-  result = std_vector_Sl_double_Sg____len__((std::vector< double > const *)arg1);
-  resultobj = SWIG_From_size_t(static_cast< size_t >(result)); return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try {
+      result = std_vector_Sl_double_Sg____len__((std::vector< double > const *)arg1); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___getslice__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ; std::vector< double >::difference_type arg2 ;
   std::vector< double >::difference_type arg3 ; void *argp1 = 0 ; int res1 = 0 ; ptrdiff_t val2 ; int ecode2 = 0 ;
@@ -6518,10 +6577,11 @@ SWIGINTERN PyObject *_wrap_DoubleVector___getslice__(PyObject *SWIGUNUSEDPARM(se
     arg2 = static_cast< std::vector< double >::difference_type >(val2); ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "DoubleVector___getslice__" "', argument " "3"" of type '" "std::vector< double >::difference_type""'"); }
-    arg3 = static_cast< std::vector< double >::difference_type >(val3); try {
-    result = (std::vector< double,std::allocator< double > > *)std_vector_Sl_double_Sg____getslice__(arg1,arg2,arg3);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); } 
+    arg3 = static_cast< std::vector< double >::difference_type >(val3); { try { try {
+        result = (std::vector< double,std::allocator< double > > *)std_vector_Sl_double_Sg____getslice__(arg1,arg2,arg3);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___setslice____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -6537,10 +6597,11 @@ SWIGINTERN PyObject *_wrap_DoubleVector___setslice____SWIG_0(PyObject *SWIGUNUSE
     arg2 = static_cast< std::vector< double >::difference_type >(val2); ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "DoubleVector___setslice__" "', argument " "3"" of type '" "std::vector< double >::difference_type""'"); }
-    arg3 = static_cast< std::vector< double >::difference_type >(val3); try {
-    std_vector_Sl_double_Sg____setslice____SWIG_0(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg3 = static_cast< std::vector< double >::difference_type >(val3); { try { try {
+        std_vector_Sl_double_Sg____setslice____SWIG_0(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___setslice____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< double > *arg1 = (std::vector< double > *) 0 ;
   std::vector< double >::difference_type arg2 ; std::vector< double >::difference_type arg3 ;
@@ -6561,10 +6622,11 @@ SWIGINTERN PyObject *_wrap_DoubleVector___setslice____SWIG_1(PyObject *SWIGUNUSE
       SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "DoubleVector___setslice__" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DoubleVector___setslice__" "', argument " "4"" of type '" "std::vector< double,std::allocator< double > > const &""'"); }
-     arg4 = ptr; }  try {
-    std_vector_Sl_double_Sg____setslice____SWIG_1(arg1,arg2,arg3,(std::vector< double,std::allocator< double > > const &)*arg4);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res4)) delete arg4;
+     arg4 = ptr; }  { try { try {
+        std_vector_Sl_double_Sg____setslice____SWIG_1(arg1,arg2,arg3,(std::vector< double,std::allocator< double > > const &)*arg4);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res4)) delete arg4;
   return resultobj; fail: if (SWIG_IsNewObj(res4)) delete arg4; return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___setslice__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[5] = { 0}
   ; if (!(argc = SWIG_Python_UnpackTuple(args, "DoubleVector___setslice__", 0, 4, argv))) SWIG_fail; --argc; if (argc == 3) {
@@ -6591,10 +6653,11 @@ SWIGINTERN PyObject *_wrap_DoubleVector___delslice__(PyObject *SWIGUNUSEDPARM(se
     arg2 = static_cast< std::vector< double >::difference_type >(val2); ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "DoubleVector___delslice__" "', argument " "3"" of type '" "std::vector< double >::difference_type""'"); }
-    arg3 = static_cast< std::vector< double >::difference_type >(val3); try {
-    std_vector_Sl_double_Sg____delslice__(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg3 = static_cast< std::vector< double >::difference_type >(val3); { try { try {
+        std_vector_Sl_double_Sg____delslice__(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___delitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< double > *arg1 = (std::vector< double > *) 0 ;
   std::vector< double >::difference_type arg2 ; void *argp1 = 0 ; int res1 = 0 ; ptrdiff_t val2 ; int ecode2 = 0 ;
@@ -6605,10 +6668,11 @@ SWIGINTERN PyObject *_wrap_DoubleVector___delitem____SWIG_0(PyObject *SWIGUNUSED
    arg1 = reinterpret_cast< std::vector< double > * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "DoubleVector___delitem__" "', argument " "2"" of type '" "std::vector< double >::difference_type""'"); }
-    arg2 = static_cast< std::vector< double >::difference_type >(val2); try {
-    std_vector_Sl_double_Sg____delitem____SWIG_0(arg1,arg2);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg2 = static_cast< std::vector< double >::difference_type >(val2); { try { try {
+        std_vector_Sl_double_Sg____delitem____SWIG_0(arg1,arg2);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___getitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< double > *arg1 = (std::vector< double > *) 0 ;
   PySliceObject *arg2 = (PySliceObject *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -6618,10 +6682,11 @@ SWIGINTERN PyObject *_wrap_DoubleVector___getitem____SWIG_0(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector___getitem__" "', argument " "1"" of type '" "std::vector< double > *""'");  }
    arg1 = reinterpret_cast< std::vector< double > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "DoubleVector___getitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try {
-    result = (std::vector< double,std::allocator< double > > *)std_vector_Sl_double_Sg____getitem____SWIG_0(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); } 
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try {
+        result = (std::vector< double,std::allocator< double > > *)std_vector_Sl_double_Sg____getitem____SWIG_0(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___setitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -6639,10 +6704,11 @@ SWIGINTERN PyObject *_wrap_DoubleVector___setitem____SWIG_0(PyObject *SWIGUNUSED
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "DoubleVector___setitem__" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DoubleVector___setitem__" "', argument " "3"" of type '" "std::vector< double,std::allocator< double > > const &""'"); }
-     arg3 = ptr; }  try {
-    std_vector_Sl_double_Sg____setitem____SWIG_0(arg1,arg2,(std::vector< double,std::allocator< double > > const &)*arg3);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res3)) delete arg3;
+     arg3 = ptr; }  { try { try {
+        std_vector_Sl_double_Sg____setitem____SWIG_0(arg1,arg2,(std::vector< double,std::allocator< double > > const &)*arg3);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res3)) delete arg3;
   return resultobj; fail: if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___setitem____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< double > *arg1 = (std::vector< double > *) 0 ;
@@ -6652,9 +6718,10 @@ SWIGINTERN PyObject *_wrap_DoubleVector___setitem____SWIG_1(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector___setitem__" "', argument " "1"" of type '" "std::vector< double > *""'");  }
    arg1 = reinterpret_cast< std::vector< double > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "DoubleVector___setitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try { std_vector_Sl_double_Sg____setitem____SWIG_1(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try { std_vector_Sl_double_Sg____setitem____SWIG_1(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___delitem____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< double > *arg1 = (std::vector< double > *) 0 ;
   PySliceObject *arg2 = (PySliceObject *) 0 ; void *argp1 = 0 ; int res1 = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -6663,9 +6730,10 @@ SWIGINTERN PyObject *_wrap_DoubleVector___delitem____SWIG_1(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector___delitem__" "', argument " "1"" of type '" "std::vector< double > *""'");  }
    arg1 = reinterpret_cast< std::vector< double > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "DoubleVector___delitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try { std_vector_Sl_double_Sg____delitem____SWIG_1(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try { std_vector_Sl_double_Sg____delitem____SWIG_1(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___delitem__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0}
   ; if (!(argc = SWIG_Python_UnpackTuple(args, "DoubleVector___delitem__", 0, 2, argv))) SWIG_fail; --argc; if (argc == 2) {
     int _v = 0; { { _v = PySlice_Check(argv[1]); } }  if (!_v) goto check_1;
@@ -6685,9 +6753,10 @@ SWIGINTERN PyObject *_wrap_DoubleVector___getitem____SWIG_1(PyObject *SWIGUNUSED
    arg1 = reinterpret_cast< std::vector< double > * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "DoubleVector___getitem__" "', argument " "2"" of type '" "std::vector< double >::difference_type""'"); }
-    arg2 = static_cast< std::vector< double >::difference_type >(val2); try {
-    result = (std::vector< double >::value_type *) &std_vector_Sl_double_Sg____getitem____SWIG_1((std::vector< double > const *)arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); } 
+    arg2 = static_cast< std::vector< double >::difference_type >(val2); { try { try {
+        result = (std::vector< double >::value_type *) &std_vector_Sl_double_Sg____getitem____SWIG_1((std::vector< double > const *)arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_double(static_cast< double >(*result));
   (void)swig::container_owner<swig::traits<std::vector< double >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj; fail: return NULL; }
@@ -6714,9 +6783,10 @@ SWIGINTERN PyObject *_wrap_DoubleVector___setitem____SWIG_2(PyObject *SWIGUNUSED
     arg2 = static_cast< std::vector< double >::difference_type >(val2); ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "DoubleVector___setitem__" "', argument " "3"" of type '" "std::vector< double >::value_type""'"); }
-    temp3 = static_cast< std::vector< double >::value_type >(val3); arg3 = &temp3; try {
-    std_vector_Sl_double_Sg____setitem____SWIG_2(arg1,arg2,(double const &)*arg3);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    temp3 = static_cast< std::vector< double >::value_type >(val3); arg3 = &temp3; { try { try {
+        std_vector_Sl_double_Sg____setitem____SWIG_2(arg1,arg2,(double const &)*arg3);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector___setitem__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0}
   ; if (!(argc = SWIG_Python_UnpackTuple(args, "DoubleVector___setitem__", 0, 3, argv))) SWIG_fail; --argc; if (argc == 2) {
     PyObject *retobj = _wrap_DoubleVector___setitem____SWIG_1(self, argc, argv);
@@ -6738,9 +6808,10 @@ SWIGINTERN PyObject *_wrap_DoubleVector_pop(PyObject *SWIGUNUSEDPARM(self), PyOb
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_pop" "', argument " "1"" of type '" "std::vector< double > *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1); try {
-    result = (std::vector< double >::value_type)std_vector_Sl_double_Sg__pop(arg1);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  resultobj = SWIG_From_double(static_cast< double >(result));
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try { try {
+        result = (std::vector< double >::value_type)std_vector_Sl_double_Sg__pop(arg1);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_append(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ; std::vector< double >::value_type *arg2 = 0 ; void *argp1 = 0 ;
@@ -6752,11 +6823,13 @@ SWIGINTERN PyObject *_wrap_DoubleVector_append(PyObject *SWIGUNUSEDPARM(self), P
    arg1 = reinterpret_cast< std::vector< double > * >(argp1); ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "DoubleVector_append" "', argument " "2"" of type '" "std::vector< double >::value_type""'"); }
-    temp2 = static_cast< std::vector< double >::value_type >(val2); arg2 = &temp2;
-  std_vector_Sl_double_Sg__append(arg1,(double const &)*arg2); resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    temp2 = static_cast< std::vector< double >::value_type >(val2); arg2 = &temp2; { try {
+      std_vector_Sl_double_Sg__append(arg1,(double const &)*arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_DoubleVector__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
-  PyObject *resultobj = 0; std::vector< double > *result = 0 ; if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
-  result = (std::vector< double > *)new std::vector< double >();
+  PyObject *resultobj = 0; std::vector< double > *result = 0 ; if ((nobjs < 0) || (nobjs > 0)) SWIG_fail; { try {
+      result = (std::vector< double > *)new std::vector< double >(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, SWIG_POINTER_NEW |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_DoubleVector__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -6767,7 +6840,8 @@ SWIGINTERN PyObject *_wrap_new_DoubleVector__SWIG_1(PyObject *SWIGUNUSEDPARM(sel
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_DoubleVector" "', argument " "1"" of type '" "std::vector< double > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_DoubleVector" "', argument " "1"" of type '" "std::vector< double > const &""'"); }
-     arg1 = ptr; }  result = (std::vector< double > *)new std::vector< double >((std::vector< double > const &)*arg1);
+     arg1 = ptr; }  { try { result = (std::vector< double > *)new std::vector< double >((std::vector< double > const &)*arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_empty(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -6776,15 +6850,18 @@ SWIGINTERN PyObject *_wrap_DoubleVector_empty(PyObject *SWIGUNUSEDPARM(self), Py
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_empty" "', argument " "1"" of type '" "std::vector< double > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1); result = (bool)((std::vector< double > const *)arg1)->empty();
-  resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try {
+      result = (bool)((std::vector< double > const *)arg1)->empty(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj;
+  fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_size(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   std::vector< double >::size_type result; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_size" "', argument " "1"" of type '" "std::vector< double > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1); result = ((std::vector< double > const *)arg1)->size();
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try { result = ((std::vector< double > const *)arg1)->size(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_size_t(static_cast< size_t >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_swap(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ; std::vector< double > *arg2 = 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -6799,15 +6876,17 @@ SWIGINTERN PyObject *_wrap_DoubleVector_swap(PyObject *SWIGUNUSEDPARM(self), PyO
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DoubleVector_swap" "', argument " "2"" of type '" "std::vector< double > &""'");  }
    if (!argp2) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DoubleVector_swap" "', argument " "2"" of type '" "std::vector< double > &""'"); }
-   arg2 = reinterpret_cast< std::vector< double > * >(argp2); (arg1)->swap(*arg2); resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+   arg2 = reinterpret_cast< std::vector< double > * >(argp2); { try { (arg1)->swap(*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_begin(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   std::vector< double >::iterator result; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_begin" "', argument " "1"" of type '" "std::vector< double > *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1); result = (arg1)->begin();
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try { result = (arg1)->begin(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< double >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_end(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -6816,7 +6895,8 @@ SWIGINTERN PyObject *_wrap_DoubleVector_end(PyObject *SWIGUNUSEDPARM(self), PyOb
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_end" "', argument " "1"" of type '" "std::vector< double > *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1); result = (arg1)->end();
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try { result = (arg1)->end(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< double >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_rbegin(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -6825,7 +6905,8 @@ SWIGINTERN PyObject *_wrap_DoubleVector_rbegin(PyObject *SWIGUNUSEDPARM(self), P
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_rbegin" "', argument " "1"" of type '" "std::vector< double > *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1); result = (arg1)->rbegin();
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try { result = (arg1)->rbegin(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< double >::reverse_iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_rend(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -6834,7 +6915,8 @@ SWIGINTERN PyObject *_wrap_DoubleVector_rend(PyObject *SWIGUNUSEDPARM(self), PyO
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_rend" "', argument " "1"" of type '" "std::vector< double > *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1); result = (arg1)->rend();
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try { result = (arg1)->rend(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< double >::reverse_iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_clear(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -6843,15 +6925,17 @@ SWIGINTERN PyObject *_wrap_DoubleVector_clear(PyObject *SWIGUNUSEDPARM(self), Py
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_clear" "', argument " "1"" of type '" "std::vector< double > *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1); (arg1)->clear(); resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try { (arg1)->clear(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_get_allocator(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   SwigValueWrapper< std::allocator< double > > result; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_get_allocator" "', argument " "1"" of type '" "std::vector< double > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1); result = ((std::vector< double > const *)arg1)->get_allocator();
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try {
+      result = ((std::vector< double > const *)arg1)->get_allocator(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj((new std::vector< double >::allocator_type(static_cast< const std::vector< double >::allocator_type& >(result))), SWIGTYPE_p_std__allocatorT_double_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_DoubleVector__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -6859,8 +6943,9 @@ SWIGINTERN PyObject *_wrap_new_DoubleVector__SWIG_2(PyObject *SWIGUNUSEDPARM(sel
   std::vector< double > *result = 0 ; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail; ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_DoubleVector" "', argument " "1"" of type '" "std::vector< double >::size_type""'"); }
-    arg1 = static_cast< std::vector< double >::size_type >(val1);
-  result = (std::vector< double > *)new std::vector< double >(arg1);
+    arg1 = static_cast< std::vector< double >::size_type >(val1); { try {
+      result = (std::vector< double > *)new std::vector< double >(arg1); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, SWIG_POINTER_NEW |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_pop_back(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -6869,8 +6954,9 @@ SWIGINTERN PyObject *_wrap_DoubleVector_pop_back(PyObject *SWIGUNUSEDPARM(self),
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_pop_back" "', argument " "1"" of type '" "std::vector< double > *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1); (arg1)->pop_back(); resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try { (arg1)->pop_back(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_resize__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< double > *arg1 = (std::vector< double > *) 0 ; std::vector< double >::size_type arg2 ;
   void *argp1 = 0 ; int res1 = 0 ; size_t val2 ; int ecode2 = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -6880,7 +6966,8 @@ SWIGINTERN PyObject *_wrap_DoubleVector_resize__SWIG_0(PyObject *SWIGUNUSEDPARM(
    arg1 = reinterpret_cast< std::vector< double > * >(argp1); ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "DoubleVector_resize" "', argument " "2"" of type '" "std::vector< double >::size_type""'"); }
-    arg2 = static_cast< std::vector< double >::size_type >(val2); (arg1)->resize(arg2); resultobj = SWIG_Py_Void();
+    arg2 = static_cast< std::vector< double >::size_type >(val2); { try { (arg1)->resize(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_erase__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< double > *arg1 = (std::vector< double > *) 0 ; std::vector< double >::iterator arg2 ;
@@ -6897,7 +6984,8 @@ SWIGINTERN PyObject *_wrap_DoubleVector_erase__SWIG_0(PyObject *SWIGUNUSEDPARM(s
     swig::SwigPyIterator_T<std::vector< double >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< double >::iterator > *>(iter2);
     if (iter_t) { arg2 = iter_t->get_current(); }  else {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "DoubleVector_erase" "', argument " "2"" of type '" "std::vector< double >::iterator""'"); }
-     }  result = std_vector_Sl_double_Sg__erase__SWIG_0(arg1,arg2);
+     }  { try { result = std_vector_Sl_double_Sg__erase__SWIG_0(arg1,arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< double >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_erase__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -6923,7 +7011,8 @@ SWIGINTERN PyObject *_wrap_DoubleVector_erase__SWIG_1(PyObject *SWIGUNUSEDPARM(s
     swig::SwigPyIterator_T<std::vector< double >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< double >::iterator > *>(iter3);
     if (iter_t) { arg3 = iter_t->get_current(); }  else {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "DoubleVector_erase" "', argument " "3"" of type '" "std::vector< double >::iterator""'"); }
-     }  result = std_vector_Sl_double_Sg__erase__SWIG_1(arg1,arg2,arg3);
+     }  { try { result = std_vector_Sl_double_Sg__erase__SWIG_1(arg1,arg2,arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< double >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_erase(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0} ;
@@ -6943,8 +7032,9 @@ SWIGINTERN PyObject *_wrap_new_DoubleVector__SWIG_3(PyObject *SWIGUNUSEDPARM(sel
     arg1 = static_cast< std::vector< double >::size_type >(val1); ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_DoubleVector" "', argument " "2"" of type '" "std::vector< double >::value_type""'"); }
-    temp2 = static_cast< std::vector< double >::value_type >(val2); arg2 = &temp2;
-  result = (std::vector< double > *)new std::vector< double >(arg1,(std::vector< double >::value_type const &)*arg2);
+    temp2 = static_cast< std::vector< double >::value_type >(val2); arg2 = &temp2; { try {
+      result = (std::vector< double > *)new std::vector< double >(arg1,(std::vector< double >::value_type const &)*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, SWIG_POINTER_NEW |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_DoubleVector(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0} ;
@@ -6972,17 +7062,18 @@ SWIGINTERN PyObject *_wrap_DoubleVector_push_back(PyObject *SWIGUNUSEDPARM(self)
    arg1 = reinterpret_cast< std::vector< double > * >(argp1); ecode2 = SWIG_AsVal_double(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "DoubleVector_push_back" "', argument " "2"" of type '" "std::vector< double >::value_type""'"); }
-    temp2 = static_cast< std::vector< double >::value_type >(val2); arg2 = &temp2;
-  (arg1)->push_back((std::vector< double >::value_type const &)*arg2); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+    temp2 = static_cast< std::vector< double >::value_type >(val2); arg2 = &temp2; { try {
+      (arg1)->push_back((std::vector< double >::value_type const &)*arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_front(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   std::vector< double >::value_type *result = 0 ; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_front" "', argument " "1"" of type '" "std::vector< double > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1);
-  result = (std::vector< double >::value_type *) &((std::vector< double > const *)arg1)->front();
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try {
+      result = (std::vector< double >::value_type *) &((std::vector< double > const *)arg1)->front(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_double(static_cast< double >(*result));
   (void)swig::container_owner<swig::traits<std::vector< double >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj; fail: return NULL; }
@@ -6992,8 +7083,9 @@ SWIGINTERN PyObject *_wrap_DoubleVector_back(PyObject *SWIGUNUSEDPARM(self), PyO
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_back" "', argument " "1"" of type '" "std::vector< double > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1);
-  result = (std::vector< double >::value_type *) &((std::vector< double > const *)arg1)->back();
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try {
+      result = (std::vector< double >::value_type *) &((std::vector< double > const *)arg1)->back(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_double(static_cast< double >(*result));
   (void)swig::container_owner<swig::traits<std::vector< double >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj; fail: return NULL; }
@@ -7011,9 +7103,9 @@ SWIGINTERN PyObject *_wrap_DoubleVector_assign(PyObject *SWIGUNUSEDPARM(self), P
     arg2 = static_cast< std::vector< double >::size_type >(val2); ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "DoubleVector_assign" "', argument " "3"" of type '" "std::vector< double >::value_type""'"); }
-    temp3 = static_cast< std::vector< double >::value_type >(val3); arg3 = &temp3;
-  (arg1)->assign(arg2,(std::vector< double >::value_type const &)*arg3); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+    temp3 = static_cast< std::vector< double >::value_type >(val3); arg3 = &temp3; { try {
+      (arg1)->assign(arg2,(std::vector< double >::value_type const &)*arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_resize__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< double > *arg1 = (std::vector< double > *) 0 ; std::vector< double >::size_type arg2 ;
   std::vector< double >::value_type *arg3 = 0 ; void *argp1 = 0 ; int res1 = 0 ; size_t val2 ; int ecode2 = 0 ;
@@ -7027,9 +7119,9 @@ SWIGINTERN PyObject *_wrap_DoubleVector_resize__SWIG_1(PyObject *SWIGUNUSEDPARM(
     arg2 = static_cast< std::vector< double >::size_type >(val2); ecode3 = SWIG_AsVal_double(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "DoubleVector_resize" "', argument " "3"" of type '" "std::vector< double >::value_type""'"); }
-    temp3 = static_cast< std::vector< double >::value_type >(val3); arg3 = &temp3;
-  (arg1)->resize(arg2,(std::vector< double >::value_type const &)*arg3); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+    temp3 = static_cast< std::vector< double >::value_type >(val3); arg3 = &temp3; { try {
+      (arg1)->resize(arg2,(std::vector< double >::value_type const &)*arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_resize(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "DoubleVector_resize", 0, 3, argv))) SWIG_fail; --argc; if (argc == 2) {
     PyObject *retobj = _wrap_DoubleVector_resize__SWIG_0(self, argc, argv);
@@ -7057,8 +7149,9 @@ SWIGINTERN PyObject *_wrap_DoubleVector_insert__SWIG_0(PyObject *SWIGUNUSEDPARM(
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "DoubleVector_insert" "', argument " "2"" of type '" "std::vector< double >::iterator""'"); }
      }  ecode3 = SWIG_AsVal_double(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "DoubleVector_insert" "', argument " "3"" of type '" "std::vector< double >::value_type""'"); }
-    temp3 = static_cast< std::vector< double >::value_type >(val3); arg3 = &temp3;
-  result = std_vector_Sl_double_Sg__insert__SWIG_0(arg1,arg2,(double const &)*arg3);
+    temp3 = static_cast< std::vector< double >::value_type >(val3); arg3 = &temp3; { try {
+      result = std_vector_Sl_double_Sg__insert__SWIG_0(arg1,arg2,(double const &)*arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< double >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_insert__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -7082,9 +7175,9 @@ SWIGINTERN PyObject *_wrap_DoubleVector_insert__SWIG_1(PyObject *SWIGUNUSEDPARM(
     arg3 = static_cast< std::vector< double >::size_type >(val3); ecode4 = SWIG_AsVal_double(swig_obj[3], &val4);
   if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "DoubleVector_insert" "', argument " "4"" of type '" "std::vector< double >::value_type""'"); }
-    temp4 = static_cast< std::vector< double >::value_type >(val4); arg4 = &temp4;
-  std_vector_Sl_double_Sg__insert__SWIG_1(arg1,arg2,arg3,(double const &)*arg4); resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+    temp4 = static_cast< std::vector< double >::value_type >(val4); arg4 = &temp4; { try {
+      std_vector_Sl_double_Sg__insert__SWIG_1(arg1,arg2,arg3,(double const &)*arg4); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_insert(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[5] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "DoubleVector_insert", 0, 4, argv))) SWIG_fail; --argc; if (argc == 3) {
     PyObject *retobj = _wrap_DoubleVector_insert__SWIG_0(self, argc, argv);
@@ -7106,7 +7199,8 @@ SWIGINTERN PyObject *_wrap_DoubleVector_reserve(PyObject *SWIGUNUSEDPARM(self), 
    arg1 = reinterpret_cast< std::vector< double > * >(argp1); ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "DoubleVector_reserve" "', argument " "2"" of type '" "std::vector< double >::size_type""'"); }
-    arg2 = static_cast< std::vector< double >::size_type >(val2); (arg1)->reserve(arg2); resultobj = SWIG_Py_Void();
+    arg2 = static_cast< std::vector< double >::size_type >(val2); { try { (arg1)->reserve(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVector_capacity(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
@@ -7114,16 +7208,18 @@ SWIGINTERN PyObject *_wrap_DoubleVector_capacity(PyObject *SWIGUNUSEDPARM(self),
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVector_capacity" "', argument " "1"" of type '" "std::vector< double > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1); result = ((std::vector< double > const *)arg1)->capacity();
-  resultobj = SWIG_From_size_t(static_cast< size_t >(result)); return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try {
+      result = ((std::vector< double > const *)arg1)->capacity(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_delete_DoubleVector(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< double > *arg1 = (std::vector< double > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_double_std__allocatorT_double_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_DoubleVector" "', argument " "1"" of type '" "std::vector< double > *""'");  }
-   arg1 = reinterpret_cast< std::vector< double > * >(argp1); delete arg1; resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+   arg1 = reinterpret_cast< std::vector< double > * >(argp1); { try { delete arg1; }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *DoubleVector_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
@@ -7142,8 +7238,9 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_iterator(PyObject *SWIGUNUSEDPARM(
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_iterator" "', argument " "1"" of type '" "std::vector< std::vector< double > > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1);
-  result = (swig::SwigPyIterator *)std_vector_Sl_std_vector_Sl_double_Sg__Sg__iterator(arg1,arg2);
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try {
+      result = (swig::SwigPyIterator *)std_vector_Sl_std_vector_Sl_double_Sg__Sg__iterator(arg1,arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___nonzero__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
@@ -7152,8 +7249,9 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___nonzero__(PyObject *SWIGUNUSEDPA
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector___nonzero__" "', argument " "1"" of type '" "std::vector< std::vector< double > > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1);
-  result = (bool)std_vector_Sl_std_vector_Sl_double_Sg__Sg____nonzero__((std::vector< std::vector< double > > const *)arg1);
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try {
+      result = (bool)std_vector_Sl_std_vector_Sl_double_Sg__Sg____nonzero__((std::vector< std::vector< double > > const *)arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___bool__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0; std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ;
@@ -7161,8 +7259,9 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___bool__(PyObject *SWIGUNUSEDPARM(
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector___bool__" "', argument " "1"" of type '" "std::vector< std::vector< double > > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1);
-  result = (bool)std_vector_Sl_std_vector_Sl_double_Sg__Sg____bool__((std::vector< std::vector< double > > const *)arg1);
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try {
+      result = (bool)std_vector_Sl_std_vector_Sl_double_Sg__Sg____bool__((std::vector< std::vector< double > > const *)arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___len__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -7170,8 +7269,9 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___len__(PyObject *SWIGUNUSEDPARM(s
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector___len__" "', argument " "1"" of type '" "std::vector< std::vector< double > > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1);
-  result = std_vector_Sl_std_vector_Sl_double_Sg__Sg____len__((std::vector< std::vector< double > > const *)arg1);
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try {
+      result = std_vector_Sl_std_vector_Sl_double_Sg__Sg____len__((std::vector< std::vector< double > > const *)arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_size_t(static_cast< size_t >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___getslice__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0; std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ;
@@ -7188,10 +7288,11 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___getslice__(PyObject *SWIGUNUSEDP
     arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "DoubleVectorVector___getslice__" "', argument " "3"" of type '" "std::vector< std::vector< double > >::difference_type""'"); }
-    arg3 = static_cast< std::vector< std::vector< double > >::difference_type >(val3); try {
-    result = (std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > *)std_vector_Sl_std_vector_Sl_double_Sg__Sg____getslice__(arg1,arg2,arg3);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); } 
+    arg3 = static_cast< std::vector< std::vector< double > >::difference_type >(val3); { try { try {
+        result = (std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > *)std_vector_Sl_std_vector_Sl_double_Sg__Sg____getslice__(arg1,arg2,arg3);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___setslice____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -7208,10 +7309,11 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___setslice____SWIG_0(PyObject *SWI
     arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "DoubleVectorVector___setslice__" "', argument " "3"" of type '" "std::vector< std::vector< double > >::difference_type""'"); }
-    arg3 = static_cast< std::vector< std::vector< double > >::difference_type >(val3); try {
-    std_vector_Sl_std_vector_Sl_double_Sg__Sg____setslice____SWIG_0(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg3 = static_cast< std::vector< std::vector< double > >::difference_type >(val3); { try { try {
+        std_vector_Sl_std_vector_Sl_double_Sg__Sg____setslice____SWIG_0(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___setslice____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ;
   std::vector< std::vector< double > >::difference_type arg2 ; std::vector< std::vector< double > >::difference_type arg3 ;
@@ -7233,10 +7335,11 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___setslice____SWIG_1(PyObject *SWI
       SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "DoubleVectorVector___setslice__" "', argument " "4"" of type '" "std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DoubleVectorVector___setslice__" "', argument " "4"" of type '" "std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > const &""'"); }
-     arg4 = ptr; }  try {
-    std_vector_Sl_std_vector_Sl_double_Sg__Sg____setslice____SWIG_1(arg1,arg2,arg3,(std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > const &)*arg4);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res4)) delete arg4;
+     arg4 = ptr; }  { try { try {
+        std_vector_Sl_std_vector_Sl_double_Sg__Sg____setslice____SWIG_1(arg1,arg2,arg3,(std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > const &)*arg4);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res4)) delete arg4;
   return resultobj; fail: if (SWIG_IsNewObj(res4)) delete arg4; return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___setslice__(PyObject *self, PyObject *args) { Py_ssize_t argc;
   PyObject *argv[5] = { 0} ;
@@ -7264,10 +7367,11 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___delslice__(PyObject *SWIGUNUSEDP
     arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2);
   ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "DoubleVectorVector___delslice__" "', argument " "3"" of type '" "std::vector< std::vector< double > >::difference_type""'"); }
-    arg3 = static_cast< std::vector< std::vector< double > >::difference_type >(val3); try {
-    std_vector_Sl_std_vector_Sl_double_Sg__Sg____delslice__(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg3 = static_cast< std::vector< std::vector< double > >::difference_type >(val3); { try { try {
+        std_vector_Sl_std_vector_Sl_double_Sg__Sg____delslice__(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___delitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ;
   std::vector< std::vector< double > >::difference_type arg2 ; void *argp1 = 0 ; int res1 = 0 ; ptrdiff_t val2 ;
@@ -7278,10 +7382,11 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___delitem____SWIG_0(PyObject *SWIG
    arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "DoubleVectorVector___delitem__" "', argument " "2"" of type '" "std::vector< std::vector< double > >::difference_type""'"); }
-    arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2); try {
-    std_vector_Sl_std_vector_Sl_double_Sg__Sg____delitem____SWIG_0(arg1,arg2);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2); { try { try {
+        std_vector_Sl_std_vector_Sl_double_Sg__Sg____delitem____SWIG_0(arg1,arg2);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___getitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ;
   PySliceObject *arg2 = (PySliceObject *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -7292,10 +7397,11 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___getitem____SWIG_0(PyObject *SWIG
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector___getitem__" "', argument " "1"" of type '" "std::vector< std::vector< double > > *""'");  }
    arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "DoubleVectorVector___getitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try {
-    result = (std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > *)std_vector_Sl_std_vector_Sl_double_Sg__Sg____getitem____SWIG_0(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); } 
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try {
+        result = (std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > *)std_vector_Sl_std_vector_Sl_double_Sg__Sg____getitem____SWIG_0(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___setitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -7314,10 +7420,11 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___setitem____SWIG_0(PyObject *SWIG
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "DoubleVectorVector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DoubleVectorVector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > const &""'"); }
-     arg3 = ptr; }  try {
-    std_vector_Sl_std_vector_Sl_double_Sg__Sg____setitem____SWIG_0(arg1,arg2,(std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > const &)*arg3);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res3)) delete arg3;
+     arg3 = ptr; }  { try { try {
+        std_vector_Sl_std_vector_Sl_double_Sg__Sg____setitem____SWIG_0(arg1,arg2,(std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > const &)*arg3);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res3)) delete arg3;
   return resultobj; fail: if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___setitem____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ;
@@ -7327,9 +7434,11 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___setitem____SWIG_1(PyObject *SWIG
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector___setitem__" "', argument " "1"" of type '" "std::vector< std::vector< double > > *""'");  }
    arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "DoubleVectorVector___setitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try { std_vector_Sl_std_vector_Sl_double_Sg__Sg____setitem____SWIG_1(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try {
+        std_vector_Sl_std_vector_Sl_double_Sg__Sg____setitem____SWIG_1(arg1,arg2);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___delitem____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ;
   PySliceObject *arg2 = (PySliceObject *) 0 ; void *argp1 = 0 ; int res1 = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -7338,9 +7447,11 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___delitem____SWIG_1(PyObject *SWIG
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector___delitem__" "', argument " "1"" of type '" "std::vector< std::vector< double > > *""'");  }
    arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "DoubleVectorVector___delitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try { std_vector_Sl_std_vector_Sl_double_Sg__Sg____delitem____SWIG_1(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try {
+        std_vector_Sl_std_vector_Sl_double_Sg__Sg____delitem____SWIG_1(arg1,arg2);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___delitem__(PyObject *self, PyObject *args) { Py_ssize_t argc;
   PyObject *argv[3] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "DoubleVectorVector___delitem__", 0, 2, argv))) SWIG_fail; --argc; if (argc == 2) {
@@ -7362,9 +7473,10 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___getitem____SWIG_1(PyObject *SWIG
    arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "DoubleVectorVector___getitem__" "', argument " "2"" of type '" "std::vector< std::vector< double > >::difference_type""'"); }
-    arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2); try {
-    result = (std::vector< std::vector< double > >::value_type *) &std_vector_Sl_std_vector_Sl_double_Sg__Sg____getitem____SWIG_1((std::vector< std::vector< double > > const *)arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); } 
+    arg2 = static_cast< std::vector< std::vector< double > >::difference_type >(val2); { try { try {
+        result = (std::vector< std::vector< double > >::value_type *) &std_vector_Sl_std_vector_Sl_double_Sg__Sg____getitem____SWIG_1((std::vector< std::vector< double > > const *)arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(*result));
   (void)swig::container_owner<swig::traits<std::vector< std::vector< double > >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj; fail: return NULL; }
@@ -7396,9 +7508,10 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector___setitem____SWIG_2(PyObject *SWIG
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "DoubleVectorVector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DoubleVectorVector___setitem__" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
-     arg3 = ptr; }  try {
-    std_vector_Sl_std_vector_Sl_double_Sg__Sg____setitem____SWIG_2(arg1,arg2,(std::vector< double,std::allocator< double > > const &)*arg3);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  resultobj = SWIG_Py_Void();
+     arg3 = ptr; }  { try { try {
+        std_vector_Sl_std_vector_Sl_double_Sg__Sg____setitem____SWIG_2(arg1,arg2,(std::vector< double,std::allocator< double > > const &)*arg3);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res3)) delete arg3; return resultobj; fail: if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector___setitem__(PyObject *self, PyObject *args) { Py_ssize_t argc;
   PyObject *argv[4] = { 0} ;
@@ -7422,9 +7535,10 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_pop(PyObject *SWIGUNUSEDPARM(self)
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_pop" "', argument " "1"" of type '" "std::vector< std::vector< double > > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); try {
-    result = std_vector_Sl_std_vector_Sl_double_Sg__Sg__pop(arg1);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); } 
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try { try {
+        result = std_vector_Sl_std_vector_Sl_double_Sg__Sg__pop(arg1);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(result)); return resultobj; fail:
   return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_append(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -7440,13 +7554,14 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_append(PyObject *SWIGUNUSEDPARM(se
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DoubleVectorVector_append" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DoubleVectorVector_append" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
-     arg2 = ptr; } 
-  std_vector_Sl_std_vector_Sl_double_Sg__Sg__append(arg1,(std::vector< double,std::allocator< double > > const &)*arg2);
-  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail:
-  if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
+     arg2 = ptr; }  { try {
+      std_vector_Sl_std_vector_Sl_double_Sg__Sg__append(arg1,(std::vector< double,std::allocator< double > > const &)*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_new_DoubleVectorVector__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
-  PyObject *resultobj = 0; std::vector< std::vector< double > > *result = 0 ; if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
-  result = (std::vector< std::vector< double > > *)new std::vector< std::vector< double > >();
+  PyObject *resultobj = 0; std::vector< std::vector< double > > *result = 0 ; if ((nobjs < 0) || (nobjs > 0)) SWIG_fail; { try {
+      result = (std::vector< std::vector< double > > *)new std::vector< std::vector< double > >(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, SWIG_POINTER_NEW |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_DoubleVectorVector__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -7457,8 +7572,9 @@ SWIGINTERN PyObject *_wrap_new_DoubleVectorVector__SWIG_1(PyObject *SWIGUNUSEDPA
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_DoubleVectorVector" "', argument " "1"" of type '" "std::vector< std::vector< double,std::allocator< double > > > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_DoubleVectorVector" "', argument " "1"" of type '" "std::vector< std::vector< double,std::allocator< double > > > const &""'"); }
-     arg1 = ptr; } 
-  result = (std::vector< std::vector< double > > *)new std::vector< std::vector< double > >((std::vector< std::vector< double,std::allocator< double > > > const &)*arg1);
+     arg1 = ptr; }  { try {
+      result = (std::vector< std::vector< double > > *)new std::vector< std::vector< double > >((std::vector< std::vector< double,std::allocator< double > > > const &)*arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_empty(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -7467,18 +7583,20 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_empty(PyObject *SWIGUNUSEDPARM(sel
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_empty" "', argument " "1"" of type '" "std::vector< std::vector< double > > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1);
-  result = (bool)((std::vector< std::vector< double > > const *)arg1)->empty();
-  resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try {
+      result = (bool)((std::vector< std::vector< double > > const *)arg1)->empty(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj;
+  fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_size(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
   PyObject *swig_obj[1] ; std::vector< std::vector< double > >::size_type result; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_size" "', argument " "1"" of type '" "std::vector< std::vector< double > > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1);
-  result = ((std::vector< std::vector< double > > const *)arg1)->size();
-  resultobj = SWIG_From_size_t(static_cast< size_t >(result)); return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try {
+      result = ((std::vector< std::vector< double > > const *)arg1)->size(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_swap(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ;
   std::vector< std::vector< double,std::allocator< double > > > *arg2 = 0 ; void *argp1 = 0 ; int res1 = 0 ; void *argp2 = 0 ;
@@ -7493,7 +7611,8 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_swap(PyObject *SWIGUNUSEDPARM(self
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DoubleVectorVector_swap" "', argument " "2"" of type '" "std::vector< std::vector< double,std::allocator< double > > > &""'");  }
    if (!argp2) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DoubleVectorVector_swap" "', argument " "2"" of type '" "std::vector< std::vector< double,std::allocator< double > > > &""'"); }
-   arg2 = reinterpret_cast< std::vector< std::vector< double,std::allocator< double > > > * >(argp2); (arg1)->swap(*arg2);
+   arg2 = reinterpret_cast< std::vector< std::vector< double,std::allocator< double > > > * >(argp2); { try {
+      (arg1)->swap(*arg2); }  catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_begin(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -7501,7 +7620,8 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_begin(PyObject *SWIGUNUSEDPARM(sel
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_begin" "', argument " "1"" of type '" "std::vector< std::vector< double > > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); result = (arg1)->begin();
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try { result = (arg1)->begin(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::vector< double > >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_end(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -7510,7 +7630,8 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_end(PyObject *SWIGUNUSEDPARM(self)
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_end" "', argument " "1"" of type '" "std::vector< std::vector< double > > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); result = (arg1)->end();
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try { result = (arg1)->end(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::vector< double > >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_rbegin(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -7520,7 +7641,8 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_rbegin(PyObject *SWIGUNUSEDPARM(se
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_rbegin" "', argument " "1"" of type '" "std::vector< std::vector< double > > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); result = (arg1)->rbegin();
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try { result = (arg1)->rbegin(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::vector< double > >::reverse_iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_rend(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -7530,7 +7652,8 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_rend(PyObject *SWIGUNUSEDPARM(self
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_rend" "', argument " "1"" of type '" "std::vector< std::vector< double > > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); result = (arg1)->rend();
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try { result = (arg1)->rend(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::vector< double > >::reverse_iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_clear(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -7539,7 +7662,8 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_clear(PyObject *SWIGUNUSEDPARM(sel
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_clear" "', argument " "1"" of type '" "std::vector< std::vector< double > > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); (arg1)->clear(); resultobj = SWIG_Py_Void();
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try { (arg1)->clear(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_get_allocator(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0; std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ;
@@ -7549,8 +7673,9 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_get_allocator(PyObject *SWIGUNUSED
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_get_allocator" "', argument " "1"" of type '" "std::vector< std::vector< double > > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1);
-  result = ((std::vector< std::vector< double > > const *)arg1)->get_allocator();
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try {
+      result = ((std::vector< std::vector< double > > const *)arg1)->get_allocator(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj((new std::vector< std::vector< double > >::allocator_type(static_cast< const std::vector< std::vector< double > >::allocator_type& >(result))), SWIGTYPE_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_DoubleVectorVector__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -7558,8 +7683,9 @@ SWIGINTERN PyObject *_wrap_new_DoubleVectorVector__SWIG_2(PyObject *SWIGUNUSEDPA
   std::vector< std::vector< double > > *result = 0 ; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1); if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_DoubleVectorVector" "', argument " "1"" of type '" "std::vector< std::vector< double > >::size_type""'"); }
-    arg1 = static_cast< std::vector< std::vector< double > >::size_type >(val1);
-  result = (std::vector< std::vector< double > > *)new std::vector< std::vector< double > >(arg1);
+    arg1 = static_cast< std::vector< std::vector< double > >::size_type >(val1); { try {
+      result = (std::vector< std::vector< double > > *)new std::vector< std::vector< double > >(arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, SWIG_POINTER_NEW |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_pop_back(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
@@ -7568,7 +7694,8 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_pop_back(PyObject *SWIGUNUSEDPARM(
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_pop_back" "', argument " "1"" of type '" "std::vector< std::vector< double > > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); (arg1)->pop_back(); resultobj = SWIG_Py_Void();
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try { (arg1)->pop_back(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_resize__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ;
@@ -7580,8 +7707,9 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_resize__SWIG_0(PyObject *SWIGUNUSE
    arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "DoubleVectorVector_resize" "', argument " "2"" of type '" "std::vector< std::vector< double > >::size_type""'"); }
-    arg2 = static_cast< std::vector< std::vector< double > >::size_type >(val2); (arg1)->resize(arg2);
-  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg2 = static_cast< std::vector< std::vector< double > >::size_type >(val2); { try { (arg1)->resize(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_erase__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ;
   std::vector< std::vector< double > >::iterator arg2 ; void *argp1 = 0 ; int res1 = 0 ; swig::SwigPyIterator *iter2 = 0 ;
@@ -7597,7 +7725,8 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_erase__SWIG_0(PyObject *SWIGUNUSED
     swig::SwigPyIterator_T<std::vector< std::vector< double > >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< std::vector< double > >::iterator > *>(iter2);
     if (iter_t) { arg2 = iter_t->get_current(); }  else {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "DoubleVectorVector_erase" "', argument " "2"" of type '" "std::vector< std::vector< double > >::iterator""'"); }
-     }  result = std_vector_Sl_std_vector_Sl_double_Sg__Sg__erase__SWIG_0(arg1,arg2);
+     }  { try { result = std_vector_Sl_std_vector_Sl_double_Sg__Sg__erase__SWIG_0(arg1,arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::vector< double > >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_erase__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -7623,7 +7752,8 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_erase__SWIG_1(PyObject *SWIGUNUSED
     swig::SwigPyIterator_T<std::vector< std::vector< double > >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< std::vector< double > >::iterator > *>(iter3);
     if (iter_t) { arg3 = iter_t->get_current(); }  else {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "DoubleVectorVector_erase" "', argument " "3"" of type '" "std::vector< std::vector< double > >::iterator""'"); }
-     }  result = std_vector_Sl_std_vector_Sl_double_Sg__Sg__erase__SWIG_1(arg1,arg2,arg3);
+     }  { try { result = std_vector_Sl_std_vector_Sl_double_Sg__Sg__erase__SWIG_1(arg1,arg2,arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::vector< double > >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_erase(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0}
@@ -7649,8 +7779,9 @@ SWIGINTERN PyObject *_wrap_new_DoubleVectorVector__SWIG_3(PyObject *SWIGUNUSEDPA
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_DoubleVectorVector" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_DoubleVectorVector" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
-     arg2 = ptr; } 
-  result = (std::vector< std::vector< double > > *)new std::vector< std::vector< double > >(arg1,(std::vector< std::vector< double > >::value_type const &)*arg2);
+     arg2 = ptr; }  { try {
+      result = (std::vector< std::vector< double > > *)new std::vector< std::vector< double > >(arg1,(std::vector< std::vector< double > >::value_type const &)*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_new_DoubleVectorVector(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0} ;
@@ -7682,9 +7813,9 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_push_back(PyObject *SWIGUNUSEDPARM
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "DoubleVectorVector_push_back" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DoubleVectorVector_push_back" "', argument " "2"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
-     arg2 = ptr; }  (arg1)->push_back((std::vector< std::vector< double > >::value_type const &)*arg2);
-  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail:
-  if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
+     arg2 = ptr; }  { try { (arg1)->push_back((std::vector< std::vector< double > >::value_type const &)*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_front(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
   PyObject *swig_obj[1] ; std::vector< std::vector< double > >::value_type *result = 0 ; if (!args) SWIG_fail;
@@ -7692,8 +7823,9 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_front(PyObject *SWIGUNUSEDPARM(sel
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_front" "', argument " "1"" of type '" "std::vector< std::vector< double > > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1);
-  result = (std::vector< std::vector< double > >::value_type *) &((std::vector< std::vector< double > > const *)arg1)->front();
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try {
+      result = (std::vector< std::vector< double > >::value_type *) &((std::vector< std::vector< double > > const *)arg1)->front(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(*result));
   (void)swig::container_owner<swig::traits<std::vector< std::vector< double > >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj; fail: return NULL; }
@@ -7704,8 +7836,9 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_back(PyObject *SWIGUNUSEDPARM(self
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_back" "', argument " "1"" of type '" "std::vector< std::vector< double > > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1);
-  result = (std::vector< std::vector< double > >::value_type *) &((std::vector< std::vector< double > > const *)arg1)->back();
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try {
+      result = (std::vector< std::vector< double > >::value_type *) &((std::vector< std::vector< double > > const *)arg1)->back(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(*result));
   (void)swig::container_owner<swig::traits<std::vector< std::vector< double > >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj; fail: return NULL; }
@@ -7726,9 +7859,9 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_assign(PyObject *SWIGUNUSEDPARM(se
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "DoubleVectorVector_assign" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DoubleVectorVector_assign" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
-     arg3 = ptr; }  (arg1)->assign(arg2,(std::vector< std::vector< double > >::value_type const &)*arg3);
-  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res3)) delete arg3; return resultobj; fail:
-  if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
+     arg3 = ptr; }  { try { (arg1)->assign(arg2,(std::vector< std::vector< double > >::value_type const &)*arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res3)) delete arg3; return resultobj; fail: if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_resize__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ;
   std::vector< std::vector< double > >::size_type arg2 ; std::vector< std::vector< double > >::value_type *arg3 = 0 ;
@@ -7746,9 +7879,9 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_resize__SWIG_1(PyObject *SWIGUNUSE
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "DoubleVectorVector_resize" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DoubleVectorVector_resize" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
-     arg3 = ptr; }  (arg1)->resize(arg2,(std::vector< std::vector< double > >::value_type const &)*arg3);
-  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res3)) delete arg3; return resultobj; fail:
-  if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
+     arg3 = ptr; }  { try { (arg1)->resize(arg2,(std::vector< std::vector< double > >::value_type const &)*arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res3)) delete arg3; return resultobj; fail: if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_resize(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0}
   ; if (!(argc = SWIG_Python_UnpackTuple(args, "DoubleVectorVector_resize", 0, 3, argv))) SWIG_fail; --argc; if (argc == 2) {
     PyObject *retobj = _wrap_DoubleVectorVector_resize__SWIG_0(self, argc, argv);
@@ -7781,8 +7914,9 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_insert__SWIG_0(PyObject *SWIGUNUSE
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "DoubleVectorVector_insert" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DoubleVectorVector_insert" "', argument " "3"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
-     arg3 = ptr; } 
-  result = std_vector_Sl_std_vector_Sl_double_Sg__Sg__insert__SWIG_0(arg1,arg2,(std::vector< double,std::allocator< double > > const &)*arg3);
+     arg3 = ptr; }  { try {
+      result = std_vector_Sl_std_vector_Sl_double_Sg__Sg__insert__SWIG_0(arg1,arg2,(std::vector< double,std::allocator< double > > const &)*arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::vector< double > >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); if (SWIG_IsNewObj(res3)) delete arg3; return resultobj; fail:
   if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
@@ -7811,10 +7945,10 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_insert__SWIG_1(PyObject *SWIGUNUSE
       SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "DoubleVectorVector_insert" "', argument " "4"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "DoubleVectorVector_insert" "', argument " "4"" of type '" "std::vector< std::vector< double > >::value_type const &""'"); }
-     arg4 = ptr; } 
-  std_vector_Sl_std_vector_Sl_double_Sg__Sg__insert__SWIG_1(arg1,arg2,arg3,(std::vector< double,std::allocator< double > > const &)*arg4);
-  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res4)) delete arg4; return resultobj; fail:
-  if (SWIG_IsNewObj(res4)) delete arg4; return NULL; }
+     arg4 = ptr; }  { try {
+      std_vector_Sl_std_vector_Sl_double_Sg__Sg__insert__SWIG_1(arg1,arg2,arg3,(std::vector< double,std::allocator< double > > const &)*arg4); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res4)) delete arg4; return resultobj; fail: if (SWIG_IsNewObj(res4)) delete arg4; return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_insert(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[5] = { 0}
   ; if (!(argc = SWIG_Python_UnpackTuple(args, "DoubleVectorVector_insert", 0, 4, argv))) SWIG_fail; --argc; if (argc == 3) {
     PyObject *retobj = _wrap_DoubleVectorVector_insert__SWIG_0(self, argc, argv);
@@ -7836,8 +7970,9 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_reserve(PyObject *SWIGUNUSEDPARM(s
    arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "DoubleVectorVector_reserve" "', argument " "2"" of type '" "std::vector< std::vector< double > >::size_type""'"); }
-    arg2 = static_cast< std::vector< std::vector< double > >::size_type >(val2); (arg1)->reserve(arg2);
-  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg2 = static_cast< std::vector< std::vector< double > >::size_type >(val2); { try { (arg1)->reserve(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_DoubleVectorVector_capacity(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0; std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ;
   void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ; std::vector< std::vector< double > >::size_type result;
@@ -7845,16 +7980,18 @@ SWIGINTERN PyObject *_wrap_DoubleVectorVector_capacity(PyObject *SWIGUNUSEDPARM(
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "DoubleVectorVector_capacity" "', argument " "1"" of type '" "std::vector< std::vector< double > > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1);
-  result = ((std::vector< std::vector< double > > const *)arg1)->capacity();
-  resultobj = SWIG_From_size_t(static_cast< size_t >(result)); return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try {
+      result = ((std::vector< std::vector< double > > const *)arg1)->capacity(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_delete_DoubleVectorVector(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::vector< double > > *arg1 = (std::vector< std::vector< double > > *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
   PyObject *swig_obj[1] ; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__vectorT_double_std__allocatorT_double_t_t_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_DoubleVectorVector" "', argument " "1"" of type '" "std::vector< std::vector< double > > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); delete arg1; resultobj = SWIG_Py_Void();
+   arg1 = reinterpret_cast< std::vector< std::vector< double > > * >(argp1); { try { delete arg1; }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *DoubleVectorVector_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
@@ -7874,8 +8011,9 @@ SWIGINTERN PyObject *_wrap_StringVector_iterator(PyObject *SWIGUNUSEDPARM(self),
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_iterator" "', argument " "1"" of type '" "std::vector< std::string > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1);
-  result = (swig::SwigPyIterator *)std_vector_Sl_std_string_Sg__iterator(arg1,arg2);
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try {
+      result = (swig::SwigPyIterator *)std_vector_Sl_std_string_Sg__iterator(arg1,arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___nonzero__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -7884,8 +8022,9 @@ SWIGINTERN PyObject *_wrap_StringVector___nonzero__(PyObject *SWIGUNUSEDPARM(sel
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector___nonzero__" "', argument " "1"" of type '" "std::vector< std::string > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1);
-  result = (bool)std_vector_Sl_std_string_Sg____nonzero__((std::vector< std::string > const *)arg1);
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try {
+      result = (bool)std_vector_Sl_std_string_Sg____nonzero__((std::vector< std::string > const *)arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___bool__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
@@ -7893,8 +8032,9 @@ SWIGINTERN PyObject *_wrap_StringVector___bool__(PyObject *SWIGUNUSEDPARM(self),
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector___bool__" "', argument " "1"" of type '" "std::vector< std::string > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1);
-  result = (bool)std_vector_Sl_std_string_Sg____bool__((std::vector< std::string > const *)arg1);
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try {
+      result = (bool)std_vector_Sl_std_string_Sg____bool__((std::vector< std::string > const *)arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___len__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
@@ -7902,8 +8042,9 @@ SWIGINTERN PyObject *_wrap_StringVector___len__(PyObject *SWIGUNUSEDPARM(self), 
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector___len__" "', argument " "1"" of type '" "std::vector< std::string > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1);
-  result = std_vector_Sl_std_string_Sg____len__((std::vector< std::string > const *)arg1);
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try {
+      result = std_vector_Sl_std_string_Sg____len__((std::vector< std::string > const *)arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_size_t(static_cast< size_t >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___getslice__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ; std::vector< std::string >::difference_type arg2 ;
@@ -7920,10 +8061,11 @@ SWIGINTERN PyObject *_wrap_StringVector___getslice__(PyObject *SWIGUNUSEDPARM(se
     arg2 = static_cast< std::vector< std::string >::difference_type >(val2); ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "StringVector___getslice__" "', argument " "3"" of type '" "std::vector< std::string >::difference_type""'"); }
-    arg3 = static_cast< std::vector< std::string >::difference_type >(val3); try {
-    result = (std::vector< std::string,std::allocator< std::string > > *)std_vector_Sl_std_string_Sg____getslice__(arg1,arg2,arg3);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); } 
+    arg3 = static_cast< std::vector< std::string >::difference_type >(val3); { try { try {
+        result = (std::vector< std::string,std::allocator< std::string > > *)std_vector_Sl_std_string_Sg____getslice__(arg1,arg2,arg3);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___setslice____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -7939,10 +8081,11 @@ SWIGINTERN PyObject *_wrap_StringVector___setslice____SWIG_0(PyObject *SWIGUNUSE
     arg2 = static_cast< std::vector< std::string >::difference_type >(val2); ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "StringVector___setslice__" "', argument " "3"" of type '" "std::vector< std::string >::difference_type""'"); }
-    arg3 = static_cast< std::vector< std::string >::difference_type >(val3); try {
-    std_vector_Sl_std_string_Sg____setslice____SWIG_0(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg3 = static_cast< std::vector< std::string >::difference_type >(val3); { try { try {
+        std_vector_Sl_std_string_Sg____setslice____SWIG_0(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___setslice____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
   std::vector< std::string >::difference_type arg2 ; std::vector< std::string >::difference_type arg3 ;
@@ -7963,10 +8106,11 @@ SWIGINTERN PyObject *_wrap_StringVector___setslice____SWIG_1(PyObject *SWIGUNUSE
       SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "StringVector___setslice__" "', argument " "4"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "StringVector___setslice__" "', argument " "4"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); }
-     arg4 = ptr; }  try {
-    std_vector_Sl_std_string_Sg____setslice____SWIG_1(arg1,arg2,arg3,(std::vector< std::string,std::allocator< std::string > > const &)*arg4);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res4)) delete arg4;
+     arg4 = ptr; }  { try { try {
+        std_vector_Sl_std_string_Sg____setslice____SWIG_1(arg1,arg2,arg3,(std::vector< std::string,std::allocator< std::string > > const &)*arg4);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res4)) delete arg4;
   return resultobj; fail: if (SWIG_IsNewObj(res4)) delete arg4; return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___setslice__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[5] = { 0}
   ; if (!(argc = SWIG_Python_UnpackTuple(args, "StringVector___setslice__", 0, 4, argv))) SWIG_fail; --argc; if (argc == 3) {
@@ -7993,10 +8137,11 @@ SWIGINTERN PyObject *_wrap_StringVector___delslice__(PyObject *SWIGUNUSEDPARM(se
     arg2 = static_cast< std::vector< std::string >::difference_type >(val2); ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "StringVector___delslice__" "', argument " "3"" of type '" "std::vector< std::string >::difference_type""'"); }
-    arg3 = static_cast< std::vector< std::string >::difference_type >(val3); try {
-    std_vector_Sl_std_string_Sg____delslice__(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg3 = static_cast< std::vector< std::string >::difference_type >(val3); { try { try {
+        std_vector_Sl_std_string_Sg____delslice__(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___delitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
   std::vector< std::string >::difference_type arg2 ; void *argp1 = 0 ; int res1 = 0 ; ptrdiff_t val2 ; int ecode2 = 0 ;
@@ -8007,10 +8152,11 @@ SWIGINTERN PyObject *_wrap_StringVector___delitem____SWIG_0(PyObject *SWIGUNUSED
    arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "StringVector___delitem__" "', argument " "2"" of type '" "std::vector< std::string >::difference_type""'"); }
-    arg2 = static_cast< std::vector< std::string >::difference_type >(val2); try {
-    std_vector_Sl_std_string_Sg____delitem____SWIG_0(arg1,arg2);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg2 = static_cast< std::vector< std::string >::difference_type >(val2); { try { try {
+        std_vector_Sl_std_string_Sg____delitem____SWIG_0(arg1,arg2);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___getitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
   PySliceObject *arg2 = (PySliceObject *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -8020,10 +8166,11 @@ SWIGINTERN PyObject *_wrap_StringVector___getitem____SWIG_0(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector___getitem__" "', argument " "1"" of type '" "std::vector< std::string > *""'");  }
    arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "StringVector___getitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try {
-    result = (std::vector< std::string,std::allocator< std::string > > *)std_vector_Sl_std_string_Sg____getitem____SWIG_0(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); } 
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try {
+        result = (std::vector< std::string,std::allocator< std::string > > *)std_vector_Sl_std_string_Sg____getitem____SWIG_0(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___setitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -8041,10 +8188,11 @@ SWIGINTERN PyObject *_wrap_StringVector___setitem____SWIG_0(PyObject *SWIGUNUSED
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "StringVector___setitem__" "', argument " "3"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "StringVector___setitem__" "', argument " "3"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); }
-     arg3 = ptr; }  try {
-    std_vector_Sl_std_string_Sg____setitem____SWIG_0(arg1,arg2,(std::vector< std::string,std::allocator< std::string > > const &)*arg3);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res3)) delete arg3;
+     arg3 = ptr; }  { try { try {
+        std_vector_Sl_std_string_Sg____setitem____SWIG_0(arg1,arg2,(std::vector< std::string,std::allocator< std::string > > const &)*arg3);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res3)) delete arg3;
   return resultobj; fail: if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___setitem____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
@@ -8054,9 +8202,10 @@ SWIGINTERN PyObject *_wrap_StringVector___setitem____SWIG_1(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector___setitem__" "', argument " "1"" of type '" "std::vector< std::string > *""'");  }
    arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "StringVector___setitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try { std_vector_Sl_std_string_Sg____setitem____SWIG_1(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try { std_vector_Sl_std_string_Sg____setitem____SWIG_1(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___delitem____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
   PySliceObject *arg2 = (PySliceObject *) 0 ; void *argp1 = 0 ; int res1 = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -8065,9 +8214,10 @@ SWIGINTERN PyObject *_wrap_StringVector___delitem____SWIG_1(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector___delitem__" "', argument " "1"" of type '" "std::vector< std::string > *""'");  }
    arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "StringVector___delitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try { std_vector_Sl_std_string_Sg____delitem____SWIG_1(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try { std_vector_Sl_std_string_Sg____delitem____SWIG_1(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___delitem__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0}
   ; if (!(argc = SWIG_Python_UnpackTuple(args, "StringVector___delitem__", 0, 2, argv))) SWIG_fail; --argc; if (argc == 2) {
     int _v = 0; { { _v = PySlice_Check(argv[1]); } }  if (!_v) goto check_1;
@@ -8088,9 +8238,10 @@ SWIGINTERN PyObject *_wrap_StringVector___getitem____SWIG_1(PyObject *SWIGUNUSED
    arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "StringVector___getitem__" "', argument " "2"" of type '" "std::vector< std::string >::difference_type""'"); }
-    arg2 = static_cast< std::vector< std::string >::difference_type >(val2); try {
-    result = (std::vector< std::string >::value_type *) &std_vector_Sl_std_string_Sg____getitem____SWIG_1((std::vector< std::string > const *)arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); } 
+    arg2 = static_cast< std::vector< std::string >::difference_type >(val2); { try { try {
+        result = (std::vector< std::string >::value_type *) &std_vector_Sl_std_string_Sg____getitem____SWIG_1((std::vector< std::string > const *)arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
   (void)swig::container_owner<swig::traits<std::vector< std::string >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj; fail: return NULL; }
@@ -8118,8 +8269,9 @@ SWIGINTERN PyObject *_wrap_StringVector___setitem____SWIG_2(PyObject *SWIGUNUSED
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "StringVector___setitem__" "', argument " "3"" of type '" "std::vector< std::string >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "StringVector___setitem__" "', argument " "3"" of type '" "std::vector< std::string >::value_type const &""'"); }
-     arg3 = ptr; }  try { std_vector_Sl_std_string_Sg____setitem____SWIG_2(arg1,arg2,(std::string const &)*arg3);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  resultobj = SWIG_Py_Void();
+     arg3 = ptr; }  { try { try { std_vector_Sl_std_string_Sg____setitem____SWIG_2(arg1,arg2,(std::string const &)*arg3);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res3)) delete arg3; return resultobj; fail: if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector___setitem__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0}
   ; if (!(argc = SWIG_Python_UnpackTuple(args, "StringVector___setitem__", 0, 3, argv))) SWIG_fail; --argc; if (argc == 2) {
@@ -8142,9 +8294,11 @@ SWIGINTERN PyObject *_wrap_StringVector_pop(PyObject *SWIGUNUSEDPARM(self), PyOb
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_pop" "', argument " "1"" of type '" "std::vector< std::string > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); try { result = std_vector_Sl_std_string_Sg__pop(arg1);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); } 
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result)); return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try { try {
+        result = std_vector_Sl_std_string_Sg__pop(arg1);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_append(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ; std::vector< std::string >::value_type *arg2 = 0 ;
   void *argp1 = 0 ; int res1 = 0 ; int res2 = SWIG_OLDOBJ ; PyObject *swig_obj[2] ;
@@ -8157,11 +8311,13 @@ SWIGINTERN PyObject *_wrap_StringVector_append(PyObject *SWIGUNUSEDPARM(self), P
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "StringVector_append" "', argument " "2"" of type '" "std::vector< std::string >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "StringVector_append" "', argument " "2"" of type '" "std::vector< std::string >::value_type const &""'"); }
-     arg2 = ptr; }  std_vector_Sl_std_string_Sg__append(arg1,(std::string const &)*arg2); resultobj = SWIG_Py_Void();
+     arg2 = ptr; }  { try { std_vector_Sl_std_string_Sg__append(arg1,(std::string const &)*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_new_StringVector__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
-  PyObject *resultobj = 0; std::vector< std::string > *result = 0 ; if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
-  result = (std::vector< std::string > *)new std::vector< std::string >();
+  PyObject *resultobj = 0; std::vector< std::string > *result = 0 ; if ((nobjs < 0) || (nobjs > 0)) SWIG_fail; { try {
+      result = (std::vector< std::string > *)new std::vector< std::string >(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, SWIG_POINTER_NEW |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_StringVector__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -8172,8 +8328,9 @@ SWIGINTERN PyObject *_wrap_new_StringVector__SWIG_1(PyObject *SWIGUNUSEDPARM(sel
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_StringVector" "', argument " "1"" of type '" "std::vector< std::string > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_StringVector" "', argument " "1"" of type '" "std::vector< std::string > const &""'"); }
-     arg1 = ptr; } 
-  result = (std::vector< std::string > *)new std::vector< std::string >((std::vector< std::string > const &)*arg1);
+     arg1 = ptr; }  { try {
+      result = (std::vector< std::string > *)new std::vector< std::string >((std::vector< std::string > const &)*arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_empty(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -8182,17 +8339,20 @@ SWIGINTERN PyObject *_wrap_StringVector_empty(PyObject *SWIGUNUSEDPARM(self), Py
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_empty" "', argument " "1"" of type '" "std::vector< std::string > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1);
-  result = (bool)((std::vector< std::string > const *)arg1)->empty(); resultobj = SWIG_From_bool(static_cast< bool >(result));
-  return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try {
+      result = (bool)((std::vector< std::string > const *)arg1)->empty(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj;
+  fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_size(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
   std::vector< std::string >::size_type result; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_size" "', argument " "1"" of type '" "std::vector< std::string > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); result = ((std::vector< std::string > const *)arg1)->size();
-  resultobj = SWIG_From_size_t(static_cast< size_t >(result)); return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try {
+      result = ((std::vector< std::string > const *)arg1)->size(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_swap(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ; std::vector< std::string > *arg2 = 0 ; void *argp1 = 0 ;
   int res1 = 0 ; void *argp2 = 0 ; int res2 = 0 ; PyObject *swig_obj[2] ;
@@ -8206,7 +8366,8 @@ SWIGINTERN PyObject *_wrap_StringVector_swap(PyObject *SWIGUNUSEDPARM(self), PyO
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "StringVector_swap" "', argument " "2"" of type '" "std::vector< std::string > &""'");  }
    if (!argp2) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "StringVector_swap" "', argument " "2"" of type '" "std::vector< std::string > &""'"); }
-   arg2 = reinterpret_cast< std::vector< std::string > * >(argp2); (arg1)->swap(*arg2); resultobj = SWIG_Py_Void();
+   arg2 = reinterpret_cast< std::vector< std::string > * >(argp2); { try { (arg1)->swap(*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_begin(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
@@ -8214,7 +8375,8 @@ SWIGINTERN PyObject *_wrap_StringVector_begin(PyObject *SWIGUNUSEDPARM(self), Py
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_begin" "', argument " "1"" of type '" "std::vector< std::string > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); result = (arg1)->begin();
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try { result = (arg1)->begin(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::string >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_end(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -8223,7 +8385,8 @@ SWIGINTERN PyObject *_wrap_StringVector_end(PyObject *SWIGUNUSEDPARM(self), PyOb
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_end" "', argument " "1"" of type '" "std::vector< std::string > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); result = (arg1)->end();
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try { result = (arg1)->end(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::string >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_rbegin(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -8232,7 +8395,8 @@ SWIGINTERN PyObject *_wrap_StringVector_rbegin(PyObject *SWIGUNUSEDPARM(self), P
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_rbegin" "', argument " "1"" of type '" "std::vector< std::string > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); result = (arg1)->rbegin();
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try { result = (arg1)->rbegin(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::string >::reverse_iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_rend(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -8241,7 +8405,8 @@ SWIGINTERN PyObject *_wrap_StringVector_rend(PyObject *SWIGUNUSEDPARM(self), PyO
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_rend" "', argument " "1"" of type '" "std::vector< std::string > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); result = (arg1)->rend();
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try { result = (arg1)->rend(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::string >::reverse_iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_clear(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -8250,7 +8415,8 @@ SWIGINTERN PyObject *_wrap_StringVector_clear(PyObject *SWIGUNUSEDPARM(self), Py
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_clear" "', argument " "1"" of type '" "std::vector< std::string > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); (arg1)->clear(); resultobj = SWIG_Py_Void();
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try { (arg1)->clear(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_get_allocator(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
@@ -8258,8 +8424,9 @@ SWIGINTERN PyObject *_wrap_StringVector_get_allocator(PyObject *SWIGUNUSEDPARM(s
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_get_allocator" "', argument " "1"" of type '" "std::vector< std::string > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1);
-  result = ((std::vector< std::string > const *)arg1)->get_allocator();
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try {
+      result = ((std::vector< std::string > const *)arg1)->get_allocator(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj((new std::vector< std::string >::allocator_type(static_cast< const std::vector< std::string >::allocator_type& >(result))), SWIGTYPE_p_std__allocatorT_std__string_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_StringVector__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -8267,8 +8434,9 @@ SWIGINTERN PyObject *_wrap_new_StringVector__SWIG_2(PyObject *SWIGUNUSEDPARM(sel
   std::vector< std::string > *result = 0 ; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1); if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_StringVector" "', argument " "1"" of type '" "std::vector< std::string >::size_type""'"); }
-    arg1 = static_cast< std::vector< std::string >::size_type >(val1);
-  result = (std::vector< std::string > *)new std::vector< std::string >(arg1);
+    arg1 = static_cast< std::vector< std::string >::size_type >(val1); { try {
+      result = (std::vector< std::string > *)new std::vector< std::string >(arg1); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, SWIG_POINTER_NEW |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_pop_back(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -8277,7 +8445,8 @@ SWIGINTERN PyObject *_wrap_StringVector_pop_back(PyObject *SWIGUNUSEDPARM(self),
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_pop_back" "', argument " "1"" of type '" "std::vector< std::string > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); (arg1)->pop_back(); resultobj = SWIG_Py_Void();
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try { (arg1)->pop_back(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_resize__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
@@ -8289,7 +8458,8 @@ SWIGINTERN PyObject *_wrap_StringVector_resize__SWIG_0(PyObject *SWIGUNUSEDPARM(
    arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "StringVector_resize" "', argument " "2"" of type '" "std::vector< std::string >::size_type""'"); }
-    arg2 = static_cast< std::vector< std::string >::size_type >(val2); (arg1)->resize(arg2); resultobj = SWIG_Py_Void();
+    arg2 = static_cast< std::vector< std::string >::size_type >(val2); { try { (arg1)->resize(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_erase__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
@@ -8306,7 +8476,8 @@ SWIGINTERN PyObject *_wrap_StringVector_erase__SWIG_0(PyObject *SWIGUNUSEDPARM(s
     swig::SwigPyIterator_T<std::vector< std::string >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< std::string >::iterator > *>(iter2);
     if (iter_t) { arg2 = iter_t->get_current(); }  else {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "StringVector_erase" "', argument " "2"" of type '" "std::vector< std::string >::iterator""'"); }
-     }  result = std_vector_Sl_std_string_Sg__erase__SWIG_0(arg1,arg2);
+     }  { try { result = std_vector_Sl_std_string_Sg__erase__SWIG_0(arg1,arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::string >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_erase__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -8332,7 +8503,8 @@ SWIGINTERN PyObject *_wrap_StringVector_erase__SWIG_1(PyObject *SWIGUNUSEDPARM(s
     swig::SwigPyIterator_T<std::vector< std::string >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< std::string >::iterator > *>(iter3);
     if (iter_t) { arg3 = iter_t->get_current(); }  else {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "StringVector_erase" "', argument " "3"" of type '" "std::vector< std::string >::iterator""'"); }
-     }  result = std_vector_Sl_std_string_Sg__erase__SWIG_1(arg1,arg2,arg3);
+     }  { try { result = std_vector_Sl_std_string_Sg__erase__SWIG_1(arg1,arg2,arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::string >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_erase(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0} ;
@@ -8355,8 +8527,9 @@ SWIGINTERN PyObject *_wrap_new_StringVector__SWIG_3(PyObject *SWIGUNUSEDPARM(sel
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_StringVector" "', argument " "2"" of type '" "std::vector< std::string >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_StringVector" "', argument " "2"" of type '" "std::vector< std::string >::value_type const &""'"); }
-     arg2 = ptr; } 
-  result = (std::vector< std::string > *)new std::vector< std::string >(arg1,(std::vector< std::string >::value_type const &)*arg2);
+     arg2 = ptr; }  { try {
+      result = (std::vector< std::string > *)new std::vector< std::string >(arg1,(std::vector< std::string >::value_type const &)*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_new_StringVector(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0} ;
@@ -8387,7 +8560,8 @@ SWIGINTERN PyObject *_wrap_StringVector_push_back(PyObject *SWIGUNUSEDPARM(self)
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "StringVector_push_back" "', argument " "2"" of type '" "std::vector< std::string >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "StringVector_push_back" "', argument " "2"" of type '" "std::vector< std::string >::value_type const &""'"); }
-     arg2 = ptr; }  (arg1)->push_back((std::vector< std::string >::value_type const &)*arg2); resultobj = SWIG_Py_Void();
+     arg2 = ptr; }  { try { (arg1)->push_back((std::vector< std::string >::value_type const &)*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_front(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
@@ -8395,8 +8569,9 @@ SWIGINTERN PyObject *_wrap_StringVector_front(PyObject *SWIGUNUSEDPARM(self), Py
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_front" "', argument " "1"" of type '" "std::vector< std::string > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1);
-  result = (std::vector< std::string >::value_type *) &((std::vector< std::string > const *)arg1)->front();
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try {
+      result = (std::vector< std::string >::value_type *) &((std::vector< std::string > const *)arg1)->front(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
   (void)swig::container_owner<swig::traits<std::vector< std::string >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj; fail: return NULL; }
@@ -8406,8 +8581,9 @@ SWIGINTERN PyObject *_wrap_StringVector_back(PyObject *SWIGUNUSEDPARM(self), PyO
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_back" "', argument " "1"" of type '" "std::vector< std::string > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1);
-  result = (std::vector< std::string >::value_type *) &((std::vector< std::string > const *)arg1)->back();
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try {
+      result = (std::vector< std::string >::value_type *) &((std::vector< std::string > const *)arg1)->back(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_std_string(static_cast< std::string >(*result));
   (void)swig::container_owner<swig::traits<std::vector< std::string >::value_type>::category>::back_reference(resultobj, swig_obj[0]);
   return resultobj; fail: return NULL; }
@@ -8427,7 +8603,8 @@ SWIGINTERN PyObject *_wrap_StringVector_assign(PyObject *SWIGUNUSEDPARM(self), P
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "StringVector_assign" "', argument " "3"" of type '" "std::vector< std::string >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "StringVector_assign" "', argument " "3"" of type '" "std::vector< std::string >::value_type const &""'"); }
-     arg3 = ptr; }  (arg1)->assign(arg2,(std::vector< std::string >::value_type const &)*arg3); resultobj = SWIG_Py_Void();
+     arg3 = ptr; }  { try { (arg1)->assign(arg2,(std::vector< std::string >::value_type const &)*arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res3)) delete arg3; return resultobj; fail: if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_resize__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ;
@@ -8444,7 +8621,8 @@ SWIGINTERN PyObject *_wrap_StringVector_resize__SWIG_1(PyObject *SWIGUNUSEDPARM(
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "StringVector_resize" "', argument " "3"" of type '" "std::vector< std::string >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "StringVector_resize" "', argument " "3"" of type '" "std::vector< std::string >::value_type const &""'"); }
-     arg3 = ptr; }  (arg1)->resize(arg2,(std::vector< std::string >::value_type const &)*arg3); resultobj = SWIG_Py_Void();
+     arg3 = ptr; }  { try { (arg1)->resize(arg2,(std::vector< std::string >::value_type const &)*arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res3)) delete arg3; return resultobj; fail: if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_resize(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "StringVector_resize", 0, 3, argv))) SWIG_fail; --argc; if (argc == 2) {
@@ -8476,7 +8654,8 @@ SWIGINTERN PyObject *_wrap_StringVector_insert__SWIG_0(PyObject *SWIGUNUSEDPARM(
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "StringVector_insert" "', argument " "3"" of type '" "std::vector< std::string >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "StringVector_insert" "', argument " "3"" of type '" "std::vector< std::string >::value_type const &""'"); }
-     arg3 = ptr; }  result = std_vector_Sl_std_string_Sg__insert__SWIG_0(arg1,arg2,(std::string const &)*arg3);
+     arg3 = ptr; }  { try { result = std_vector_Sl_std_string_Sg__insert__SWIG_0(arg1,arg2,(std::string const &)*arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< std::string >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); if (SWIG_IsNewObj(res3)) delete arg3; return resultobj; fail:
   if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
@@ -8503,9 +8682,9 @@ SWIGINTERN PyObject *_wrap_StringVector_insert__SWIG_1(PyObject *SWIGUNUSEDPARM(
       SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "StringVector_insert" "', argument " "4"" of type '" "std::vector< std::string >::value_type const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "StringVector_insert" "', argument " "4"" of type '" "std::vector< std::string >::value_type const &""'"); }
-     arg4 = ptr; }  std_vector_Sl_std_string_Sg__insert__SWIG_1(arg1,arg2,arg3,(std::string const &)*arg4);
-  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res4)) delete arg4; return resultobj; fail:
-  if (SWIG_IsNewObj(res4)) delete arg4; return NULL; }
+     arg4 = ptr; }  { try { std_vector_Sl_std_string_Sg__insert__SWIG_1(arg1,arg2,arg3,(std::string const &)*arg4); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res4)) delete arg4; return resultobj; fail: if (SWIG_IsNewObj(res4)) delete arg4; return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_insert(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[5] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "StringVector_insert", 0, 4, argv))) SWIG_fail; --argc; if (argc == 3) {
     PyObject *retobj = _wrap_StringVector_insert__SWIG_0(self, argc, argv);
@@ -8527,7 +8706,8 @@ SWIGINTERN PyObject *_wrap_StringVector_reserve(PyObject *SWIGUNUSEDPARM(self), 
    arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "StringVector_reserve" "', argument " "2"" of type '" "std::vector< std::string >::size_type""'"); }
-    arg2 = static_cast< std::vector< std::string >::size_type >(val2); (arg1)->reserve(arg2); resultobj = SWIG_Py_Void();
+    arg2 = static_cast< std::vector< std::string >::size_type >(val2); { try { (arg1)->reserve(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_StringVector_capacity(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
@@ -8535,8 +8715,9 @@ SWIGINTERN PyObject *_wrap_StringVector_capacity(PyObject *SWIGUNUSEDPARM(self),
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "StringVector_capacity" "', argument " "1"" of type '" "std::vector< std::string > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1);
-  result = ((std::vector< std::string > const *)arg1)->capacity(); resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try {
+      result = ((std::vector< std::string > const *)arg1)->capacity(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_delete_StringVector(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< std::string > *arg1 = (std::vector< std::string > *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
@@ -8544,8 +8725,8 @@ SWIGINTERN PyObject *_wrap_delete_StringVector(PyObject *SWIGUNUSEDPARM(self), P
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_std__string_std__allocatorT_std__string_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_StringVector" "', argument " "1"" of type '" "std::vector< std::string > *""'");  }
-   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); delete arg1; resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< std::string > * >(argp1); { try { delete arg1; }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *StringVector_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
@@ -8564,8 +8745,9 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_iterator(PyObject *SWIGUNUSEDPARM(sel
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_iterator" "', argument " "1"" of type '" "std::vector< char const * > *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1);
-  result = (swig::SwigPyIterator *)std_vector_Sl_char_SS_const_Sm__Sg__iterator(arg1,arg2);
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try {
+      result = (swig::SwigPyIterator *)std_vector_Sl_char_SS_const_Sm__Sg__iterator(arg1,arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_swig__SwigPyIterator, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___nonzero__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
@@ -8574,8 +8756,9 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___nonzero__(PyObject *SWIGUNUSEDPARM(
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector___nonzero__" "', argument " "1"" of type '" "std::vector< char const * > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1);
-  result = (bool)std_vector_Sl_char_SS_const_Sm__Sg____nonzero__((std::vector< char const * > const *)arg1);
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try {
+      result = (bool)std_vector_Sl_char_SS_const_Sm__Sg____nonzero__((std::vector< char const * > const *)arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___bool__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -8583,8 +8766,9 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___bool__(PyObject *SWIGUNUSEDPARM(sel
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector___bool__" "', argument " "1"" of type '" "std::vector< char const * > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1);
-  result = (bool)std_vector_Sl_char_SS_const_Sm__Sg____bool__((std::vector< char const * > const *)arg1);
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try {
+      result = (bool)std_vector_Sl_char_SS_const_Sm__Sg____bool__((std::vector< char const * > const *)arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___len__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -8592,8 +8776,9 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___len__(PyObject *SWIGUNUSEDPARM(self
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector___len__" "', argument " "1"" of type '" "std::vector< char const * > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1);
-  result = std_vector_Sl_char_SS_const_Sm__Sg____len__((std::vector< char const * > const *)arg1);
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try {
+      result = std_vector_Sl_char_SS_const_Sm__Sg____len__((std::vector< char const * > const *)arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_From_size_t(static_cast< size_t >(result)); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___getslice__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0; std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ;
@@ -8610,10 +8795,11 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___getslice__(PyObject *SWIGUNUSEDPARM
     arg2 = static_cast< std::vector< char const * >::difference_type >(val2); ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "ConstCharVector___getslice__" "', argument " "3"" of type '" "std::vector< char const * >::difference_type""'"); }
-    arg3 = static_cast< std::vector< char const * >::difference_type >(val3); try {
-    result = (std::vector< char const *,std::allocator< char const * > > *)std_vector_Sl_char_SS_const_Sm__Sg____getslice__(arg1,arg2,arg3);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); } 
+    arg3 = static_cast< std::vector< char const * >::difference_type >(val3); { try { try {
+        result = (std::vector< char const *,std::allocator< char const * > > *)std_vector_Sl_char_SS_const_Sm__Sg____getslice__(arg1,arg2,arg3);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___setslice____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -8629,10 +8815,11 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___setslice____SWIG_0(PyObject *SWIGUN
     arg2 = static_cast< std::vector< char const * >::difference_type >(val2); ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "ConstCharVector___setslice__" "', argument " "3"" of type '" "std::vector< char const * >::difference_type""'"); }
-    arg3 = static_cast< std::vector< char const * >::difference_type >(val3); try {
-    std_vector_Sl_char_SS_const_Sm__Sg____setslice____SWIG_0(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg3 = static_cast< std::vector< char const * >::difference_type >(val3); { try { try {
+        std_vector_Sl_char_SS_const_Sm__Sg____setslice____SWIG_0(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___setslice____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ;
   std::vector< char const * >::difference_type arg2 ; std::vector< char const * >::difference_type arg3 ;
@@ -8653,10 +8840,11 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___setslice____SWIG_1(PyObject *SWIGUN
       SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "ConstCharVector___setslice__" "', argument " "4"" of type '" "std::vector< char const *,std::allocator< char const * > > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ConstCharVector___setslice__" "', argument " "4"" of type '" "std::vector< char const *,std::allocator< char const * > > const &""'"); }
-     arg4 = ptr; }  try {
-    std_vector_Sl_char_SS_const_Sm__Sg____setslice____SWIG_1(arg1,arg2,arg3,(std::vector< char const *,std::allocator< char const * > > const &)*arg4);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res4)) delete arg4;
+     arg4 = ptr; }  { try { try {
+        std_vector_Sl_char_SS_const_Sm__Sg____setslice____SWIG_1(arg1,arg2,arg3,(std::vector< char const *,std::allocator< char const * > > const &)*arg4);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res4)) delete arg4;
   return resultobj; fail: if (SWIG_IsNewObj(res4)) delete arg4; return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___setslice__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[5] = {
     0} ; if (!(argc = SWIG_Python_UnpackTuple(args, "ConstCharVector___setslice__", 0, 4, argv))) SWIG_fail; --argc;
@@ -8683,10 +8871,11 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___delslice__(PyObject *SWIGUNUSEDPARM
     arg2 = static_cast< std::vector< char const * >::difference_type >(val2); ecode3 = SWIG_AsVal_ptrdiff_t(swig_obj[2], &val3);
   if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "ConstCharVector___delslice__" "', argument " "3"" of type '" "std::vector< char const * >::difference_type""'"); }
-    arg3 = static_cast< std::vector< char const * >::difference_type >(val3); try {
-    std_vector_Sl_char_SS_const_Sm__Sg____delslice__(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg3 = static_cast< std::vector< char const * >::difference_type >(val3); { try { try {
+        std_vector_Sl_char_SS_const_Sm__Sg____delslice__(arg1,arg2,arg3);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___delitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ;
   std::vector< char const * >::difference_type arg2 ; void *argp1 = 0 ; int res1 = 0 ; ptrdiff_t val2 ; int ecode2 = 0 ;
@@ -8697,10 +8886,11 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___delitem____SWIG_0(PyObject *SWIGUNU
    arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ConstCharVector___delitem__" "', argument " "2"" of type '" "std::vector< char const * >::difference_type""'"); }
-    arg2 = static_cast< std::vector< char const * >::difference_type >(val2); try {
-    std_vector_Sl_char_SS_const_Sm__Sg____delitem____SWIG_0(arg1,arg2);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg2 = static_cast< std::vector< char const * >::difference_type >(val2); { try { try {
+        std_vector_Sl_char_SS_const_Sm__Sg____delitem____SWIG_0(arg1,arg2);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___getitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ;
   PySliceObject *arg2 = (PySliceObject *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -8710,10 +8900,11 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___getitem____SWIG_0(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector___getitem__" "', argument " "1"" of type '" "std::vector< char const * > *""'");  }
    arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "ConstCharVector___getitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try {
-    result = (std::vector< char const *,std::allocator< char const * > > *)std_vector_Sl_char_SS_const_Sm__Sg____getitem____SWIG_0(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); } 
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try {
+        result = (std::vector< char const *,std::allocator< char const * > > *)std_vector_Sl_char_SS_const_Sm__Sg____getitem____SWIG_0(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___setitem____SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -8731,10 +8922,11 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___setitem____SWIG_0(PyObject *SWIGUNU
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConstCharVector___setitem__" "', argument " "3"" of type '" "std::vector< char const *,std::allocator< char const * > > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ConstCharVector___setitem__" "', argument " "3"" of type '" "std::vector< char const *,std::allocator< char const * > > const &""'"); }
-     arg3 = ptr; }  try {
-    std_vector_Sl_char_SS_const_Sm__Sg____setitem____SWIG_0(arg1,arg2,(std::vector< char const *,std::allocator< char const * > > const &)*arg3);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res3)) delete arg3;
+     arg3 = ptr; }  { try { try {
+        std_vector_Sl_char_SS_const_Sm__Sg____setitem____SWIG_0(arg1,arg2,(std::vector< char const *,std::allocator< char const * > > const &)*arg3);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res3)) delete arg3;
   return resultobj; fail: if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___setitem____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ;
@@ -8744,9 +8936,10 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___setitem____SWIG_1(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector___setitem__" "', argument " "1"" of type '" "std::vector< char const * > *""'");  }
    arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "ConstCharVector___setitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try { std_vector_Sl_char_SS_const_Sm__Sg____setitem____SWIG_1(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try { std_vector_Sl_char_SS_const_Sm__Sg____setitem____SWIG_1(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___delitem____SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ;
   PySliceObject *arg2 = (PySliceObject *) 0 ; void *argp1 = 0 ; int res1 = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -8755,9 +8948,10 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___delitem____SWIG_1(PyObject *SWIGUNU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector___delitem__" "', argument " "1"" of type '" "std::vector< char const * > *""'");  }
    arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { if (!PySlice_Check(swig_obj[1])) {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "ConstCharVector___delitem__" "', argument " "2"" of type '" "PySliceObject *""'"); }
-     arg2 = (PySliceObject *) swig_obj[1]; }  try { std_vector_Sl_char_SS_const_Sm__Sg____delitem____SWIG_1(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
-    SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+     arg2 = (PySliceObject *) swig_obj[1]; }  { try { try { std_vector_Sl_char_SS_const_Sm__Sg____delitem____SWIG_1(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  catch(std::invalid_argument &_e) {
+        SWIG_exception_fail(SWIG_ValueError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___delitem__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = {
     0} ; if (!(argc = SWIG_Python_UnpackTuple(args, "ConstCharVector___delitem__", 0, 2, argv))) SWIG_fail; --argc;
   if (argc == 2) { int _v = 0; { { _v = PySlice_Check(argv[1]); } }  if (!_v) goto check_1;
@@ -8778,9 +8972,10 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___getitem____SWIG_1(PyObject *SWIGUNU
    arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); ecode2 = SWIG_AsVal_ptrdiff_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ConstCharVector___getitem__" "', argument " "2"" of type '" "std::vector< char const * >::difference_type""'"); }
-    arg2 = static_cast< std::vector< char const * >::difference_type >(val2); try {
-    result = (std::vector< char const * >::value_type)std_vector_Sl_char_SS_const_Sm__Sg____getitem____SWIG_1(arg1,arg2);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); } 
+    arg2 = static_cast< std::vector< char const * >::difference_type >(val2); { try { try {
+        result = (std::vector< char const * >::value_type)std_vector_Sl_char_SS_const_Sm__Sg____getitem____SWIG_1(arg1,arg2);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_FromCharPtr((const char *)result); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___getitem__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = {
     0} ; if (!(argc = SWIG_Python_UnpackTuple(args, "ConstCharVector___getitem__", 0, 2, argv))) SWIG_fail; --argc;
@@ -8805,10 +9000,11 @@ SWIGINTERN PyObject *_wrap_ConstCharVector___setitem____SWIG_2(PyObject *SWIGUNU
     arg2 = static_cast< std::vector< char const * >::difference_type >(val2);
   res3 = SWIG_AsCharPtrAndSize(swig_obj[2], &buf3, NULL, &alloc3); if (!SWIG_IsOK(res3)) {
     SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConstCharVector___setitem__" "', argument " "3"" of type '" "std::vector< char const * >::value_type""'"); }
-   arg3 = reinterpret_cast< std::vector< char const * >::value_type >(buf3); try {
-    std_vector_Sl_char_SS_const_Sm__Sg____setitem____SWIG_2(arg1,arg2,(char const *)arg3);}  catch(std::out_of_range &_e) {
-    SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  resultobj = SWIG_Py_Void();
-  if (alloc3 == SWIG_NEWOBJ) delete[] buf3; return resultobj; fail: if (alloc3 == SWIG_NEWOBJ) delete[] buf3; return NULL; }
+   arg3 = reinterpret_cast< std::vector< char const * >::value_type >(buf3); { try { try {
+        std_vector_Sl_char_SS_const_Sm__Sg____setitem____SWIG_2(arg1,arg2,(char const *)arg3);}  catch(std::out_of_range &_e) {
+        SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (alloc3 == SWIG_NEWOBJ) delete[] buf3;
+  return resultobj; fail: if (alloc3 == SWIG_NEWOBJ) delete[] buf3; return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector___setitem__(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = {
     0} ; if (!(argc = SWIG_Python_UnpackTuple(args, "ConstCharVector___setitem__", 0, 3, argv))) SWIG_fail; --argc;
   if (argc == 2) { PyObject *retobj = _wrap_ConstCharVector___setitem____SWIG_1(self, argc, argv);
@@ -8830,9 +9026,10 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_pop(PyObject *SWIGUNUSEDPARM(self), P
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_pop" "', argument " "1"" of type '" "std::vector< char const * > *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); try {
-    result = (std::vector< char const * >::value_type)std_vector_Sl_char_SS_const_Sm__Sg__pop(arg1);}
-   catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); } 
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try { try {
+        result = (std::vector< char const * >::value_type)std_vector_Sl_char_SS_const_Sm__Sg__pop(arg1);}
+       catch(std::out_of_range &_e) { SWIG_exception_fail(SWIG_IndexError, (&_e)->what()); }  }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_FromCharPtr((const char *)result); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_append(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ;
@@ -8845,12 +9042,14 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_append(PyObject *SWIGUNUSEDPARM(self)
    arg1 = reinterpret_cast< std::vector< char const * > * >(argp1);
   res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2); if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ConstCharVector_append" "', argument " "2"" of type '" "std::vector< char const * >::value_type""'"); }
-   arg2 = reinterpret_cast< std::vector< char const * >::value_type >(buf2);
-  std_vector_Sl_char_SS_const_Sm__Sg__append(arg1,(char const *)arg2); resultobj = SWIG_Py_Void();
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2; return resultobj; fail: if (alloc2 == SWIG_NEWOBJ) delete[] buf2; return NULL; }
+   arg2 = reinterpret_cast< std::vector< char const * >::value_type >(buf2); { try {
+      std_vector_Sl_char_SS_const_Sm__Sg__append(arg1,(char const *)arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj; fail: if (alloc2 == SWIG_NEWOBJ) delete[] buf2; return NULL; }
 SWIGINTERN PyObject *_wrap_new_ConstCharVector__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
-  PyObject *resultobj = 0; std::vector< char const * > *result = 0 ; if ((nobjs < 0) || (nobjs > 0)) SWIG_fail;
-  result = (std::vector< char const * > *)new std::vector< char const * >();
+  PyObject *resultobj = 0; std::vector< char const * > *result = 0 ; if ((nobjs < 0) || (nobjs > 0)) SWIG_fail; { try {
+      result = (std::vector< char const * > *)new std::vector< char const * >(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, SWIG_POINTER_NEW |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_ConstCharVector__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -8861,8 +9060,9 @@ SWIGINTERN PyObject *_wrap_new_ConstCharVector__SWIG_1(PyObject *SWIGUNUSEDPARM(
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_ConstCharVector" "', argument " "1"" of type '" "std::vector< char const * > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_ConstCharVector" "', argument " "1"" of type '" "std::vector< char const * > const &""'"); }
-     arg1 = ptr; } 
-  result = (std::vector< char const * > *)new std::vector< char const * >((std::vector< char const * > const &)*arg1);
+     arg1 = ptr; }  { try {
+      result = (std::vector< char const * > *)new std::vector< char const * >((std::vector< char const * > const &)*arg1); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_empty(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -8871,17 +9071,19 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_empty(PyObject *SWIGUNUSEDPARM(self),
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_empty" "', argument " "1"" of type '" "std::vector< char const * > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1);
-  result = (bool)((std::vector< char const * > const *)arg1)->empty(); resultobj = SWIG_From_bool(static_cast< bool >(result));
-  return resultobj; fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try {
+      result = (bool)((std::vector< char const * > const *)arg1)->empty(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_bool(static_cast< bool >(result)); return resultobj;
+  fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_size(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
   PyObject *swig_obj[1] ; std::vector< char const * >::size_type result; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_size" "', argument " "1"" of type '" "std::vector< char const * > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1);
-  result = ((std::vector< char const * > const *)arg1)->size(); resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try {
+      result = ((std::vector< char const * > const *)arg1)->size(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_swap(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ; std::vector< char const * > *arg2 = 0 ;
@@ -8896,7 +9098,8 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_swap(PyObject *SWIGUNUSEDPARM(self), 
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ConstCharVector_swap" "', argument " "2"" of type '" "std::vector< char const * > &""'");  }
    if (!argp2) {
     SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "ConstCharVector_swap" "', argument " "2"" of type '" "std::vector< char const * > &""'"); }
-   arg2 = reinterpret_cast< std::vector< char const * > * >(argp2); (arg1)->swap(*arg2); resultobj = SWIG_Py_Void();
+   arg2 = reinterpret_cast< std::vector< char const * > * >(argp2); { try { (arg1)->swap(*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_begin(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -8904,7 +9107,8 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_begin(PyObject *SWIGUNUSEDPARM(self),
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_begin" "', argument " "1"" of type '" "std::vector< char const * > *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); result = (arg1)->begin();
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try { result = (arg1)->begin(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< char const * >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_end(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -8913,7 +9117,8 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_end(PyObject *SWIGUNUSEDPARM(self), P
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_end" "', argument " "1"" of type '" "std::vector< char const * > *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); result = (arg1)->end();
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try { result = (arg1)->end(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< char const * >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_rbegin(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -8922,7 +9127,8 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_rbegin(PyObject *SWIGUNUSEDPARM(self)
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_rbegin" "', argument " "1"" of type '" "std::vector< char const * > *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); result = (arg1)->rbegin();
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try { result = (arg1)->rbegin(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< char const * >::reverse_iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_rend(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -8931,7 +9137,8 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_rend(PyObject *SWIGUNUSEDPARM(self), 
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_rend" "', argument " "1"" of type '" "std::vector< char const * > *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); result = (arg1)->rend();
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try { result = (arg1)->rend(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< char const * >::reverse_iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_clear(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -8940,7 +9147,8 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_clear(PyObject *SWIGUNUSEDPARM(self),
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_clear" "', argument " "1"" of type '" "std::vector< char const * > *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); (arg1)->clear(); resultobj = SWIG_Py_Void();
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try { (arg1)->clear(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_get_allocator(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0; std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ; void *argp1 = 0 ;
@@ -8949,8 +9157,9 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_get_allocator(PyObject *SWIGUNUSEDPAR
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_get_allocator" "', argument " "1"" of type '" "std::vector< char const * > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1);
-  result = ((std::vector< char const * > const *)arg1)->get_allocator();
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try {
+      result = ((std::vector< char const * > const *)arg1)->get_allocator(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj((new std::vector< char const * >::allocator_type(static_cast< const std::vector< char const * >::allocator_type& >(result))), SWIGTYPE_p_std__allocatorT_char_const_p_t, SWIG_POINTER_OWN |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_new_ConstCharVector__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -8958,8 +9167,9 @@ SWIGINTERN PyObject *_wrap_new_ConstCharVector__SWIG_2(PyObject *SWIGUNUSEDPARM(
   std::vector< char const * > *result = 0 ; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   ecode1 = SWIG_AsVal_size_t(swig_obj[0], &val1); if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_ConstCharVector" "', argument " "1"" of type '" "std::vector< char const * >::size_type""'"); }
-    arg1 = static_cast< std::vector< char const * >::size_type >(val1);
-  result = (std::vector< char const * > *)new std::vector< char const * >(arg1);
+    arg1 = static_cast< std::vector< char const * >::size_type >(val1); { try {
+      result = (std::vector< char const * > *)new std::vector< char const * >(arg1); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, SWIG_POINTER_NEW |  0 );
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_pop_back(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
@@ -8968,7 +9178,8 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_pop_back(PyObject *SWIGUNUSEDPARM(sel
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_pop_back" "', argument " "1"" of type '" "std::vector< char const * > *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); (arg1)->pop_back(); resultobj = SWIG_Py_Void();
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try { (arg1)->pop_back(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_resize__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ;
@@ -8980,7 +9191,8 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_resize__SWIG_0(PyObject *SWIGUNUSEDPA
    arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ConstCharVector_resize" "', argument " "2"" of type '" "std::vector< char const * >::size_type""'"); }
-    arg2 = static_cast< std::vector< char const * >::size_type >(val2); (arg1)->resize(arg2); resultobj = SWIG_Py_Void();
+    arg2 = static_cast< std::vector< char const * >::size_type >(val2); { try { (arg1)->resize(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_erase__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ;
@@ -8997,7 +9209,8 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_erase__SWIG_0(PyObject *SWIGUNUSEDPAR
     swig::SwigPyIterator_T<std::vector< char const * >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< char const * >::iterator > *>(iter2);
     if (iter_t) { arg2 = iter_t->get_current(); }  else {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "ConstCharVector_erase" "', argument " "2"" of type '" "std::vector< char const * >::iterator""'"); }
-     }  result = std_vector_Sl_char_SS_const_Sm__Sg__erase__SWIG_0(arg1,arg2);
+     }  { try { result = std_vector_Sl_char_SS_const_Sm__Sg__erase__SWIG_0(arg1,arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< char const * >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_erase__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -9023,7 +9236,8 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_erase__SWIG_1(PyObject *SWIGUNUSEDPAR
     swig::SwigPyIterator_T<std::vector< char const * >::iterator > *iter_t = dynamic_cast<swig::SwigPyIterator_T<std::vector< char const * >::iterator > *>(iter3);
     if (iter_t) { arg3 = iter_t->get_current(); }  else {
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "ConstCharVector_erase" "', argument " "3"" of type '" "std::vector< char const * >::iterator""'"); }
-     }  result = std_vector_Sl_char_SS_const_Sm__Sg__erase__SWIG_1(arg1,arg2,arg3);
+     }  { try { result = std_vector_Sl_char_SS_const_Sm__Sg__erase__SWIG_1(arg1,arg2,arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< char const * >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_erase(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0} ;
@@ -9045,8 +9259,9 @@ SWIGINTERN PyObject *_wrap_new_ConstCharVector__SWIG_3(PyObject *SWIGUNUSEDPARM(
     arg1 = static_cast< std::vector< char const * >::size_type >(val1);
   res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2); if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "new_ConstCharVector" "', argument " "2"" of type '" "std::vector< char const * >::value_type""'"); }
-   arg2 = reinterpret_cast< std::vector< char const * >::value_type >(buf2);
-  result = (std::vector< char const * > *)new std::vector< char const * >(arg1,arg2);
+   arg2 = reinterpret_cast< std::vector< char const * >::value_type >(buf2); { try {
+      result = (std::vector< char const * > *)new std::vector< char const * >(arg1,arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, SWIG_POINTER_NEW |  0 );
   if (alloc2 == SWIG_NEWOBJ) delete[] buf2; return resultobj; fail: if (alloc2 == SWIG_NEWOBJ) delete[] buf2; return NULL; }
 SWIGINTERN PyObject *_wrap_new_ConstCharVector(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0} ;
@@ -9076,17 +9291,18 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_push_back(PyObject *SWIGUNUSEDPARM(se
    arg1 = reinterpret_cast< std::vector< char const * > * >(argp1);
   res2 = SWIG_AsCharPtrAndSize(swig_obj[1], &buf2, NULL, &alloc2); if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ConstCharVector_push_back" "', argument " "2"" of type '" "std::vector< char const * >::value_type""'"); }
-   arg2 = reinterpret_cast< std::vector< char const * >::value_type >(buf2); (arg1)->push_back(arg2);
-  resultobj = SWIG_Py_Void(); if (alloc2 == SWIG_NEWOBJ) delete[] buf2; return resultobj; fail:
-  if (alloc2 == SWIG_NEWOBJ) delete[] buf2; return NULL; }
+   arg2 = reinterpret_cast< std::vector< char const * >::value_type >(buf2); { try { (arg1)->push_back(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2; return resultobj; fail: if (alloc2 == SWIG_NEWOBJ) delete[] buf2; return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_front(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
   PyObject *swig_obj[1] ; std::vector< char const * >::value_type result; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_front" "', argument " "1"" of type '" "std::vector< char const * > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1);
-  result = (std::vector< char const * >::value_type)((std::vector< char const * > const *)arg1)->front();
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try {
+      result = (std::vector< char const * >::value_type)((std::vector< char const * > const *)arg1)->front(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_FromCharPtr((const char *)result); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_back(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -9094,8 +9310,9 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_back(PyObject *SWIGUNUSEDPARM(self), 
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_back" "', argument " "1"" of type '" "std::vector< char const * > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1);
-  result = (std::vector< char const * >::value_type)((std::vector< char const * > const *)arg1)->back();
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try {
+      result = (std::vector< char const * >::value_type)((std::vector< char const * > const *)arg1)->back(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_FromCharPtr((const char *)result); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_assign(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ; std::vector< char const * >::size_type arg2 ;
@@ -9111,9 +9328,9 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_assign(PyObject *SWIGUNUSEDPARM(self)
     arg2 = static_cast< std::vector< char const * >::size_type >(val2);
   res3 = SWIG_AsCharPtrAndSize(swig_obj[2], &buf3, NULL, &alloc3); if (!SWIG_IsOK(res3)) {
     SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConstCharVector_assign" "', argument " "3"" of type '" "std::vector< char const * >::value_type""'"); }
-   arg3 = reinterpret_cast< std::vector< char const * >::value_type >(buf3); (arg1)->assign(arg2,arg3);
-  resultobj = SWIG_Py_Void(); if (alloc3 == SWIG_NEWOBJ) delete[] buf3; return resultobj; fail:
-  if (alloc3 == SWIG_NEWOBJ) delete[] buf3; return NULL; }
+   arg3 = reinterpret_cast< std::vector< char const * >::value_type >(buf3); { try { (arg1)->assign(arg2,arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3; return resultobj; fail: if (alloc3 == SWIG_NEWOBJ) delete[] buf3; return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_resize__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ;
   std::vector< char const * >::size_type arg2 ;
@@ -9128,9 +9345,9 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_resize__SWIG_1(PyObject *SWIGUNUSEDPA
     arg2 = static_cast< std::vector< char const * >::size_type >(val2);
   res3 = SWIG_AsCharPtrAndSize(swig_obj[2], &buf3, NULL, &alloc3); if (!SWIG_IsOK(res3)) {
     SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConstCharVector_resize" "', argument " "3"" of type '" "std::vector< char const * >::value_type""'"); }
-   arg3 = reinterpret_cast< std::vector< char const * >::value_type >(buf3); (arg1)->resize(arg2,arg3);
-  resultobj = SWIG_Py_Void(); if (alloc3 == SWIG_NEWOBJ) delete[] buf3; return resultobj; fail:
-  if (alloc3 == SWIG_NEWOBJ) delete[] buf3; return NULL; }
+   arg3 = reinterpret_cast< std::vector< char const * >::value_type >(buf3); { try { (arg1)->resize(arg2,arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  if (alloc3 == SWIG_NEWOBJ) delete[] buf3; return resultobj; fail: if (alloc3 == SWIG_NEWOBJ) delete[] buf3; return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_resize(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "ConstCharVector_resize", 0, 3, argv))) SWIG_fail; --argc; if (argc == 2) {
     PyObject *retobj = _wrap_ConstCharVector_resize__SWIG_0(self, argc, argv);
@@ -9160,8 +9377,9 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_insert__SWIG_0(PyObject *SWIGUNUSEDPA
       SWIG_exception_fail(SWIG_ArgError(SWIG_TypeError), "in method '" "ConstCharVector_insert" "', argument " "2"" of type '" "std::vector< char const * >::iterator""'"); }
      }  res3 = SWIG_AsCharPtrAndSize(swig_obj[2], &buf3, NULL, &alloc3); if (!SWIG_IsOK(res3)) {
     SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ConstCharVector_insert" "', argument " "3"" of type '" "std::vector< char const * >::value_type""'"); }
-   arg3 = reinterpret_cast< std::vector< char const * >::value_type >(buf3);
-  result = std_vector_Sl_char_SS_const_Sm__Sg__insert__SWIG_0(arg1,arg2,(char const *)arg3);
+   arg3 = reinterpret_cast< std::vector< char const * >::value_type >(buf3); { try {
+      result = std_vector_Sl_char_SS_const_Sm__Sg__insert__SWIG_0(arg1,arg2,(char const *)arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(swig::make_output_iterator(static_cast< const std::vector< char const * >::iterator & >(result)),
   swig::SwigPyIterator::descriptor(),SWIG_POINTER_OWN); if (alloc3 == SWIG_NEWOBJ) delete[] buf3; return resultobj; fail:
   if (alloc3 == SWIG_NEWOBJ) delete[] buf3; return NULL; }
@@ -9187,8 +9405,9 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_insert__SWIG_1(PyObject *SWIGUNUSEDPA
     arg3 = static_cast< std::vector< char const * >::size_type >(val3);
   res4 = SWIG_AsCharPtrAndSize(swig_obj[3], &buf4, NULL, &alloc4); if (!SWIG_IsOK(res4)) {
     SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "ConstCharVector_insert" "', argument " "4"" of type '" "std::vector< char const * >::value_type""'"); }
-   arg4 = reinterpret_cast< std::vector< char const * >::value_type >(buf4);
-  std_vector_Sl_char_SS_const_Sm__Sg__insert__SWIG_1(arg1,arg2,arg3,(char const *)arg4); resultobj = SWIG_Py_Void();
+   arg4 = reinterpret_cast< std::vector< char const * >::value_type >(buf4); { try {
+      std_vector_Sl_char_SS_const_Sm__Sg__insert__SWIG_1(arg1,arg2,arg3,(char const *)arg4); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   if (alloc4 == SWIG_NEWOBJ) delete[] buf4; return resultobj; fail: if (alloc4 == SWIG_NEWOBJ) delete[] buf4; return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_insert(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[5] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "ConstCharVector_insert", 0, 4, argv))) SWIG_fail; --argc; if (argc == 3) {
@@ -9211,7 +9430,8 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_reserve(PyObject *SWIGUNUSEDPARM(self
    arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); ecode2 = SWIG_AsVal_size_t(swig_obj[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ConstCharVector_reserve" "', argument " "2"" of type '" "std::vector< char const * >::size_type""'"); }
-    arg2 = static_cast< std::vector< char const * >::size_type >(val2); (arg1)->reserve(arg2); resultobj = SWIG_Py_Void();
+    arg2 = static_cast< std::vector< char const * >::size_type >(val2); { try { (arg1)->reserve(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_ConstCharVector_capacity(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -9219,8 +9439,9 @@ SWIGINTERN PyObject *_wrap_ConstCharVector_capacity(PyObject *SWIGUNUSEDPARM(sel
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ConstCharVector_capacity" "', argument " "1"" of type '" "std::vector< char const * > const *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1);
-  result = ((std::vector< char const * > const *)arg1)->capacity(); resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try {
+      result = ((std::vector< char const * > const *)arg1)->capacity(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_delete_ConstCharVector(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   std::vector< char const * > *arg1 = (std::vector< char const * > *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -9228,8 +9449,8 @@ SWIGINTERN PyObject *_wrap_delete_ConstCharVector(PyObject *SWIGUNUSEDPARM(self)
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_ConstCharVector" "', argument " "1"" of type '" "std::vector< char const * > *""'");  }
-   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); delete arg1; resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+   arg1 = reinterpret_cast< std::vector< char const * > * >(argp1); { try { delete arg1; }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *ConstCharVector_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
@@ -9242,6 +9463,31 @@ SWIGINTERN PyObject *ConstCharVector_swiginit(PyObject *SWIGUNUSEDPARM(self), Py
 }
 
 SWIGINTERN PyObject *_wrap_new_Vina__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0; std::string *arg1 = 0 ; int arg2 ; int arg3 ; int arg4 ; bool arg5 ;
+  std::function< void (double) > *arg6 = (std::function< void (double) > *) 0 ; int res1 = SWIG_OLDOBJ ; int val2 ;
+  int ecode2 = 0 ; int val3 ; int ecode3 = 0 ; int val4 ; int ecode4 = 0 ; bool val5 ; int ecode5 = 0 ; void *argp6 = 0 ;
+  int res6 = 0 ; Vina *result = 0 ; if ((nobjs < 6) || (nobjs > 6)) SWIG_fail; { std::string *ptr = (std::string *)0;
+    res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr); if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Vina" "', argument " "1"" of type '" "std::string const &""'"); }
+     if (!ptr) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_Vina" "', argument " "1"" of type '" "std::string const &""'"); }
+     arg1 = ptr; }  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_Vina" "', argument " "2"" of type '" "int""'"); }  
+  arg2 = static_cast< int >(val2); ecode3 = SWIG_AsVal_int(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_Vina" "', argument " "3"" of type '" "int""'"); }  
+  arg3 = static_cast< int >(val3); ecode4 = SWIG_AsVal_int(swig_obj[3], &val4); if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "new_Vina" "', argument " "4"" of type '" "int""'"); }  
+  arg4 = static_cast< int >(val4); ecode5 = SWIG_AsVal_bool(swig_obj[4], &val5); if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "new_Vina" "', argument " "5"" of type '" "bool""'"); }  
+  arg5 = static_cast< bool >(val5);
+  res6 = SWIG_ConvertPtr(swig_obj[5], &argp6,SWIGTYPE_p_std__functionT_void_fdoubleF_t, 0 |  0 ); if (!SWIG_IsOK(res6)) {
+    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "new_Vina" "', argument " "6"" of type '" "std::function< void (double) > *""'");  }
+   arg6 = reinterpret_cast< std::function< void (double) > * >(argp6); { try {
+      result = (Vina *)new Vina((std::string const &)*arg1,arg2,arg3,arg4,arg5,arg6); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 );
+  if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
+SWIGINTERN PyObject *_wrap_new_Vina__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::string *arg1 = 0 ; int arg2 ; int arg3 ; int arg4 ; bool arg5 ; int res1 = SWIG_OLDOBJ ;
   int val2 ; int ecode2 = 0 ; int val3 ; int ecode3 = 0 ; int val4 ; int ecode4 = 0 ; bool val5 ; int ecode5 = 0 ;
   Vina *result = 0 ; if ((nobjs < 5) || (nobjs > 5)) SWIG_fail; { std::string *ptr = (std::string *)0;
@@ -9257,10 +9503,11 @@ SWIGINTERN PyObject *_wrap_new_Vina__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_s
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "new_Vina" "', argument " "4"" of type '" "int""'"); }  
   arg4 = static_cast< int >(val4); ecode5 = SWIG_AsVal_bool(swig_obj[4], &val5); if (!SWIG_IsOK(ecode5)) {
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "new_Vina" "', argument " "5"" of type '" "bool""'"); }  
-  arg5 = static_cast< bool >(val5); result = (Vina *)new Vina((std::string const &)*arg1,arg2,arg3,arg4,arg5);
+  arg5 = static_cast< bool >(val5); { try { result = (Vina *)new Vina((std::string const &)*arg1,arg2,arg3,arg4,arg5); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
-SWIGINTERN PyObject *_wrap_new_Vina__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_new_Vina__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::string *arg1 = 0 ; int arg2 ; int arg3 ; int arg4 ; int res1 = SWIG_OLDOBJ ; int val2 ;
   int ecode2 = 0 ; int val3 ; int ecode3 = 0 ; int val4 ; int ecode4 = 0 ; Vina *result = 0 ;
   if ((nobjs < 4) || (nobjs > 4)) SWIG_fail; { std::string *ptr = (std::string *)0;
@@ -9274,10 +9521,11 @@ SWIGINTERN PyObject *_wrap_new_Vina__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_s
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_Vina" "', argument " "3"" of type '" "int""'"); }  
   arg3 = static_cast< int >(val3); ecode4 = SWIG_AsVal_int(swig_obj[3], &val4); if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "new_Vina" "', argument " "4"" of type '" "int""'"); }  
-  arg4 = static_cast< int >(val4); result = (Vina *)new Vina((std::string const &)*arg1,arg2,arg3,arg4);
+  arg4 = static_cast< int >(val4); { try { result = (Vina *)new Vina((std::string const &)*arg1,arg2,arg3,arg4); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
-SWIGINTERN PyObject *_wrap_new_Vina__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_new_Vina__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::string *arg1 = 0 ; int arg2 ; int arg3 ; int res1 = SWIG_OLDOBJ ; int val2 ; int ecode2 = 0 ;
   int val3 ; int ecode3 = 0 ; Vina *result = 0 ; if ((nobjs < 3) || (nobjs > 3)) SWIG_fail; {
     std::string *ptr = (std::string *)0; res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr); if (!SWIG_IsOK(res1)) {
@@ -9288,10 +9536,11 @@ SWIGINTERN PyObject *_wrap_new_Vina__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_s
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_Vina" "', argument " "2"" of type '" "int""'"); }  
   arg2 = static_cast< int >(val2); ecode3 = SWIG_AsVal_int(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "new_Vina" "', argument " "3"" of type '" "int""'"); }  
-  arg3 = static_cast< int >(val3); result = (Vina *)new Vina((std::string const &)*arg1,arg2,arg3);
+  arg3 = static_cast< int >(val3); { try { result = (Vina *)new Vina((std::string const &)*arg1,arg2,arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
-SWIGINTERN PyObject *_wrap_new_Vina__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_new_Vina__SWIG_4(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::string *arg1 = 0 ; int arg2 ; int res1 = SWIG_OLDOBJ ; int val2 ; int ecode2 = 0 ;
   Vina *result = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail; { std::string *ptr = (std::string *)0;
     res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr); if (!SWIG_IsOK(res1)) {
@@ -9300,54 +9549,63 @@ SWIGINTERN PyObject *_wrap_new_Vina__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_s
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_Vina" "', argument " "1"" of type '" "std::string const &""'"); }
      arg1 = ptr; }  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "new_Vina" "', argument " "2"" of type '" "int""'"); }  
-  arg2 = static_cast< int >(val2); result = (Vina *)new Vina((std::string const &)*arg1,arg2);
+  arg2 = static_cast< int >(val2); { try { result = (Vina *)new Vina((std::string const &)*arg1,arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
-SWIGINTERN PyObject *_wrap_new_Vina__SWIG_4(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+SWIGINTERN PyObject *_wrap_new_Vina__SWIG_5(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; std::string *arg1 = 0 ; int res1 = SWIG_OLDOBJ ; Vina *result = 0 ;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail; { std::string *ptr = (std::string *)0;
     res1 = SWIG_AsPtr_std_string(swig_obj[0], &ptr); if (!SWIG_IsOK(res1)) {
       SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_Vina" "', argument " "1"" of type '" "std::string const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "new_Vina" "', argument " "1"" of type '" "std::string const &""'"); }
-     arg1 = ptr; }  result = (Vina *)new Vina((std::string const &)*arg1);
+     arg1 = ptr; }  { try { result = (Vina *)new Vina((std::string const &)*arg1); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 );
   if (SWIG_IsNewObj(res1)) delete arg1; return resultobj; fail: if (SWIG_IsNewObj(res1)) delete arg1; return NULL; }
-SWIGINTERN PyObject *_wrap_new_Vina__SWIG_5(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
-  PyObject *resultobj = 0; Vina *result = 0 ; if ((nobjs < 0) || (nobjs > 0)) SWIG_fail; result = (Vina *)new Vina();
+SWIGINTERN PyObject *_wrap_new_Vina__SWIG_6(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **SWIGUNUSEDPARM(swig_obj)) {
+  PyObject *resultobj = 0; Vina *result = 0 ; if ((nobjs < 0) || (nobjs > 0)) SWIG_fail; { try { result = (Vina *)new Vina(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vina, SWIG_POINTER_NEW |  0 ); return resultobj; fail:
   return NULL; }
-SWIGINTERN PyObject *_wrap_new_Vina(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[6] = { 0} ;
-  if (!(argc = SWIG_Python_UnpackTuple(args, "new_Vina", 0, 5, argv))) SWIG_fail; --argc; if (argc == 0) {
-    PyObject *retobj = _wrap_new_Vina__SWIG_5(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
-    SWIG_fail;}  if (argc == 1) { PyObject *retobj = _wrap_new_Vina__SWIG_4(self, argc, argv);
+SWIGINTERN PyObject *_wrap_new_Vina(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[7] = { 0} ;
+  if (!(argc = SWIG_Python_UnpackTuple(args, "new_Vina", 0, 6, argv))) SWIG_fail; --argc; if (argc == 0) {
+    PyObject *retobj = _wrap_new_Vina__SWIG_6(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
+    SWIG_fail;}  if (argc == 1) { PyObject *retobj = _wrap_new_Vina__SWIG_5(self, argc, argv);
     if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  if (argc == 2) {
-    PyObject *retobj = _wrap_new_Vina__SWIG_3(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
-    SWIG_fail;}  if (argc == 3) { PyObject *retobj = _wrap_new_Vina__SWIG_2(self, argc, argv);
+    PyObject *retobj = _wrap_new_Vina__SWIG_4(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
+    SWIG_fail;}  if (argc == 3) { PyObject *retobj = _wrap_new_Vina__SWIG_3(self, argc, argv);
     if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  if (argc == 4) {
-    PyObject *retobj = _wrap_new_Vina__SWIG_1(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
-    SWIG_fail;}  if (argc == 5) { PyObject *retobj = _wrap_new_Vina__SWIG_0(self, argc, argv);
-    if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  fail:
+    PyObject *retobj = _wrap_new_Vina__SWIG_2(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
+    SWIG_fail;}  if (argc == 5) { PyObject *retobj = _wrap_new_Vina__SWIG_1(self, argc, argv);
+    if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  if (argc == 6) {
+    PyObject *retobj = _wrap_new_Vina__SWIG_0(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
+    SWIG_fail;}  fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'new_Vina'.\n"
-  "  Possible C/C++ prototypes are:\n" "    Vina::Vina(std::string const &,int,int,int,bool)\n"
-  "    Vina::Vina(std::string const &,int,int,int)\n" "    Vina::Vina(std::string const &,int,int)\n"
-  "    Vina::Vina(std::string const &,int)\n" "    Vina::Vina(std::string const &)\n" "    Vina::Vina()\n"); return 0; }
+  "  Possible C/C++ prototypes are:\n" "    Vina::Vina(std::string const &,int,int,int,bool,std::function< void (double) > *)\n"
+  "    Vina::Vina(std::string const &,int,int,int,bool)\n" "    Vina::Vina(std::string const &,int,int,int)\n"
+  "    Vina::Vina(std::string const &,int,int)\n" "    Vina::Vina(std::string const &,int)\n"
+  "    Vina::Vina(std::string const &)\n" "    Vina::Vina()\n"); return 0; }
 SWIGINTERN PyObject *_wrap_delete_Vina(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, SWIG_POINTER_DISOWN |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_Vina" "', argument " "1"" of type '" "Vina *""'");  } 
-  arg1 = reinterpret_cast< Vina * >(argp1); delete arg1; resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+  arg1 = reinterpret_cast< Vina * >(argp1); { try { delete arg1; }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_cite(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ; if (!args) SWIG_fail; swig_obj[0] = args;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_cite" "', argument " "1"" of type '" "Vina *""'");  } 
-  arg1 = reinterpret_cast< Vina * >(argp1); (arg1)->cite(); resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+  arg1 = reinterpret_cast< Vina * >(argp1); { try { (arg1)->cite(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_seed(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
   Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ; int result; if (!args) SWIG_fail;
   swig_obj[0] = args; res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_seed" "', argument " "1"" of type '" "Vina *""'");  } 
-  arg1 = reinterpret_cast< Vina * >(argp1); result = (int)(arg1)->seed(); resultobj = SWIG_From_int(static_cast< int >(result));
-  return resultobj; fail: return NULL; }
+  arg1 = reinterpret_cast< Vina * >(argp1); { try { result = (int)(arg1)->seed(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_int(static_cast< int >(result)); return resultobj;
+  fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_receptor__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; std::string *arg2 = 0 ; std::string *arg3 = 0 ; void *argp1 = 0 ;
   int res1 = 0 ; int res2 = SWIG_OLDOBJ ; int res3 = SWIG_OLDOBJ ; if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
@@ -9363,7 +9621,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_receptor__SWIG_0(PyObject *SWIGUNUSEDPARM(se
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Vina_set_receptor" "', argument " "3"" of type '" "std::string const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_set_receptor" "', argument " "3"" of type '" "std::string const &""'"); }
-     arg3 = ptr; }  (arg1)->set_receptor((std::string const &)*arg2,(std::string const &)*arg3); resultobj = SWIG_Py_Void();
+     arg3 = ptr; }  { try { (arg1)->set_receptor((std::string const &)*arg2,(std::string const &)*arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res2)) delete arg2; if (SWIG_IsNewObj(res3)) delete arg3; return resultobj; fail:
   if (SWIG_IsNewObj(res2)) delete arg2; if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_receptor__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -9376,14 +9635,15 @@ SWIGINTERN PyObject *_wrap_Vina_set_receptor__SWIG_1(PyObject *SWIGUNUSEDPARM(se
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Vina_set_receptor" "', argument " "2"" of type '" "std::string const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_set_receptor" "', argument " "2"" of type '" "std::string const &""'"); }
-     arg2 = ptr; }  (arg1)->set_receptor((std::string const &)*arg2); resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
+     arg2 = ptr; }  { try { (arg1)->set_receptor((std::string const &)*arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_receptor__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_set_receptor" "', argument " "1"" of type '" "Vina *""'");  } 
-  arg1 = reinterpret_cast< Vina * >(argp1); (arg1)->set_receptor(); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+  arg1 = reinterpret_cast< Vina * >(argp1); { try { (arg1)->set_receptor(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_receptor(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_set_receptor", 0, 3, argv))) SWIG_fail; --argc; if (argc == 1) {
     PyObject *retobj = _wrap_Vina_set_receptor__SWIG_2(self, argc, argv);
@@ -9405,8 +9665,9 @@ SWIGINTERN PyObject *_wrap_Vina_set_ligand_from_string__SWIG_0(PyObject *SWIGUNU
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Vina_set_ligand_from_string" "', argument " "2"" of type '" "std::string const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_set_ligand_from_string" "', argument " "2"" of type '" "std::string const &""'"); }
-     arg2 = ptr; }  (arg1)->set_ligand_from_string((std::string const &)*arg2); resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
+     arg2 = ptr; }  { try { (arg1)->set_ligand_from_string((std::string const &)*arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_ligand_from_string__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; std::vector< std::string,std::allocator< std::string > > *arg2 = 0 ;
   void *argp1 = 0 ; int res1 = 0 ; int res2 = SWIG_OLDOBJ ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -9418,9 +9679,10 @@ SWIGINTERN PyObject *_wrap_Vina_set_ligand_from_string__SWIG_1(PyObject *SWIGUNU
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Vina_set_ligand_from_string" "', argument " "2"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_set_ligand_from_string" "', argument " "2"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); }
-     arg2 = ptr; }  (arg1)->set_ligand_from_string((std::vector< std::string,std::allocator< std::string > > const &)*arg2);
-  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail:
-  if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
+     arg2 = ptr; }  { try {
+      (arg1)->set_ligand_from_string((std::vector< std::string,std::allocator< std::string > > const &)*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_ligand_from_string(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = {
     0} ; if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_set_ligand_from_string", 0, 2, argv))) SWIG_fail; --argc;
   if (argc == 2) { int _v = 0; { int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0)); _v = SWIG_CheckState(res);} 
@@ -9440,8 +9702,9 @@ SWIGINTERN PyObject *_wrap_Vina_set_ligand_from_file__SWIG_0(PyObject *SWIGUNUSE
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Vina_set_ligand_from_file" "', argument " "2"" of type '" "std::string const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_set_ligand_from_file" "', argument " "2"" of type '" "std::string const &""'"); }
-     arg2 = ptr; }  (arg1)->set_ligand_from_file((std::string const &)*arg2); resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
+     arg2 = ptr; }  { try { (arg1)->set_ligand_from_file((std::string const &)*arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_ligand_from_file__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; std::vector< std::string,std::allocator< std::string > > *arg2 = 0 ;
   void *argp1 = 0 ; int res1 = 0 ; int res2 = SWIG_OLDOBJ ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -9453,9 +9716,10 @@ SWIGINTERN PyObject *_wrap_Vina_set_ligand_from_file__SWIG_1(PyObject *SWIGUNUSE
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Vina_set_ligand_from_file" "', argument " "2"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_set_ligand_from_file" "', argument " "2"" of type '" "std::vector< std::string,std::allocator< std::string > > const &""'"); }
-     arg2 = ptr; }  (arg1)->set_ligand_from_file((std::vector< std::string,std::allocator< std::string > > const &)*arg2);
-  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail:
-  if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
+     arg2 = ptr; }  { try {
+      (arg1)->set_ligand_from_file((std::vector< std::string,std::allocator< std::string > > const &)*arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_ligand_from_file(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0}
   ; if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_set_ligand_from_file", 0, 2, argv))) SWIG_fail; --argc; if (argc == 2) {
     int _v = 0; { int res = SWIG_AsPtr_std_string(argv[1], (std::string**)(0)); _v = SWIG_CheckState(res);} 
@@ -9486,8 +9750,9 @@ SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_0(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "Vina_set_vina_weights" "', argument " "7"" of type '" "double""'"); }
     arg7 = static_cast< double >(val7); ecode8 = SWIG_AsVal_double(swig_obj[7], &val8); if (!SWIG_IsOK(ecode8)) {
     SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "Vina_set_vina_weights" "', argument " "8"" of type '" "double""'"); }
-    arg8 = static_cast< double >(val8); (arg1)->set_vina_weights(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
-  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg8 = static_cast< double >(val8); { try { (arg1)->set_vina_weights(arg2,arg3,arg4,arg5,arg6,arg7,arg8); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; double arg5 ; double arg6 ;
   double arg7 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ; int ecode2 = 0 ; double val3 ; int ecode3 = 0 ; double val4 ;
@@ -9507,7 +9772,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_1(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Vina_set_vina_weights" "', argument " "6"" of type '" "double""'"); }
     arg6 = static_cast< double >(val6); ecode7 = SWIG_AsVal_double(swig_obj[6], &val7); if (!SWIG_IsOK(ecode7)) {
     SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "Vina_set_vina_weights" "', argument " "7"" of type '" "double""'"); }
-    arg7 = static_cast< double >(val7); (arg1)->set_vina_weights(arg2,arg3,arg4,arg5,arg6,arg7); resultobj = SWIG_Py_Void();
+    arg7 = static_cast< double >(val7); { try { (arg1)->set_vina_weights(arg2,arg3,arg4,arg5,arg6,arg7); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; double arg5 ; double arg6 ;
@@ -9525,7 +9791,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_2(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Vina_set_vina_weights" "', argument " "5"" of type '" "double""'"); }
     arg5 = static_cast< double >(val5); ecode6 = SWIG_AsVal_double(swig_obj[5], &val6); if (!SWIG_IsOK(ecode6)) {
     SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Vina_set_vina_weights" "', argument " "6"" of type '" "double""'"); }
-    arg6 = static_cast< double >(val6); (arg1)->set_vina_weights(arg2,arg3,arg4,arg5,arg6); resultobj = SWIG_Py_Void();
+    arg6 = static_cast< double >(val6); { try { (arg1)->set_vina_weights(arg2,arg3,arg4,arg5,arg6); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; double arg5 ; void *argp1 = 0 ;
@@ -9541,7 +9808,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_3(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Vina_set_vina_weights" "', argument " "4"" of type '" "double""'"); }
     arg4 = static_cast< double >(val4); ecode5 = SWIG_AsVal_double(swig_obj[4], &val5); if (!SWIG_IsOK(ecode5)) {
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Vina_set_vina_weights" "', argument " "5"" of type '" "double""'"); }
-    arg5 = static_cast< double >(val5); (arg1)->set_vina_weights(arg2,arg3,arg4,arg5); resultobj = SWIG_Py_Void();
+    arg5 = static_cast< double >(val5); { try { (arg1)->set_vina_weights(arg2,arg3,arg4,arg5); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_4(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -9555,8 +9823,9 @@ SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_4(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Vina_set_vina_weights" "', argument " "3"" of type '" "double""'"); }
     arg3 = static_cast< double >(val3); ecode4 = SWIG_AsVal_double(swig_obj[3], &val4); if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Vina_set_vina_weights" "', argument " "4"" of type '" "double""'"); }
-    arg4 = static_cast< double >(val4); (arg1)->set_vina_weights(arg2,arg3,arg4); resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+    arg4 = static_cast< double >(val4); { try { (arg1)->set_vina_weights(arg2,arg3,arg4); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_5(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ;
   int ecode2 = 0 ; double val3 ; int ecode3 = 0 ; if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
@@ -9566,8 +9835,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_5(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_set_vina_weights" "', argument " "2"" of type '" "double""'"); }
     arg2 = static_cast< double >(val2); ecode3 = SWIG_AsVal_double(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Vina_set_vina_weights" "', argument " "3"" of type '" "double""'"); }
-    arg3 = static_cast< double >(val3); (arg1)->set_vina_weights(arg2,arg3); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+    arg3 = static_cast< double >(val3); { try { (arg1)->set_vina_weights(arg2,arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_6(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ;
   int ecode2 = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -9575,14 +9844,14 @@ SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_6(PyObject *SWIGUNUSEDPAR
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_set_vina_weights" "', argument " "1"" of type '" "Vina *""'");  }
    arg1 = reinterpret_cast< Vina * >(argp1); ecode2 = SWIG_AsVal_double(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_set_vina_weights" "', argument " "2"" of type '" "double""'"); }
-    arg2 = static_cast< double >(val2); (arg1)->set_vina_weights(arg2); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+    arg2 = static_cast< double >(val2); { try { (arg1)->set_vina_weights(arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vina_weights__SWIG_7(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_set_vina_weights" "', argument " "1"" of type '" "Vina *""'");  }
-   arg1 = reinterpret_cast< Vina * >(argp1); (arg1)->set_vina_weights(); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+   arg1 = reinterpret_cast< Vina * >(argp1); { try { (arg1)->set_vina_weights(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vina_weights(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[9] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_set_vina_weights", 0, 8, argv))) SWIG_fail; --argc; if (argc == 1) {
     PyObject *retobj = _wrap_Vina_set_vina_weights__SWIG_7(self, argc, argv);
@@ -9626,7 +9895,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_vinardo_weights__SWIG_0(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Vina_set_vinardo_weights" "', argument " "6"" of type '" "double""'"); }
     arg6 = static_cast< double >(val6); ecode7 = SWIG_AsVal_double(swig_obj[6], &val7); if (!SWIG_IsOK(ecode7)) {
     SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "Vina_set_vinardo_weights" "', argument " "7"" of type '" "double""'"); }
-    arg7 = static_cast< double >(val7); (arg1)->set_vinardo_weights(arg2,arg3,arg4,arg5,arg6,arg7); resultobj = SWIG_Py_Void();
+    arg7 = static_cast< double >(val7); { try { (arg1)->set_vinardo_weights(arg2,arg3,arg4,arg5,arg6,arg7); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vinardo_weights__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; double arg5 ; double arg6 ;
@@ -9644,7 +9914,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_vinardo_weights__SWIG_1(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Vina_set_vinardo_weights" "', argument " "5"" of type '" "double""'"); }
     arg5 = static_cast< double >(val5); ecode6 = SWIG_AsVal_double(swig_obj[5], &val6); if (!SWIG_IsOK(ecode6)) {
     SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Vina_set_vinardo_weights" "', argument " "6"" of type '" "double""'"); }
-    arg6 = static_cast< double >(val6); (arg1)->set_vinardo_weights(arg2,arg3,arg4,arg5,arg6); resultobj = SWIG_Py_Void();
+    arg6 = static_cast< double >(val6); { try { (arg1)->set_vinardo_weights(arg2,arg3,arg4,arg5,arg6); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vinardo_weights__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; double arg5 ; void *argp1 = 0 ;
@@ -9660,7 +9931,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_vinardo_weights__SWIG_2(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Vina_set_vinardo_weights" "', argument " "4"" of type '" "double""'"); }
     arg4 = static_cast< double >(val4); ecode5 = SWIG_AsVal_double(swig_obj[4], &val5); if (!SWIG_IsOK(ecode5)) {
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Vina_set_vinardo_weights" "', argument " "5"" of type '" "double""'"); }
-    arg5 = static_cast< double >(val5); (arg1)->set_vinardo_weights(arg2,arg3,arg4,arg5); resultobj = SWIG_Py_Void();
+    arg5 = static_cast< double >(val5); { try { (arg1)->set_vinardo_weights(arg2,arg3,arg4,arg5); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vinardo_weights__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -9674,7 +9946,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_vinardo_weights__SWIG_3(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Vina_set_vinardo_weights" "', argument " "3"" of type '" "double""'"); }
     arg3 = static_cast< double >(val3); ecode4 = SWIG_AsVal_double(swig_obj[3], &val4); if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Vina_set_vinardo_weights" "', argument " "4"" of type '" "double""'"); }
-    arg4 = static_cast< double >(val4); (arg1)->set_vinardo_weights(arg2,arg3,arg4); resultobj = SWIG_Py_Void();
+    arg4 = static_cast< double >(val4); { try { (arg1)->set_vinardo_weights(arg2,arg3,arg4); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vinardo_weights__SWIG_4(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ;
@@ -9685,8 +9958,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_vinardo_weights__SWIG_4(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_set_vinardo_weights" "', argument " "2"" of type '" "double""'"); }
     arg2 = static_cast< double >(val2); ecode3 = SWIG_AsVal_double(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Vina_set_vinardo_weights" "', argument " "3"" of type '" "double""'"); }
-    arg3 = static_cast< double >(val3); (arg1)->set_vinardo_weights(arg2,arg3); resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+    arg3 = static_cast< double >(val3); { try { (arg1)->set_vinardo_weights(arg2,arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vinardo_weights__SWIG_5(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ;
   int ecode2 = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -9694,14 +9967,14 @@ SWIGINTERN PyObject *_wrap_Vina_set_vinardo_weights__SWIG_5(PyObject *SWIGUNUSED
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_set_vinardo_weights" "', argument " "1"" of type '" "Vina *""'");  }
    arg1 = reinterpret_cast< Vina * >(argp1); ecode2 = SWIG_AsVal_double(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_set_vinardo_weights" "', argument " "2"" of type '" "double""'"); }
-    arg2 = static_cast< double >(val2); (arg1)->set_vinardo_weights(arg2); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+    arg2 = static_cast< double >(val2); { try { (arg1)->set_vinardo_weights(arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vinardo_weights__SWIG_6(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_set_vinardo_weights" "', argument " "1"" of type '" "Vina *""'");  }
-   arg1 = reinterpret_cast< Vina * >(argp1); (arg1)->set_vinardo_weights(); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+   arg1 = reinterpret_cast< Vina * >(argp1); { try { (arg1)->set_vinardo_weights(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_vinardo_weights(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[8] = { 0}
   ; if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_set_vinardo_weights", 0, 7, argv))) SWIG_fail; --argc; if (argc == 1) {
     PyObject *retobj = _wrap_Vina_set_vinardo_weights__SWIG_6(self, argc, argv);
@@ -9743,7 +10016,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights__SWIG_0(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Vina_set_ad4_weights" "', argument " "6"" of type '" "double""'"); }
     arg6 = static_cast< double >(val6); ecode7 = SWIG_AsVal_double(swig_obj[6], &val7); if (!SWIG_IsOK(ecode7)) {
     SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "Vina_set_ad4_weights" "', argument " "7"" of type '" "double""'"); }
-    arg7 = static_cast< double >(val7); (arg1)->set_ad4_weights(arg2,arg3,arg4,arg5,arg6,arg7); resultobj = SWIG_Py_Void();
+    arg7 = static_cast< double >(val7); { try { (arg1)->set_ad4_weights(arg2,arg3,arg4,arg5,arg6,arg7); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; double arg5 ; double arg6 ;
@@ -9761,7 +10035,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights__SWIG_1(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Vina_set_ad4_weights" "', argument " "5"" of type '" "double""'"); }
     arg5 = static_cast< double >(val5); ecode6 = SWIG_AsVal_double(swig_obj[5], &val6); if (!SWIG_IsOK(ecode6)) {
     SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Vina_set_ad4_weights" "', argument " "6"" of type '" "double""'"); }
-    arg6 = static_cast< double >(val6); (arg1)->set_ad4_weights(arg2,arg3,arg4,arg5,arg6); resultobj = SWIG_Py_Void();
+    arg6 = static_cast< double >(val6); { try { (arg1)->set_ad4_weights(arg2,arg3,arg4,arg5,arg6); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; double arg5 ; void *argp1 = 0 ;
@@ -9777,7 +10052,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights__SWIG_2(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Vina_set_ad4_weights" "', argument " "4"" of type '" "double""'"); }
     arg4 = static_cast< double >(val4); ecode5 = SWIG_AsVal_double(swig_obj[4], &val5); if (!SWIG_IsOK(ecode5)) {
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Vina_set_ad4_weights" "', argument " "5"" of type '" "double""'"); }
-    arg5 = static_cast< double >(val5); (arg1)->set_ad4_weights(arg2,arg3,arg4,arg5); resultobj = SWIG_Py_Void();
+    arg5 = static_cast< double >(val5); { try { (arg1)->set_ad4_weights(arg2,arg3,arg4,arg5); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -9791,8 +10067,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights__SWIG_3(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Vina_set_ad4_weights" "', argument " "3"" of type '" "double""'"); }
     arg3 = static_cast< double >(val3); ecode4 = SWIG_AsVal_double(swig_obj[3], &val4); if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Vina_set_ad4_weights" "', argument " "4"" of type '" "double""'"); }
-    arg4 = static_cast< double >(val4); (arg1)->set_ad4_weights(arg2,arg3,arg4); resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+    arg4 = static_cast< double >(val4); { try { (arg1)->set_ad4_weights(arg2,arg3,arg4); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights__SWIG_4(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ;
   int ecode2 = 0 ; double val3 ; int ecode3 = 0 ; if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
@@ -9802,8 +10078,8 @@ SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights__SWIG_4(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_set_ad4_weights" "', argument " "2"" of type '" "double""'"); }
     arg2 = static_cast< double >(val2); ecode3 = SWIG_AsVal_double(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Vina_set_ad4_weights" "', argument " "3"" of type '" "double""'"); }
-    arg3 = static_cast< double >(val3); (arg1)->set_ad4_weights(arg2,arg3); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+    arg3 = static_cast< double >(val3); { try { (arg1)->set_ad4_weights(arg2,arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights__SWIG_5(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ;
   int ecode2 = 0 ; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -9811,14 +10087,14 @@ SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights__SWIG_5(PyObject *SWIGUNUSEDPARM
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_set_ad4_weights" "', argument " "1"" of type '" "Vina *""'");  }
    arg1 = reinterpret_cast< Vina * >(argp1); ecode2 = SWIG_AsVal_double(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_set_ad4_weights" "', argument " "2"" of type '" "double""'"); }
-    arg2 = static_cast< double >(val2); (arg1)->set_ad4_weights(arg2); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+    arg2 = static_cast< double >(val2); { try { (arg1)->set_ad4_weights(arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights__SWIG_6(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_set_ad4_weights" "', argument " "1"" of type '" "Vina *""'");  }
-   arg1 = reinterpret_cast< Vina * >(argp1); (arg1)->set_ad4_weights(); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+   arg1 = reinterpret_cast< Vina * >(argp1); { try { (arg1)->set_ad4_weights(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[8] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_set_ad4_weights", 0, 7, argv))) SWIG_fail; --argc; if (argc == 1) {
     PyObject *retobj = _wrap_Vina_set_ad4_weights__SWIG_6(self, argc, argv);
@@ -9840,6 +10116,36 @@ SWIGINTERN PyObject *_wrap_Vina_set_ad4_weights(PyObject *self, PyObject *args) 
   "    Vina::set_ad4_weights(double,double,double,double,double)\n" "    Vina::set_ad4_weights(double,double,double,double)\n"
   "    Vina::set_ad4_weights(double,double,double)\n" "    Vina::set_ad4_weights(double,double)\n"
   "    Vina::set_ad4_weights(double)\n" "    Vina::set_ad4_weights()\n"); return 0; }
+SWIGINTERN PyObject *_wrap_Vina_grid_dimensions_from_ligand__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ;
+  int ecode2 = 0 ; std::vector< double,std::allocator< double > > result; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_grid_dimensions_from_ligand" "', argument " "1"" of type '" "Vina *""'");  }
+   arg1 = reinterpret_cast< Vina * >(argp1); ecode2 = SWIG_AsVal_double(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_grid_dimensions_from_ligand" "', argument " "2"" of type '" "double""'"); }
+    arg2 = static_cast< double >(val2); { try { result = (arg1)->grid_dimensions_from_ligand(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
+  resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(result)); return resultobj; fail:
+  return NULL; }
+SWIGINTERN PyObject *_wrap_Vina_grid_dimensions_from_ligand__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
+  std::vector< double,std::allocator< double > > result; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_grid_dimensions_from_ligand" "', argument " "1"" of type '" "Vina *""'");  }
+   arg1 = reinterpret_cast< Vina * >(argp1); { try { result = (arg1)->grid_dimensions_from_ligand(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
+  resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(result)); return resultobj; fail:
+  return NULL; }
+SWIGINTERN PyObject *_wrap_Vina_grid_dimensions_from_ligand(PyObject *self, PyObject *args) { Py_ssize_t argc;
+  PyObject *argv[3] = { 0} ;
+  if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_grid_dimensions_from_ligand", 0, 2, argv))) SWIG_fail; --argc;
+  if (argc == 1) { PyObject *retobj = _wrap_Vina_grid_dimensions_from_ligand__SWIG_1(self, argc, argv);
+    if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  if (argc == 2) {
+    PyObject *retobj = _wrap_Vina_grid_dimensions_from_ligand__SWIG_0(self, argc, argv);
+    if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Vina_grid_dimensions_from_ligand'.\n"
+  "  Possible C/C++ prototypes are:\n" "    Vina::grid_dimensions_from_ligand(double)\n"
+  "    Vina::grid_dimensions_from_ligand()\n"); return 0; }
 SWIGINTERN PyObject *_wrap_Vina_compute_vina_maps__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; double arg5 ; double arg6 ;
   double arg7 ; double arg8 ; bool arg9 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ; int ecode2 = 0 ; double val3 ;
@@ -9863,8 +10169,9 @@ SWIGINTERN PyObject *_wrap_Vina_compute_vina_maps__SWIG_0(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "Vina_compute_vina_maps" "', argument " "8"" of type '" "double""'"); }
     arg8 = static_cast< double >(val8); ecode9 = SWIG_AsVal_bool(swig_obj[8], &val9); if (!SWIG_IsOK(ecode9)) {
     SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "Vina_compute_vina_maps" "', argument " "9"" of type '" "bool""'"); }
-    arg9 = static_cast< bool >(val9); (arg1)->compute_vina_maps(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
-  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg9 = static_cast< bool >(val9); { try { (arg1)->compute_vina_maps(arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_compute_vina_maps__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; double arg5 ; double arg6 ;
   double arg7 ; double arg8 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ; int ecode2 = 0 ; double val3 ; int ecode3 = 0 ;
@@ -9886,8 +10193,9 @@ SWIGINTERN PyObject *_wrap_Vina_compute_vina_maps__SWIG_1(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "Vina_compute_vina_maps" "', argument " "7"" of type '" "double""'"); }
     arg7 = static_cast< double >(val7); ecode8 = SWIG_AsVal_double(swig_obj[7], &val8); if (!SWIG_IsOK(ecode8)) {
     SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "Vina_compute_vina_maps" "', argument " "8"" of type '" "double""'"); }
-    arg8 = static_cast< double >(val8); (arg1)->compute_vina_maps(arg2,arg3,arg4,arg5,arg6,arg7,arg8);
-  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+    arg8 = static_cast< double >(val8); { try { (arg1)->compute_vina_maps(arg2,arg3,arg4,arg5,arg6,arg7,arg8); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_compute_vina_maps__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; double arg3 ; double arg4 ; double arg5 ; double arg6 ;
   double arg7 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ; int ecode2 = 0 ; double val3 ; int ecode3 = 0 ; double val4 ;
@@ -9907,7 +10215,8 @@ SWIGINTERN PyObject *_wrap_Vina_compute_vina_maps__SWIG_2(PyObject *SWIGUNUSEDPA
     SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "Vina_compute_vina_maps" "', argument " "6"" of type '" "double""'"); }
     arg6 = static_cast< double >(val6); ecode7 = SWIG_AsVal_double(swig_obj[6], &val7); if (!SWIG_IsOK(ecode7)) {
     SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "Vina_compute_vina_maps" "', argument " "7"" of type '" "double""'"); }
-    arg7 = static_cast< double >(val7); (arg1)->compute_vina_maps(arg2,arg3,arg4,arg5,arg6,arg7); resultobj = SWIG_Py_Void();
+    arg7 = static_cast< double >(val7); { try { (arg1)->compute_vina_maps(arg2,arg3,arg4,arg5,arg6,arg7); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_compute_vina_maps(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[10] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_compute_vina_maps", 0, 9, argv))) SWIG_fail; --argc; if (argc == 7) {
@@ -9929,8 +10238,9 @@ SWIGINTERN PyObject *_wrap_Vina_load_maps(PyObject *SWIGUNUSEDPARM(self), PyObje
   arg1 = reinterpret_cast< Vina * >(argp1); { std::string *ptr = (std::string *)0;
     int res = SWIG_AsPtr_std_string(swig_obj[1], &ptr); if (!SWIG_IsOK(res) || !ptr) {
       SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Vina_load_maps" "', argument " "2"" of type '" "std::string""'");  }
-     arg2 = *ptr; if (SWIG_IsNewObj(res)) delete ptr; }  (arg1)->load_maps(arg2); resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+     arg2 = *ptr; if (SWIG_IsNewObj(res)) delete ptr; }  { try { (arg1)->load_maps(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_randomize__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; int arg2 ; void *argp1 = 0 ; int res1 = 0 ; int val2 ; int ecode2 = 0 ;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail; res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 );
@@ -9938,13 +10248,14 @@ SWIGINTERN PyObject *_wrap_Vina_randomize__SWIG_0(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_randomize" "', argument " "1"" of type '" "Vina *""'");  } 
   arg1 = reinterpret_cast< Vina * >(argp1); ecode2 = SWIG_AsVal_int(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_randomize" "', argument " "2"" of type '" "int""'"); }  
-  arg2 = static_cast< int >(val2); (arg1)->randomize(arg2); resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
+  arg2 = static_cast< int >(val2); { try { (arg1)->randomize(arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_randomize__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_randomize" "', argument " "1"" of type '" "Vina *""'");  } 
-  arg1 = reinterpret_cast< Vina * >(argp1); (arg1)->randomize(); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+  arg1 = reinterpret_cast< Vina * >(argp1); { try { (arg1)->randomize(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_randomize(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_randomize", 0, 2, argv))) SWIG_fail; --argc; if (argc == 1) {
     PyObject *retobj = _wrap_Vina_randomize__SWIG_1(self, argc, argv);
@@ -9953,14 +10264,33 @@ SWIGINTERN PyObject *_wrap_Vina_randomize(PyObject *self, PyObject *args) { Py_s
     if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  fail:
   SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Vina_randomize'.\n"
   "  Possible C/C++ prototypes are:\n" "    Vina::randomize(int const)\n" "    Vina::randomize()\n"); return 0; }
-SWIGINTERN PyObject *_wrap_Vina_score(PyObject *SWIGUNUSEDPARM(self), PyObject *args) { PyObject *resultobj = 0;
-  Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; PyObject *swig_obj[1] ;
-  std::vector< double,std::allocator< double > > result; if (!args) SWIG_fail; swig_obj[0] = args;
+SWIGINTERN PyObject *_wrap_Vina_score__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ;
+  std::vector< double,std::allocator< double > > result; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_score" "', argument " "1"" of type '" "Vina *""'");  } 
-  arg1 = reinterpret_cast< Vina * >(argp1); result = (arg1)->score();
+  arg1 = reinterpret_cast< Vina * >(argp1); { try { result = (arg1)->score(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(result)); return resultobj; fail:
   return NULL; }
+SWIGINTERN PyObject *_wrap_Vina_score__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
+  PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; double arg2 ; void *argp1 = 0 ; int res1 = 0 ; double val2 ;
+  int ecode2 = 0 ; std::vector< double,std::allocator< double > > result; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_score" "', argument " "1"" of type '" "Vina *""'");  } 
+  arg1 = reinterpret_cast< Vina * >(argp1); ecode2 = SWIG_AsVal_double(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_score" "', argument " "2"" of type '" "double""'"); }  
+  arg2 = static_cast< double >(val2); { try { result = (arg1)->score(arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
+  resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(result)); return resultobj; fail:
+  return NULL; }
+SWIGINTERN PyObject *_wrap_Vina_score(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0} ;
+  if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_score", 0, 2, argv))) SWIG_fail; --argc; if (argc == 1) {
+    PyObject *retobj = _wrap_Vina_score__SWIG_0(self, argc, argv); if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj;
+    SWIG_fail;}  if (argc == 2) { PyObject *retobj = _wrap_Vina_score__SWIG_1(self, argc, argv);
+    if (!SWIG_Python_TypeErrorOccurred(retobj)) return retobj; SWIG_fail;}  fail:
+  SWIG_Python_RaiseOrModifyTypeError("Wrong number or type of arguments for overloaded function 'Vina_score'.\n"
+  "  Possible C/C++ prototypes are:\n" "    Vina::score()\n" "    Vina::score(double)\n"); return 0; }
 SWIGINTERN PyObject *_wrap_Vina_optimize__SWIG_0(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; int arg2 ; void *argp1 = 0 ; int res1 = 0 ; int val2 ; int ecode2 = 0 ;
   std::vector< double,std::allocator< double > > result; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -9968,7 +10298,8 @@ SWIGINTERN PyObject *_wrap_Vina_optimize__SWIG_0(PyObject *SWIGUNUSEDPARM(self),
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_optimize" "', argument " "1"" of type '" "Vina *""'");  } 
   arg1 = reinterpret_cast< Vina * >(argp1); ecode2 = SWIG_AsVal_int(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_optimize" "', argument " "2"" of type '" "int""'"); }  
-  arg2 = static_cast< int >(val2); result = (arg1)->optimize(arg2);
+  arg2 = static_cast< int >(val2); { try { result = (arg1)->optimize(arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(result)); return resultobj; fail:
   return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_optimize__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -9976,7 +10307,8 @@ SWIGINTERN PyObject *_wrap_Vina_optimize__SWIG_1(PyObject *SWIGUNUSEDPARM(self),
   std::vector< double,std::allocator< double > > result; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_optimize" "', argument " "1"" of type '" "Vina *""'");  } 
-  arg1 = reinterpret_cast< Vina * >(argp1); result = (arg1)->optimize();
+  arg1 = reinterpret_cast< Vina * >(argp1); { try { result = (arg1)->optimize(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = swig::from(static_cast< std::vector< double,std::allocator< double > > >(result)); return resultobj; fail:
   return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_optimize(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[3] = { 0} ;
@@ -10000,8 +10332,8 @@ SWIGINTERN PyObject *_wrap_Vina_global_search__SWIG_0(PyObject *SWIGUNUSEDPARM(s
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Vina_global_search" "', argument " "4"" of type '" "double""'"); }
     arg4 = static_cast< double >(val4); ecode5 = SWIG_AsVal_int(swig_obj[4], &val5); if (!SWIG_IsOK(ecode5)) {
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "Vina_global_search" "', argument " "5"" of type '" "int""'"); }  
-  arg5 = static_cast< int >(val5); (arg1)->global_search(arg2,arg3,arg4,arg5); resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+  arg5 = static_cast< int >(val5); { try { (arg1)->global_search(arg2,arg3,arg4,arg5); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_global_search__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; int arg2 ; int arg3 ; double arg4 ; void *argp1 = 0 ; int res1 = 0 ;
   int val2 ; int ecode2 = 0 ; int val3 ; int ecode3 = 0 ; double val4 ; int ecode4 = 0 ;
@@ -10014,8 +10346,8 @@ SWIGINTERN PyObject *_wrap_Vina_global_search__SWIG_1(PyObject *SWIGUNUSEDPARM(s
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Vina_global_search" "', argument " "3"" of type '" "int""'"); }  
   arg3 = static_cast< int >(val3); ecode4 = SWIG_AsVal_double(swig_obj[3], &val4); if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Vina_global_search" "', argument " "4"" of type '" "double""'"); }
-    arg4 = static_cast< double >(val4); (arg1)->global_search(arg2,arg3,arg4); resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+    arg4 = static_cast< double >(val4); { try { (arg1)->global_search(arg2,arg3,arg4); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_global_search__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; int arg2 ; int arg3 ; void *argp1 = 0 ; int res1 = 0 ; int val2 ;
   int ecode2 = 0 ; int val3 ; int ecode3 = 0 ; if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
@@ -10025,8 +10357,8 @@ SWIGINTERN PyObject *_wrap_Vina_global_search__SWIG_2(PyObject *SWIGUNUSEDPARM(s
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_global_search" "', argument " "2"" of type '" "int""'"); }  
   arg2 = static_cast< int >(val2); ecode3 = SWIG_AsVal_int(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Vina_global_search" "', argument " "3"" of type '" "int""'"); }  
-  arg3 = static_cast< int >(val3); (arg1)->global_search(arg2,arg3); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+  arg3 = static_cast< int >(val3); { try { (arg1)->global_search(arg2,arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_global_search__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; int arg2 ; void *argp1 = 0 ; int res1 = 0 ; int val2 ; int ecode2 = 0 ;
   if ((nobjs < 2) || (nobjs > 2)) SWIG_fail; res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 );
@@ -10034,14 +10366,14 @@ SWIGINTERN PyObject *_wrap_Vina_global_search__SWIG_3(PyObject *SWIGUNUSEDPARM(s
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_global_search" "', argument " "1"" of type '" "Vina *""'");  } 
   arg1 = reinterpret_cast< Vina * >(argp1); ecode2 = SWIG_AsVal_int(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_global_search" "', argument " "2"" of type '" "int""'"); }  
-  arg2 = static_cast< int >(val2); (arg1)->global_search(arg2); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+  arg2 = static_cast< int >(val2); { try { (arg1)->global_search(arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_global_search__SWIG_4(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_global_search" "', argument " "1"" of type '" "Vina *""'");  } 
-  arg1 = reinterpret_cast< Vina * >(argp1); (arg1)->global_search(); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+  arg1 = reinterpret_cast< Vina * >(argp1); { try { (arg1)->global_search(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_global_search(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[6] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_global_search", 0, 5, argv))) SWIG_fail; --argc; if (argc == 1) {
     PyObject *retobj = _wrap_Vina_global_search__SWIG_4(self, argc, argv);
@@ -10067,8 +10399,9 @@ SWIGINTERN PyObject *_wrap_Vina_get_poses__SWIG_0(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_get_poses" "', argument " "2"" of type '" "int""'"); }  
   arg2 = static_cast< int >(val2); ecode3 = SWIG_AsVal_double(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Vina_get_poses" "', argument " "3"" of type '" "double""'"); }  
-  arg3 = static_cast< double >(val3); result = (arg1)->get_poses(arg2,arg3);
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result)); return resultobj; fail: return NULL; }
+  arg3 = static_cast< double >(val3); { try { result = (arg1)->get_poses(arg2,arg3); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_get_poses__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; int arg2 ; void *argp1 = 0 ; int res1 = 0 ; int val2 ; int ecode2 = 0 ;
   std::string result; if ((nobjs < 2) || (nobjs > 2)) SWIG_fail;
@@ -10076,15 +10409,17 @@ SWIGINTERN PyObject *_wrap_Vina_get_poses__SWIG_1(PyObject *SWIGUNUSEDPARM(self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_get_poses" "', argument " "1"" of type '" "Vina *""'");  } 
   arg1 = reinterpret_cast< Vina * >(argp1); ecode2 = SWIG_AsVal_int(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_get_poses" "', argument " "2"" of type '" "int""'"); }  
-  arg2 = static_cast< int >(val2); result = (arg1)->get_poses(arg2);
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result)); return resultobj; fail: return NULL; }
+  arg2 = static_cast< int >(val2); { try { result = (arg1)->get_poses(arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_get_poses__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; std::string result;
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail; res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_get_poses" "', argument " "1"" of type '" "Vina *""'");  } 
-  arg1 = reinterpret_cast< Vina * >(argp1); result = (arg1)->get_poses();
-  resultobj = SWIG_From_std_string(static_cast< std::string >(result)); return resultobj; fail: return NULL; }
+  arg1 = reinterpret_cast< Vina * >(argp1); { try { result = (arg1)->get_poses(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_get_poses(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_get_poses", 0, 3, argv))) SWIG_fail; --argc; if (argc == 1) {
     PyObject *retobj = _wrap_Vina_get_poses__SWIG_2(self, argc, argv);
@@ -10107,7 +10442,8 @@ SWIGINTERN PyObject *_wrap_Vina_get_poses_coordinates__SWIG_0(PyObject *SWIGUNUS
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_get_poses_coordinates" "', argument " "2"" of type '" "int""'"); }
     arg2 = static_cast< int >(val2); ecode3 = SWIG_AsVal_double(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Vina_get_poses_coordinates" "', argument " "3"" of type '" "double""'"); }
-    arg3 = static_cast< double >(val3); result = (arg1)->get_poses_coordinates(arg2,arg3);
+    arg3 = static_cast< double >(val3); { try { result = (arg1)->get_poses_coordinates(arg2,arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = swig::from(static_cast< std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > >(result));
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_get_poses_coordinates__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -10118,7 +10454,8 @@ SWIGINTERN PyObject *_wrap_Vina_get_poses_coordinates__SWIG_1(PyObject *SWIGUNUS
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_get_poses_coordinates" "', argument " "1"" of type '" "Vina *""'");  }
    arg1 = reinterpret_cast< Vina * >(argp1); ecode2 = SWIG_AsVal_int(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_get_poses_coordinates" "', argument " "2"" of type '" "int""'"); }
-    arg2 = static_cast< int >(val2); result = (arg1)->get_poses_coordinates(arg2);
+    arg2 = static_cast< int >(val2); { try { result = (arg1)->get_poses_coordinates(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = swig::from(static_cast< std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > >(result));
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_get_poses_coordinates__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -10127,7 +10464,8 @@ SWIGINTERN PyObject *_wrap_Vina_get_poses_coordinates__SWIG_2(PyObject *SWIGUNUS
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail; res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_get_poses_coordinates" "', argument " "1"" of type '" "Vina *""'");  }
-   arg1 = reinterpret_cast< Vina * >(argp1); result = (arg1)->get_poses_coordinates();
+   arg1 = reinterpret_cast< Vina * >(argp1); { try { result = (arg1)->get_poses_coordinates(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = swig::from(static_cast< std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > >(result));
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_get_poses_coordinates(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0}
@@ -10152,7 +10490,8 @@ SWIGINTERN PyObject *_wrap_Vina_get_poses_energies__SWIG_0(PyObject *SWIGUNUSEDP
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_get_poses_energies" "', argument " "2"" of type '" "int""'"); }
     arg2 = static_cast< int >(val2); ecode3 = SWIG_AsVal_double(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Vina_get_poses_energies" "', argument " "3"" of type '" "double""'"); }
-    arg3 = static_cast< double >(val3); result = (arg1)->get_poses_energies(arg2,arg3);
+    arg3 = static_cast< double >(val3); { try { result = (arg1)->get_poses_energies(arg2,arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = swig::from(static_cast< std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > >(result));
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_get_poses_energies__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -10163,7 +10502,8 @@ SWIGINTERN PyObject *_wrap_Vina_get_poses_energies__SWIG_1(PyObject *SWIGUNUSEDP
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_get_poses_energies" "', argument " "1"" of type '" "Vina *""'");  }
    arg1 = reinterpret_cast< Vina * >(argp1); ecode2 = SWIG_AsVal_int(swig_obj[1], &val2); if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vina_get_poses_energies" "', argument " "2"" of type '" "int""'"); }
-    arg2 = static_cast< int >(val2); result = (arg1)->get_poses_energies(arg2);
+    arg2 = static_cast< int >(val2); { try { result = (arg1)->get_poses_energies(arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = swig::from(static_cast< std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > >(result));
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_get_poses_energies__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -10172,7 +10512,8 @@ SWIGINTERN PyObject *_wrap_Vina_get_poses_energies__SWIG_2(PyObject *SWIGUNUSEDP
   if ((nobjs < 1) || (nobjs > 1)) SWIG_fail; res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_get_poses_energies" "', argument " "1"" of type '" "Vina *""'");  }
-   arg1 = reinterpret_cast< Vina * >(argp1); result = (arg1)->get_poses_energies();
+   arg1 = reinterpret_cast< Vina * >(argp1); { try { result = (arg1)->get_poses_energies(); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  } 
   resultobj = swig::from(static_cast< std::vector< std::vector< double,std::allocator< double > >,std::allocator< std::vector< double,std::allocator< double > > > > >(result));
   return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_get_poses_energies(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0} ;
@@ -10201,7 +10542,8 @@ SWIGINTERN PyObject *_wrap_Vina_write_pose__SWIG_0(PyObject *SWIGUNUSEDPARM(self
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Vina_write_pose" "', argument " "3"" of type '" "std::string const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_write_pose" "', argument " "3"" of type '" "std::string const &""'"); }
-     arg3 = ptr; }  (arg1)->write_pose((std::string const &)*arg2,(std::string const &)*arg3); resultobj = SWIG_Py_Void();
+     arg3 = ptr; }  { try { (arg1)->write_pose((std::string const &)*arg2,(std::string const &)*arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res2)) delete arg2; if (SWIG_IsNewObj(res3)) delete arg3; return resultobj; fail:
   if (SWIG_IsNewObj(res2)) delete arg2; if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_write_pose__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -10214,8 +10556,9 @@ SWIGINTERN PyObject *_wrap_Vina_write_pose__SWIG_1(PyObject *SWIGUNUSEDPARM(self
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Vina_write_pose" "', argument " "2"" of type '" "std::string const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_write_pose" "', argument " "2"" of type '" "std::string const &""'"); }
-     arg2 = ptr; }  (arg1)->write_pose((std::string const &)*arg2); resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
+     arg2 = ptr; }  { try { (arg1)->write_pose((std::string const &)*arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_write_pose(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[4] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_write_pose", 0, 3, argv))) SWIG_fail; --argc; if (argc == 2) {
     PyObject *retobj = _wrap_Vina_write_pose__SWIG_1(self, argc, argv);
@@ -10240,7 +10583,8 @@ SWIGINTERN PyObject *_wrap_Vina_write_poses__SWIG_0(PyObject *SWIGUNUSEDPARM(sel
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Vina_write_poses" "', argument " "3"" of type '" "int""'"); }  
   arg3 = static_cast< int >(val3); ecode4 = SWIG_AsVal_double(swig_obj[3], &val4); if (!SWIG_IsOK(ecode4)) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "Vina_write_poses" "', argument " "4"" of type '" "double""'"); }  
-  arg4 = static_cast< double >(val4); (arg1)->write_poses((std::string const &)*arg2,arg3,arg4); resultobj = SWIG_Py_Void();
+  arg4 = static_cast< double >(val4); { try { (arg1)->write_poses((std::string const &)*arg2,arg3,arg4); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_write_poses__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; std::string *arg2 = 0 ; int arg3 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -10254,7 +10598,8 @@ SWIGINTERN PyObject *_wrap_Vina_write_poses__SWIG_1(PyObject *SWIGUNUSEDPARM(sel
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_write_poses" "', argument " "2"" of type '" "std::string const &""'"); }
      arg2 = ptr; }  ecode3 = SWIG_AsVal_int(swig_obj[2], &val3); if (!SWIG_IsOK(ecode3)) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "Vina_write_poses" "', argument " "3"" of type '" "int""'"); }  
-  arg3 = static_cast< int >(val3); (arg1)->write_poses((std::string const &)*arg2,arg3); resultobj = SWIG_Py_Void();
+  arg3 = static_cast< int >(val3); { try { (arg1)->write_poses((std::string const &)*arg2,arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_write_poses__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; std::string *arg2 = 0 ; void *argp1 = 0 ; int res1 = 0 ;
@@ -10266,8 +10611,9 @@ SWIGINTERN PyObject *_wrap_Vina_write_poses__SWIG_2(PyObject *SWIGUNUSEDPARM(sel
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Vina_write_poses" "', argument " "2"" of type '" "std::string const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_write_poses" "', argument " "2"" of type '" "std::string const &""'"); }
-     arg2 = ptr; }  (arg1)->write_poses((std::string const &)*arg2); resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
+     arg2 = ptr; }  { try { (arg1)->write_poses((std::string const &)*arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_write_poses(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[5] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_write_poses", 0, 4, argv))) SWIG_fail; --argc; if (argc == 2) {
     PyObject *retobj = _wrap_Vina_write_poses__SWIG_2(self, argc, argv);
@@ -10305,12 +10651,13 @@ SWIGINTERN PyObject *_wrap_Vina_write_maps__SWIG_0(PyObject *SWIGUNUSEDPARM(self
       SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "Vina_write_maps" "', argument " "5"" of type '" "std::string const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_write_maps" "', argument " "5"" of type '" "std::string const &""'"); }
-     arg5 = ptr; } 
-  (arg1)->write_maps((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5);
-  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res2)) delete arg2; if (SWIG_IsNewObj(res3)) delete arg3;
-  if (SWIG_IsNewObj(res4)) delete arg4; if (SWIG_IsNewObj(res5)) delete arg5; return resultobj; fail:
+     arg5 = ptr; }  { try {
+      (arg1)->write_maps((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4,(std::string const &)*arg5); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res2)) delete arg2; if (SWIG_IsNewObj(res3)) delete arg3; if (SWIG_IsNewObj(res4)) delete arg4;
-  if (SWIG_IsNewObj(res5)) delete arg5; return NULL; }
+  if (SWIG_IsNewObj(res5)) delete arg5; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2;
+  if (SWIG_IsNewObj(res3)) delete arg3; if (SWIG_IsNewObj(res4)) delete arg4; if (SWIG_IsNewObj(res5)) delete arg5;
+  return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_write_maps__SWIG_1(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; std::string *arg2 = 0 ; std::string *arg3 = 0 ; std::string *arg4 = 0 ;
   void *argp1 = 0 ; int res1 = 0 ; int res2 = SWIG_OLDOBJ ; int res3 = SWIG_OLDOBJ ; int res4 = SWIG_OLDOBJ ;
@@ -10332,10 +10679,12 @@ SWIGINTERN PyObject *_wrap_Vina_write_maps__SWIG_1(PyObject *SWIGUNUSEDPARM(self
       SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "Vina_write_maps" "', argument " "4"" of type '" "std::string const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_write_maps" "', argument " "4"" of type '" "std::string const &""'"); }
-     arg4 = ptr; }  (arg1)->write_maps((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4);
-  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res2)) delete arg2; if (SWIG_IsNewObj(res3)) delete arg3;
-  if (SWIG_IsNewObj(res4)) delete arg4; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2;
-  if (SWIG_IsNewObj(res3)) delete arg3; if (SWIG_IsNewObj(res4)) delete arg4; return NULL; }
+     arg4 = ptr; }  { try {
+      (arg1)->write_maps((std::string const &)*arg2,(std::string const &)*arg3,(std::string const &)*arg4); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  if (SWIG_IsNewObj(res2)) delete arg2; if (SWIG_IsNewObj(res3)) delete arg3; if (SWIG_IsNewObj(res4)) delete arg4;
+  return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; if (SWIG_IsNewObj(res3)) delete arg3;
+  if (SWIG_IsNewObj(res4)) delete arg4; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_write_maps__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; std::string *arg2 = 0 ; std::string *arg3 = 0 ; void *argp1 = 0 ;
   int res1 = 0 ; int res2 = SWIG_OLDOBJ ; int res3 = SWIG_OLDOBJ ; if ((nobjs < 3) || (nobjs > 3)) SWIG_fail;
@@ -10351,7 +10700,8 @@ SWIGINTERN PyObject *_wrap_Vina_write_maps__SWIG_2(PyObject *SWIGUNUSEDPARM(self
       SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "Vina_write_maps" "', argument " "3"" of type '" "std::string const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_write_maps" "', argument " "3"" of type '" "std::string const &""'"); }
-     arg3 = ptr; }  (arg1)->write_maps((std::string const &)*arg2,(std::string const &)*arg3); resultobj = SWIG_Py_Void();
+     arg3 = ptr; }  { try { (arg1)->write_maps((std::string const &)*arg2,(std::string const &)*arg3); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
   if (SWIG_IsNewObj(res2)) delete arg2; if (SWIG_IsNewObj(res3)) delete arg3; return resultobj; fail:
   if (SWIG_IsNewObj(res2)) delete arg2; if (SWIG_IsNewObj(res3)) delete arg3; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_write_maps__SWIG_3(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
@@ -10364,14 +10714,15 @@ SWIGINTERN PyObject *_wrap_Vina_write_maps__SWIG_3(PyObject *SWIGUNUSEDPARM(self
       SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "Vina_write_maps" "', argument " "2"" of type '" "std::string const &""'"); }
      if (!ptr) {
       SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "Vina_write_maps" "', argument " "2"" of type '" "std::string const &""'"); }
-     arg2 = ptr; }  (arg1)->write_maps((std::string const &)*arg2); resultobj = SWIG_Py_Void();
-  if (SWIG_IsNewObj(res2)) delete arg2; return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
+     arg2 = ptr; }  { try { (arg1)->write_maps((std::string const &)*arg2); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); if (SWIG_IsNewObj(res2)) delete arg2;
+  return resultobj; fail: if (SWIG_IsNewObj(res2)) delete arg2; return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_write_maps__SWIG_4(PyObject *SWIGUNUSEDPARM(self), Py_ssize_t nobjs, PyObject **swig_obj) {
   PyObject *resultobj = 0; Vina *arg1 = (Vina *) 0 ; void *argp1 = 0 ; int res1 = 0 ; if ((nobjs < 1) || (nobjs > 1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_Vina, 0 |  0 ); if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vina_write_maps" "', argument " "1"" of type '" "Vina *""'");  } 
-  arg1 = reinterpret_cast< Vina * >(argp1); (arg1)->write_maps(); resultobj = SWIG_Py_Void(); return resultobj; fail:
-  return NULL; }
+  arg1 = reinterpret_cast< Vina * >(argp1); { try { (arg1)->write_maps(); }  catch (const pdbqt_parse_error& e) {
+      SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void(); return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *_wrap_Vina_write_maps(PyObject *self, PyObject *args) { Py_ssize_t argc; PyObject *argv[6] = { 0} ;
   if (!(argc = SWIG_Python_UnpackTuple(args, "Vina_write_maps", 0, 5, argv))) SWIG_fail; --argc; if (argc == 1) {
     PyObject *retobj = _wrap_Vina_write_maps__SWIG_4(self, argc, argv);
@@ -10399,8 +10750,9 @@ SWIGINTERN PyObject *_wrap_Vina_show_score(PyObject *SWIGUNUSEDPARM(self), PyObj
     std::vector< double,std::allocator< double > > *ptr = (std::vector< double,std::allocator< double > > *)0;
     int res = swig::asptr(swig_obj[1], &ptr); if (!SWIG_IsOK(res) || !ptr) {
       SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "Vina_show_score" "', argument " "2"" of type '" "std::vector< double,std::allocator< double > > const""'");  }
-     arg2 = *ptr; if (SWIG_IsNewObj(res)) delete ptr; }  (arg1)->show_score(arg2); resultobj = SWIG_Py_Void(); return resultobj;
-  fail: return NULL; }
+     arg2 = *ptr; if (SWIG_IsNewObj(res)) delete ptr; }  { try { (arg1)->show_score(arg2); }
+     catch (const pdbqt_parse_error& e) { SWIG_exception(SWIG_TypeError, e.what()); }  }  resultobj = SWIG_Py_Void();
+  return resultobj; fail: return NULL; }
 SWIGINTERN PyObject *Vina_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *obj;
   if (!SWIG_Python_UnpackTuple(args, "swigregister", 1, 1, &obj)) return NULL;
@@ -10617,10 +10969,11 @@ static PyMethodDef SwigMethods[] = {
 	 { "Vina_set_vina_weights", _wrap_Vina_set_vina_weights, METH_VARARGS, NULL},
 	 { "Vina_set_vinardo_weights", _wrap_Vina_set_vinardo_weights, METH_VARARGS, NULL},
 	 { "Vina_set_ad4_weights", _wrap_Vina_set_ad4_weights, METH_VARARGS, NULL},
+	 { "Vina_grid_dimensions_from_ligand", _wrap_Vina_grid_dimensions_from_ligand, METH_VARARGS, NULL},
 	 { "Vina_compute_vina_maps", _wrap_Vina_compute_vina_maps, METH_VARARGS, NULL},
 	 { "Vina_load_maps", _wrap_Vina_load_maps, METH_VARARGS, NULL},
 	 { "Vina_randomize", _wrap_Vina_randomize, METH_VARARGS, NULL},
-	 { "Vina_score", _wrap_Vina_score, METH_O, NULL},
+	 { "Vina_score", _wrap_Vina_score, METH_VARARGS, NULL},
 	 { "Vina_optimize", _wrap_Vina_optimize, METH_VARARGS, NULL},
 	 { "Vina_global_search", _wrap_Vina_global_search, METH_VARARGS, NULL},
 	 { "Vina_get_poses", _wrap_Vina_get_poses, METH_VARARGS, NULL},
@@ -10653,6 +11006,7 @@ static swig_type_info _swigt__p_std__allocatorT_double_t = {"_p_std__allocatorT_
 static swig_type_info _swigt__p_std__allocatorT_int_t = {"_p_std__allocatorT_int_t", "std::vector< int >::allocator_type *|std::allocator< int > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__allocatorT_std__string_t = {"_p_std__allocatorT_std__string_t", "std::vector< std::string >::allocator_type *|std::allocator< std::string > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t = {"_p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t", "std::vector< std::vector< double > >::allocator_type *|std::allocator< std::vector< double,std::allocator< double > > > *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_std__functionT_void_fdoubleF_t = {"_p_std__functionT_void_fdoubleF_t", "std::function< void (double) > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__invalid_argument = {"_p_std__invalid_argument", "std::invalid_argument *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t = {"_p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t", "std::vector< char const *,std::allocator< char const * > > *|std::vector< char const * > *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_std__vectorT_double_std__allocatorT_double_t_t = {"_p_std__vectorT_double_std__allocatorT_double_t_t", "std::vector< double,std::allocator< double > > *|std::vector< double > *", 0, 0, (void*)0, 0};
@@ -10674,6 +11028,7 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_std__allocatorT_int_t,
   &_swigt__p_std__allocatorT_std__string_t,
   &_swigt__p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t,
+  &_swigt__p_std__functionT_void_fdoubleF_t,
   &_swigt__p_std__invalid_argument,
   &_swigt__p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t,
   &_swigt__p_std__vectorT_double_std__allocatorT_double_t_t,
@@ -10695,6 +11050,7 @@ static swig_cast_info _swigc__p_std__allocatorT_double_t[] = {  {&_swigt__p_std_
 static swig_cast_info _swigc__p_std__allocatorT_int_t[] = {  {&_swigt__p_std__allocatorT_int_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_std__string_t[] = {  {&_swigt__p_std__allocatorT_std__string_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t[] = {  {&_swigt__p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_std__functionT_void_fdoubleF_t[] = {  {&_swigt__p_std__functionT_void_fdoubleF_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__invalid_argument[] = {  {&_swigt__p_std__invalid_argument, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t[] = {  {&_swigt__p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_std__vectorT_double_std__allocatorT_double_t_t[] = {  {&_swigt__p_std__vectorT_double_std__allocatorT_double_t_t, 0, 0, 0},{0, 0, 0, 0}};
@@ -10716,6 +11072,7 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_std__allocatorT_int_t,
   _swigc__p_std__allocatorT_std__string_t,
   _swigc__p_std__allocatorT_std__vectorT_double_std__allocatorT_double_t_t_t,
+  _swigc__p_std__functionT_void_fdoubleF_t,
   _swigc__p_std__invalid_argument,
   _swigc__p_std__vectorT_char_const_p_std__allocatorT_char_const_p_t_t,
   _swigc__p_std__vectorT_double_std__allocatorT_double_t_t,

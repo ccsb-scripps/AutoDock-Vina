@@ -66,6 +66,15 @@
 #include "utils.h"
 %}
 
+%include "exception.i"
+%exception {
+    try {
+        $action
+    } catch (const pdbqt_parse_error& e) {
+        SWIG_exception(SWIG_TypeError, e.what());
+    }
+}
+
 // Set and reset dlopenflags so that plugin loading works fine for "import _openbabel"
 %pythonbegin %{
 import sys
