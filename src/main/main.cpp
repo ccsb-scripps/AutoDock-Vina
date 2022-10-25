@@ -512,7 +512,7 @@ Thank you!\n";
 			}
 			if (repeated_names.size()) {
 				std::cout << "Found " << repeated_names.size() << " repeated filenames in the input batch.\n";
-				std::cout << "The corresponding ouput filenames are suffixed with _instance<n>_out.pdbqt\n";
+				std::cout << "The corresponding output filenames are suffixed with _instance<n>_out.pdbqt\n";
 			}
 		}
 	}
