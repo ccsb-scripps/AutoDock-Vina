@@ -26,10 +26,10 @@
 #include <vector> // ligand paths
 #include <exception>
 #include <boost/program_options.hpp>
-#include <boost/filesystem.hpp>
 #include "vina.h"
 #include "utils.h"
 #include "scoring_function.h"
+#include <unordered_map>
 
 struct usage_error : public std::runtime_error {
 	usage_error(const std::string& message) : std::runtime_error(message) {}
@@ -467,21 +467,32 @@ Thank you!\n";
 				}
 			}
 
-			std::set<std::string> out_names;
+			std::set<std::string> repeated_names;
+			std::set<std::string> raw_names;
+			std::string name;
 			VINA_RANGE(i, 0, batch_ligand_names.size()) {
-				v.set_ligand_from_file(batch_ligand_names[i]);
-
-				out_name = default_output(get_filename(batch_ligand_names[i]), out_dir);
-				if (out_names.count(out_name)) {
-					// Detect filename collisions, but overwrite the first instance.
-					int idx=2;
-					while (boost::filesystem::exists(out_name)) {
-						out_name = default_output(get_filename(batch_ligand_names[i]), out_dir, idx);
-						idx++;
-					}
+				name = get_filename(batch_ligand_names[i]);
+				if (raw_names.count(name)) {
+					repeated_names.insert(name);
 				}
-				out_names.insert(out_name);
+				raw_names.insert(name);
+			}
+			std::unordered_map<std::string, int> instance_counter;
 
+			VINA_RANGE(i, 0, batch_ligand_names.size()) {
+				name = get_filename(batch_ligand_names[i]);
+				if (repeated_names.count(name)) {
+					if (instance_counter.count(name)) {
+						instance_counter[name] += 1;
+					} else {
+						instance_counter[name] = 1;
+					}
+					out_name = default_output(name, out_dir, instance_counter[name]);
+				} else {
+                    std::cout << "Name is not repeated " << name << "\n";
+					out_name = default_output(name, out_dir);
+				}
+				v.set_ligand_from_file(batch_ligand_names[i]);
 				if (randomize_only) {
 					v.randomize();
 					v.write_pose(out_name);
@@ -498,6 +509,10 @@ Thank you!\n";
 					v.global_search(exhaustiveness, num_modes, min_rmsd, max_evals);
 					v.write_poses(out_name, num_modes, energy_range);
 				}
+			}
+			if (repeated_names.size()) {
+				std::cout << "Found " << repeated_names.size() << " repeated filenames in the input batch.\n";
+				std::cout << "The corresponding ouput filenames are suffixed with _instance<n>_out.pdbqt\n";
 			}
 		}
 	}

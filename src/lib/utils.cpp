@@ -65,7 +65,7 @@ std::string default_output(const std::string& input_name, int idx) {
     std::string tmp = input_name;
     if (tmp.size() >= 6 && tmp.substr(tmp.size()-6, 6) == ".pdbqt")
         tmp.resize(tmp.size() - 6); // FIXME?
-    return tmp + "_" + std::to_string(idx) + "_out.pdbqt";
+    return tmp + "_instance" + std::to_string(idx) + "_out.pdbqt";
 }
 
 
