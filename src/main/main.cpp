@@ -21,6 +21,7 @@
 */
 
 #include <iostream>
+#include <set>
 #include <string>
 #include <vector> // ligand paths
 #include <exception>
@@ -29,6 +30,7 @@
 #include "vina.h"
 #include "utils.h"
 #include "scoring_function.h"
+#include <unordered_map>
 
 struct usage_error : public std::runtime_error {
 	usage_error(const std::string& message) : std::runtime_error(message) {}
@@ -466,8 +468,32 @@ Thank you!\n";
 				}
 			}
 
+			std::set<std::string> repeated_names;
+			std::set<std::string> raw_names;
+			std::string name;
+			VINA_RANGE(i, 0, batch_ligand_names.size()) {
+				name = get_filename(batch_ligand_names[i]);
+				if (raw_names.count(name)) {
+					repeated_names.insert(name);
+				}
+				raw_names.insert(name);
+			}
+			std::unordered_map<std::string, int> instance_counter;
+
 			unsigned long int failed_ligand_parsing = 0;
 			VINA_RANGE(i, 0, batch_ligand_names.size()) {
+				name = get_filename(batch_ligand_names[i]);
+				if (repeated_names.count(name)) {
+					if (instance_counter.count(name)) {
+						instance_counter[name] += 1;
+					} else {
+						instance_counter[name] = 1;
+					}
+					out_name = default_output(name, out_dir, instance_counter[name]);
+				} else {
+					out_name = default_output(name, out_dir);
+				}
+
 				try {
 					v.set_ligand_from_file(batch_ligand_names[i]);
 				}
@@ -477,8 +503,6 @@ Thank you!\n";
 					failed_ligand_parsing++;
 					continue;
 				}
-
-				out_name = default_output(get_filename(batch_ligand_names[i]), out_dir);
 
 				if (randomize_only) {
 					v.randomize();
@@ -496,6 +520,10 @@ Thank you!\n";
 					v.global_search(exhaustiveness, num_modes, min_rmsd, max_evals);
 					v.write_poses(out_name, num_modes, energy_range);
 				}
+			}
+			if (repeated_names.size()) {
+				std::cout << "Found " << repeated_names.size() << " repeated filenames in the input batch.\n";
+				std::cout << "The corresponding output filenames are suffixed with _instance<n>_out.pdbqt\n";
 			}
 			if (failed_ligand_parsing) {
 				std::cout << "Failed to parse " << failed_ligand_parsing << " ligands.\n";
