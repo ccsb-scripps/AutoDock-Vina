@@ -24,6 +24,7 @@
 #include <string>
 #include <vector> // ligand paths
 #include <exception>
+#include "parse_error.h"
 #include <boost/program_options.hpp>
 #include "vina.h"
 #include "utils.h"
@@ -465,8 +466,17 @@ Thank you!\n";
 				}
 			}
 
+			unsigned long int failed_ligand_parsing = 0;
 			VINA_RANGE(i, 0, batch_ligand_names.size()) {
-				v.set_ligand_from_file(batch_ligand_names[i]);
+				try {
+					v.set_ligand_from_file(batch_ligand_names[i]);
+				}
+				catch(pdbqt_parse_error& e) {
+					std::cerr << e.what();
+					std::cout << "Failed parsing " << batch_ligand_names[i] << ". Skipping it.\n";
+					failed_ligand_parsing++;
+					continue;
+				}
 
 				out_name = default_output(get_filename(batch_ligand_names[i]), out_dir);
 
@@ -487,9 +497,16 @@ Thank you!\n";
 					v.write_poses(out_name, num_modes, energy_range);
 				}
 			}
+			if (failed_ligand_parsing) {
+				std::cout << "Failed to parse " << failed_ligand_parsing << " ligands.\n";
+			}
 		}
 	}
 
+	catch(pdbqt_parse_error& e) {
+		std::cerr << e.what();
+		return 1;
+	}
 	catch(file_error& e) {
 		std::cerr << "\n\nError: could not open \"" << e.name.string() << "\" for " << (e.in ? "reading" : "writing") << ".\n";
 		return 1;
