@@ -480,7 +480,7 @@ Thank you!\n";
 			}
 			std::unordered_map<std::string, int> instance_counter;
 
-			unsigned long int failed_ligand_parsing = 0;
+			std::size_t failed_ligand_parsing = 0;
 			VINA_RANGE(i, 0, batch_ligand_names.size()) {
 				name = get_filename(batch_ligand_names[i]);
 				if (repeated_names.count(name)) {
