@@ -399,8 +399,11 @@ class Vina:
         """Randomize the input ligand conformation."""
         self._vina.randomize()
     
-    def score(self):
+    def score(self, unbound_energy=None):
         """Score current pose.
+
+        Args:
+            unbound_energy (float): Optionally pass the unbound systems energy of the ligand.
 
         Returns:
             nadarray: Array of energies from current pose.
@@ -414,7 +417,10 @@ class Vina:
         """
         # It does not make sense to report energies with a precision higher than 3
         # since the coordinates precision is 3.
-        energies = np.around(self._vina.score(), decimals=3)
+        if unbound_energy is None:
+            energies = np.around(self._vina.score(), decimals=3)
+        else:
+            energies = np.around(self._vina.score(unbound_energy), decimals=3)
         return energies
 
     def optimize(self, max_steps=0):

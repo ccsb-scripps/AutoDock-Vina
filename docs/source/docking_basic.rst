@@ -34,7 +34,7 @@ Other options are available for ``prepare_receptor`` by typing ``prepare_recepto
 2. Preparing the ligand
 -----------------------
 
-This step is very similar to the previous step. We will also create a PDBQT file from a ligand molecule file (in MOL/MOL2 or SDF format) using the ``Meeko`` python package (see installation instruction here: :ref:`docking_requirements`). For convenience, the file ``1iep_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1iep <https://www.rcsb.org/structure/1IEP>`_ (see ``Download instance Coordinates`` link for the STI molecule). Since the ligand file does not include the hydrogen atoms, we are going to automatically add them and correct the protonation for a pH of 7.4.
+This step is very similar to the previous step. We will also create a PDBQT file from a ligand molecule file (in MOL/MOL2 or SDF format) using the ``Meeko`` python package (see installation instruction here: :ref:`docking_requirements`). For convenience, the file ``1iep_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1iep <https://www.rcsb.org/structure/1IEP>`_ (see ``Download instance Coordinates`` link for the STI molecule). Since the ligand file does not include the hydrogen atoms, we are going to automatically add them.
 
 .. warning::
   
@@ -42,7 +42,7 @@ This step is very similar to the previous step. We will also create a PDBQT file
 
 .. code-block:: bash
 
-    $ mk_prepare_ligand.py -i 1iep_ligand.sdf -o 1iep_ligand.pdbqt --pH 7.4
+    $ mk_prepare_ligand.py -i 1iep_ligand.sdf -o 1iep_ligand.pdbqt
 
 Other options are available for ``mk_prepare_ligand.py`` by typing ``mk_prepare_ligand.py --help``. If you are not sure about this step, the output PDBQT file ``1iep_ligand.pdbqt`` is available in ``solution`` directory.
 

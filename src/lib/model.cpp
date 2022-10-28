@@ -223,7 +223,7 @@ void model::append(const model& m) {
 	*/
 	VINA_FOR(i, m_num_movable_atoms) {
 		VINA_RANGE(j, m_num_movable_atoms, m_num_movable_atoms + m.m_num_movable_atoms) {
-			if (is_closure_clash(i, j)) continue; // 1-2, 1-3 or 1-4 interaction around CG-CG bond
+			if (is_closure_clash(i, j) || is_unmatched_closure_dummy(i, j)) continue;
 
 			const atom& a = atoms[i];
 			const atom& b = atoms[j];
@@ -516,6 +516,19 @@ bool model::is_glue_pair(sz i, sz j) const {
 		return false;
 }
 
+// exclude pair if one atom is G0 but the other atom is not CG0
+bool model::is_unmatched_closure_dummy(sz i, sz j) const {
+	sz t1 = atoms[i].get(atom_type::AD);
+	sz t2 = atoms[j].get(atom_type::AD);
+	if ((t1==AD_TYPE_G0 && t2!=AD_TYPE_CG0) || (t2==AD_TYPE_G0 && t1!=AD_TYPE_CG0) ||
+    	(t1==AD_TYPE_G1 && t2!=AD_TYPE_CG1) || (t2==AD_TYPE_G1 && t1!=AD_TYPE_CG1) ||
+    	(t1==AD_TYPE_G2 && t2!=AD_TYPE_CG2) || (t2==AD_TYPE_G2 && t1!=AD_TYPE_CG2) ||
+    	(t1==AD_TYPE_G3 && t2!=AD_TYPE_CG3) || (t2==AD_TYPE_G3 && t1!=AD_TYPE_CG3))
+		return true;
+	else
+		return false;
+}
+
 void model::initialize_pairs(const distance_type_matrix& mobility) {
 	/* Interactions:
 	- ligand_i - ligand_i : YES (1-4 only) (ligand.pairs)
@@ -529,7 +542,7 @@ void model::initialize_pairs(const distance_type_matrix& mobility) {
 
 		VINA_RANGE(j, i + 1, atoms.size()) {
 			if (mobility(i, j) == DISTANCE_VARIABLE && !has(bonded_atoms, j)) {
-                if (is_closure_clash(i, j)) continue;  // 1-2, 1-3 or 1-4 interaction around CG-CG bond
+				if (is_closure_clash(i, j) || is_unmatched_closure_dummy(i, j)) continue;
 				
 				sz t1 = atoms[i].get(atom_typing_used());
 				sz t2 = atoms[j].get(atom_typing_used());

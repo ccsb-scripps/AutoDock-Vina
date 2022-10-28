@@ -21,11 +21,19 @@ LDFLAGS = -L$(BASE)/lib -L.
 # install libboost_thread-mt, but not
 # libboost_thread (e.g. macOS)
 $(shell echo "int main(){ return 0; }" > linktest.cpp)
+ifeq ($(BOOST_STATIC), y)
+$(shell $(CC) $(LDFLAGS) ${BASE}/lib/libboost_thread-mt${BOOST_LIB_VERSION}.a linktest.cpp -o linktest >/dev/null 2>&1)
+else
 $(shell $(CC) $(LDFLAGS) -l boost_thread-mt${BOOST_LIB_VERSION} linktest.cpp -o linktest >/dev/null 2>&1)
+endif
 threadmt:=$(shell if [ -f ./linktest ]; then echo "-mt"; rm ./linktest; fi;)
 $(shell rm ./linktest.cpp)
 
+ifeq ($(BOOST_STATIC), y)
+LIBS = ${BASE}/lib/libboost_system${BOOST_LIB_VERSION}.a ${BASE}/lib/libboost_thread${threadmt}${BOOST_LIB_VERSION}.a ${BASE}/lib/libboost_serialization${BOOST_LIB_VERSION}.a ${BASE}/lib/libboost_filesystem${BOOST_LIB_VERSION}.a ${BASE}/lib/libboost_program_options${BOOST_LIB_VERSION}.a
+else
 LIBS = -l boost_system${BOOST_LIB_VERSION} -l boost_thread${threadmt}${BOOST_LIB_VERSION} -l boost_serialization${BOOST_LIB_VERSION} -l boost_filesystem${BOOST_LIB_VERSION} -l boost_program_options${BOOST_LIB_VERSION}#-l pthread
+endif
 
 .SUFFIXES: .cpp .o
 
