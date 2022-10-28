@@ -7,7 +7,6 @@ import re
 import shutil
 import subprocess
 import sys
-import sysconfig
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 from distutils.command.clean import clean
@@ -107,7 +106,8 @@ def locate_ob():
 
     if in_conda():
         # It means that Openbabel was installed in an Anaconda env
-        data_pathname = sysconfig.get_path('data')
+        data_pathname = os.environ["CONDA_PREFIX"]
+        return 'CONDA_DEFAULT_ENV' in os.environ.keys()
         include_dirs = data_pathname + os.path.sep + 'include' + os.path.sep + 'openbabel{}'.format(py_major_ver)
         library_dirs = data_pathname + os.path.sep + 'lib'
 
@@ -149,7 +149,7 @@ def locate_ob():
 def locate_boost():
     """Try to locate boost."""
     if in_conda():
-        data_pathname = sysconfig.get_path('data')
+        data_pathname = os.environ["CONDA_PREFIX"]
         include_dirs = data_pathname + os.path.sep + 'include'
         library_dirs = data_pathname + os.path.sep + 'lib'
         
