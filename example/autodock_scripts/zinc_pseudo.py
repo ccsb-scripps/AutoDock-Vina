@@ -563,7 +563,7 @@ def main():
     if len(tz_list) < 1:
         print("NOTE: TZ pseudo atoms are added only for zinc ions")
         print("NOTE: that can bind ligands in a tetrahedral geometry.")
-        print("NOTE: Apparently none tetrahedral zinc site was detected.")
+        print("NOTE: No tetrahedral zinc sites were detected.")
 
     # write file
     recfile = open(output_name, 'w')

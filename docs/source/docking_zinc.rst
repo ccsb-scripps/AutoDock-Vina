@@ -33,8 +33,8 @@ To prepare the receptor, execute the following command lines:
     $ prepare_receptor -r protein.pdb -o protein.pdbqt -U nphs_lps_waters
     $ pythonsh <script_directory>/zinc_pseudo.py -r protein.pdbqt -o protein_tz.pdbqt
 
-NOTE: default for `prepare_receptor` is to remove non-standard residues (e.g. Zn),
-`-U nphs_lps_waters` option will prevent zinc removal.
+NOTE: default for `prepare_receptor` is to remove chains consisting exclusively of non-standard residues (e.g. Zn),
+If zinc is in a chain without standard protein residues, option -U nphs_lps_waters` will prevent zinc removal.
 The execution of these two commands should output these two messages. One informing us that the charge for the zinc ion was not set by ``prepare_receptor``. In this context, the message can be safely ignored since the ligand will interact preferentially with the zinc pseudo atoms (TZ). The PDBQT output files can be found in the ``solution`` directory.
 
 .. code-block:: console
