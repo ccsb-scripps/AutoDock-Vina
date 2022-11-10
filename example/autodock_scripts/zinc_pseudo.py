@@ -11,7 +11,7 @@ def angle(a,b,c):
     """Calculate the angle between three points. First point in the middle"""
     d12 = dist(a, b)
     d13 = dist(a, c)
-    d23 = dist(b, c) 
+    d23 = dist(b, c)
     #round. To avoid things like 1.000000001
     angle = math.acos(round((d12**2 + d13**2 - d23**2)/(2*d12*d13),7))
     return angle
@@ -28,7 +28,7 @@ def dihedral(a,b,c,d):
     y = dotProd(temp ,crossProd(v2,v3))
     x = dotProd(crossProd(v1,v2),crossProd(v2,v3))
     rad = math.atan2(y,x)
-    return rad*(180/math.pi) 
+    return rad*(180/math.pi)
 
 def dotProd(a,b):
     N = min(len(a),len(b))
@@ -77,7 +77,7 @@ class PDBQT():
         self.name        = line      [12:16]     # atom name
         self.altLoc      = line      [16:17]     # Alternate location
         self.resName     = line      [17:20]     # Residue name
-        #                            [20:21] 
+        #                            [20:21]
         self.chain       = line      [21:22]     # chain
         self.resNum      = int(line  [22:26])    # Residue number
         self.icode       = line      [26:27]     # ???
@@ -100,15 +100,15 @@ class PDBQT():
         linestr = ''
         linestr += '%6s' % (self.keyword)
         linestr += '%5d' % (self.serial)
-        linestr += ' ' 
+        linestr += ' '
         linestr += '%4s' % (self.name)
-        linestr += '%1s' % (self.altLoc) 
+        linestr += '%1s' % (self.altLoc)
         linestr += '%3s' % (self.resName)
-        linestr += ' ' 
+        linestr += ' '
         linestr += '%1s' % (self.chain)
         linestr += '%4d' % (self.resNum)
         linestr += '%1s' % (self.icode)
-        linestr += ' ' * 3 
+        linestr += ' ' * 3
         linestr += '%8.3f' % (self.x)
         linestr += '%8.3f' % (self.y)
         linestr += '%8.3f' % (self.z)
@@ -139,21 +139,21 @@ class PDBQT():
         return is_bound
 
     def atomnr_vdw(self, atomnr):
-        D = {1:2.0, 6:4.0, 7:3.5, 8:3.2, 9:3.1, 12:1.3, 15:4.2, 16:4.0, 17:4.1, 
-        20:2.0, 25:1.3, 26:1.3, 30:1.5, 35:4.3, 53:4.7} 
+        D = {1:2.0, 6:4.0, 7:3.5, 8:3.2, 9:3.1, 12:1.3, 15:4.2, 16:4.0, 17:4.1,
+        20:2.0, 25:1.3, 26:1.3, 30:1.5, 35:4.3, 53:4.7}
         return D[atomnr]
 
     def atype_to_atomnr(self, atype):
-        D = {'H':1, 'HD':1, 'HS':1, 'C':6, 'A':6, 'N':7, 'NA':7, 'NS':7, 
-             'OA':8,'OS':8, 'F':9, 'MG':12, 'S':16, 'SA':16, 'CL':17, 
-             'CA':20, 'MN':25, 'FE':26, 'ZN':30, 'BR':35, 'I':53, 'G':6, 
+        D = {'H':1, 'HD':1, 'HS':1, 'C':6, 'A':6, 'N':7, 'NA':7, 'NS':7,
+             'OA':8,'OS':8, 'F':9, 'MG':12, 'S':16, 'SA':16, 'CL':17,
+             'CA':20, 'MN':25, 'FE':26, 'ZN':30, 'BR':35, 'I':53, 'G':6,
              'J':6, 'P':15, 'Z':6, 'GA':6, 'Q':6, 'TZ':-1}
         try:
             return D[atype.strip().upper()]
         except:
             sys.stderr.write(
     'unexpected atom type: %s (not in standard forcefield)\n' % atype)
-            return -1 
+            return -1
 
 def load_pdbqt(filename):
     """Creates a list of PDBQT atom objects"""
@@ -219,8 +219,8 @@ class znShell():
         # Connectivity stuff
         connect, n_conn = self._getBonds(atoms)
 
-        # Find carboxy 
-        carboxyIndx = self._getCarboxyOxyIndx(atoms, connect, n_conn) 
+        # Find carboxy
+        carboxyIndx = self._getCarboxyOxyIndx(atoms, connect, n_conn)
         Os = [(atoms[o], atoms[O])for i,o,O in carboxyIndx] # Oxygen atoms
         atoms = self._rmCarboxy(atoms, carboxyIndx)         # remove carboxy
         connect, n_conn = self._getBonds(atoms)             # re-do connect
@@ -283,21 +283,21 @@ class znShell():
         return (connect, n_conn)
 
     def _getCarboxyOxyIndx(self,atoms,connect,n_conn):
-        
+
         # Find C=O (forcing n_conn 1 for O should eliminate hydroxyls)
         co = []
         for i,j in connect:
-            if (atoms[i].atype in ['O','OA'] and 
+            if (atoms[i].atype in ['O','OA'] and
                 atoms[j].atype in ['C','A'] and n_conn[i] == 1):
                 co.append((j,i))
-            if (atoms[j].atype in ['O','OA'] and 
+            if (atoms[j].atype in ['O','OA'] and
                     atoms[i].atype in ['C','A'] and n_conn[j] == 1):
                 co.append((i,j))
-        # Finally find carboxyl 
+        # Finally find carboxyl
         coo = []
         for i in range(len(co)):
             for j in range(i+1,len(co)):
-                if co[i][0] == co[j][0]: 
+                if co[i][0] == co[j][0]:
                     twoOxygens = (co[i][1], co[j][1])
                     coo.append((co[i][0], min(twoOxygens), max(twoOxygens)))
         return coo
@@ -323,8 +323,8 @@ class znShell():
         for oxypair in oxys:
             A = deepcopy(oxypair[0])
             A.x, A.y, A.z = self.avgCarboxyInner(
-                    oxypair[0].getcoords(), 
-                    self.zn.getcoords(), 
+                    oxypair[0].getcoords(),
+                    self.zn.getcoords(),
                     oxypair[1].getcoords())
             A.name = 'AVG'
             A.atype = 'OC'
@@ -336,7 +336,7 @@ class znShell():
             with a dist based approach. This will be used to calculate the
             angle between the carboxylate and other coordinating atoms"""
         d1 = dist(o1,zn)
-        d2 = dist(o2,zn) 
+        d2 = dist(o2,zn)
         oo = dist(o1,o2)
         ratio = ((d2-d1)/oo)**self.e # 0 to 1, 1 beign o2 more distant from zn
         weight = (1-ratio)/2 # if ratio==0 w12 should be half way between 01-o2
@@ -371,7 +371,7 @@ class znShell():
         # 1-2 and 1-3 connected atoms.
         # Then, if an atom is chosen to be bound (carbons/hydrogens wont)
         # the connected atoms will be removed.
-        # This is robust for the cases a C would be closer then a 
+        # This is robust for the cases a C would be closer then a
         # 1-2 connected NA - although the C has a lower index (is closer)
         # that fact does not remove the NA, which is the actual binder
         reach3 = {}
@@ -390,7 +390,7 @@ class znShell():
     def _rm_too_far(self, atoms):
         # Wrap me  ------ remove far away...
         too_far = []
-        for i,a in enumerate(atoms):    
+        for i,a in enumerate(atoms):
             if a.dist(self.zn) > self.c:
                 too_far.append(i)
         too_far.reverse()
@@ -403,7 +403,7 @@ class znShell():
         It goes up atom-index by atom-index,
         starting with the closest atoms to Zn,
         (they are sorted by distances), and if it is a
-        valid zinc binder, like NA, it removes the 
+        valid zinc binder, like NA, it removes the
         1-2 and 1-3 bound atoms for the list.
         The remaining atoms are the binders."""
         ValidAtoms = ['O','OA','NA','N','S','SA','MG','MN','ZN','CA','FE','CU']
@@ -415,12 +415,12 @@ class znShell():
             connected = (i in reach3)   # reach3 has no lonely atoms
             #print i+1, atom.dist(self.zn),invalid, too_far, not_removed, connected
             if invalid or too_far:
-                remove.append(i) 
-            elif not_removed and connected: 
+                remove.append(i)
+            elif not_removed and connected:
                 [remove.append(j) for j in reach3[i] if j not in remove]
         # new atoms list with leftovers form remove
-        binderAtoms = [atom for i,atom in enumerate(nearAtoms) 
-                            if i not in remove] 
+        binderAtoms = [atom for i,atom in enumerate(nearAtoms)
+                            if i not in remove]
         return binderAtoms
 
     def tetrahedral_pseudo(self, d = 2.0):
@@ -432,11 +432,11 @@ class znShell():
         if n==3 and tetrhdrlAngDev < wise_limit:
             pseudo = deepcopy(self.zn)
             pseudo.name = 'TZ'
-            pseudo.atype = 'TZ' 
-            a,b,c = [a.getcoords() for a in self.rec] # 
+            pseudo.atype = 'TZ'
+            a,b,c = [a.getcoords() for a in self.rec] #
             w = 2*(int(dihedral(a,b,c,zn)) > 0)-1       # 1 or -1
             # normal vector
-            nv = crossProd(rawVec(a,b), rawVec(b,c))    
+            nv = crossProd(rawVec(a,b), rawVec(b,c))
             # Normalize length
             nvn = [w*d*nv[i]/dist(nv,(0,0,0)) for i in range(3)]
             x,y,z = [zn[i]+nvn[i] for i in range(3)]     # origin on zn
@@ -475,7 +475,7 @@ class znShell():
         devs = [(a.dist(tz))**2 for a in self.lig]
         return math.sqrt( float(sum(devs)) / len(devs))
 
-def about(): 
+def about():
     print('Description:')
     print('   places tetrahedral zinc pseudo atoms (atom type = TZ)')
     print('   required by the forcefield "AutoDock4Zn"')
@@ -492,7 +492,7 @@ def usage():
     print('Options:')
     print('   -r   input receptor filename')
     print('   -o   output receptor filename | default = "input"_TZ.pdbqt')
-    print('   -h   print this help message and exit') 
+    print('   -h   print this help message and exit')
     print('   -a   print "about" message and exit')
 
 def main():
@@ -505,7 +505,7 @@ def main():
     except getopt.GetoptError as err:
         print((str(err))) # will print something like "option -a not recognized"
         usage()
-        sys.exit(2) 
+        sys.exit(2)
 
     # Parse arguments
     for o, a in opts:
@@ -534,8 +534,8 @@ def main():
     carboxy = 0.5   # carboxylate averaging parameter (Supp. Info of paper)
     cutoff = 2.5    # to consider receptor atoms as zinc-coordinated
 
-    # Load molecules 
-    r, num_tz, lastserial, non_atom_text = load_pdbqt(input_name) 
+    # Load molecules
+    r, num_tz, lastserial, non_atom_text = load_pdbqt(input_name)
     if num_tz:
         sys.stderr.write(
             'WARNING: ignoring TZ pseudo-atoms in %s\n' % input_name)
@@ -548,7 +548,7 @@ def main():
     tz_list = []
     for alist in atoms_by_zn: # for each list of atoms nearby a zn atom
         zn = alist[0]
-        znobj = znShell(zn, cutoff, carboxy) 
+        znobj = znShell(zn, cutoff, carboxy)
         znobj.proc_rec(alist[1:]) # alist[0] is zn
         znobjs.append(znobj)
         tz_list.append(znobj.tetrahedral_pseudo(distance))
@@ -560,6 +560,10 @@ def main():
         tz.serial = lastserial
         r.append(tz)
     print(('Wrote %d TZ atoms on %s.' % (len(tz_list), output_name)))
+    if len(tz_list) < 1:
+        print("NOTE: TZ pseudo atoms are added only for zinc ions")
+        print("NOTE: that can bind ligands in a tetrahedral geometry.")
+        print("NOTE: Apparently none tetrahedral zinc site was detected.")
 
     # write file
     recfile = open(output_name, 'w')
@@ -571,4 +575,3 @@ def main():
     recfile.close()
 
 main()
-
