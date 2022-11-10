@@ -3,7 +3,7 @@
 Docking with zinc metalloproteins
 =================================
 
-Zinc is present in a wide variety of proteins and is important in the metabolism of most organisms. Zinc metalloenzymes are therapeutically relevant targets in diseases such as cancer, heart disease, bacterial infection, and Alzheimer’s disease. In most cases a drug molecule targeting such enzymes establishes an interaction that coordinates with the zinc ion. Thus, accurate prediction of the interaction of ligands with zinc is an important aspect of computational docking and virtual screening against zinc containing proteins. 
+Zinc is present in a wide variety of proteins and is important in the metabolism of most organisms. Zinc metalloenzymes are therapeutically relevant targets in diseases such as cancer, heart disease, bacterial infection, and Alzheimer’s disease. In most cases a drug molecule targeting such enzymes establishes an interaction that coordinates with the zinc ion. Thus, accurate prediction of the interaction of ligands with zinc is an important aspect of computational docking and virtual screening against zinc containing proteins.
 
 The AutoDock4 force field was extended to include a specialized potential describing the interactions of zinc-coordinating ligands. This potential describes both the energetic and geometric components of the interaction. The new force field, named AutoDock4Zn, was calibrated on a data set of 292 crystal complexes containing zinc. Redocking experiments show that the force field provides significant improvement in performance in both free energy of binding estimation as well as in root-mean-square deviation from the crystal structure pose.
 
@@ -30,9 +30,11 @@ To prepare the receptor, execute the following command lines:
 
 .. code-block:: bash
 
-    $ prepare_receptor -r protein.pdb -o protein.pdbqt
+    $ prepare_receptor -r protein.pdb -o protein.pdbqt -U nphs_lps_waters
     $ pythonsh <script_directory>/zinc_pseudo.py -r protein.pdbqt -o protein_tz.pdbqt
 
+NOTE: default for `prepare_receptor` is to remove chains consisting exclusively of non-standard residues (e.g. Zn),
+If zinc is in a chain without standard protein residues, option -U nphs_lps_waters` will prevent zinc removal.
 The execution of these two commands should output these two messages. One informing us that the charge for the zinc ion was not set by ``prepare_receptor``. In this context, the message can be safely ignored since the ligand will interact preferentially with the zinc pseudo atoms (TZ). The PDBQT output files can be found in the ``solution`` directory.
 
 .. code-block:: console
@@ -65,7 +67,7 @@ The preparation script ``prepare_gpf4zn.py`` will be used to generate a special 
 
     $ pythonsh <script_directory>/prepare_gpf4zn.py -l 1s63_ligand.pdbqt -r protein_tz.pdbqt \
     -o protein_tz.gpf  -p npts=40,30,50 -p gridcenter=18,134,-1 \
-    –p parameter_file=AD4Zn.dat   
+    –p parameter_file=AD4Zn.dat
 
 The ``-p`` flag is used to set the box center (``gridcenter``) and size (``npts``) along with the ``parameter_file`` specific for this case. After execution, you should obtain a GPF file called ``protein_tz.gpf`` containing this:
 
@@ -137,7 +139,7 @@ The predicted free energy of binding should be about ``-13 kcal/mol`` for the be
     Verbosity: 1
 
     Reading AD4.2 maps ... done.
-    Performing docking (random seed: 1984557646) ... 
+    Performing docking (random seed: 1984557646) ...
     0%   10   20   30   40   50   60   70   80   90   100%
     |----|----|----|----|----|----|----|----|----|----|
     ***************************************************
