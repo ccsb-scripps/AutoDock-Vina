@@ -257,7 +257,7 @@ class Vina:
         self._center = center
         self._box_size = box_size
         self._spacing = spacing
-        self._voxels = np.ceil(np.array(box_size) / self._spacing).astype(np.int)
+        self._voxels = np.ceil(np.array(box_size) / self._spacing).astype(np.int32)
 
         # Necessary step to know if we can write maps or not later
         if force_even_voxels:
