@@ -666,6 +666,7 @@ void Vina::randomize(const int max_steps) {
 	VINA_FOR(i, max_steps) {
 		c = init_conf;
 		c.randomize(m_grid.corner1(), m_grid.corner2(), generator);
+		m_model.set(c);
 		penalty = m_model.clash_penalty();
 
 		if (i == 0 || penalty < best_clash_penalty) {
