@@ -395,9 +395,14 @@ class Vina:
 
         return np.around(self._vina.get_poses_energies(n_poses, energy_range), decimals=3)
 
-    def randomize(self):
-        """Randomize the input ligand conformation."""
-        self._vina.randomize()
+    def randomize(self, max_steps=10000):
+        """Randomize the input ligand conformation.
+
+        Args:
+            max_steps (int): Number of poses to generate for selection of the best one.
+
+        """
+        self._vina.randomize(max_steps)
     
     def score(self, unbound_energy=None):
         """Score current pose.
