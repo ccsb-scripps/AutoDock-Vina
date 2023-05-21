@@ -723,17 +723,17 @@ def getpoints(mapdata, coords=None, distance=None):
 
                 for x_ofs in range(-pt_scan, pt_scan+1): 
                     x = x_pt + x_ofs
-                    if x < 0 :
+                    if x < 0 or x >= pts[0]:
                         harvesting.append(0)
                         break
                     for y_ofs in range(-pt_scan, pt_scan+1): 
                         y = y_pt + y_ofs
-                        if y < 0 :
+                        if y < 0 or y >= pts[1]:
                             harvesting.append(0)
                             break
                         for z_ofs in range(-pt_scan, pt_scan+1): 
                             z = z_pt + z_ofs
-                            if z < 0 :
+                            if z < 0 or z >= pts[2]:
                                 harvesting.append(0)
                                 break
                             harvesting.append( data[z,y,x] )
