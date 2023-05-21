@@ -687,9 +687,9 @@ def getmap(data):
     max.append(center[1]+step[1])
     max.append(center[2]+step[2])
 
-    data = array(data, 'f').reshape(pts[2], pts[1], pts[0])
+    data = array(data, 'f').reshape(int(pts[2]), int(pts[1]), int(pts[0]))
 
-    data = data.reshape(pts[2], pts[1], pts[0])
+    data = data.reshape(int(pts[2]), int(pts[1]), int(pts[0]))
     return { "values" : data, "spacing" : spacing, 'pts': pts, 'center' : center, 'min' : min, 'max' : max}
     
 
