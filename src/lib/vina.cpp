@@ -944,6 +944,7 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 				}
 			}
 
+			poses.sort(); // order often changes after non_cache refinement
 			m_model.set(poses[0].c);
 			if (m_no_refine || !m_receptor_initialized)
 				intramolecular_energy = m_model.eval_intramolecular(m_precalculated_byatom, m_grid, authentic_v);
@@ -973,8 +974,10 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 			}
 		}
 
-		// Since pose.e contains the final energy, we have to sort them again
-		poses.sort();
+		// In AD4, the unbound energy is intra for each pose, so order may have changed
+		// The order does not change in Vina because unbound is intra of the 1st pose
+		if (m_sf_choice == SF_AD42)
+			poses.sort();
 
 		// Now compute RMSD from the best model
 		// Necessary to do it in two pass for AD4 scoring function

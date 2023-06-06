@@ -875,15 +875,6 @@ fl model::eval_intramolecular(const precalculate_byatom& p, const igrid& ig, con
 		}
 	}
 
-	// glue_i - glue_i and glue_i - glue_j interactions (no cutoff)
-	VINA_FOR_IN(i, glue_pairs) {
-		const interacting_pair& pair = glue_pairs[i];
-		fl r2 = vec_distance_sqr(coords[pair.a], coords[pair.b]);
-		fl this_e = p.eval_fast(pair.a, pair.b, r2);
-		curl(this_e, v[2]);
-		e += this_e;
-	}
-
 	return e;
 }
 
