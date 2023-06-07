@@ -58,7 +58,6 @@ fl cache::eval(const model& m, fl v) const { // needs m.coords
 	sz nat = num_atom_types(atom_type::XS);
 
 	VINA_FOR(i, m.num_movable_atoms()) {
-		if(!m.is_atom_in_ligand(i)) continue; // we only want ligand - grid interaction
 		const atom& a = m.atoms[i];
 		sz t = a.get(atom_type::XS);
 
