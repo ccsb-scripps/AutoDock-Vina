@@ -55,6 +55,19 @@
 #include "precalculate.h"
 
 
+class vina_runtime_error : public std::exception {
+public:
+    explicit vina_runtime_error(const std::string & message)
+            : m_message("\n\nVina runtime error: " + message + "\n") {}
+
+    virtual const char* what() const throw () {
+        return m_message.c_str();
+    }
+
+private:
+    const std::string m_message;
+};
+
 class Vina {
 public:
 	// Constructor

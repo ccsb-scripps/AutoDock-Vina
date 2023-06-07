@@ -320,15 +320,12 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
 	// Setup the search box
 	// Check first that the receptor was added
 	if (m_sf_choice == SF_AD42) {
-		std::cerr << "ERROR: Cannot compute Vina affinity maps using the AD4 scoring function.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("Cannot compute Vina affinity maps using the AD4 scoring function.");
 	} else if (!m_receptor_initialized) {
 		// m_model
-		std::cerr << "ERROR: Cannot compute Vina or Vinardo affinity maps. The (rigid) receptor was not initialized.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("Cannot compute Vina or Vinardo affinity maps. The (rigid) receptor was not initialized.");
 	} else if (size_x <= 0 || size_y <= 0 || size_z <= 0) {
-		std::cerr << "ERROR: Grid box dimensions must be greater than 0 Angstrom.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("Grid box dimensions must be greater than 0 Angstrom");
 	} else if (size_x * size_y * size_z > 27e3) {
 		std::cerr << "WARNING: Search space volume is greater than 27000 Angstrom^3 (See FAQ)\n";
 	}
@@ -429,8 +426,7 @@ void Vina::load_maps(std::string maps) {
 void Vina::write_maps(const std::string& map_prefix, const std::string& gpf_filename,
 					  const std::string& fld_filename, const std::string& receptor_filename) {
 	if (!m_map_initialized) {
-		std::cerr << "ERROR: Cannot write affinity maps. Affinity maps were not initialized.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("Cannot write affinity maps. Affinity maps were not initialized.");
 	}
 
 	szv atom_types;
@@ -461,13 +457,11 @@ std::vector< std::vector<double> > Vina::get_poses_coordinates(int how_many, dou
 	std::vector< std::vector<double> > coordinates;
 
 	if (how_many < 0) {
-		std::cerr << "Error: number of poses asked must be greater than zero.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("number of poses asked must be greater than zero.");
 	}
 
 	if (energy_range < 0) {
-		std::cerr << "Error: energy range must be greater than zero.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("energy range must be greater than zero.");
 	}
 
 	if (!m_poses.empty()) {
@@ -505,13 +499,11 @@ std::vector< std::vector<double> > Vina::get_poses_energies(int how_many, double
 	std::vector< std::vector<double> > energies;
 
 	if (how_many < 0) {
-		std::cerr << "Error: number of poses asked must be greater than zero.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("number of poses asked must be greater than zero.");
 	}
 
 	if (energy_range < 0) {
-		std::cerr << "Error: energy range must be greater than zero.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("energy range must be greater than zero.");
 	}
 
 	if (!m_poses.empty()) {
@@ -570,13 +562,11 @@ std::string Vina::get_poses(int how_many, double energy_range) {
 	std::string remarks;
 
 	if (how_many < 0) {
-		std::cerr << "Error: number of poses written must be greater than zero.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("number of poses written must be greater than zero.");
 	}
 
 	if (energy_range < 0) {
-		std::cerr << "Error: energy range must be greater than zero.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("energy range must be greater than zero.");
 	}
 
 	if (!m_poses.empty()) {
@@ -643,11 +633,9 @@ void Vina::randomize(const int max_steps) {
 	// Randomize ligand/flex residues conformation
 	// Check the box was defined
 	if (!m_ligand_initialized) {
-		std::cerr << "ERROR: Cannot do ligand randomization. Ligand(s) was(ere) not initialized.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("Cannot do ligand randomization. Ligand(s) was(ere) not initialized.");
 	} else if (!m_map_initialized) {
-		std::cerr << "ERROR: Cannot do ligand randomization. Affinity maps were not initialized.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("Cannot do ligand randomization. Affinity maps were not initialized.");
 	}
 
 	conf c;
@@ -773,14 +761,11 @@ std::vector<double> Vina::score() {
 	// Check if ff and ligand were initialized
 	// Check if the ligand is not outside the box
 	if (!m_ligand_initialized) {
-		std::cerr << "ERROR: Cannot score the pose. Ligand(s) was(ere) not initialized.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("Cannot score the pose. Ligand(s) was(ere) not initialized.");
 	} else if (!m_map_initialized) {
-		std::cerr << "ERROR: Cannot score the pose. Affinity maps were not initialized.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("Cannot score the pose. Affinity maps were not initialized.");
 	} else if (!m_grid.is_in_grid(m_model)) {
-		std::cerr << "ERROR: The ligand is outside the grid box. Increase the size of the grid box or center it accordingly around the ligand.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("The ligand is outside the grid box. Increase the size of the grid box or center it accordingly around the ligand.");
 	}
 
 	double intramolecular_energy = 0;
@@ -844,14 +829,11 @@ std::vector<double> Vina::optimize(int max_steps) {
 	// Check if ff, box and ligand were initialized
 	// Check if the ligand is not outside the box
 	if (!m_ligand_initialized) {
-		std::cerr << "ERROR: Cannot do the optimization. Ligand(s) was(ere) not initialized.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("Cannot do the optimization. Ligand(s) was(ere) not initialized.");
 	} else if (!m_map_initialized) {
-		std::cerr << "ERROR: Cannot do the optimization. Affinity maps were not initialized.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("Cannot do the optimization. Affinity maps were not initialized.");
 	} else if (!m_grid.is_in_grid(m_model)) {
-		std::cerr << "ERROR: The ligand is outside the grid box. Increase the size of the grid box or center it accordingly around the ligand.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("The ligand is outside the grid box. Increase the size of the grid box or center it accordingly around the ligand.");
 	}
 
 	double e = 0;
@@ -884,14 +866,11 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 	// Vina search (Monte-carlo and local optimization)
 	// Check if ff, box and ligand were initialized
 	if (!m_ligand_initialized) {
-		std::cerr << "ERROR: Cannot do the global search. Ligand(s) was(ere) not initialized.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("Cannot do the global search. Ligand(s) was(ere) not initialized.");
 	} else if (!m_map_initialized) {
-		std::cerr << "ERROR: Cannot do the global search. Affinity maps were not initialized.\n";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("Cannot do the global search. Affinity maps were not initialized.");
 	} else if (exhaustiveness < 1) {
-		std::cerr << "ERROR: Exhaustiveness must be 1 or greater";
-		exit(EXIT_FAILURE);
+		throw vina_runtime_error("Exhaustiveness must be 1 or greater");
 	}
 
 	if (exhaustiveness < m_cpu) {
