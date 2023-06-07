@@ -358,7 +358,7 @@ setup(
     packages=['vina'],
     package_dir=package_dir,
     install_requires=['numpy>=1.18'],
-    python_requires='>=3.5.*',
+    python_requires='>=3.5',
     ext_modules=[obextension],
     #entry_points={"console_scripts": ["vina = vina.vina_cli:main"]},
     classifiers=[
