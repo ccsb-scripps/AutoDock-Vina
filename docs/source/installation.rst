@@ -76,7 +76,7 @@ Building from Source
     Building Vina from source is NOT meant to be done by regular users!
 
 - Step 1: **Install a C++ compiler suite**
-    - Ubuntu/Debian: ``sudo apt-get install build-essentials``
+    - Ubuntu/Debian: ``sudo apt-get install build-essential``
     - macOS: Install Xcode from the `AppStore <https://apps.apple.com/fr/app/xcode/id497799835?mt=12>`_ and the Command Line Tools (CLT) from the terminal ``xcode-select --install``
 - Step 2: **Install Boost and SWIG**
     - Ubuntu/Debian: ``sudo apt-get install libboost-all-dev swig``
