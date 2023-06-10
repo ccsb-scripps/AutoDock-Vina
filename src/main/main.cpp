@@ -456,7 +456,7 @@ Thank you!\n";
 				v.write_poses(out_name, num_modes, energy_range);
 			}
 		} else if (vm.count("batch")) {
-			if (sf_name.compare("vina") == 0) {
+			if (sf_name.compare("vina") == 0 || sf_name.compare("vinardo") == 0) {
 				if (vm.count("maps")) {
 					v.load_maps(maps);
 				} else {
