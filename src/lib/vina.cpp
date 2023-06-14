@@ -921,7 +921,6 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 			if (!m_no_refine & m_receptor_initialized) {
 				change g(m_model.get_size());
 				quasi_newton quasi_newton_par;
-				const vec authentic_v(1000, 1000, 1000);
 				//std::vector<double> energies_before_opt;
 				//std::vector<double> energies_after_opt;
 				int evalcount = 0;
@@ -930,7 +929,6 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 				quasi_newton_par.max_steps = unsigned((25 + m_model.num_movable_atoms()) / 3);
 
 				VINA_FOR_IN(i, poses){
-					const fl slope_orig = m_non_cache.slope;
 					VINA_FOR(p, 5){
 						m_non_cache.slope = 100 * std::pow(10.0, 2.0*p);
 						quasi_newton_par(m_model, m_precalculated_byatom, m_non_cache, poses[i], g, authentic_v, evalcount);
@@ -938,9 +936,18 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 							break;
 					}
 					poses[i].coords = m_model.get_heavy_atom_movable_coords();
-					if (!m_non_cache.within(m_model))
-						poses[i].e = max_fl;
+					//if (!m_non_cache.within(m_model))
+					//	poses[i].e = max_fl;
 					m_non_cache.slope = slope;
+					// rescoring in case a ligand or flex sidechain atom is outside box
+					// ensuring poses will be sorted with the same slope (a.k.a. out of
+					// box penalty) that will be used to calculate final energies.
+					m_model.set(poses[i].c);
+					double all_grids = m_non_cache.eval(m_model, authentic_v[1]);
+					double inter_pairs = m_model.eval_inter(m_precalculated_byatom, authentic_v); // ligand -- flex
+					double intra_pairs = m_model.evalo(m_precalculated_byatom, authentic_v); // flex_i -- flex_i and flex_i -- flex_j
+					double lig_intra = m_model.evali(m_precalculated_byatom, authentic_v); // ligand_i -- ligand_i
+					poses[i].e = all_grids + inter_pairs + intra_pairs + lig_intra;
 				}
 			}
 
