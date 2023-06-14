@@ -33,7 +33,7 @@ struct non_cache : public igrid {
 	virtual fl eval      (const model& m, fl v) const; // needs m.coords // clean up
 	virtual fl eval_intra(      model& m, fl v) const;
 	virtual fl eval_deriv(      model& m, fl v) const; // needs m.coords, sets m.minus_forces // clean up
-	bool within(const model& m, fl margin = -0.0001) const; // negative margin ensures we stay inside (thanks Andreas!)
+	bool within(const model& m, fl margin = 0.0001) const;
 	fl slope;
 private:
 	szv_grid sgrid;
