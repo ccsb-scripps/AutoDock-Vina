@@ -1014,7 +1014,8 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 		// Clean up by putting back the best pose in model
 		m_model.set(poses[0].c);
 	} else {
-		std::cerr << "WARNING: Zero poses in output container after global search. Something went wrong.\n";
+		std::cerr << "WARNING: Zero poses in output container after global search. This should not be happening and is likely a bug.\n";
+		std::cerr << "WARNING: If possible, please file a bug report with your input files and random seed on GitHub.\n";
 	}
 
 	// Store results in Vina object
