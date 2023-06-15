@@ -936,8 +936,6 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 							break;
 					}
 					poses[i].coords = m_model.get_heavy_atom_movable_coords();
-					//if (!m_non_cache.within(m_model))
-					//	poses[i].e = max_fl;
 					m_non_cache.slope = slope;
 					// rescoring in case a ligand or flex sidechain atom is outside box
 					// ensuring poses will be sorted with the same slope (a.k.a. out of
@@ -1016,8 +1014,7 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 		// Clean up by putting back the best pose in model
 		m_model.set(poses[0].c);
 	} else {
-		std::cerr << "WARNING: Could not find any conformations completely within the search space.\n";
-		std::cerr << "WARNING: Check that it is large enough for all movable atoms, including those in the flexible side chains.\n";
+		std::cerr << "WARNING: Zero poses in output container after global search. Something went wrong.\n";
 	}
 
 	// Store results in Vina object
