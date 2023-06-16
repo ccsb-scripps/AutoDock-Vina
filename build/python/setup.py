@@ -7,6 +7,7 @@ import re
 import shutil
 import subprocess
 import sys
+import sysconfig
 from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 from distutils.command.clean import clean
@@ -95,61 +96,13 @@ def execute_command(cmd_line):
     return output, errors
 
 
-def locate_ob():
-    """Try use pkgconfig to locate Open Babel, otherwise guess default location."""
-    # Warn if the (major, minor) version of the installed OB doesn't match these python bindings
-    if not is_package_installed("openbabel"):
-        raise RuntimeError("Error: Openbabel is not installed.")
-
-    py_ver = StrictVersion(find_package_version('openbabel'))
-    py_major_ver, py_minor_ver = py_ver.version[:2]
-
-    if in_conda():
-        # It means that Openbabel was installed in an Anaconda env
-        data_pathname = os.environ["CONDA_PREFIX"]
-        return 'CONDA_DEFAULT_ENV' in os.environ.keys()
-        include_dirs = data_pathname + os.path.sep + 'include' + os.path.sep + 'openbabel{}'.format(py_major_ver)
-        library_dirs = data_pathname + os.path.sep + 'lib'
-
-        if os.path.isdir(include_dirs):
-            print('Open Babel location automatically determined in Anaconda.')
-            return include_dirs, library_dirs
-        else:
-            print("Warning: We are in an Anaconda env, but Openbabel is not installed here.")
-
-    pcfile = 'openbabel-{}'.format(py_major_ver)
-    output, errors = execute_command("pkg-config --modversion %s" % pcfile)
-
-    if output:
-        # It means that Openbabel was install with apt-get
-        ob_ver = StrictVersion(output.strip())
-
-        if not ob_ver.version[:2] == py_ver.version[:2]:
-            print('Warning: Open Babel {}.{}.x is required. Your version ({}) may not be compatible.'
-                    .format(py_major_ver, py_minor_ver, ob_ver))
-        include_dirs = execute_command("pkg-config --variable=pkgincludedir %s" % pcfile)[0].strip()
-        library_dirs = execute_command("pkg-config --variable=libdir %s" % pcfile)[0].strip()
-
-        print('Open Babel location automatically determined by pkg-config.')
-        return include_dirs, library_dirs
-    else:
-        pathnames = ['/usr', '/usr/local']
-        for pathname in pathnames:
-            include_dirs = pathname + os.path.sep + 'include' + os.path.sep + 'openbabel{}'.format(py_major_ver)
-            library_dirs = pathname + os.path.sep + 'lib'
-
-            if os.path.isdir(include_dirs):
-                print('Open Babel location was automatically guessed.')
-                return include_dirs, library_dirs
-
-        print('Open Babel location was set to default location.')
-        return include_dirs, library_dirs
-
-
 def locate_boost():
     """Try to locate boost."""
     if in_conda():
-        data_pathname = os.environ["CONDA_PREFIX"]
+        if "CONDA_PREFIX" in os.environ.keys():
+            data_pathname = os.environ["CONDA_PREFIX"]
+        else:
+            data_pathname = sysconfig.get_path("data") # just for readthedocs build
         include_dirs = data_pathname + os.path.sep + 'include'
         library_dirs = data_pathname + os.path.sep + 'lib'
         
@@ -250,11 +203,6 @@ class CustomBuildExt(build_ext):
 
         self.include_dirs.append(self.boost_include_dir)
         self.library_dirs.append(self.boost_library_dir)
-
-        # Openbabel
-        #self.ob_include_dir, self.ob_library_dir = locate_ob()
-        #self.include_dirs.append(self.ob_include_dir)
-        #self.library_dirs.append(self.ob_library_dir)
 
         # Vina
         self.include_dirs.append('src/lib')
