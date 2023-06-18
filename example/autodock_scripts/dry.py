@@ -700,7 +700,6 @@ def getpoints(mapdata, coords=None, distance=None):
     max = mapdata['max']
     spacing = mapdata['spacing']
     pts = mapdata['pts']
-    harvesting = []
     
     if not distance:
         distace = 1.0 # default 1A distance scanning
@@ -724,23 +723,19 @@ def getpoints(mapdata, coords=None, distance=None):
                 for x_ofs in range(-pt_scan, pt_scan+1): 
                     x = x_pt + x_ofs
                     if x < 0 or x >= pts[0]:
-                        harvesting.append(0)
                         break
                     for y_ofs in range(-pt_scan, pt_scan+1): 
                         y = y_pt + y_ofs
                         if y < 0 or y >= pts[1]:
-                            harvesting.append(0)
                             break
                         for z_ofs in range(-pt_scan, pt_scan+1): 
                             z = z_pt + z_ofs
                             if z < 0 or z >= pts[2]:
-                                harvesting.append(0)
                                 break
-                            harvesting.append( data[z,y,x] )
                             if data[z,y,x] < best:
                                 best = data[z,y,x]
-            if DEBUG: print(" %d pts [ best: %2.2f ]" % (len(harvesting), best), end=' ')
-            return harvesting, best
+            if DEBUG: print(" in getpoints, best: %2.2f" % best, end=' ')
+            return best
     return False
 
 
@@ -1191,7 +1186,7 @@ if grid :
 
     if not QUIET: print("\n water grid score results [ map: %s ] " % (opts['-m']))
     for w in watoms:
-        harvest, affinity = getpoints(grid, coord(w), distance = 1.0) # angstroms
+        affinity = getpoints(grid, coord(w), distance = 1.0) # angstroms
         #WAFFINITY_STRONG = -0.45 
         #WAFFINITY_WEAK   = -0.3
 
