@@ -32,7 +32,7 @@ rm -rf swig-4.0.2*
 
 # Install Boost
 # Source: http://www.linuxfromscratch.org/blfs/view/svn/general/boost.html
-wget https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.bz2
+wget https://boostorg.jfrog.io/artifactory/main/release/1.75.0/source/boost_1_75_0.tar.bz2
 tar -xvf boost_1_75_0.tar.bz2 
 cd boost_1_75_0
 ./bootstrap.sh --prefix=/usr --with-python=python
