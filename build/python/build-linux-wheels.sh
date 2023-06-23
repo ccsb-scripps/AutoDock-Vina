@@ -2,7 +2,7 @@
 
 # cd <Autodock-Vina_directory>
 # DOCKER_IMAGE=quay.io/pypa/manylinux2014_x86_64
-# PLAT="manylinux2014_x86_64"
+# PLAT="manylinux_2_17_x86_64"
 # sudo docker run --rm -it -e PLAT=$PLAT -v "$(pwd)":/io "$DOCKER_IMAGE" /io/build/python/build-linux-wheels.sh
 
 set -e -u -x
@@ -32,7 +32,7 @@ rm -rf swig-4.0.2*
 
 # Install Boost
 # Source: http://www.linuxfromscratch.org/blfs/view/svn/general/boost.html
-wget https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.bz2
+wget https://boostorg.jfrog.io/artifactory/main/release/1.75.0/source/boost_1_75_0.tar.bz2
 tar -xvf boost_1_75_0.tar.bz2 
 cd boost_1_75_0
 ./bootstrap.sh --prefix=/usr --with-python=python
@@ -45,6 +45,11 @@ cd /io/build/python
 # We need to copy the src file before setuptools create a tmp dir of it
 # Source: https://github.com/pypa/pip/issues/3500
 cp -r ../../src src
+
+# pip doesn't work under python 3.12 currently 
+# remove this line when pip is fixed in the near future
+# see: https://github.com/pypa/pip/issues/11501
+rm -rf /opt/python/cp312-cp312
 
 # Compile wheels
 for PYBIN in /opt/python/*/bin; do
