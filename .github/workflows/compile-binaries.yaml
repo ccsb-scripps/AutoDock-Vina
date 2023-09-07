@@ -23,7 +23,7 @@ on:
 
 jobs:
   compile_binaries:
-    name: Build wheels on ${{ matrix.os }} / ${{ matrix.arch }}
+    name: Build wheels on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
