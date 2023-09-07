@@ -23,7 +23,7 @@ on:
 
 jobs:
   compile_binaries:
-    name: Build wheels on ${{ matrix.os }}
+    name: Build wheels on ${{ matrix.os }} / ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -37,16 +37,16 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with: 
           fetch-depth: 0
-      - name: Compile Vina for linux x86-64
+      - name: Compile Vina for Linux x86-64
         if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         run: |
           sudo apt-get install -y libboost-all-dev swig
           cd ./build/linux/release
           make
-      - name: Compile Vina for linux ${{ matrix.arch }}
+      - name: Compile Vina for Linux aarch64
         if: matrix.os == 'ubuntu-latest' && matrix.arch != 'x86_64'
         uses: uraimo/run-on-arch-action@v2
         with:
