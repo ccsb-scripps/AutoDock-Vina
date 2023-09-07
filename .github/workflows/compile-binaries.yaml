@@ -80,7 +80,7 @@ jobs:
           .\compile.bat
         shell: powershell
       - name: Upload artifacts for inspection
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: binaries
           path: |
