@@ -28,9 +28,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with: 
           fetch-depth: 0
 
       - name: Set up Python
@@ -38,8 +38,12 @@ jobs:
         with:
           python-version: '3.8'
           architecture: 'x64'
-
-      - name: Install System Dependencies
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: arm64
+      - name: Add tag to version.py file
         run: |
           sudo apt-get update
           sudo apt-get install -y swig libboost-all-dev
@@ -71,11 +75,11 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with: 
           fetch-depth: 0
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
           architecture: 'x64'
@@ -102,9 +106,9 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
           architecture: 'x64'

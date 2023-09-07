@@ -23,11 +23,7 @@ on:
 
 jobs:
   compile_binaries:
-<<<<<<< HEAD
-    name: Compile binaries on ${{ matrix.os }}
-=======
     name: Build wheels on ${{ matrix.os }} / ${{ matrix.arch }}
->>>>>>> 5c4bd4d (Update actions/checkout to v4)
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -118,11 +114,7 @@ jobs:
           .\compile.bat Release x64 "C:\local\boost_1_83_0\lib64-msvc-14.2" "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" "$env:GIT_VERSION"
         shell: powershell
       - name: Upload artifacts for inspection
-<<<<<<< HEAD
         uses: actions/upload-artifact@v4
-=======
-        uses: actions/upload-artifact@v3
->>>>>>> 283d887 (Update actions/upload-artifact to v3)
         with:
           name: binaries-${{ matrix.os }}${{ matrix.arch }}
           path: |
