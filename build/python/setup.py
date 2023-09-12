@@ -62,12 +62,12 @@ def find_version():
         return version
 
     try:
-        git_output = subprocess.check_output(['git', 'describe', '--abbrev=7', '--dirty', '--always', '--tags'])
+        git_output = subprocess.check_output(['git', 'describe', '--abbrev=7', '--dirty=@mod', '--always', '--tags'])
         git_output = git_output.strip().decode()
 
         if git_output.startswith('v'):
             git_output = git_output[1:]
-        version = git_output.replace('dirty', 'mod').replace('-', '+', 1).replace('-', '.')
+        version = git_output.replace('-', '.dev', 1).replace('@', '-', 1).replace('-', '+', 1).replace('-','')
 
         print('Version found %s (from git describe)' % version)
         return version
