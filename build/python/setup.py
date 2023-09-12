@@ -223,7 +223,7 @@ class CustomBuildExt(build_ext):
             print('\nError: SWIG failed.',
                   'You may need to manually specify the location of Open Babel include and library directories. '
                   'For example:',
-                  '  python setup.py build_ext -I{} -L{}'.format(self.include_dirs, self.library_dir),
+                  '  python setup.py build_ext -I{} -L{}'.format(self.include_dirs, self.library_dirs),
                   '  python setup.py install',
                   sep='\n')
             sys.exit(1)
