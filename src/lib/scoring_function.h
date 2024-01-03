@@ -38,7 +38,10 @@ enum scoring_function_choice {SF_VINA, SF_AD42, SF_VINARDO};
 
 class ScoringFunction {
 public:
-    ScoringFunction() { }
+    ScoringFunction() {
+        m_num_potentials = 0;
+        m_num_conf_independents = 0;
+    }
     ScoringFunction(const scoring_function_choice sf_choice, const flv& weights){
         switch (sf_choice)
         {
@@ -94,7 +97,25 @@ public:
         m_num_conf_independents = m_conf_independents.size();
         m_weights = weights;
     };
-    ~ScoringFunction() { }
+    void Destroy()
+    {
+        for (auto p : m_potentials)
+        {
+            delete p;
+        }
+        m_potentials.clear();
+        m_num_potentials = 0;
+        for (auto p : m_conf_independents)
+        {
+            delete p;
+        }
+        m_conf_independents.clear();
+        m_num_conf_independents = 0;
+    }
+    ~ScoringFunction() {
+        Destroy();
+    }
+
     fl eval(atom& a, atom& b, fl r) const{ // intentionally not checking for cutoff
         fl acc = 0;
         VINA_FOR (i, m_num_potentials)
