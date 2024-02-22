@@ -20,7 +20,7 @@ class Vina:
         """Initialize a Vina object.
 
         Args:
-            sf_name (str): Scoring function name to use (Vina or ad4) (default: vina)
+            sf_name (str): Scoring function name to use (vina, vinardo or ad4) (default: vina)
             cpu (int): Number of CPU to use (default: 0; use all of them)
             seed (int): Random seed (default: 0; ramdomly choosed)
             no_refine (boolean): when receptor is provided, do not use explicit receptor atoms
@@ -207,7 +207,7 @@ class Vina:
         self._ligands = pdbqt_string
 
     def set_weights(self, weights):
-        """Set potential weights for vina or ad4 scoring function.
+        """Set potential weights for vina, vinardo or ad4 scoring function.
 
         Args:
             weights (list): list or weights
@@ -266,7 +266,7 @@ class Vina:
             self._voxels[2] += int(self._voxels[2] % 2 == 1)
 
     def load_maps(self, map_prefix_filename):
-        """Load vina or ad4 affinity maps.
+        """Load vina, vinardo or ad4 affinity maps.
 
         Args:
             map_prefix_filename (str): affinity map prefix filename
