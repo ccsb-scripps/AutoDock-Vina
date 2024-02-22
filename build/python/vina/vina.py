@@ -20,7 +20,7 @@ class Vina:
         """Initialize a Vina object.
 
         Args:
-            sf_name (str): Scoring function name to use (Vina or ad4) (default: vina)
+            sf_name (str): Scoring function name to use (vina, vinardo or ad4) (default: vina)
             cpu (int): Number of CPU to use (default: 0; use all of them)
             seed (int): Random seed (default: 0; ramdomly choosed)
             no_refine (boolean): when receptor is provided, do not use explicit receptor atoms
