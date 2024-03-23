@@ -316,7 +316,7 @@ std::vector<double> Vina::grid_dimensions_from_ligand(double buffer_size) {
 	return box_dimensions;
 }
 
-void Vina::compute_vina_maps(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity, bool force_even_voxels) {
+void Vina::compute_vina_maps(double center_x, double center_y, double center_z, double size_x, double size_y, double size_z, double granularity, bool force_even_voxels, double max_search_space) {
 	// Setup the search box
 	// Check first that the receptor was added
 	if (m_sf_choice == SF_AD42) {
@@ -326,8 +326,8 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
 		throw vina_runtime_error("Cannot compute Vina or Vinardo affinity maps. The (rigid) receptor was not initialized.");
 	} else if (size_x <= 0 || size_y <= 0 || size_z <= 0) {
 		throw vina_runtime_error("Grid box dimensions must be greater than 0 Angstrom");
-	} else if (size_x * size_y * size_z > 27e3) {
-		std::cerr << "WARNING: Search space volume is greater than 27000 Angstrom^3 (See FAQ)\n";
+	} else if (max_search_space > 0 && size_x * size_y * size_z > max_search_space) {
+		std::cerr << "WARNING: Search space volume is greater than " << max_search_space << " Angstrom^3 (See FAQ)\n";
 	}
 
 	grid_dims gd;
