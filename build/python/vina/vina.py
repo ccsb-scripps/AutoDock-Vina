@@ -229,7 +229,7 @@ class Vina:
 
         self._weights = weights
 
-    def compute_vina_maps(self, center, box_size, spacing=0.375, force_even_voxels=False):
+    def compute_vina_maps(self, center, box_size, spacing=0.375, force_even_voxels=False, max_search_space=27e3):
         """Compute affinity maps using Vina scoring function.
 
         Args:
@@ -252,7 +252,7 @@ class Vina:
         x, y, z = center
         a, b, c = box_size
 
-        self._vina.compute_vina_maps(x, y, z, a, b, c, spacing, force_even_voxels)
+        self._vina.compute_vina_maps(x, y, z, a, b, c, spacing, force_even_voxels, max_search_space)
 
         self._center = center
         self._box_size = box_size
