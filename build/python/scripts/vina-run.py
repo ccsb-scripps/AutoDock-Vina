@@ -3,6 +3,8 @@
 from vina import Vina
 from meeko import MoleculePreparation
 from meeko import PDBQTWriterLegacy
+from meeko import PDBQTMolecule
+from meeko import RDKitMolCreate
 from ringtail import RingtailCore
 
 import argparse
@@ -82,25 +84,35 @@ class MolSupplier:
         return tmp % self.counter
 
 
-parser_essential = argparse.ArgumentParser(description="Run vina from SDF to SQLite", add_help=False)
+parser = argparse.ArgumentParser(description="Run vina from SDF to SQLite")
 
-parser_essential.add_argument("-l", "--ligands", help="input filename (.sdf)", required=True)
-parser_essential.add_argument("-r", "--receptor", help="receptor filename (.pdbqt)")
-parser_essential.add_argument("-m", "--maps", help="base filename of grid maps")
-parser_essential.add_argument(      "--scoring_function", choices=["vina", "vinardo", "ad4"], default="vina")
-parser_essential.add_argument("--out_db", help="output sqlite3 filename (.sqlite3/.db)", required=True)
-parser_essential.add_argument("--size", help="size of search space (grid maps)", type=float, nargs=3)
-parser_essential.add_argument("--center", help="center of search space (grid maps)", type=float, nargs=3)
+parser.add_argument("-l", "--ligands", help="input filename (.sdf)", required=True)
+parser.add_argument("-r", "--receptor", help="receptor filename (.pdbqt)")
+parser.add_argument("-m", "--maps", help="base filename of grid maps")
+parser.add_argument(      "--scoring_function", choices=["vina", "vinardo", "ad4"], default="vina")
+parser.add_argument("--out_db", help="output sqlite3 filename (.sqlite3/.db)", required=True)
+parser.add_argument("--size", help="size of search space (grid maps)", type=float, nargs=3)
+parser.add_argument("--center", help="center of search space (grid maps)", type=float, nargs=3)
+parser.add_argument("--out_sdf", help="output SD filename")
+parser.add_argument("--name_from_prop", help="set input molecule name from RDKit/SDF property")
+args = parser.parse_args()
 
-basic = parser_essential.add_argument_group("options")
-basic.add_argument("--out_sdf", help="output SD filename")
-basic.add_argument("--name_from_prop", help="set molecule name from RDKit/SDF property")
 
-args = parser_essential.parse_args()
+# we always need receptor to insert in DB
+if args.scoring_function == "ad4":
+    if args.maps is None:
+        print("AD4 scoring function requires --maps to be passed in")
+        sys.exit(2)
+    v = Vina(sf_name="ad4", cpu=1)
+    v.load_maps(args.maps)
+else:
+    v = Vina(sf_name=args.scoring_function, cpu=1)
+    if args.maps is not None:
+        v.load_maps(args.maps)
+    else:
+        v.set_receptor(args.receptor)
+        v.compute_vina_maps(center=args.center, box_size=args.size)
 
-v = Vina(sf_name=args.scoring_function, cpu=1)
-v.set_receptor(args.receptor)
-v.compute_vina_maps(center=args.center, box_size=args.size)
 supplier = Chem.SDMolSupplier(args.ligands, removeHs=False)
 if args.name_from_prop:
     supplier = MolSupplier(supplier, name_from_prop=args.name_from_prop)
@@ -117,7 +129,10 @@ def dock(mol):
     molsetups = meeko_prep.prepare(mol)
     if len(molsetups) != 1:
         return None
-    lig_pdbqt = meeko_prep.write_pdbqt_string()
+    molsetup = molsetups[0]
+    lig_pdbqt, is_ok, err = PDBQTWriterLegacy.write_string(molsetup) #, add_index_map=True, remove_smiles=True)
+    if not is_ok:
+        raise RuntimeError(f'ligand not ok {mol.GetProp("_Name")=}')
     v.set_ligand_from_string(lig_pdbqt)
     v.dock(max_evals=128000)
     output_pdbqt = v.poses(2)
@@ -128,9 +143,21 @@ def dock(mol):
 nr_cores = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(nr_cores - 1) # leave 1 for ringtail
 
+if args.out_sdf is not None:
+    w = Chem.SDWriter(args.out_sdf)
+
+
 for vina_strings in pool.imap_unordered(dock, supplier):
     rtc.add_results_from_vina_string(
             results_strings=vina_strings,
             save_receptor=False,
             add_interactions=True,
             )
+    if args.out_sdf is not None:
+        mol_name = list(vina_strings.keys())[0]
+        pdbqt_mol = PDBQTMolecule(vina_strings[mol_name])
+        output_rdmol = RDKitMolCreate.from_pdbqt_mol(pdbqt_mol)[0] # ignore sidechains
+        w.write(output_rdmol)
+
+if args.out_sdf is not None:
+    w.close()
