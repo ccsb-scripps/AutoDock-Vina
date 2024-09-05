@@ -68,6 +68,8 @@ jobs:
             brew install boost swig
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_BEFORE_ALL_LINUX: |
+            sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+            sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
             yum install -y wget python-devel pcre-devel
             # Install SWIG
             wget https://downloads.sourceforge.net/swig/swig-4.0.2.tar.gz
