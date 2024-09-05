@@ -63,7 +63,7 @@ jobs:
           CIBW_ARCHS: auto64
           CIBW_ARCHS_LINUX: auto64 aarch64
           CIBW_BEFORE_BUILD: |
-            pip install --upgrade pip setuptools
+            conda install boost-cpp swig
           CIBW_BEFORE_ALL_MACOS: |
             brew install boost swig
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
