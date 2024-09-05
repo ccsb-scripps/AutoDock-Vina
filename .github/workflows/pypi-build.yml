@@ -34,6 +34,13 @@ jobs:
         uses: actions/checkout@v2
         with: 
           fetch-depth: 0
+      - name: Check CPU Architecture
+        run: |
+          arch=$(uname -m)
+          if [ "$arch" != "x86_64" ]; then
+            echo "This job only runs on Intel-based Macs (x86_64). Skipping..."
+            exit 1
+          fi
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -63,7 +70,7 @@ jobs:
           CIBW_ARCHS: auto64
           CIBW_ARCHS_LINUX: auto64 aarch64
           CIBW_BEFORE_BUILD: |
-            conda install boost-cpp swig
+            pip install --upgrade pip setuptools
           CIBW_BEFORE_ALL_MACOS: |
             brew install boost swig
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
