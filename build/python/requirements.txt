@@ -1,1 +1,3 @@
 numpy>=1.18
+boost-cpp
+swig
