@@ -53,7 +53,7 @@ jobs:
             sed 's/v//' > ./build/python/vina/version.py
           cat ./build/python/vina/version.py
       - name: Install Python dependencies
-        run: python -m pip install cibuildwheel==2.0.1
+        run: python -m pip install cibuildwheel==2.0.1 boost-cpp swig
       - name: Build wheels
         run: |
           cp -R ./build/python/* .
@@ -69,23 +69,7 @@ jobs:
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_BEFORE_ALL_LINUX: |
             yum install -y wget python-devel pcre-devel
-            # Install SWIG
-            wget https://downloads.sourceforge.net/swig/swig-4.0.2.tar.gz
-            tar -xvf swig-4*.tar.gz 
-            cd swig-4*
-            ./configure --prefix=/usr --without-maximum-compile-warnings && make
-            make install && install -v -m755 -d /usr/share/doc/swig-4.0.2 && cp -v -R Doc/* /usr/share/doc/swig-4.0.2
-            cd ..
-            # Install Boost
-            wget https://boostorg.jfrog.io/artifactory/main/release/1.75.0/source/boost_1_75_0.tar.gz
-            tar -xzf boost_1_*
-            cd boost_1_*
-            ./bootstrap.sh --prefix=/usr/local --with-python=python
-            ./b2 install threading=multi link=shared
-            cd ..
-            # Clean up
-            rm -rf boost_1_*
-            rm -rf swig-4*
+            sudo apt-get install libboost-all-dev swig
       - name: Upload artifacts for inspection
         uses: actions/upload-artifact@v2
         with:
