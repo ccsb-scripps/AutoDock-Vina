@@ -80,7 +80,7 @@ jobs:
             wget https://boostorg.jfrog.io/artifactory/main/release/1.75.0/source/boost_1_75_0.tar.gz
             tar -xzf boost_1_*
             cd boost_1_*
-            ./bootstrap.sh --prefix=/usr --with-python=python
+            ./bootstrap.sh --prefix=/usr/local --with-python=python
             ./b2 install threading=multi link=shared
             cd ..
             # Clean up
