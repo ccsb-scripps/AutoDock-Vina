@@ -53,7 +53,7 @@ jobs:
             sed 's/v//' > ./build/python/vina/version.py
           cat ./build/python/vina/version.py
       - name: Install Python dependencies
-        run: python -m pip install cibuildwheel==2.0.1 boost-cpp swig
+        run: python -m pip install cibuildwheel==2.0.1
       - name: Build wheels
         run: |
           cp -R ./build/python/* .
