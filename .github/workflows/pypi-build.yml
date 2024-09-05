@@ -69,7 +69,7 @@ jobs:
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_BEFORE_ALL_LINUX: |
             yum install -y wget python-devel pcre-devel
-            sudo apt-get install libboost-all-dev swig
+            apt-get install libboost-all-dev swig
       - name: Upload artifacts for inspection
         uses: actions/upload-artifact@v2
         with:
