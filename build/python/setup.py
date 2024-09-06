@@ -19,6 +19,17 @@ from distutils.version import StrictVersion
 from distutils.util import convert_path
 from distutils.sysconfig import customize_compiler
 from distutils.ccompiler import show_compilers
+from packaging.version import Version, InvalidVersion
+
+def is_pep440_compliant(version_str):
+    try:
+        # Attempt to parse the version string using packaging's Version class
+        Version(version_str)
+        return True
+    except InvalidVersion:
+        # If parsing fails, the version is not PEP 440 compliant
+        print(f"{version_str} is not PEP 440 compliant")
+        return False
 
 
 # Path to the directory that contains this setup.py file.
@@ -59,7 +70,8 @@ def find_version():
             version = f.read().strip()
         
         print('Version found: %s (from version.py)' % version)
-        return version
+        if is_pep440_compliant(version):
+            return version
 
     try:
         git_output = subprocess.check_output(['git', 'describe', '--abbrev=7', '--dirty=@mod', '--always', '--tags'])
@@ -70,7 +82,8 @@ def find_version():
         version = git_output.replace('-', '.dev', 1).replace('@', '-', 1).replace('-', '+', 1).replace('-','')
 
         print('Version found %s (from git describe)' % version)
-        return version
+        if is_pep440_compliant(version):
+            return version
     except:
         pass
     
