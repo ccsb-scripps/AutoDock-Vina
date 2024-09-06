@@ -131,6 +131,14 @@ def locate_boost():
             return include_dirs, '/usr/lib64'
         elif glob.glob('/usr/lib/libboost*'):
             return include_dirs, '/usr/lib'
+        
+    # Added to support Mac with Apple Silicon
+    # on which homebrew's prefix is /opt/homebrew
+    include_dirs = '/opt/homebrew/include'
+
+    if os.path.isdir(include_dirs + os.path.sep + 'boost'):
+        if glob.glob('/opt/homebrew/lib/libboost*'):
+            return include_dirs, '/opt/homebrew/lib/'
 
     return None, None
 
