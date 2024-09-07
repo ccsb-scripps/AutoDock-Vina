@@ -1,4 +1,4 @@
-BASE=/usr/local
+BASE=$(shell brew --prefix)
 BOOST_VERSION=
 BOOST_INCLUDE = $(BASE)/include
 C_PLATFORM=-pthread

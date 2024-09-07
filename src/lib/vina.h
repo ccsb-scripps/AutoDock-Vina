@@ -33,9 +33,7 @@
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/program_options.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/exception.hpp>
-#include <boost/filesystem/convenience.hpp> // filesystem::basename
+#include <boost/filesystem.hpp>
 #include <boost/thread/thread.hpp> // hardware_concurrency // FIXME rm ?
 #include <boost/algorithm/string.hpp>
 //#include <openbabel/mol.h>
