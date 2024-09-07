@@ -1,4 +1,4 @@
-BASE=/usr/local
+BASE=/usr
 BOOST_VERSION=
 BOOST_INCLUDE = $(BASE)/include
 C_PLATFORM=-static -pthread
