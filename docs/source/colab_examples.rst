@@ -16,7 +16,7 @@ Overview
 
 .. image:: images/docking_workflow.png
    :alt: docking workflow
-   :width: 80%
+   :width: 100%
    :align: center
 
 *Major Python packages used* 
