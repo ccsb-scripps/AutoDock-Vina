@@ -1,3 +1,4 @@
+*.DS_Store
 *.o
 build/python/vina/autodock_vina_wrap.cpp
 build/python/vina/vina_wrapper.py
