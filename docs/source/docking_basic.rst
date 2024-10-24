@@ -7,21 +7,21 @@ Let's start with our first example of docking, where the typical usage pattern w
 
 
 System and software requirements
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This is a command-line-based tutorial for a basic docking experiment with AutoDock-Vina. It can be done on macOS, Linux, and Windows Subsystem for Linux (WSL). 
 
 This tutorial uses python package Meeko for receptor and ligand preparation. Installation guide and advanced usage can be found from the documentation: `https://meeko.readthedocs.io/en/readthedocs/ <https://meeko.readthedocs.io/en/readthedocs/>`_.
 
 Citing this tutorial
-~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^
 
 The publication for the materials present can be also found here: `https://www.nature.com/articles/nprot.2016.051 <https://www.nature.com/articles/nprot.2016.051>`_. If you are using this tutorial for your works, you can cite the following paper:
 
 - Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.
 
 Input and expected output files
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The input and expected output files can be found here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/_basic_docking>`_.
 
@@ -35,38 +35,41 @@ During this step, we will create a PDBQT file of our receptor containing only th
     $ mk_prepare_receptor.py -i 1iep_receptorH.pdb -o 1iep_receptor -p -v \
     --box_size 20 20 20 --box_center 15.190 53.903 16.917
 
-The command specifies the provided `1iep_receptorH.pdb` as the input file, and `1iep_receptor` as the basename of the output files. As requested by the `-p` option, a receptor PDBQT will be generated. And as requested by the `-v` option along with the box specification arguments `--box_size` and `--box_center`, a TXT file and a box PDB file containing the box dimension will be generated. The TXT file can be used as the config file for the docking calculation. And the PDB file can be used to visualize the box in other programs such as PyMOL. 
+The command specifies that the provided ``1iep_receptorH.pdb`` is the input file, and ``1iep_receptor`` will be the basename of the output files. As requested by the ``-p`` option, a receptor PDBQT will be generated. And as requested by the ``-v`` option along with the box specification arguments ``--box_size`` and ``--box_center``, a TXT file and a box PDB file containing the box dimension will be generated. The TXT file can be used as the config file for the docking calculation. And the PDB file can be used to visualize the box in other programs such as PyMOL. 
 
-The provided PDB file contains the receptor coordinates taken from PDB entry `1iep <https://www.rcsb.org/structure/1IEP>`_. If you are using experimental structures (for instance, from the `Protein Data Bank <https://www.rcsb.org>`_), you may want to remove waters, ligands, cofactors, ions deemed unnecessary for the docking. During receptor preparation with `mk_prepare_receptor.py`, there is a `--delete_residues` option to conviniently ignore those unwanted components from the input structure. 
+The provided PDB file contains the receptor coordinates taken from PDB entry `1iep <https://www.rcsb.org/structure/1IEP>`_. If you are using experimental structures (for instance, from the `Protein Data Bank <https://www.rcsb.org>`_), you may want to remove waters, ligands, cofactors, ions deemed unnecessary for the docking. During receptor preparation with ``mk_prepare_receptor.py``, there is a ``--delete_residues`` option to conviniently ignore those unwanted components from the input structure. 
 
-As an alternate to `mk_prepare_receptor.py`, you may use the ``prepare_receptor`` command tool from the ADFR Suite. As a prerequisite, a receptor coordinate file must contain all hydrogen atoms. Many tools exist to add missing hydrogen atoms to a protein, one popular choice would be to use `REDUCE <https://github.com/rlabduke/reduce>`_. 
+As an alternate to ``mk_prepare_receptor.py`` , you may use the ``prepare_receptor`` command tool from the ADFR Suite. As a prerequisite, a receptor coordinate file must contain all hydrogen atoms. Many tools exist to add missing hydrogen atoms to a protein, one popular choice would be to use `REDUCE <https://github.com/rlabduke/reduce>`_. 
 
-::
+.. code-block:: bash
+
     $ prepare_receptor -r 1iep_receptorH.pdb -o 1iep_receptor.pdbqt
 
 
 2. Preparing the ligand
 -----------------------
 
-This step is very similar to the previous step. We will also create a PDBQT file from a ligand molecule file (in MOL/MOL2 or SDF format) using the ``Meeko`` python package (see installation instruction here: :ref:`docking_requirements`). For convenience, the file ``1iep_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1iep <https://www.rcsb.org/structure/1IEP>`_ (see ``Download instance Coordinates`` link for the STI molecule). Since the ligand file does not include the hydrogen atoms, we are going to automatically add them.
+This step is very similar to the previous step. We will also create a PDBQT file from a ligand molecule file (preferably in the SDF format) using the ``Meeko`` python package. For convenience, the file ``1iep_ligand.sdf`` is provided. Alternatively, the 3D structure of the ligand is available from Protein Data Bank, PubChem and other online databases. 
 
 .. warning::
   
   We strongly advice you against using PDB format for preparing small molecules, since it does not contain information about bond connections. Please don't forget to always check the protonation state of your molecules before docking. Your success can sometimes hang by just an hydrogen atom. ;-)
 
+In case your starting ligand structure does not contain hydrogens, you may consider the command-line script ``scrub.py`` from the python package `Scrubber <https://github.com/forlilab/scrubber>`_ to protonate the ligand. If given the Smiles string of the ligand, ``scrub.py`` is also able to generate 3D conformers and enumerate tautomeric and protonation states of ligand. 
+
 .. code-block:: bash
 
     $ mk_prepare_ligand.py -i 1iep_ligand.sdf -o 1iep_ligand.pdbqt
 
-Other options are available for ``mk_prepare_ligand.py`` by typing ``mk_prepare_ligand.py --help``. If you are not sure about this step, the output PDBQT file ``1iep_ligand.pdbqt`` is available in ``solution`` directory.
+Other options are available for ``mk_prepare_ligand.py`` by typing ``mk_prepare_ligand.py --help``. 
 
 
 3. (Optional) Generating affinity maps for AutoDock FF
 ------------------------------------------------------
 
-Now, we have to define the grid space for the docking, typically, a 3D box around a the potential binding site of a receptor. During this step, we will create the input file for AutoGrid4, which will create an affinity map file for each atom types. The grid parameter file specifies an AutoGrid4 calculation, including the size and location of the grid, the atom types that will be used, the coordinate file for the rigid receptor, and other parameters for calculation of the grids.
+To use the AutoDock FF in docking, we need an additional input file, which is the grid parameter file (GPF) for AutoGrid4, to create an affinity map file for each atom types. The GPF file specifies an AutoGrid4 calculation, including the size and location of the grid, the atom types that will be used, the coordinate file for the rigid receptor, and other parameters for calculation of the grids.
 
-To prepare the gpf file for AutoGrid4, you can use the ``prepare_gpf.py`` command line tool.
+To prepare the gpf file for AutoGrid4, you can rerun ``mk_prepare_receptor.py`` command line tool.
 
 .. code-block:: bash
 
