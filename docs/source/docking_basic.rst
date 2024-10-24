@@ -31,7 +31,8 @@ The input and expected output files can be found here on `GitHub <https://github
 
 During this step, we will create a PDBQT file of our receptor containing only the polar hydrogen atoms as well as partial charges. For this step, we will use the ``mk_prepare_receptor.py`` command-line script: 
 
-::
+.. code-block:: bash
+    
     $ mk_prepare_receptor.py -i 1iep_receptorH.pdb -o 1iep_receptor -p -v \
     --box_size 20 20 20 --box_center 15.190 53.903 16.917
 
@@ -69,41 +70,18 @@ Other options are available for ``mk_prepare_ligand.py`` by typing ``mk_prepare_
 
 To use the AutoDock FF in docking, we need an additional input file, which is the grid parameter file (GPF) for AutoGrid4, to create an affinity map file for each atom types. The GPF file specifies an AutoGrid4 calculation, including the size and location of the grid, the atom types that will be used, the coordinate file for the rigid receptor, and other parameters for calculation of the grids.
 
-To prepare the gpf file for AutoGrid4, you can rerun ``mk_prepare_receptor.py`` command line tool.
+To prepare the gpf file for AutoGrid4, you can run (or rerun) ``mk_prepare_receptor.py`` with the additional option, ``-g`` that will enable the writing of the GPF file. 
 
 .. code-block:: bash
-
-    $ pythonsh <script_directory>/prepare_gpf.py -l 1iep_ligand.pdbqt -r 1iep_receptor.pdbqt -y
-
-The option ``-y`` specifies that we want to center automatically the grid around the ligand. For more information about ``prepare_gpf.py``, type ``pythonsh prepare_gpf.py -h``. At the end you should obtain the following GPF file ``1iep_receptor.gpf`` containing those lines:
-
-
-.. code-block:: console
-    :caption: Content of the grid parameter file (**1iep_receptor.gpf**) for the receptor c-Abl (**1iep_receptor.pdbqt**)
-
-    npts 54 54 54                        # num.grid points in xyz
-    gridfld 1iep_receptor.maps.fld       # grid_data_file
-    spacing 0.375                        # spacing(A)
-    receptor_types A C OA N SA HD        # receptor atom types
-    ligand_types A C NA OA N HD          # ligand atom types
-    receptor 1iep_receptor.pdbqt         # macromolecule
-    gridcenter 15.190 53.903 16.917      # xyz-coordinates or auto
-    smooth 0.5                           # store minimum energy w/in rad(A)
-    map 1iep_receptor.A.map              # atom-specific affinity map
-    map 1iep_receptor.C.map              # atom-specific affinity map
-    map 1iep_receptor.NA.map             # atom-specific affinity map
-    map 1iep_receptor.OA.map             # atom-specific affinity map
-    map 1iep_receptor.N.map              # atom-specific affinity map
-    map 1iep_receptor.HD.map             # atom-specific affinity map
-    elecmap 1iep_receptor.e.map          # electrostatic potential map
-    dsolvmap 1iep_receptor.d.map         # desolvation potential map
-    dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
+    
+    $ mk_prepare_receptor.py -i 1iep_receptorH.pdb -o 1iep_receptor -p -v -g \
+    --box_size 20 20 20 --box_center 15.190 53.903 16.917
 
 After creating the GPF file, and now we can use the ``autogrid4`` command to generate the different map files that will be used for the molecular docking:
 
 .. code-block:: bash
 
-    $ autogrid4 -p 1iep.gpf -l 1iep.glg
+    $ autogrid4 -p 1iep_receptor.gpf -l 1iep_receptor.glg
 
 From this command you should have generated the following files:
 
@@ -134,10 +112,10 @@ Running AutoDock Vina will write a PDBQT file called ``1iep_ligand_ad4_out.pdbqt
 4.b. Using Vina forcefield
 __________________________
 
-Contrary to AutoDock4, you don't need to precalculate the affinity grid maps with ``autogrid4`` when using the Vina forcefield. AutoDock Vina computes those maps internally before the docking. However, you still need to specify the center and dimensions (in Angstrom) of the grid space, as well as the receptor. Here, instead of specifying each parameters for the grid box using the arguments ``--center_x, --center_y, --center_z`` and ``--size_x, --size_y, --size_z``, we will store all those informations in a text file ``1iep_receptor_vina_box.txt``.
+Contrary to AutoDock4, you don't need to precalculate the affinity grid maps with ``autogrid4`` when using the Vina forcefield. AutoDock Vina computes those maps internally before the docking. If you did not make the box dimension file when preparing receptor in the previous step, you could specify the center and dimensions (in Angstrom) of the grid box in a new TXT file:  
 
 .. code-block:: console
-    :caption: Content of the config file (**1iep_receptor_vina_box.txt**) for AutoDock Vina
+    :caption: Content of the config file (**1iep_receptor.box.txt**) for AutoDock Vina
 
     center_x = 15.190
     center_y = 53.903
@@ -149,7 +127,7 @@ Contrary to AutoDock4, you don't need to precalculate the affinity grid maps wit
 .. code-block:: bash
 
     $ vina --receptor 1iep_receptor.pdbqt --ligand 1iep_ligand.pdbqt \
-           --config 1iep_receptor_vina_box.txt \
+           --config 1iep_receptor.box.txt \
            --exhaustiveness=32 --out 1iep_ligand_vina_out.pdbqt
 
 .. tip::
@@ -174,30 +152,31 @@ The predicted free energy of binding should be about ``-14 kcal/mol`` for poses 
 
 .. code-block:: console
 
-  Scoring function : ad4
-  Ligand: 1iep_ligand.pdbqt
-  Exhaustiveness: 32
-  CPU: 0
-  Verbosity: 1
+    Scoring function : ad4
+    Ligand: 1iep_ligand.pdbqt
+    Exhaustiveness: 32
+    CPU: 0
+    Verbosity: 1
 
-  Reading AD4.2 maps ... done.
-  Performing docking (random seed: -556654859) ... 
-  0%   10   20   30   40   50   60   70   80   90   100%
-  |----|----|----|----|----|----|----|----|----|----|
-  ***************************************************
+    Reading AD4.2 maps ... done.
+    Performing docking (random seed: 1045208650) ... 
+    0%   10   20   30   40   50   60   70   80   90   100%
+    |----|----|----|----|----|----|----|----|----|----|
+    ***************************************************
 
-  mode |   affinity | dist from best mode
-       | (kcal/mol) | rmsd l.b.| rmsd u.b.
-  -----+------------+----------+----------
-     1       -14.62          0          0
-     2       -13.13      1.051      1.529
-     3       -12.26      1.442      2.158
-     4       -11.91      3.646       11.5
-     5       -11.89      3.859      11.99
-     6       -11.47      1.978      13.56
-     7       -11.33      1.727      2.585
-     8       -10.85      3.619      5.759
-     9       -10.23      7.057       12.7
+    mode |   affinity | dist from best mode
+        | (kcal/mol) | rmsd l.b.| rmsd u.b.
+    -----+------------+----------+----------
+    1       -14.72          0          0
+    2       -14.63      0.862      1.051
+    3       -13.12      1.152      1.877
+    4        -11.7      4.989      11.38
+    5       -11.44      3.619      11.51
+    6       -11.39       1.36      2.222
+    7       -11.21      3.773      12.06
+    8       -10.71      2.043      13.49
+    9       -10.41      1.748      2.955
+
 
 5.b. Using Vina forcefield
 __________________________
@@ -206,31 +185,31 @@ Using the vina forcefield, you should obtain a similar output from Vina with the
 
 .. code-block:: console
 
-  Scoring function : vina
-  Rigid receptor: 1iep_receptor.pdbqt
-  Ligand: 1iep_ligand.pdbqt
-  Center: X 15.19 Y 53.903 Z 16.917
-  Size: X 20 Y 20 Z 20
-  Grid space: 0.375
-  Exhaustiveness: 32
-  CPU: 0
-  Verbosity: 1
+    Scoring function : vina
+    Rigid receptor: 1iep_receptor.pdbqt
+    Ligand: 1iep_ligand.pdbqt
+    Grid center: X 15.19 Y 53.903 Z 16.917
+    Grid size  : X 20 Y 20 Z 20
+    Grid space : 0.375
+    Exhaustiveness: 32
+    CPU: 0
+    Verbosity: 1
 
-  Computing Vina grid ... done.
-  Performing docking (random seed: -131415392) ... 
-  0%   10   20   30   40   50   60   70   80   90   100%
-  |----|----|----|----|----|----|----|----|----|----|
-  ***************************************************
+    Computing Vina grid ... done.
+    Performing docking (random seed: -1622165383) ... 
+    0%   10   20   30   40   50   60   70   80   90   100%
+    |----|----|----|----|----|----|----|----|----|----|
+    ***************************************************
 
-  mode |   affinity | dist from best mode
-       | (kcal/mol) | rmsd l.b.| rmsd u.b.
-  -----+------------+----------+----------
-     1       -12.92          0          0
-     2       -10.97      3.012      12.42
-     3       -10.79      3.713      12.19
-     4       -10.69      3.913      12.36
-     5       -10.32      2.538      12.64
-     6       -9.464      2.916      12.53
-     7       -9.204       1.35      2.025
-     8       -9.137      1.596      2.674
-     9       -8.637      3.969      12.69
+    mode |   affinity | dist from best mode
+        | (kcal/mol) | rmsd l.b.| rmsd u.b.
+    -----+------------+----------+----------
+    1       -13.23          0          0
+    2       -11.29     0.9857      1.681
+    3       -11.28      3.044      12.41
+    4       -11.15      3.813      12.24
+    5       -9.746      3.313      12.36
+    6       -9.132      1.736      13.47
+    7       -9.079      2.559      12.78
+    8       -8.931      3.951      12.69
+    9       -8.762      3.541      12.21
