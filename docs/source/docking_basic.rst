@@ -37,7 +37,7 @@ During this step, we will create a PDBQT file of our receptor containing only th
 
 The command specifies that the provided ``1iep_receptorH.pdb`` is the input file, and ``1iep_receptor`` will be the basename of the output files. As requested by the ``-p`` option, a receptor PDBQT will be generated. And as requested by the ``-v`` option along with the box specification arguments ``--box_size`` and ``--box_center``, a TXT file and a box PDB file containing the box dimension will be generated. The TXT file can be used as the config file for the docking calculation. And the PDB file can be used to visualize the box in other programs such as PyMOL. 
 
-The provided PDB file contains the receptor coordinates taken from PDB entry `1iep <https://www.rcsb.org/structure/1IEP>`_. If you are using experimental structures (for instance, from the `Protein Data Bank <https://www.rcsb.org>`_), you may want to remove waters, ligands, cofactors, ions deemed unnecessary for the docking. During receptor preparation with ``mk_prepare_receptor.py``, there is a ``--delete_residues`` option to conviniently ignore those unwanted components from the input structure. 
+The provided PDB file contains the receptor coordinates taken from PDB entry ``1iep``. If you are using experimental structures (for instance, from the `Protein Data Bank <https://www.rcsb.org>`_), you may want to remove waters, ligands, cofactors, ions deemed unnecessary for the docking. During receptor preparation with ``mk_prepare_receptor.py``, there is a ``--delete_residues`` option to conviniently ignore those unwanted components from the input structure. 
 
 As an alternate to ``mk_prepare_receptor.py`` , you may use the ``prepare_receptor`` command tool from the ADFR Suite. As a prerequisite, a receptor coordinate file must contain all hydrogen atoms. Many tools exist to add missing hydrogen atoms to a protein, one popular choice would be to use `REDUCE <https://github.com/rlabduke/reduce>`_. 
 
@@ -122,6 +122,8 @@ Contrary to AutoDock4, you don't need to precalculate the affinity grid maps wit
     size_x = 20.0
     size_y = 20.0
     size_z = 20.0
+
+And then run the following command to execute the docking calculation: 
 
 .. code-block:: bash
 
