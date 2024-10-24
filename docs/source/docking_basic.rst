@@ -5,30 +5,44 @@ Basic docking
 
 Let's start with our first example of docking, where the typical usage pattern would be to dock a single molecule into a rigid receptor. In this example we will dock the approved anticancer drug `imatinib <https://en.wikipedia.org/wiki/Imatinib>`_ (Gleevec; PDB entry `1iep <https://www.rcsb.org/structure/1IEP>`_) in the structure of c-Abl using AutoDock Vina. The target for this protocol is the kinase domain of the proto-oncogene tyrosine protein kinase c-Abl. The protein is an important target for cancer chemotherapy—in particular, the treatment of chronic myelogenous leukemia.
 
-.. note::
-    This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the meeko Python package.
 
-.. note::
-    The materials present is this tutorial can be also found here: `https://www.nature.com/articles/nprot.2016.051 <https://www.nature.com/articles/nprot.2016.051>`_. If you are using this tutorial for your works, you can cite the following paper:
+System and software requirements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    - Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.
+This is a command-line-based tutorial for a basic docking experiment with AutoDock-Vina. It can be done on macOS, Linux, and Windows Subsystem for Linux (WSL). 
 
-Materials for this tutorial
----------------------------
+This tutorial uses python package Meeko for receptor and ligand preparation. Installation guide and advanced usage can be found from the documentation: `https://meeko.readthedocs.io/en/readthedocs/ <https://meeko.readthedocs.io/en/readthedocs/>`_.
 
-For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/basic_docking/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/basic_docking>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/basic_docking/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
+Citing this tutorial
+~~~~~~~~~~~~~~~~~~~~
+
+The publication for the materials present can be also found here: `https://www.nature.com/articles/nprot.2016.051 <https://www.nature.com/articles/nprot.2016.051>`_. If you are using this tutorial for your works, you can cite the following paper:
+
+- Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.
+
+Input and expected output files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The input and expected output files can be found here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/_basic_docking>`_.
 
 
 1. Preparing the receptor
 -------------------------
 
-During this step, we will create a PDBQT file of our receptor containing only the polar hydrogen atoms as well as partial charges. For this step, we will use the ``prepare_receptor`` command tool from the ADFR Suite. As a prerequisite, a receptor coordinate file must contain all hydrogen atoms. If hydrogen atoms are absent in the protein structure file, you can add the ``-A "hydrogens"`` flag. Many tools exist to add missing hydrogen atoms to a protein, one popular choice would be to use `REDUCE <https://github.com/rlabduke/reduce>`_. If you are using experimental structures (for instance, from the `Protein Data Bank <https://www.rcsb.org>`_), use a text editor to remove waters, ligands, cofactors, ions deemed unnecessary for the docking. This file contains the receptor coordinates taken from PDB entry `1iep <https://www.rcsb.org/structure/1IEP>`_.
+During this step, we will create a PDBQT file of our receptor containing only the polar hydrogen atoms as well as partial charges. For this step, we will use the ``mk_prepare_receptor.py`` command-line script: 
 
-.. code-block:: bash
+::
+    $ mk_prepare_receptor.py -i 1iep_receptorH.pdb -o 1iep_receptor -p -v \
+    --box_size 20 20 20 --box_center 15.190 53.903 16.917
 
+The command specifies the provided `1iep_receptorH.pdb` as the input file, and `1iep_receptor` as the basename of the output files. As requested by the `-p` option, a receptor PDBQT will be generated. And as requested by the `-v` option along with the box specification arguments `--box_size` and `--box_center`, a TXT file and a box PDB file containing the box dimension will be generated. The TXT file can be used as the config file for the docking calculation. And the PDB file can be used to visualize the box in other programs such as PyMOL. 
+
+The provided PDB file contains the receptor coordinates taken from PDB entry `1iep <https://www.rcsb.org/structure/1IEP>`_. If you are using experimental structures (for instance, from the `Protein Data Bank <https://www.rcsb.org>`_), you may want to remove waters, ligands, cofactors, ions deemed unnecessary for the docking. During receptor preparation with `mk_prepare_receptor.py`, there is a `--delete_residues` option to conviniently ignore those unwanted components from the input structure. 
+
+As an alternate to `mk_prepare_receptor.py`, you may use the ``prepare_receptor`` command tool from the ADFR Suite. As a prerequisite, a receptor coordinate file must contain all hydrogen atoms. Many tools exist to add missing hydrogen atoms to a protein, one popular choice would be to use `REDUCE <https://github.com/rlabduke/reduce>`_. 
+
+::
     $ prepare_receptor -r 1iep_receptorH.pdb -o 1iep_receptor.pdbqt
-
-Other options are available for ``prepare_receptor`` by typing ``prepare_receptor -h``. If you are not sure about this step, the output PDBQT file ``1iep_receptor.pdbqt`` is available in ``solution`` directory.
 
 
 2. Preparing the ligand
