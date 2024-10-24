@@ -24,7 +24,7 @@ The Python package ``meeko`` is package recently developped in the Forli lab als
 
 .. code-block:: bash
     
-    $ pip install -U numpy openbabel meeko
+    $ pip install -U numpy scipy rdkit vina meeko prody
 
 If the installation was successful, you should now be able to access to the following command from your terminal by typing:
 
@@ -38,14 +38,14 @@ If the installation was successful, you should now be able to access to the foll
 
     See instructions in :ref:`installation` on how to setup and create an dedicated ``Conda`` environment.
 
-Type the following command to install ``NumPy``, ``OpenBabel`` and ``meeko``:
+Type the following command to install ``Meeko`` and (optionally) ``ProDy``:
 
 .. code-block:: bash
     
     $ conda activate vina
     $ conda install python=3.10    # for ProDy interoperability
-    $ conda install -c conda-forge numpy openbabel scipy rdkit
-    $ pip install meeko
+    $ conda install -c conda-forge numpy scipy rdkit vina meeko
+    $ pip install prody
 
 
 ADFR software suite
