@@ -119,7 +119,7 @@ You should obtain as well the following files:
 4.a. Using AutoDock4 forcefield
 _______________________________
 
-While using the AutoDock4 forcefield, only the flex part of the receptor is necessary, as well as the affinity maps. Once the receptor (flex part ``1fpu_receptor_flex.pdbqt``), ligand ``1iep_ligand.pdbqt`` and maps ``1fpu_receptor_rigid`` were prepared, you can perform the flexible side-chain docking by simply running the following command line:
+The flexible-receptor docking calculation using the AutoDock4 forcefield will require the flex part of the receptor as well as the affinity maps. Once the receptor (flex part ``1fpu_receptor_flex.pdbqt``), ligand ``1iep_ligand.pdbqt`` and maps ``1fpu_receptor_rigid`` were prepared, you can perform the flexible side-chain docking by simply running the following command line:
 
 .. code-block:: bash
 
