@@ -1,0 +1,64 @@
+# AVS field file
+#
+# AutoDock Atomic Affinity and Electrostatic Grids
+#
+# Created by autogrid4.
+#
+#SPACING 0.375
+#NELEMENTS 52 52 52
+#CENTER 15.190 53.903 16.917
+#MACROMOLECULE 1fpu_receptor_rigid.pdbqt
+#GRID_PARAMETER_FILE 1fpu_receptor_rigid.gpf
+#
+ndim=3			# number of dimensions in the field
+dim1=53			# number of x-elements
+dim2=53			# number of y-elements
+dim3=53			# number of z-elements
+nspace=3		# number of physical coordinates per point
+veclen=19		# number of affinity values at each point
+data=float		# data type (byte, integer, float, double)
+field=uniform		# field type (uniform, rectilinear, irregular)
+coord 1 file=1fpu_receptor_rigid.maps.xyz filetype=ascii offset=0
+coord 2 file=1fpu_receptor_rigid.maps.xyz filetype=ascii offset=2
+coord 3 file=1fpu_receptor_rigid.maps.xyz filetype=ascii offset=4
+label=HD-affinity	# component label for variable 1
+label=C-affinity	# component label for variable 2
+label=A-affinity	# component label for variable 3
+label=N-affinity	# component label for variable 4
+label=NA-affinity	# component label for variable 5
+label=OA-affinity	# component label for variable 6
+label=F-affinity	# component label for variable 7
+label=P-affinity	# component label for variable 8
+label=SA-affinity	# component label for variable 9
+label=S-affinity	# component label for variable 10
+label=Cl-affinity	# component label for variable 11
+label=CL-affinity	# component label for variable 12
+label=Br-affinity	# component label for variable 13
+label=BR-affinity	# component label for variable 14
+label=I-affinity	# component label for variable 15
+label=Si-affinity	# component label for variable 16
+label=B-affinity	# component label for variable 17
+label=Electrostatics	# component label for variable 17
+label=Desolvation	# component label for variable 18
+#
+# location of affinity grid files and how to read them
+#
+variable 1 file=1fpu_receptor_rigid.HD.map filetype=ascii skip=6
+variable 2 file=1fpu_receptor_rigid.C.map filetype=ascii skip=6
+variable 3 file=1fpu_receptor_rigid.A.map filetype=ascii skip=6
+variable 4 file=1fpu_receptor_rigid.N.map filetype=ascii skip=6
+variable 5 file=1fpu_receptor_rigid.NA.map filetype=ascii skip=6
+variable 6 file=1fpu_receptor_rigid.OA.map filetype=ascii skip=6
+variable 7 file=1fpu_receptor_rigid.F.map filetype=ascii skip=6
+variable 8 file=1fpu_receptor_rigid.P.map filetype=ascii skip=6
+variable 9 file=1fpu_receptor_rigid.SA.map filetype=ascii skip=6
+variable 10 file=1fpu_receptor_rigid.S.map filetype=ascii skip=6
+variable 11 file=1fpu_receptor_rigid.Cl.map filetype=ascii skip=6
+variable 12 file=1fpu_receptor_rigid.CL.map filetype=ascii skip=6
+variable 13 file=1fpu_receptor_rigid.Br.map filetype=ascii skip=6
+variable 14 file=1fpu_receptor_rigid.BR.map filetype=ascii skip=6
+variable 15 file=1fpu_receptor_rigid.I.map filetype=ascii skip=6
+variable 16 file=1fpu_receptor_rigid.Si.map filetype=ascii skip=6
+variable 17 file=1fpu_receptor_rigid.B.map filetype=ascii skip=6
+variable 18 file=1fpu_receptor_rigid.e.map filetype=ascii skip=6
+variable 19 file=1fpu_receptor_rigid.d.map filetype=ascii skip=6
