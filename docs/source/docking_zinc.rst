@@ -21,7 +21,7 @@ Materials for this tutorial
 
 For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/docking_with_zinc_metalloproteins/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/docking_with_zinc_metalloproteins>`_). This includes a special parameter data file, ``AD4Zn.dat``, which is required by this tutorial. 
 
-Additionally, the receptor preparation requires a specialized command-line script, ``zinc_pseudo.py``, located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
+Additionally, the receptor preparation requires specialized command-line scripts, ``zinc_pseudo.py`` and ``prepare_gpf4zn.py``, located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_. The execution of ``prepare_gpf4zn.py`` and the grid map computation require ADFR suite. 
 
 1. Preparing the receptor
 -------------------------
@@ -59,7 +59,7 @@ The execution of the first command will output the following message:
     Files written:
     protein.pdbqt <-- static (i.e., rigid) receptor input file
 
-This is informing us that the noncovalent cofactor, FPP, is built upon a definition CIF file fetched from PDB. 
+This is informing us that the noncovalent cofactor, ``FPP``, has been created based on the definition CIF file that is downloaed from PDB. 
 
 The execution of the second command will output the following message, telling us that only one zinc pseudo atom (TZ) was added to the receptor.
 
