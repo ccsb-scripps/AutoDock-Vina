@@ -1,0 +1,35 @@
+parameter_file AD4Zn.dat
+npts 40 30 50
+gridfld protein_tz.maps.fld
+spacing 0.375
+receptor_types TZ HD C A N NA OA F P SA S Cl Br I Mg Ca Mn Fe Zn
+ligand_types HD C A N NA OA F P SA S Cl CL Br BR I Si B
+receptor protein_tz.pdbqt
+gridcenter 18.000 134.000 -1.000
+smooth 0.500
+map protein_tz.HD.map
+map protein_tz.C.map
+map protein_tz.A.map
+map protein_tz.N.map
+map protein_tz.NA.map
+map protein_tz.OA.map
+map protein_tz.F.map
+map protein_tz.P.map
+map protein_tz.SA.map
+map protein_tz.S.map
+map protein_tz.Cl.map
+map protein_tz.CL.map
+map protein_tz.Br.map
+map protein_tz.BR.map
+map protein_tz.I.map
+map protein_tz.Si.map
+map protein_tz.B.map
+elecmap protein_tz.e.map
+dsolvmap protein_tz.d.map
+dielectric -42.000
+nbp_r_eps 0.25 23.2135 12 6 NA TZ
+nbp_r_eps 2.1   3.8453 12 6 OA Zn
+nbp_r_eps 2.25  7.5914 12 6 SA Zn
+nbp_r_eps 1.0   0.0    12 6 HD Zn
+nbp_r_eps 2.0   0.0060 12 6 NA Zn
+nbp_r_eps 2.0   0.2966 12 6  N Zn

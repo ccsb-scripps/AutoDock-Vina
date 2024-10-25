@@ -44,7 +44,7 @@ Type the following command to install ``Meeko`` and (optionally) ``ProDy``:
     
     $ conda activate vina
     $ conda install python=3.10    # for ProDy interoperability
-    $ conda install -c conda-forge numpy scipy rdkit vina meeko
+    $ conda install -c conda-forge numpy scipy rdkit gemmi vina meeko
     $ pip install prody
 
 

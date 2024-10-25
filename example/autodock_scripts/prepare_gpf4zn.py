@@ -1,4 +1,4 @@
-#!/usr/bin/env pythonsh
+#!/usr/bin/env python
 #
 # 
 #
