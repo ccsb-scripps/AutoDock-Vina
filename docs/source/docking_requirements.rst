@@ -24,7 +24,7 @@ The Python package ``meeko`` is package recently developped in the Forli lab als
 
 .. code-block:: bash
     
-    $ pip install -U numpy scipy rdkit vina meeko prody
+    $ pip install -U numpy scipy rdkit vina meeko gemmi prody
 
 If the installation was successful, you should now be able to access to the following command from your terminal by typing:
 
@@ -44,7 +44,7 @@ Type the following command to install ``Meeko`` and (optionally) ``ProDy``:
     
     $ conda activate vina
     $ conda install python=3.10    # for ProDy interoperability
-    $ conda install -c conda-forge numpy scipy rdkit gemmi vina meeko
+    $ conda install -c conda-forge numpy scipy rdkit vina meeko gemmi
     $ pip install prody
 
 
