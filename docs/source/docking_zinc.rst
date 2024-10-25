@@ -38,6 +38,7 @@ To prepare the receptor, execute the following command lines:
 The execution of the first command will output the following message: 
 
 .. code-block:: console
+    
     Input residues {'B:3011': 'FPP'} not in residue_templates
 
     Trying to resolve unknown residues by building chemical templates... 
