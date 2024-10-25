@@ -13,37 +13,46 @@ Thus a method was developed that uses the existing version of AutoDock4 and now 
 
 In this tutorial, we are going to dock a fragment-size ligand (nicotine) with explicit water molecules in the acetylcholine binding protein (AChBP) structure (PDB entry `1uw6 <https://www.rcsb.org/structure/1UW6>`_). It was shown that the absence of water molecules could have a dramatic influence in docking performance leading to either inaccurate scoring and/or incorrect pose. With hydrated docking, fragment-sized ligands show a overall RMSD improvement.
 
-.. note::
 
-    This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the meeko Python package.
+**System and software requirements**
 
-.. note::
+This is a command-line-based tutorial for a basic docking experiment with AutoDock-Vina. It can be done on macOS, Linux, and Windows Subsystem for Linux (WSL). 
+
+This tutorial uses python package Meeko for receptor and ligand preparation. Installation guide and advanced usage can be found from the documentation: `https://meeko.readthedocs.io/en/readthedocs/ <https://meeko.readthedocs.io/en/readthedocs/>`_.
+
+.. note:: Citing this tutorial & method
     
-    The materials present is this tutorial can be also found here: `https://www.nature.com/articles/nprot.2016.051 <https://www.nature.com/articles/nprot.2016.051>`_. If you are using this tutorial or this docking method for your work, you can cite the following papers:
+    If you are using this tutorial or this docking method for your work, you can cite the following papers:
 
     - Forli, S., & Olson, A. J. (2012). A force field with discrete displaceable waters and desolvation entropy for hydrated ligand docking. Journal of medicinal chemistry, 55(2), 623-638.
     - Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.
 
-Materials for this tutorial
----------------------------
+**Input and expected output files**
 
-For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/hydrated_docking/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/hydrated_docking>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/hydrated_docking/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
+The input and expected output files can be found here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/_basic_docking>`_. 
+
+**Specialized utility scripts**
+
+This tutorial requires the following specialized Python scripts for preparation and result processing:
+- mapwater.py
+- dry.py
+These scripts are provided in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
 
 1. Preparing the receptor
 -------------------------
 
-The receptor can be prepared using the method described earlier in the following tutorials: :ref:`basic_docking` or :ref:`flexible_docking` if one wants to incorporate some sidechain flexibility. The file ``1uw6_receptorH.pdb`` is provided (see ``data`` directory located at ``<autodock-vina_directory>/example/hydrated_docking/``). This file contains the receptor coordinates of chain A and B taken from the PDB entry ``1uw6``.
+The receptor can be prepared using the method described earlier in the following tutorials: :ref:`basic_docking` or :ref:`flexible_docking` if one wants to incorporate some sidechain flexibility. The file ``1uw6_receptorH.pdb`` is provided. This file contains the receptor coordinates from the PDB entry ``1uw6``. To create the PDBQT file and the grid parameter file (GPF) for autogrid4, we will use the ``mk_prepare_receptor.py`` command-line script:  
 
 .. code-block:: bash
 
-    $ prepare_receptor -r 1uw6_receptorH.pdb -o 1uw6_receptor.pdbqt
+    $ mk_prepare_receptor.py -i 1uw6_receptorH.pdb -o 1uw6_receptor -p -g \
+    --box_center 83.640 69.684 -10.124 --box_size 15 15 15
 
-The output PDBQT file ``1uw6_receptor.pdbqt`` is available in ``solution`` directory if necessary.
 
 2. Preparing the ligand
 -----------------------
 
-For the hydrated docking, explicit water molecules (W atoms) must be added to the molecule. And for that, we will use ``Meeko`` (see installation instruction here: :ref:`docking_requirements`). For convenience, the molecule file ``1uw6_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1uw6 <https://www.rcsb.org/structure/1UW6>`_ (see ``Download instance Coordinates`` link for the NCT molecule (chain U [A])). Since the ligand file does not include the hydrogen atoms, we are going to automatically add them. The option ``-w`` is use to add explicit water molecule to the molecule.
+For the hydrated docking, explicit water molecules (W atoms) must be added to the molecule. And for that, we will use ``Meeko`` (see installation instruction here: :ref:`docking_requirements`). For convenience, the molecule file ``1uw6_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1uw6 <https://www.rcsb.org/structure/1UW6>`_ (see ``Download instance Coordinates`` link for the NCT molecule (chain U [A])). Since the ligand file does not include the hydrogen atoms, we are going to add them using ``scrub.py`` from python package Scrubber. The option ``-w`` is use to add explicit water molecule to the molecule.
 
 .. warning::
   
@@ -51,42 +60,57 @@ For the hydrated docking, explicit water molecules (W atoms) must be added to th
 
 .. code-block:: bash
     
-    $ mk_prepare_ligand.py -i 1uw6_ligand.sdf -o 1uw6_ligand.pdbqt -w
+    $ scrub.py 1uw6_ligand.sdf -o 1uw6_ligandH.sdf
+    $ mk_prepare_ligand.py -i 1uw6_ligandH.sdf -o 1uw6_ligand.pdbqt -w
 
-In total, 2 water molecules were added to the fragment. If you were not able to generate the ``1uw6_ligand.pdbqt`` file, you can look at the ``solution`` directory.
+In total, 2 water molecules were added to the fragment. 
 
 3. Generating affinity maps
 ---------------------------
 
-As well as for the :ref:`basic_docking` or :ref:`flexible_docking` tutorials, we will also need to calculate the affinity maps for each atom types present in the ligand. However, this time we will also need to craft a special ``W`` affinity map for the water molecules attached to the ligand. This ``W`` affinity map is obtained by combining the ``OA`` and ``HD`` grid maps, therefore we are going to use the ``-p ligand_types='A,C,OA,N,HD'`` option to be sure those atom types are included in the GPF, in addition of the ligand atom types, while ignoring the ``W`` atom type:
+The hydrated docking method was calibrated and validated with the AutoDock4 forcefield. Therefore, we need to generate a GPF file to precalculate the affinity map for each atom types. 
+
+In case you haven't already made the GPF file, you could rerun ``mk_prepare_receptor.py`` with the additional option, ``-g`` that will enable the writing of the GPF file. 
 
 .. code-block:: bash
+    
+    $ mk_prepare_receptor.py -i 1uw6_receptorH.pdb -o 1uw6_receptor -p -g \
+    --box_center 83.640 69.684 -10.124 --box_size 15 15 15
 
-    $ pythonsh <script_directory>/prepare_gpf.py -l 1uw6_ligand.pdbqt -r 1uw6_receptor.pdbqt -y \
-               -p ligand_types='A,NA,C,HD,N,OA' \
-
-The option ``-y`` specifies that we want to center automatically the grid around the ligand. After manually adding the ``OA`` atom type, you should have a GPF file called ``1uw6_receptor.gpf`` that looks like this:
+After creating the GPF file, and now we can use the ``autogrid4`` command to generate the different map files that will be used for the molecular docking: 
 
 .. code-block:: console
     :caption: Content of the grid parameter file (**1uw6_receptor.gpf**) for the receptor (**1uw6_receptor.pdbqt**)
 
-    npts 40 40 40                        # num.grid points in xyz
-    gridfld 1uw6_receptor.maps.fld       # grid_data_file
-    spacing 0.375                        # spacing(A)
-    receptor_types A C NA OA N SA HD     # receptor atom types
-    ligand_types A NA C HD N OA          # ligand atom types
-    receptor 1uw6_receptor.pdbqt         # macromolecule
-    gridcenter 83.640 69.684 -10.124     # xyz-coordinates or auto
-    smooth 0.5                           # store minimum energy w/in rad(A)
-    map 1uw6_receptor.A.map              # atom-specific affinity map
-    map 1uw6_receptor.NA.map             # atom-specific affinity map
-    map 1uw6_receptor.C.map              # atom-specific affinity map
-    map 1uw6_receptor.HD.map             # atom-specific affinity map * ADD OA IF NOT PRESENT *
-    map 1uw6_receptor.N.map              # atom-specific affinity map
-    map 1uw6_receptor.OA.map             # atom-specific affinity map * ADD OA IF NOT PRESENT *
-    elecmap 1uw6_receptor.e.map          # electrostatic potential map
-    dsolvmap 1uw6_receptor.d.map              # desolvation potential map
-    dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
+    parameter_file boron-silicon-atom_par.dat
+    npts 40 40 40
+    gridfld 1uw6_receptor.maps.fld
+    spacing 0.375
+    receptor_types HD C A N NA OA F P SA S Cl Br I Mg Ca Mn Fe Zn
+    ligand_types HD C A N NA OA F P SA S Cl CL Br BR I Si B
+    receptor 1uw6_receptor.pdbqt
+    gridcenter 83.640 69.684 -10.124
+    smooth 0.500
+    map 1uw6_receptor.HD.map
+    map 1uw6_receptor.C.map
+    map 1uw6_receptor.A.map
+    map 1uw6_receptor.N.map
+    map 1uw6_receptor.NA.map
+    map 1uw6_receptor.OA.map
+    map 1uw6_receptor.F.map
+    map 1uw6_receptor.P.map
+    map 1uw6_receptor.SA.map
+    map 1uw6_receptor.S.map
+    map 1uw6_receptor.Cl.map
+    map 1uw6_receptor.CL.map
+    map 1uw6_receptor.Br.map
+    map 1uw6_receptor.BR.map
+    map 1uw6_receptor.I.map
+    map 1uw6_receptor.Si.map
+    map 1uw6_receptor.B.map
+    elecmap 1uw6_receptor.e.map
+    dsolvmap 1uw6_receptor.d.map
+    dielectric -42.000
 
 You can now execute ``autogrid4`` using the GPF file called ``1uw6_receptor.gpf`` and generate the additional water map ``W`` by combining ``OA`` and ``HD`` affinity maps using ``mapwater.py``:
 
@@ -100,27 +124,27 @@ For more informations about the ``mapwater.py`` command tool and all the availab
 .. code-block:: console
 
     ADD PWD AND FILE SUMMARY
-      receptor :  1uw6_receptor.pdbqt
-          OA map -> 1uw6_receptor.OA.map
-          HD map -> 1uw6_receptor.HD.map
-     => Water map weight : DEFAULT [ 0.60 ]
+    receptor :  1uw6_receptor.pdbqt
+        OA map -> 1uw6_receptor.OA.map
+        HD map -> 1uw6_receptor.HD.map
+    => Water map weight : DEFAULT [ 0.60 ]
 
-      MapWater generator
-     =====================
-      mode      :  BEST
-      weight    :   0.6
-      HD_weight :   1.0
-      OA_weight :   1.0
-      entropy   :   -0.2
+    MapWater generator
+    =====================
+    mode      :  BEST
+    weight    :   0.6
+    HD_weight :   1.0
+    OA_weight :   1.0
+    entropy   :   -0.2
 
-         Output info  
-      --------------------
-      filename  : 1uw6_receptor.W.map
-      OA points : 91.73%
-      HD points : 8.27%
+        Output info  
+    --------------------
+    filename  : 1uw6_receptor.W.map
+    OA points : 91.66%
+    HD points : 8.34%
 
-      lowest  map value : -0.99
-      highest map value : -0.01
+    lowest  map value : -0.98
+    highest map value : -0.01
 
 4. Running AutoDock Vina
 ------------------------
@@ -160,23 +184,23 @@ The predicted free energy of binding should be about ``-8 kcal/mol`` for poses t
     Verbosity: 1
 
     Reading AD4.2 maps ... done.
-    Performing docking (random seed: -655217817) ... 
+    Performing docking (random seed: 1952347903) ... 
     0%   10   20   30   40   50   60   70   80   90   100%
     |----|----|----|----|----|----|----|----|----|----|
     ***************************************************
 
     mode |   affinity | dist from best mode
-         | (kcal/mol) | rmsd l.b.| rmsd u.b.
+        | (kcal/mol) | rmsd l.b.| rmsd u.b.
     -----+------------+----------+----------
-       1       -8.077          0          0
-       2        -7.63      2.038      2.684
-       3       -7.382      2.378      2.747
-       4        -7.27      2.063      2.538
-       5       -7.138      1.861      5.391
-       6       -7.129          2      2.542
-       7       -7.078      3.307      5.442
-       8       -7.065       2.22      4.872
-       9       -7.051      3.135      5.636
+    1       -8.261          0          0
+    2       -7.673      1.124      1.239
+    3       -7.489      2.051       2.49
+    4       -7.225      2.441      3.621
+    5       -7.211      1.905      2.479
+    6       -7.065      2.469       5.79
+    7       -6.978      3.059      5.719
+    8       -6.968      2.339      3.029
+    9       -6.931      3.448      5.773
 
 Docking results are filtered by using the receptor to remove displaced waters and the W map file to rank the conserved ones as strong or weak water molecules.
 
@@ -188,36 +212,49 @@ For more informations about the ``dry.py`` command tool and all the available op
 
 .. code-block:: console
 
-                      ____                      
-                     /\  _`\                    
-                     \ \ \/\ \  _ __  __  __    
-                      \ \ \ \ \/\`'__\\ \/\ \   
-                       \ \ \_\ \ \ \/\ \ \_\ \  
+                    ____                      
+                    /\  _`\                    
+                    \ \ \/\ \  _ __  __  __    
+                    \ \ \ \ \/\`'__\\ \/\ \   
+                    \ \ \_\ \ \ \/\ \ \_\ \  
                         \ \____/\ \_\ \/`____ \ 
-                         \/___/  \/_/  `/___/> \
-                                          /\___/
-                                          \/__/ 
+                        \/___/  \/_/  `/___/> \
+                                        /\___/
+                                        \/__/ 
 
         
     ========================== INPUT DATA =========================
-     importing ATOMS from  1uw6_ligand_ad4_out.pdbqt
+    importing ATOMS from  1uw6_ligand_ad4_out.pdbqt
 
-     [ using map file 1uw6_receptor.W.map ]
+    [ using map file 1uw6_receptor.W.map ]
     ===============================================================
 
 
-     receptor structure loaded           [ 4069 atoms ]
-     receptor 5A shell extracted             [ 480 atoms in 5 A shell ] 
-     removing ligand/ligand overlapping waters    [ 5 water(s) removed ]
-     removing ligand/receptor overlapping waters      [ 8 water(s) removed ]
+    receptor structure loaded	 		 [ 4069 atoms ]
+    receptor 5A shell extracted  			 [ 485 atoms in 5 A shell ] 
+    removing ligand/ligand overlapping waters	  [ 0 water(s) removed ]
+    removing ligand/receptor overlapping waters	  [ 0 water(s) removed ]
 
-     scanning grid map for conserved waters...    [ filtered pose contains 5 waters ]
+    scanning grid map for conserved waters...	  [ filtered pose contains 18 waters ]
 
-     water grid score results [ map: 1uw6_receptor.W.map ] 
-         [ Water STRONG ( -0.92 ) +++ ]
-         [ Water STRONG ( -0.66 ) +++ ]
-         [ Water  WEAK  ( -0.50 )  +  ]
-         [ Water STRONG ( -0.83 ) +++ ]
-         [ Water STRONG ( -0.99 ) +++ ]
+    water grid score results [ map: 1uw6_receptor.W.map ] 
+        [ Water STRONG ( -0.92 ) +++ ]
+        [ Water DISPLC ( -0.25 )  D  ]
+        [ Water STRONG ( -0.89 ) +++ ]
+        [ Water DISPLC ( -0.20 )  D  ]
+        [ Water DISPLC ( -0.20 )  D  ]
+        [ Water DISPLC ( -0.25 )  D  ]
+        [ Water STRONG ( -0.65 ) +++ ]
+        [ Water DISPLC ( -0.21 )  D  ]
+        [ Water STRONG ( -0.92 ) +++ ]
+        [ Water  WEAK  ( -0.32 )  +  ]
+        [ Water  WEAK  ( -0.49 )  +  ]
+        [ Water DISPLC ( -0.20 )  D  ]
+        [ Water STRONG ( -0.53 ) +++ ]
+        [ Water  WEAK  ( -0.39 )  +  ]
+        [ Water STRONG ( -0.89 ) +++ ]
+        [ Water  WEAK  ( -0.47 )  +  ]
+        [ Water STRONG ( -0.81 ) +++ ]
+        [ Water DISPLC ( -0.20 )  D  ]
 
 Waters are ranked (STRONG, WEAK) and scored inside the output file ``1uw6_ligand_ad4_out_DRY_SCORED.pdbqt`` with the calculated energy.
