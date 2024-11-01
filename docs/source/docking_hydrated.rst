@@ -20,9 +20,9 @@ This is a command-line-based tutorial for a basic docking experiment with AutoDo
 
 This tutorial uses python package Meeko for receptor and ligand preparation. Installation guide and advanced usage can be found from the documentation: `https://meeko.readthedocs.io/en/readthedocs/ <https://meeko.readthedocs.io/en/readthedocs/>`_.
 
-.. note:: Citing this tutorial & method
+.. note:: 
     
-    If you are using this tutorial or this docking method for your work, you can cite the following papers:
+    If you are using this tutorial or this docking method for your work, please cite the following papers:
 
     - Forli, S., & Olson, A. J. (2012). A force field with discrete displaceable waters and desolvation entropy for hydrated ligand docking. Journal of medicinal chemistry, 55(2), 623-638.
     - Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.

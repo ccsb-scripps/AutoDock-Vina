@@ -12,9 +12,9 @@ This is a command-line-based tutorial for a basic docking experiment with AutoDo
 
 This tutorial uses python package Meeko for receptor and ligand preparation. Installation guide and advanced usage can be found from the documentation: `https://meeko.readthedocs.io/en/readthedocs/ <https://meeko.readthedocs.io/en/readthedocs/>`_.
 
-.. note:: Citing this tutorial
-
-If you are using this tutorial for your works, you can cite the following paper:
+.. note:: 
+    
+    If you are using this tutorial for your works, please cite the following paper:
 
     - Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.
 
