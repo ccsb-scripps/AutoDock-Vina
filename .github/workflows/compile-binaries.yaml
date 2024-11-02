@@ -75,7 +75,9 @@ jobs:
         run: |
           $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.77.0/boost_1_77_0-msvc-14.2-64.exe"
           [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-          (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost.exe")
+          $wcl=(New-Object System.Net.WebClient)
+          $wcl.Headers.Add("user-agent", "Wget/1.21.0")
+          $wcl.DownloadFile($Url, "$env:TEMP\boost.exe")
           Start-Process -Wait -FilePath "$env:TEMP\boost.exe" "/SILENT","/SP-","/SUPPRESSMSGBOXES"
           cd .\build\windows
           .\compile.bat
