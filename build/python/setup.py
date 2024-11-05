@@ -255,13 +255,14 @@ class CustomBuildExt(build_ext):
             # To get the right @rpath on macos for libraries
             self.extensions[0].extra_link_args.append('-Wl,-rpath,' + self.library_dirs[0])
             self.extensions[0].extra_link_args.append('-Wl,-rpath,' + '/usr/lib')
-        
+
         print('- extra link args: %s' % self.extensions[0].extra_link_args)
 
         # Replace current compiler to g++
         self.compiler.compiler_so[0] = "g++"
         self.compiler.compiler_so.insert(2, "-shared")
 
+        # Remove compiler flags if we can
         remove_flags = ["-Wstrict-prototypes", "-Wall"]
         for remove_flag in remove_flags:
             try:
@@ -270,13 +271,19 @@ class CustomBuildExt(build_ext):
                 print('Warning: compiler flag %s is not present, cannot remove it.' % remove_flag)
                 pass
 
-        self.compiler.compiler_so.append("-std=c++11")
-        self.compiler.compiler_so.append("-Wno-long-long")
-        self.compiler.compiler_so.append("-pedantic")
         # Source: https://stackoverflow.com/questions/9723793/undefined-reference-to-boostsystemsystem-category-when-compiling
-        self.compiler.compiler_so.append('-DBOOST_ERROR_CODE_HEADER_ONLY')
+        vina_compiler_options = [
+                               "-std=c++11",
+                               "-Wno-long-long",
+                               "-pedantic",
+                               '-DBOOST_ERROR_CODE_HEADER_ONLY'
+                              ]
 
-        print('- compiler options: %s' % self.compiler.compiler_so)
+        print('- compiler options: %s' % (self.compiler.compiler_so + vina_compiler_options))
+
+        for ext in self.extensions:
+            ext.extra_compile_args += vina_compiler_options
+
         build_ext.build_extensions(self)
 
 
