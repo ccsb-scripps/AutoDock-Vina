@@ -22,10 +22,7 @@ This tutorial uses python package **Meeko for receptor and ligand preparation**.
 
 The **input and expected output files** can be found here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/hydrated_docking>`_. 
 
-This tutorial requires the following **specialized Python scripts** for preparation and result processing:
-- mapwater.py
-- dry.py
-These scripts are provided in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
+This tutorial requires the following **specialized Python scripts** for preparation and result processing: ``mapwater.py`` and ``dry.py``. These scripts are provided in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
 
 .. note:: 
     
