@@ -1,4 +1,4 @@
-USER  MOD reduce.3.23.130521 H: found=0, std=0, add=1214, rem=0, adj=33
+USER  MOD reduce.3.23.130521 H: found=0, std=0, add=1214, rem=0, adj=31
 USER  MOD -----------------------------------------------------------------
 USER  MOD scores for adjustable sidechains, with "set" totals for H,N and Q
 USER  MOD "o" means original, "f" means flipped, "180deg" is methyl default
@@ -8,10 +8,10 @@ USER  MOD Set 1.1: A  78 GLN     :      amide:sc=   0.635  K(o=0.69,f=-4.7!)
 USER  MOD Set 1.2: A 131 THR OG1 :   rot  170:sc=  0.0524
 USER  MOD Set 2.1: A 101 SER OG  :   rot -103:sc=    2.04
 USER  MOD Set 2.2: A 103 ASN     :      amide:sc=   0.792  K(o=2.8,f=1.2)
-USER  MOD Set 3.1: A  18 ASN     :FLIP  amide:sc=   0.803  F(o=2.2,f=3.2)
-USER  MOD Set 3.2: A  64 ASN     :      amide:sc=   0.802  K(o=3.2,f=-0.55!)
-USER  MOD Set 3.3: A  66 SER OG  :   rot  -77:sc=   0.829
-USER  MOD Set 3.4: A 102 THR OG1 :   rot  180:sc=   0.334
+USER  MOD Set 3.1: A  18 ASN     :      amide:sc=   0.212  K(o=2.2,f=3.2)
+USER  MOD Set 3.2: A  64 ASN     :      amide:sc=   0.518  K(o=2.2,f=-0.55!)
+USER  MOD Set 3.3: A  66 SER OG  :   rot   69:sc=   0.631
+USER  MOD Set 3.4: A 102 THR OG1 :   rot  -72:sc=   0.351
 USER  MOD Set 3.5: A 104 THR OG1 :   rot  180:sc=   0.465
 USER  MOD Set 4.1: A  67 SER OG  :   rot -102:sc=    1.25
 USER  MOD Set 4.2: A  71 MET CE  :methyl  147:sc=-0.000977   (180deg=-0.74)
@@ -50,7 +50,7 @@ USER  MOD Single : A 117 MET CE  :methyl  180:sc=       0   (180deg=0)
 USER  MOD Single : A 118 MET CE  :methyl -144:sc=       0   (180deg=-0.374)
 USER  MOD Single : A 121 SER OG  :   rot  180:sc=       0
 USER  MOD Single : A 124 THR OG1 :   rot  169:sc=  -0.272
-USER  MOD Single : A 126 ASN     :FLIP  amide:sc=   0.475  F(o=-0.59,f=0.47)
+USER  MOD Single : A 126 ASN     :      amide:sc=  -0.588  K(o=-0.59,f=0.47)
 USER  MOD Single : A 132 LYS NZ  :NH3+   -127:sc=       0   (180deg=-0.0248)
 USER  MOD Single : A 141 SER OG  :   rot  -87:sc= -0.0128
 USER  MOD Single : A 142 THR OG1 :   rot  180:sc=       0
@@ -501,16 +501,16 @@ ATOM    145  CB  ASN A  18     -32.428  14.996 122.698  1.00 21.44           C
 ANISOU  145  CB  ASN A  18     3355   2121   2670   -714  -1206    568       C
 ATOM    146  CG  ASN A  18     -33.092  16.008 121.782  1.00 21.10           C
 ANISOU  146  CG  ASN A  18     3209   2220   2585   -672  -1040    520       C
-ATOM    147  OD1 ASN A  18     -34.041  16.771 122.317  1.00 21.61           O   flip
+ATOM    147  OD1 ASN A  18     -32.810  16.022 120.587  1.00 21.61           O
 ANISOU  147  OD1 ASN A  18     3382   2190   2638   -516  -1049    375       O
-ATOM    148  ND2 ASN A  18     -32.810  16.022 120.587  1.00 20.13           N   flip
+ATOM    148  ND2 ASN A  18     -34.041  16.771 122.317  1.00 20.13           N
 ANISOU  148  ND2 ASN A  18     2884   2337   2425   -803   -918    647       N
 ATOM      0  H   ASN A  18     -30.595  16.539 122.767  1.00 18.06           H   new
 ATOM      0  HA  ASN A  18     -32.590  16.051 124.432  1.00 19.96           H   new
 ATOM      0  HB2 ASN A  18     -31.710  14.552 122.221  1.00 21.44           H   new
 ATOM      0  HB3 ASN A  18     -33.071  14.312 122.942  1.00 21.44           H   new
-ATOM      0 HD21 ASN A  18     -32.188  15.510 120.286  1.00 20.13           H   new
-ATOM      0 HD22 ASN A  18     -33.235  16.544 120.051  1.00 20.13           H   new
+ATOM      0 HD21 ASN A  18     -34.492  17.308 121.820  1.00 20.13           H   new
+ATOM      0 HD22 ASN A  18     -34.204  16.727 123.160  1.00 20.13           H   new
 ATOM    149  N   TRP A  19     -30.044  14.147 124.450  1.00 21.37           N
 ANISOU  149  N   TRP A  19     3439   1963   2717   -546  -1243    491       N
 ATOM    150  CA  TRP A  19     -29.353  13.099 125.167  1.00 22.90           C
@@ -1651,7 +1651,7 @@ ATOM      0  H   SER A  66     -31.563  19.287 119.584  1.00 16.03           H  
 ATOM      0  HA  SER A  66     -32.504  19.078 117.038  1.00 16.19           H   new
 ATOM      0  HB2 SER A  66     -34.073  19.662 119.344  1.00 17.94           H   new
 ATOM      0  HB3 SER A  66     -34.651  19.548 117.900  1.00 17.94           H   new
-ATOM      0  HG  SER A  66     -34.296  17.437 117.932  1.00 21.82           H   new
+ATOM      0  HG  SER A  66     -33.633  17.530 119.292  1.00 21.82           H   new
 ATOM    529  N   SER A  67     -32.643  21.538 116.599  1.00 14.68           N
 ANISOU  529  N   SER A  67     2058   1905   1614    -53   -230     58       N
 ATOM    530  CA  SER A  67     -32.530  22.970 116.366  1.00 13.60           C
@@ -2565,7 +2565,7 @@ ANISOU  840  CG2 THR A 102     3955   1883   2645   -165  -1435     27       C
 ATOM      0  H   THR A 102     -33.320  16.541 113.241  1.00 20.05           H   new
 ATOM      0  HA  THR A 102     -32.307  17.097 115.696  1.00 20.18           H   new
 ATOM      0  HB  THR A 102     -33.911  14.880 114.980  1.00 21.82           H   new
-ATOM      0  HG1 THR A 102     -35.233  15.728 116.554  1.00 21.84           H   new
+ATOM      0  HG1 THR A 102     -34.406  16.641 116.903  1.00 21.84           H   new
 ATOM      0 HG21 THR A 102     -33.643  14.113 117.218  1.00 22.33           H   new
 ATOM      0 HG22 THR A 102     -32.231  14.179 116.505  1.00 22.33           H   new
 ATOM      0 HG23 THR A 102     -32.665  15.324 117.509  1.00 22.33           H   new
@@ -3061,16 +3061,16 @@ ATOM   1006  CB  ASN A 126     -11.541  20.797 142.238  1.00 11.08           C
 ANISOU 1006  CB  ASN A 126      901   1860   1449   -120    -54    710       C
 ATOM   1007  CG  ASN A 126     -11.604  20.808 143.755  1.00 11.35           C
 ANISOU 1007  CG  ASN A 126      927   1911   1471   -167    -81    717       C
-ATOM   1008  OD1 ASN A 126     -12.292  21.764 144.266  1.00 13.06           O   flip
+ATOM   1008  OD1 ASN A 126     -10.988  19.946 144.480  1.00 13.06           O
 ANISOU 1008  OD1 ASN A 126     1128   2142   1692   -166    -87    762       O
-ATOM   1009  ND2 ASN A 126     -10.988  19.946 144.480  1.00 10.56           N   flip
+ATOM   1009  ND2 ASN A 126     -12.292  21.764 144.266  1.00 10.56           N
 ANISOU 1009  ND2 ASN A 126      840   1825   1346   -186   -111    668       N
 ATOM      0  H   ASN A 126     -13.403  19.137 141.687  1.00 10.63           H   new
 ATOM      0  HA  ASN A 126     -13.348  21.802 141.964  1.00 10.75           H   new
 ATOM      0  HB2 ASN A 126     -11.172  19.952 141.937  1.00 11.08           H   new
 ATOM      0  HB3 ASN A 126     -10.937  21.494 141.936  1.00 11.08           H   new
-ATOM      0 HD21 ASN A 126     -10.535  19.317 144.108  1.00 10.56           H   new
-ATOM      0 HD22 ASN A 126     -11.028  19.998 145.337  1.00 10.56           H   new
+ATOM      0 HD21 ASN A 126     -12.351  21.842 145.120  1.00 10.56           H   new
+ATOM      0 HD22 ASN A 126     -12.694  22.326 143.754  1.00 10.56           H   new
 ATOM   1010  N   VAL A 127     -13.416  20.377 139.311  1.00 12.02           N
 ANISOU 1010  N   VAL A 127     1104   1898   1562    -29    -13    605       N
 ATOM   1011  CA  VAL A 127     -13.328  20.542 137.839  1.00 12.27           C
