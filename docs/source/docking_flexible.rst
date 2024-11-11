@@ -5,16 +5,14 @@ Flexible docking
 
 The lack of receptor flexibility is arguably the greatest limitation in these types of docking methods. However, AutoDock Vina allows some limited flexibility of selected receptor side chains. In this tutorial, we will describe the cross-docking of the `imatinib molecule <https://en.wikipedia.org/wiki/Imatinib>`_ to c-Abl in PDB entry `1fpu <https://www.rcsb.org/structure/1FPU>`_, treating Thr315 as flexible. 
 
+System and software requirements
+--------
 
-**System and software requirements**
+This is a command-line tutorial for a flexible docking experiment with AutoDock-Vina. It can be done on macOS, Linux, and Windows Subsystem for Linux (WSL). 
 
-This is a command-line-based tutorial for a basic docking experiment with AutoDock-Vina. It can be done on macOS, Linux, and Windows Subsystem for Linux (WSL). 
+This tutorial uses python package **Meeko for receptor and ligand preparation**. Installation guide and advanced usage can be found from the `Meeko documentation <https://meeko.readthedocs.io/en/release>`_.
 
-This tutorial uses python package Meeko for receptor and ligand preparation. Installation guide and advanced usage can be found from the documentation: `https://meeko.readthedocs.io/en/readthedocs/ <https://meeko.readthedocs.io/en/readthedocs/>`_.
-
-**Input and expected output files**
-
-The input and expected output files can be found here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/_basic_docking>`_.
+The **input and expected output files** can be found here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/flexible_docking>`_.
 
 
 1. Preparing the flexible receptor
