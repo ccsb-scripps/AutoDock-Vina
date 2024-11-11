@@ -13,12 +13,19 @@ Thus a method was developed that uses the existing version of AutoDock4 and now 
 
 In this tutorial, we are going to dock a fragment-size ligand (nicotine) with explicit water molecules in the acetylcholine binding protein (AChBP) structure (PDB entry `1uw6 <https://www.rcsb.org/structure/1UW6>`_). It was shown that the absence of water molecules could have a dramatic influence in docking performance leading to either inaccurate scoring and/or incorrect pose. With hydrated docking, fragment-sized ligands show a overall RMSD improvement.
 
+System and software requirements
+--------
 
-**System and software requirements**
+This is a command-line tutorial for a hydrated docking experiment with AutoDock-Vina. It can be done on macOS, Linux, and Windows Subsystem for Linux (WSL). 
 
-This is a command-line-based tutorial for a basic docking experiment with AutoDock-Vina. It can be done on macOS, Linux, and Windows Subsystem for Linux (WSL). 
+This tutorial uses python package **Meeko for receptor and ligand preparation**. Installation guide and advanced usage can be found from the `Meeko documentation <https://meeko.readthedocs.io/en/release>`_.
 
-This tutorial uses python package Meeko for receptor and ligand preparation. Installation guide and advanced usage can be found from the documentation: `https://meeko.readthedocs.io/en/readthedocs/ <https://meeko.readthedocs.io/en/readthedocs/>`_.
+The **input and expected output files** can be found here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/hydrated_docking>`_. 
+
+This tutorial requires the following **specialized Python scripts** for preparation and result processing:
+- mapwater.py
+- dry.py
+These scripts are provided in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
 
 .. note:: 
     
@@ -26,17 +33,6 @@ This tutorial uses python package Meeko for receptor and ligand preparation. Ins
 
     - Forli, S., & Olson, A. J. (2012). A force field with discrete displaceable waters and desolvation entropy for hydrated ligand docking. Journal of medicinal chemistry, 55(2), 623-638.
     - Forli, S., Huey, R., Pique, M. E., Sanner, M. F., Goodsell, D. S., & Olson, A. J. (2016). Computational protein–ligand docking and virtual drug screening with the AutoDock suite. Nature protocols, 11(5), 905-919.
-
-**Input and expected output files**
-
-The input and expected output files can be found here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/_basic_docking>`_. 
-
-**Specialized utility scripts**
-
-This tutorial requires the following specialized Python scripts for preparation and result processing:
-- mapwater.py
-- dry.py
-These scripts are provided in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
 
 1. Preparing the receptor
 -------------------------

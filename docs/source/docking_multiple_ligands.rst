@@ -7,16 +7,14 @@ Vina is now able to dock simultaneously multiple ligands. This functionality may
 
 The protein PDE in complex with two inhibitors (pdb id: `5x72 <https://www.rcsb.org/structure/5X72>`_) was used as an example to demonstrate the ability of the AutoDock Vina to dock successfully multiple ligands. The two inhibitors in this structure are stereoisomers, and only the R-isomer is able to bind in a specific region of the pocket, while both the R- and S-isomers can bind to the second location. 
 
+System and software requirements
+--------
 
-**System and software requirements**
+This is a command-line tutorial for a flexible docking experiment with AutoDock-Vina. It can be done on macOS, Linux, and Windows Subsystem for Linux (WSL). 
 
-This is a command-line-based tutorial for a basic docking experiment with AutoDock-Vina. It can be done on macOS, Linux, and Windows Subsystem for Linux (WSL). 
+This tutorial uses python package **Meeko for receptor and ligand preparation**. Installation guide and advanced usage can be found from the `Meeko documentation <https://meeko.readthedocs.io/en/release>`_.
 
-This tutorial uses python package Meeko for receptor and ligand preparation. Installation guide and advanced usage can be found from the documentation: `https://meeko.readthedocs.io/en/readthedocs/ <https://meeko.readthedocs.io/en/readthedocs/>`_.
-
-**Input and expected output files**
-
-The input and expected output files can be found here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/_basic_docking>`_.
+The **input and expected output files** can be found here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/mulitple_ligands_docking>`_.
 
 
 1. Preparing receptor
