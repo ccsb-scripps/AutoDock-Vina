@@ -41,7 +41,7 @@ The Anaconda Python distribution, which can be download from `https://docs.conti
 
 .. code-block:: bash
 
-    $ conda create -n vina python=3
+    $ conda create -n vina python=3.9
     $ conda activate vina
     $ conda config --env --add channels conda-forge
 
