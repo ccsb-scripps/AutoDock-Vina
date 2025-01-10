@@ -118,7 +118,7 @@ def locate_boost():
             data_pathname = sysconfig.get_path("data") # just for readthedocs build
         include_dirs = data_pathname + os.path.sep + 'include'
         library_dirs = data_pathname + os.path.sep + 'lib'
-        
+
         if os.path.isdir(include_dirs + os.path.sep + 'boost'):
             print('Boost library location automatically determined in this conda environment.')
             return include_dirs, library_dirs
@@ -130,6 +130,8 @@ def locate_boost():
     if os.path.isdir(include_dirs + os.path.sep + 'boost'):
         if glob.glob('/usr/local/lib/x86_64-linux-gnu/libboost*'):
             return include_dirs, '/usr/local/lib/x86_64-linux-gnu'
+        elif glob.glob('/usr/local/lib/aarch64-linux-gnu/libboost*'):
+            return include_dirs, '/usr/local/lib/aarch64-linux-gnu'
         elif glob.glob('/usr/local/lib64/libboost*'):
             return include_dirs, '/usr/local/lib64'
         elif glob.glob('/usr/local/lib/libboost*'):
@@ -140,6 +142,8 @@ def locate_boost():
     if os.path.isdir(include_dirs + os.path.sep + 'boost'):
         if glob.glob('/usr/lib/x86_64-linux-gnu/libboost*'):
             return include_dirs, '/usr/lib/x86_64-linux-gnu'
+        elif glob.glob('/usr/lib/aarch64-linux-gnu/libboost*'):
+            return include_dirs, '/usr/lib/aarch64-linux-gnu'
         elif glob.glob('/usr/lib64/libboost*'):
             return include_dirs, '/usr/lib64'
         elif glob.glob('/usr/lib/libboost*'):
