@@ -23,7 +23,7 @@ on:
 
 jobs:
   compile_binaries:
-    name: Build wheels on ${{ matrix.os }}
+    name: Compile binaries on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -33,7 +33,10 @@ jobs:
           - os: ubuntu-latest
             arch: aarch64
           - os: macos-latest
-          - os: windows-latest
+            arch: x86_64
+          - os: macos-latest
+            arch: aarch64
+          - os: windows-2019
 
     steps:
       - name: Checkout
@@ -61,8 +64,6 @@ jobs:
           run: |
             cd /vina/build/linux/release
             make
-            mv vina vina-${{ matrix.arch }}
-            mv vina_split vina_split-${{ matrix.arch }}
       - name: Compile Vina for macOS
         if: matrix.os == 'macos-latest'
         run: |
@@ -70,23 +71,20 @@ jobs:
           cd ./build/mac/release
           make
       - name: Compile Vina for Windows x64
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2019'
         run: |
           $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.77.0/boost_1_77_0-msvc-14.2-64.exe"
           [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-          (New-Object System.Net.WebClient).DownloadFile($Url, "$env:TEMP\boost.exe")
+          $wcl=(New-Object System.Net.WebClient)
+          $wcl.Headers.Add("user-agent", "Wget/1.21.0")
+          $wcl.DownloadFile($Url, "$env:TEMP\boost.exe")
           Start-Process -Wait -FilePath "$env:TEMP\boost.exe" "/SILENT","/SP-","/SUPPRESSMSGBOXES"
           cd .\build\windows
           .\compile.bat
         shell: powershell
       - name: Upload artifacts for inspection
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: binaries
+          name: binaries-${{ matrix.os }}${{ matrix.arch }}
           path: |
-            ./**/release/vina
-            ./**/release/vina-${{ matrix.arch }}
-            ./**/release/vina_split
-            ./**/release/vina_split-${{ matrix.arch }}
-            ./**/release/vina.exe
-            ./**/release/vina_split.exe
+            ./**/release/vina*

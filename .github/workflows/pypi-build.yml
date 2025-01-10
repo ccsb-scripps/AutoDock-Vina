@@ -27,7 +27,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            arch: x86_64
 
     steps:
       - name: Checkout
@@ -61,13 +63,17 @@ jobs:
         env:
           CIBW_SKIP: pp*
           CIBW_ARCHS: auto64
-          CIBW_ARCHS_LINUX: auto64 aarch64
+          CIBW_ARCHS_LINUX: ${{ matrix.arch }}
           CIBW_BEFORE_BUILD: |
             pip install --upgrade pip setuptools
           CIBW_BEFORE_ALL_MACOS: |
             brew install boost swig
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_BEFORE_ALL_LINUX: |
+            sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo 
+            sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo 
+            sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
+            yum clean all && yum -y update 
             yum install -y wget python-devel pcre-devel
             # Install SWIG
             wget https://downloads.sourceforge.net/swig/swig-4.0.2.tar.gz
@@ -87,9 +93,9 @@ jobs:
             rm -rf boost_1_*
             rm -rf swig-4*
       - name: Upload artifacts for inspection
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: wheels
           path: ./wheelhouse/*.whl
 
   build_sdist:
@@ -117,9 +123,9 @@ jobs:
           cd ./build/python
           python setup.py sdist
       - name: Upload artifacts for inspection
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: sdist
           path: ./build/python/dist/*.tar.gz
 
   upload_pypi:
@@ -139,7 +145,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools twine
       - name: Download artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: dist
           path: ./dist

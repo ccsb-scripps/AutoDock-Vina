@@ -81,7 +81,7 @@ void Vina::set_receptor(const std::string& rigid_name, const std::string& flex_n
 	}
 
 	// CONDITIONS 4, 5, 6, 7 (rigid_name and flex_name are empty strings per default)
-	m_receptor = parse_receptor_pdbqt(rigid_name, flex_name, m_scoring_function.get_atom_typing());
+	m_receptor = parse_receptor_pdbqt(rigid_name, flex_name, m_scoring_function->get_atom_typing());
 
 	m_model = m_receptor;
 	m_receptor_initialized = true;
@@ -97,7 +97,7 @@ void Vina::set_ligand_from_string(const std::string& ligand_string) {
 		exit(EXIT_FAILURE);
 	}
 
-	atom_type::t atom_typing = m_scoring_function.get_atom_typing();
+	atom_type::t atom_typing = m_scoring_function->get_atom_typing();
 
 	if (!m_receptor_initialized) {
 		// This situation will happen if we don't need a receptor and we are using affinity maps
@@ -113,7 +113,7 @@ void Vina::set_ligand_from_string(const std::string& ligand_string) {
 	m_model.append(parse_ligand_pdbqt_from_string(ligand_string, atom_typing));
 
 	// Because we precalculate ligand atoms interactions
-	precalculate_byatom precalculated_byatom(m_scoring_function, m_model);
+	precalculate_byatom precalculated_byatom(*m_scoring_function, m_model);
 
 	// Check that all atom types are in the grid (if initialized)
 	if (m_map_initialized) {
@@ -142,7 +142,7 @@ void Vina::set_ligand_from_string(const std::vector<std::string>& ligand_string)
 		exit(EXIT_FAILURE);
 	}
 
-	atom_type::t atom_typing = m_scoring_function.get_atom_typing();
+	atom_type::t atom_typing = m_scoring_function->get_atom_typing();
 
 	if (!m_receptor_initialized) {
 		// This situation will happen if we don't need a receptor and we are using affinity maps
@@ -158,7 +158,7 @@ void Vina::set_ligand_from_string(const std::vector<std::string>& ligand_string)
 		m_model.append(parse_ligand_pdbqt_from_string(ligand_string[i], atom_typing));
 
 	// Because we precalculate ligand atoms interactions
-	precalculate_byatom precalculated_byatom(m_scoring_function, m_model);
+	precalculate_byatom precalculated_byatom(*m_scoring_function, m_model);
 
 	// Check that all atom types are in the grid (if initialized)
 	if (m_map_initialized) {
@@ -280,9 +280,8 @@ void Vina::set_ad4_weights(double weight_ad4_vdw , double weight_ad4_hb,
 }
 
 void Vina::set_forcefield() {
-	ScoringFunction scoring_function(m_sf_choice, m_weights);
-	// Store in Vina object
-	m_scoring_function = scoring_function;
+    // Store in Vina object
+    m_scoring_function = std::make_shared<ScoringFunction>(m_sf_choice, m_weights);
 }
 
 std::vector<double> Vina::grid_dimensions_from_ligand(double buffer_size) {
@@ -335,7 +334,7 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
 	vec center(center_x, center_y, center_z);
 	const fl slope = 1e6; // FIXME: too large? used to be 100
 	szv atom_types;
-	atom_type::t atom_typing = m_scoring_function.get_atom_typing();
+	atom_type::t atom_typing = m_scoring_function->get_atom_typing();
 
 	/* Atom types initialization
 	If a ligand was defined before, we only use those present in the ligand
@@ -344,7 +343,7 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
 	if (m_ligand_initialized)
 		atom_types = m_model.get_movable_atom_types(atom_typing);
 	else
-		atom_types = m_scoring_function.get_atom_types();
+		atom_types = m_scoring_function->get_atom_types();
 
 	// Grid dimensions
 	VINA_FOR_IN(i, gd) {
@@ -361,7 +360,7 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
 	}
 
 	// Initialize the scoring function
-	precalculate precalculated_sf(m_scoring_function);
+	precalculate precalculated_sf(*m_scoring_function);
 	// Store it now in Vina object because of non_cache
 	m_precalculated_sf = precalculated_sf;
 
@@ -407,7 +406,7 @@ void Vina::load_maps(std::string maps) {
 
 	// Check that all the affinity map are present for ligands/flex residues (if initialized already)
 	if (m_ligand_initialized) {
-		atom_type::t atom_typing = m_scoring_function.get_atom_typing();
+		atom_type::t atom_typing = m_scoring_function->get_atom_typing();
 		szv atom_types = m_model.get_movable_atom_types(atom_typing);
 
 		if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
@@ -430,12 +429,12 @@ void Vina::write_maps(const std::string& map_prefix, const std::string& gpf_file
 	}
 
 	szv atom_types;
-	atom_type::t atom_typing = m_scoring_function.get_atom_typing();
+	atom_type::t atom_typing = m_scoring_function->get_atom_typing();
 
 	if (m_ligand_initialized)
 		atom_types = m_model.get_movable_atom_types(atom_typing);
 	else
-		atom_types = m_scoring_function.get_atom_types();
+		atom_types = m_scoring_function->get_atom_types();
 
 	if (m_sf_choice == SF_VINA || m_sf_choice == SF_VINARDO) {
 		doing("Writing Vina maps", m_verbosity, 0);
@@ -721,7 +720,7 @@ std::vector<double> Vina::score(double intramolecular_energy) {
 		lig_intra = m_model.evali(m_precalculated_byatom, authentic_v); // [2] ligand_i -- ligand_i
 		intra = flex_grids + intra_pairs + lig_intra;
 		// Total
-		total = m_scoring_function.conf_independent(m_model, inter + intra - intramolecular_energy); // we pass intermolecular energy from the best pose
+		total = m_scoring_function->conf_independent(m_model, inter + intra - intramolecular_energy); // we pass intermolecular energy from the best pose
 		// Torsion, we want to know how much torsion penalty was added to the total energy
 		conf_independent = total - (inter + intra - intramolecular_energy);
 	} else {
@@ -735,7 +734,7 @@ std::vector<double> Vina::score(double intramolecular_energy) {
 		lig_intra = m_model.evali(m_precalculated_byatom, authentic_v); // [2] ligand_i -- ligand_i
 		intra = flex_grids + intra_pairs + lig_intra;
 		// Torsion
-		conf_independent = m_scoring_function.conf_independent(m_model, 0); // [3] we can pass e=0 because we do not modify the energy like in vina
+		conf_independent = m_scoring_function->conf_independent(m_model, 0); // [3] we can pass e=0 because we do not modify the energy like in vina
 		// Total
 		total = inter + conf_independent; // (+ intra - intra)
 	}
@@ -1033,7 +1032,6 @@ Vina::~Vina() {
 	// scoring function
 	scoring_function_choice m_sf_choice;
 	flv m_weights;
-	ScoringFunction m_scoring_function;
 	precalculate_byatom m_precalculated_byatom;
 	precalculate m_precalculated_sf;
 	// maps

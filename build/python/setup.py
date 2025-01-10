@@ -19,7 +19,7 @@ from distutils.version import StrictVersion
 from distutils.util import convert_path
 from distutils.sysconfig import customize_compiler
 from distutils.ccompiler import show_compilers
-
+from packaging.version import Version, InvalidVersion
 
 # Path to the directory that contains this setup.py file.
 base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -53,13 +53,25 @@ def find_version():
     3. __init__.py (as failback)
 
     """
+
+    def is_compliant(version_str):
+        try:
+            # Attempt to parse the version string using packaging's Version class
+            Version(version_str)
+            return True
+        except InvalidVersion:
+            # If parsing fails, the version is not PEP 440 compliant
+            print(f"{version_str} is not PEP 440 compliant")
+            return False
+        
     version_file = os.path.join(base_dir, 'vina', 'version.py')
     if os.path.isfile(version_file):
         with open(version_file) as f:
             version = f.read().strip()
         
         print('Version found: %s (from version.py)' % version)
-        return version
+        if is_compliant(version):
+            return version
 
     try:
         git_output = subprocess.check_output(['git', 'describe', '--abbrev=7', '--dirty=@mod', '--always', '--tags'])
@@ -70,7 +82,8 @@ def find_version():
         version = git_output.replace('-', '.dev', 1).replace('@', '-', 1).replace('-', '+', 1).replace('-','')
 
         print('Version found %s (from git describe)' % version)
-        return version
+        if is_compliant(version):
+            return version
     except:
         pass
     
@@ -242,13 +255,14 @@ class CustomBuildExt(build_ext):
             # To get the right @rpath on macos for libraries
             self.extensions[0].extra_link_args.append('-Wl,-rpath,' + self.library_dirs[0])
             self.extensions[0].extra_link_args.append('-Wl,-rpath,' + '/usr/lib')
-        
+
         print('- extra link args: %s' % self.extensions[0].extra_link_args)
 
         # Replace current compiler to g++
         self.compiler.compiler_so[0] = "g++"
         self.compiler.compiler_so.insert(2, "-shared")
 
+        # Remove compiler flags if we can
         remove_flags = ["-Wstrict-prototypes", "-Wall"]
         for remove_flag in remove_flags:
             try:
@@ -257,13 +271,19 @@ class CustomBuildExt(build_ext):
                 print('Warning: compiler flag %s is not present, cannot remove it.' % remove_flag)
                 pass
 
-        self.compiler.compiler_so.append("-std=c++11")
-        self.compiler.compiler_so.append("-Wno-long-long")
-        self.compiler.compiler_so.append("-pedantic")
         # Source: https://stackoverflow.com/questions/9723793/undefined-reference-to-boostsystemsystem-category-when-compiling
-        self.compiler.compiler_so.append('-DBOOST_ERROR_CODE_HEADER_ONLY')
+        vina_compiler_options = [
+                               "-std=c++11",
+                               "-Wno-long-long",
+                               "-pedantic",
+                               '-DBOOST_ERROR_CODE_HEADER_ONLY'
+                              ]
 
-        print('- compiler options: %s' % self.compiler.compiler_so)
+        print('- compiler options: %s' % (self.compiler.compiler_so + vina_compiler_options))
+
+        for ext in self.extensions:
+            ext.extra_compile_args += vina_compiler_options
+
         build_ext.build_extensions(self)
 
 
