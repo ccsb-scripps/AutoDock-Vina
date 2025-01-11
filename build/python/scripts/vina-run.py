@@ -19,11 +19,6 @@ from rdkit import Chem
 from rdkit import RDLogger
 from rdkit.Chem import rdMolInterchange
 
-Chem.SetDefaultPickleProperties(Chem.PropertyPickleOptions.MolProps |
-                                Chem.PropertyPickleOptions.PrivateProps)
-RDLogger.DisableLog("rdApp.*")
-rt_logger = logging.getLogger("ringtail")
-
 
 class MolSupplier:
     """wraps other suppliers (e.g. Chem.SDMolSupplier) to change non-integer
@@ -90,13 +85,31 @@ parser.add_argument("-l", "--ligands", help="input filename (.sdf)", required=Tr
 parser.add_argument("-r", "--receptor", help="receptor filename (.pdbqt)")
 parser.add_argument("-m", "--maps", help="base filename of grid maps")
 parser.add_argument(      "--scoring_function", choices=["vina", "vinardo", "ad4"], default="vina")
-parser.add_argument("--out_db", help="output sqlite3 filename (.sqlite3/.db)", required=True)
+parser.add_argument("--out_db", help="output sqlite3 filename (.sqlite3/.db)")
 parser.add_argument("--size", help="size of search space (grid maps)", type=float, nargs=3)
 parser.add_argument("--center", help="center of search space (grid maps)", type=float, nargs=3)
 parser.add_argument("--out_sdf", help="output SD filename")
 parser.add_argument("--name_from_prop", help="set input molecule name from RDKit/SDF property")
+parser.add_argument("--log_filename", help="write log to this filename")
+parser.add_argument("--cpu", type=int, default=0)
 args = parser.parse_args()
 
+Chem.SetDefaultPickleProperties(Chem.PropertyPickleOptions.MolProps |
+                                Chem.PropertyPickleOptions.PrivateProps)
+RDLogger.DisableLog("rdApp.*")
+rt_logger = logging.getLogger("ringtail")
+if args.log_filename is not None:
+    root_logger = logging.getLogger()
+    root_logger.setLevel("INFO")
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    file_handler = logging.FileHandler(args.log_filename)
+    file_handler.setFormatter(formatter)
+    root_logger.addHandler(file_handler)
+
+# check there is output
+if args.out_db is None and args.out_sdf is None:
+    print("Use --out_db and/or --out_sdf")
+    sys.exit(2)
 
 # we always need receptor to insert in DB
 if args.scoring_function == "ad4":
@@ -120,44 +133,63 @@ if args.name_from_prop:
 # prepare ligand pdbqt
 meeko_prep = MoleculePreparation()
 
-rtc = RingtailCore(args.out_db)
-rtc.save_receptor(args.receptor)
-
-rt_logger.setLevel("WARNING")
+if args.out_db is not None:
+    rtc = RingtailCore(args.out_db)
+    rtc.save_receptor(args.receptor)
+    rt_logger.setLevel("WARNING")
 
 def dock(mol):
-    molsetups = meeko_prep.prepare(mol)
-    if len(molsetups) != 1:
-        return None
-    molsetup = molsetups[0]
-    lig_pdbqt, is_ok, err = PDBQTWriterLegacy.write_string(molsetup) #, add_index_map=True, remove_smiles=True)
-    if not is_ok:
-        raise RuntimeError(f'ligand not ok {mol.GetProp("_Name")=}')
-    v.set_ligand_from_string(lig_pdbqt)
-    v.dock(max_evals=128000)
-    output_pdbqt = v.poses(2)
-    mol_name = mol.GetProp("_Name")
-    vina_strings = {mol_name: output_pdbqt}
-    return vina_strings
+    try:
+        mol_name = mol.GetProp("_Name")
+        molsetups = meeko_prep.prepare(mol)
+        if len(molsetups) != 1:
+            return None
+        molsetup = molsetups[0]
+        lig_pdbqt, is_ok, err = PDBQTWriterLegacy.write_string(molsetup) #, add_index_map=True, remove_smiles=True)
+        if not is_ok:
+            raise RuntimeError(f'ligand not ok {mol.GetProp("_Name")=}')
+        v.set_ligand_from_string(lig_pdbqt)
+        v.dock(max_evals=128000)
+        output_pdbqt = v.poses(2)
+        vina_strings = {mol_name: output_pdbqt}
+        return vina_strings
+    except Exception as error:
+        return error
     
-nr_cores = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(nr_cores - 1) # leave 1 for ringtail
+if args.cpu == 0:
+    nr_cores = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(nr_cores - 1) # leave 1 for writing
+    map_fn = pool.imap_unordered
+elif args.cpu > 1:
+    pool = multiprocessing.Pool(args.cpu - 1) # leave 1 for writing
+    map_fn = pool.imap_unordered 
+elif args.cpu == 1:
+    map_fn = map
+else:
+    print("args.cpu can't be negative")
+    sys.exit(2)
 
 if args.out_sdf is not None:
     w = Chem.SDWriter(args.out_sdf)
 
-
-for vina_strings in pool.imap_unordered(dock, supplier):
-    rtc.add_results_from_vina_string(
-            results_strings=vina_strings,
-            save_receptor=False,
-            add_interactions=True,
+for vina_strings in map_fn(dock, supplier):
+    if isinstance(vina_strings, Exception):
+        root_logger.error(str(vina_strings))
+    try:
+        if args.out_db is not None:
+            rtc.add_results_from_vina_string(
+                results_strings=vina_strings,
+                save_receptor=False,
+                add_interactions=True,
             )
-    if args.out_sdf is not None:
-        mol_name = list(vina_strings.keys())[0]
-        pdbqt_mol = PDBQTMolecule(vina_strings[mol_name])
-        output_rdmol = RDKitMolCreate.from_pdbqt_mol(pdbqt_mol)[0] # ignore sidechains
-        w.write(output_rdmol)
+        if args.out_sdf is not None:
+            mol_name = list(vina_strings.keys())[0]
+            root_logger.info(f"writing {mol_name=} to {args.out_sdf}")
+            pdbqt_mol = PDBQTMolecule(vina_strings[mol_name])
+            output_rdmol = RDKitMolCreate.from_pdbqt_mol(pdbqt_mol)[0] # ignore sidechains
+            w.write(output_rdmol)
+    except Exception as error:
+        root_logger.error(str(error))
 
 if args.out_sdf is not None:
     w.close()
