@@ -95,7 +95,7 @@ public:
         m_weights = weights;
     };
     ~ScoringFunction() { }
-    fl eval(atom& a, atom& b, fl r) const{ // intentionally not checking for cutoff
+    fl eval(atom const& a, atom const& b, fl r) const{ // intentionally not checking for cutoff
         fl acc = 0;
         VINA_FOR (i, m_num_potentials)
         {

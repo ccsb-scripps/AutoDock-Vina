@@ -129,7 +129,7 @@ public:
 		ip.a = operator()(ip.a);
 		ip.b = operator()(ip.b);
 	}
-	void update(vec& v) const { // coordinates & forces - do nothing
+	void update(const vec& v) const { // coordinates & forces - do nothing
 	}
 	void update(ligand& lig) const {
 		lig.transform(*this); // ligand as an atom_range subclass
@@ -357,7 +357,7 @@ void model::assign_bonds(const distance_type_matrix& mobility) { // assign bonds
 			VINA_FOR_IN(bead_elements_i, bead_elements) {
 				sz j = bead_elements[bead_elements_i];
 				atom_index j_atom_index = sz_to_atom_index(j);
-				atom& j_atom = get_atom(j_atom_index);
+				atom const& j_atom = get_atom(j_atom_index);
 				const fl bond_length = i_atom.optimal_covalent_bond_length(j_atom);
 				distance_type dt = distance_type_between(mobility, i_atom_index, j_atom_index);
 				if(dt != DISTANCE_VARIABLE && i != j) {

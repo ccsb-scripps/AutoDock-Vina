@@ -49,7 +49,7 @@ struct parsed_atom : public atom {
     }
 };
 
-void add_context(context& c, std::string& str) {
+void add_context(context& c, const std::string& str) {
     c.push_back(parsed_line(str, boost::optional<sz>()));
 }
 
@@ -366,7 +366,7 @@ void parse_pdbqt_aux(std::istream& in, parsing_struct& p, context& c, boost::opt
 void add_bonds(non_rigid_parsed& nr, boost::optional<atom_reference> atm, const atom_range& r) {
     if(atm)
         VINA_RANGE(i, r.begin, r.end) {
-            atom_reference& ar = atm.get();
+            atom_reference const& ar = atm.get();
             if(ar.inflex) 
                 nr.atoms_inflex_bonds(i, ar.index) = DISTANCE_FIXED; //(max_unsigned); // first index - atoms, second index - inflex
             else
@@ -376,8 +376,8 @@ void add_bonds(non_rigid_parsed& nr, boost::optional<atom_reference> atm, const 
 
 void set_rotor(non_rigid_parsed& nr, boost::optional<atom_reference> axis_begin, boost::optional<atom_reference> axis_end) {
     if(axis_begin && axis_end) {
-        atom_reference& r1 = axis_begin.get();
-        atom_reference& r2 = axis_end  .get();
+        atom_reference const& r1 = axis_begin.get();
+        atom_reference const& r2 = axis_end  .get();
         if(r2.inflex) {
             VINA_CHECK(r1.inflex); // no atom-inflex rotors
             nr.inflex_inflex_bonds(r1.index, r2.index) = DISTANCE_ROTOR;

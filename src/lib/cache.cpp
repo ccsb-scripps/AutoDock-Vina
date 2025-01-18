@@ -219,7 +219,7 @@ bool cache::are_atom_types_grid_initialized(szv atom_types) const {
 	return true;
 }
 
-std::vector<std::string> vina_split(std::string str) {
+std::vector<std::string> vina_split(const std::string str) {
 	std::vector<std::string> fields;
 	std::string field;
 	std::istringstream iss(str);
@@ -230,7 +230,7 @@ std::vector<std::string> vina_split(std::string str) {
 	return fields;
 }
 
-void read_vina_map(path &filename, std::vector<grid_dims> &gds, grid &g) {
+void read_vina_map(const path &filename, std::vector<grid_dims> &gds, grid &g) {
 	sz line_counter = 0;
 	sz pt_counter = 0;
 	sz x = 0;
@@ -474,7 +474,7 @@ void cache::populate(const model &m, const precalculate &p, const szv &atom_type
 
 	sz nat = num_atom_types(atom_type::XS);
 
-	grid& g = m_grids[needed.front()];
+	grid const& g = m_grids[needed.front()];
 
 	const fl cutoff_sqr = p.cutoff_sqr();
 

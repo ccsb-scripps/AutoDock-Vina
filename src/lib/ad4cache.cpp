@@ -229,7 +229,7 @@ bool ad4cache::are_atom_types_grid_initialized(szv atom_types) const {
 	return true;
 }
 
-std::vector<std::string> split(std::string str) {
+std::vector<std::string> split(const std::string& str) {
 	std::vector<std::string> fields;
 	std::string field;
 	std::istringstream iss(str);
@@ -240,7 +240,7 @@ std::vector<std::string> split(std::string str) {
 	return fields;
 }
 
-void read_ad4_map(path& filename, std::vector<grid_dims>& gds, grid& g) {
+void read_ad4_map(const path& filename, std::vector<grid_dims>& gds, grid& g) {
 	sz line_counter = 0;
 	sz pt_counter = 0;
 	sz x = 0;

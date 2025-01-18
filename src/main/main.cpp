@@ -47,7 +47,7 @@ struct options_occurrence {
 	}
 };
 
-options_occurrence get_occurrence(boost::program_options::variables_map& vm, boost::program_options::options_description& d) {
+options_occurrence get_occurrence(const boost::program_options::variables_map& vm, const boost::program_options::options_description& d) {
 	options_occurrence tmp;
 	VINA_FOR_IN(i, d.options())
 		if(vm.count((*d.options()[i]).long_name()))
@@ -57,7 +57,7 @@ options_occurrence get_occurrence(boost::program_options::variables_map& vm, boo
 	return tmp;
 }
 
-void check_occurrence(boost::program_options::variables_map& vm, boost::program_options::options_description& d) {
+void check_occurrence(const boost::program_options::variables_map& vm, const boost::program_options::options_description& d) {
 	VINA_FOR_IN(i, d.options()) {
 		const std::string& str = (*d.options()[i]).long_name();
 		if(!vm.count(str))
