@@ -10,7 +10,7 @@ System and software requirements
 
 This is a command-line tutorial for a basic docking experiment with AutoDock-Vina. It can be done on macOS, Linux, and Windows Subsystem for Linux (WSL). 
 
-This tutorial uses python package **Meeko for receptor and ligand preparation**. Installation guide and advanced usage can be found from the `Meeko documentation <https://meeko.readthedocs.io/en/release>`_.
+This tutorial uses python package **Meeko for receptor and ligand preparation**. Installation guide and advanced usage can be found from the `Meeko documentation <https://meeko.readthedocs.io/en/release-doc>`_.
 
 The **input and expected output files** can be found here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/basic_docking>`_.
 
@@ -50,7 +50,7 @@ This step is very similar to the previous step. We will also create a PDBQT file
   
   We strongly advice you against using PDB format for preparing small molecules, since it does not contain information about bond connections. Please don't forget to always check the protonation state of your molecules before docking. Your success can sometimes hang by just an hydrogen atom. ;-)
 
-In case your starting ligand structure does not contain hydrogens, you may consider the command-line script ``scrub.py`` from the python package `Scrubber <https://github.com/forlilab/scrubber>`_ to protonate the ligand. If given the Smiles string of the ligand, ``scrub.py`` is also able to generate 3D conformers and enumerate tautomeric and protonation states of ligand. 
+In case your starting ligand structure does not contain hydrogens, you may consider the command-line script ``scrub.py`` from the python package `Molscrub <https://github.com/forlilab/molscrub>`_ to protonate the ligand. If given the Smiles string of the ligand, ``scrub.py`` is also able to generate 3D conformers and enumerate tautomeric and protonation states of ligand. 
 
 .. code-block:: bash
 

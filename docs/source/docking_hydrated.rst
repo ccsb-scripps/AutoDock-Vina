@@ -45,7 +45,7 @@ The receptor can be prepared using the method described earlier in the following
 2. Preparing the ligand
 -----------------------
 
-For the hydrated docking, explicit water molecules (W atoms) must be added to the molecule. And for that, we will use ``Meeko`` (see installation instruction here: :ref:`docking_requirements`). For convenience, the molecule file ``1uw6_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1uw6 <https://www.rcsb.org/structure/1UW6>`_ (see ``Download instance Coordinates`` link for the NCT molecule (chain U [A])). Since the ligand file does not include the hydrogen atoms, we are going to add them using ``scrub.py`` from python package Scrubber. The option ``-w`` is use to add explicit water molecule to the molecule.
+For the hydrated docking, explicit water molecules (W atoms) must be added to the molecule. And for that, we will use ``Meeko`` (see installation instruction here: :ref:`docking_requirements`). For convenience, the molecule file ``1uw6_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1uw6 <https://www.rcsb.org/structure/1UW6>`_ (see ``Download instance Coordinates`` link for the NCT molecule (chain U [A])). Since the ligand file does not include the hydrogen atoms, we are going to add them using ``scrub.py`` from python package Molscrub. The option ``-w`` is use to add explicit water molecule to the molecule.
 
 .. warning::
   

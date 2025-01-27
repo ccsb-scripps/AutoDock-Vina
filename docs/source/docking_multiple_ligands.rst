@@ -33,7 +33,7 @@ Here again we're using the ``-a`` option to ignore the partially resolve residue
 2. Prepare ligands
 ------------------
 
-Here, we will prepare two ligands instead of only one. We will start from the SDF files ``5x72_ligand_p59.sdf`` and ``5x72_ligand_p69.sdf`` located in the ``data`` directory. They were also obtained directly from the `PDB <https://www.rcsb.org>`_ here: `5x72 <https://www.rcsb.org/structure/5X72>`_ (see ``Download instance Coordinates`` link for the P59 and P69 molecules). Since the ligand files do not include the hydrogen atoms, we are going to add them using ``scrub.py`` from python package Scrubber.
+Here, we will prepare two ligands instead of only one. We will start from the SDF files ``5x72_ligand_p59.sdf`` and ``5x72_ligand_p69.sdf`` located in the ``data`` directory. They were also obtained directly from the `PDB <https://www.rcsb.org>`_ here: `5x72 <https://www.rcsb.org/structure/5X72>`_ (see ``Download instance Coordinates`` link for the P59 and P69 molecules). Since the ligand files do not include the hydrogen atoms, we are going to add them using ``scrub.py`` from python package Molscrub.
 
 .. code-block:: bash
 
