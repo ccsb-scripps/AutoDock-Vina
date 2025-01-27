@@ -3,7 +3,7 @@
 Docking in batch mode
 ================
 
-Docking in batch mode (running the docking calculation with multiple ligands, one by one, one for a single run) is possible with AutoDock Vina. This is useful when you want to perform virtual screening of a large number of ligands against a target protein. The following sections describe how to do this using the command line and the Python API. 
+Docking in batch mode (running the docking calculation with multiple ligands, one by one, one for a single run) is possible with AutoDock Vina. This is useful when you want to perform virtual screening of a large number of ligands against a target protein. The following sections describe how to do this using the command line. For possible ways of doing this with the Python API, see :ref:`docking_python`. 
 
 Do not confuse this with multiple ligand docking (:ref:`docking_multiple_ligands`), in which multiple ligands are involved in a single docking run. 
 
