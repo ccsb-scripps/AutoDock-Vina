@@ -3,9 +3,9 @@
 Docking in batch mode
 ================
 
-Docking many ligands sequentially, one after the other, is possible with AutoDock Vina. This is useful to perform virtual screening of a large number of ligands against a receptor. The following sections describe how to do this using the command line. For possible ways of doing this with the Python API, see :ref:`docking_python`. 
+Docking many ligands sequentially, one after the other, is possible with AutoDock Vina. This is useful to perform virtual screening of a large number of ligands against a receptor. The following sections describe how to do this using the command line. For possible ways of doing this with the Python API, see :ref:`python_dockingn`. 
 
-Do not confuse this with multiple ligand docking (:ref:`docking_multiple_ligands`), in which multiple ligands are docked simultaneously. 
+Do not confuse this with multiple ligand docking (:ref:`multiple_ligands_docking`), in which multiple ligands are docked simultaneously. 
 
 Command line options
 --------------------
