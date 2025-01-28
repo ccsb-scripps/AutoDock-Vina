@@ -3,16 +3,16 @@
 Docking in batch mode
 ================
 
-Docking in batch mode (running the docking calculation with multiple ligands, one by one, one for a single run) is possible with AutoDock Vina. This is useful when you want to perform virtual screening of a large number of ligands against a target protein. The following sections describe how to do this using the command line. For possible ways of doing this with the Python API, see :ref:`docking_python`. 
+Docking many ligands sequentially, one after the other, is possible with AutoDock Vina. This is useful to perform virtual screening of a large number of ligands against a receptor. The following sections describe how to do this using the command line. For possible ways of doing this with the Python API, see :ref:`docking_python`. 
 
-Do not confuse this with multiple ligand docking (:ref:`docking_multiple_ligands`), in which multiple ligands are involved in a single docking run. 
+Do not confuse this with multiple ligand docking (:ref:`docking_multiple_ligands`), in which multiple ligands are docked simultaneously. 
 
 Command line options
 --------------------
 
-The command line usage is similar to the one for a single ligand. The only difference is that instead of specifying a single ligand using the ``--ligand`` option, we may use the ``--batch`` option for one or multiple times to include all ligands. 
+The command line usage is similar to the one for a single ligand. The only difference is that instead of specifying a single ligand using the ``--ligand`` option, we use the ``--batch`` option once or multiple times to include all ligands. 
 
-To specify the output directory, ``--dir`` may be used. The output filename will be ``<ligand_name>_out.pdbqt`` under the specified directory, where ``<ligand_name>`` is the name of the input ligand file without the path. When the name of the ligand is duplicated, an index will be added to the name to avoid the name collision. 
+Use ``--dir`` to specify the output directory. The output filename will be ``<ligand_name>_out.pdbqt`` under the specified directory, where ``<ligand_name>`` is the name of the input ligand file without the path. When the name of the ligand is duplicated, an index will be added to the name to avoid the name collision. 
 
 Assuming we have multiple ligand PDBQT files in the directory named ``ligands`` in the current path. For Linux and macOS, the command line would look like this: 
 
