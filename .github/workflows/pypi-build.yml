@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - develop
+      - pip
     paths-ignore:
       - 'example/**'
       - 'docs/**'
@@ -13,6 +14,7 @@ on:
     branches:
       - master
       - develop
+      - pip
     paths-ignore:
       - 'example/**'
       - 'docs/**'
