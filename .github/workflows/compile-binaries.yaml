@@ -47,6 +47,7 @@ jobs:
       - name: Compile Vina for linux x86-64
         if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         run: |
+          sudo apt-get update -y
           sudo apt-get install -y libboost-all-dev swig
           cd ./build/linux/release
           make
@@ -68,7 +69,10 @@ jobs:
       - name: Compile Vina for macOS
         if: matrix.os == 'macos-latest'
         run: |
-          brew install boost swig
+          echo "DEBUG:: Checking Clang and xcode version"
+          clang++ --version
+          xcode-select --print-path
+          brew install boost@1.85 swig
           cd ./build/mac/release
           make
       - name: Compile Vina for Windows x64
