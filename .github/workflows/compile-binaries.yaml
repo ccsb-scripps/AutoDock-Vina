@@ -72,7 +72,7 @@ jobs:
           echo "DEBUG:: Checking Clang and xcode version"
           clang++ --version
           xcode-select --print-path
-          brew install boost@1.85 swig
+          brew install boost swig
           cd ./build/mac/release
           make
       - name: Compile Vina for Windows x64
