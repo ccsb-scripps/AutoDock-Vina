@@ -329,7 +329,7 @@ setup(
     cmdclass={'build': CustomBuild, 'build_ext': CustomBuildExt, 'install': CustomInstall, 'sdist': CustomSdist},
     packages=['vina'],
     package_dir=package_dir,
-    install_requires=['numpy>=1.18'],
+    install_requires=['numpy>=1.18', "setuptools>=50.3", "wheel", "packaging"],
     python_requires='>=3.5',
     ext_modules=[obextension],
     #entry_points={"console_scripts": ["vina = vina.vina_cli:main"]},
