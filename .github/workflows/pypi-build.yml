@@ -5,7 +5,6 @@ on:
     branches:
       - master
       - develop
-      - pip
     paths-ignore:
       - 'example/**'
       - 'docs/**'
@@ -92,9 +91,7 @@ jobs:
             # Install Boost
             # wget https://boostorg.jfrog.io/artifactory/main/release/1.75.0/source/boost_1_75_0.tar.gz
             wget https://archives.boost.io/release/1.82.0/source/boost_1_82_0.tar.gz
-            # tar -xzf boost_1_*
             tar -xzf boost_1_82_0.tar.gz
-            # cd boost_1_*
             cd boost_1_82_0 
             ls
             ./bootstrap.sh --prefix=/usr --with-python=python
