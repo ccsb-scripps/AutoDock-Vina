@@ -5,7 +5,6 @@ on:
     branches:
       - master
       - develop
-      - pip
     paths-ignore:
       - 'example/**'
       - 'docs/**'
@@ -14,7 +13,6 @@ on:
     branches:
       - master
       - develop
-      - pip
     paths-ignore:
       - 'example/**'
       - 'docs/**'
@@ -50,7 +48,6 @@ jobs:
           platforms: arm64
       - name: Add tag to version.py file
         run: |
-          echo "jani debug, add tag to version.py file"
           git describe --abbrev=7 --dirty --always --tags | \
             sed 's/dirty/mod/g' | \
             sed 's/-/+/' | \
@@ -92,9 +89,6 @@ jobs:
             cd ..
 
             # Install Boost
-            # echo "jani before installing boost"
-            # pwd
-            # ls 
             # wget https://boostorg.jfrog.io/artifactory/main/release/1.75.0/source/boost_1_75_0.tar.gz
             wget https://archives.boost.io/release/1.82.0/source/boost_1_82_0.tar.gz
             # tar -xzf boost_1_*
@@ -107,10 +101,6 @@ jobs:
             cd ..
             export CXXFLAGS="-I/usr/include"
             export LDFLAGS="-L/usr/lib64"
-            echo "jani after installing boost"
-            cat /etc/os-release
-            pwd
-            ls project
 
             # Clean up
             rm -rf boost_1_*
@@ -138,7 +128,6 @@ jobs:
           architecture: 'x64'
       - name: Install Python dependencies
         run: |
-          echo "jani debug, Install python deps in build-sdist"
           python -m pip install --upgrade pip setuptools wheel packaging
       - name: Install boost-devel and swig
         run: |

@@ -5,7 +5,6 @@ on:
     branches:
       - master
       - develop
-      - pip
     paths-ignore:
       - 'example/**'
       - 'docs/**'
@@ -69,9 +68,6 @@ jobs:
       - name: Compile Vina for macOS
         if: matrix.os == 'macos-latest'
         run: |
-          echo "DEBUG:: Checking Clang and xcode version"
-          clang++ --version
-          xcode-select --print-path
           brew install boost swig
           cd ./build/mac/release
           make
