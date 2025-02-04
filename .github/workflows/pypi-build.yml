@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - develop
+      - pip
     paths-ignore:
       - 'example/**'
       - 'docs/**'
