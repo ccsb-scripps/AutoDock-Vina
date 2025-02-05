@@ -68,7 +68,7 @@ jobs:
       - name: Compile Vina for macOS x86_64
         if: matrix.os == 'macos-latest' && matrix.arch == 'x86_64'
         run: |
-          brew install boost swig
+          arch -x86_64 brew install boost swig
           cd ./build/mac/release
           arch -x86_64 make
       - name: Compile Vina for macOS aarch64
