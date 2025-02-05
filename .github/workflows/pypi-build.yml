@@ -55,6 +55,8 @@ jobs:
           cp ./build/python/MANIFEST.in .
           echo "Checking director contents"
           ls -l 
+          echo "Checking contents of vina/"
+          ls -l vina/
           python -m build
 
       - name: Upload Built Artifacts

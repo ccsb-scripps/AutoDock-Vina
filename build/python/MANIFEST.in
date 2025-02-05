@@ -1,2 +1,3 @@
 include LICENSE *.md *.toml
-recursive-include src *.h *.cpp vina
+recursive-include vina *
+recursive-include src *.h *.cpp 
