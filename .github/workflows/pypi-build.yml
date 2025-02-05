@@ -51,6 +51,10 @@ jobs:
       - name: Build sdist and wheel
         run: |
           cp -R ./build/python/* .
+          cp ./build/python/setup.py .
+          cp ./build/python/MANIFEST.in .
+          echo "Checking director contents"
+          ls -l 
           python -m build
 
       - name: Upload Built Artifacts
