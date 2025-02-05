@@ -65,8 +65,16 @@ jobs:
           run: |
             cd /vina/build/linux/release
             make
-      - name: Compile Vina for macOS
-        if: matrix.os == 'macos-latest'
+      - name: Compile Vina for macOS x86_64
+        if: matrix.os == 'macos-latest' && matrix.arch == 'x86_64'
+        run: |
+          arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          eval "$(/usr/local/bin/brew shellenv)"
+          arch -x86_64 brew install boost swig
+          cd ./build/mac/release
+          arch -x86_64 make
+      - name: Compile Vina for macOS aarch64
+        if: matrix.os == 'macos-latest' && matrix.arch == 'aarch64'
         run: |
           brew install boost swig
           cd ./build/mac/release
