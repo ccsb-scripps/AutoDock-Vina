@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - develop
+      - ga_pypi_ubuntu
     paths-ignore:
       - 'example/**'
       - 'docs/**'
@@ -23,92 +24,40 @@ on:
 
 jobs:
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            arch: x86_64
+    name: Build sdist and wheel
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with: 
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
           fetch-depth: 0
+
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: '3.8'
           architecture: 'x64'
-      - name: Set up QEMU
-        if: runner.os == 'Linux'
-        uses: docker/setup-qemu-action@v1
-        with:
-          platforms: arm64
-      - name: Add tag to version.py file
+
+      - name: Install System Dependencies
         run: |
-          git describe --abbrev=7 --dirty --always --tags | \
-            sed 's/dirty/mod/g' | \
-            sed 's/-/+/' | \
-            sed 's/-/./g' | \
-            sed 's/v//' > ./build/python/vina/version.py
-          cat ./build/python/vina/version.py
-      - name: Install Python dependencies
-        run: python -m pip install cibuildwheel setuptools wheel packaging
-      - name: Check setuptools version
+          sudo apt-get update
+          sudo apt-get install -y swig libboost-all-dev
+
+      - name: Install Python Dependencies
         run: |
-          echo "checking setuptools version"
-          python -c "import setuptools; print(setuptools.__version__)"
-      - name: Build wheels
+          python -m pip install --upgrade pip setuptools wheel build
+
+      - name: Build sdist and wheel
         run: |
           cp -R ./build/python/* .
-          python -m cibuildwheel --output-dir wheelhouse
-        env:
-          CIBW_SKIP: pp*
-          CIBW_ARCHS: auto64
-          CIBW_ARCHS_LINUX: ${{ matrix.arch }}
-          CIBW_BEFORE_BUILD: |
-            pip install --upgrade pip setuptools wheel packaging
-          CIBW_BEFORE_ALL_MACOS: |
-            brew install boost swig
-          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
-          CIBW_BEFORE_ALL_LINUX: |
-            sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo 
-            sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo 
-            sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
-            yum clean all && yum -y update 
-            yum install -y wget python-devel pcre-devel
+          python -m build
 
-            # Install SWIG
-            wget https://downloads.sourceforge.net/swig/swig-4.0.2.tar.gz
-            tar -xvf swig-4*.tar.gz 
-            cd swig-4*
-            ./configure --prefix=/usr --without-maximum-compile-warnings && make
-            make install && install -v -m755 -d /usr/share/doc/swig-4.0.2 && cp -v -R Doc/* /usr/share/doc/swig-4.0.2
-            cd ..
-
-            # Install Boost
-            # wget https://boostorg.jfrog.io/artifactory/main/release/1.75.0/source/boost_1_75_0.tar.gz
-            wget https://archives.boost.io/release/1.82.0/source/boost_1_82_0.tar.gz
-            tar -xzf boost_1_82_0.tar.gz
-            cd boost_1_82_0 
-            ls
-            ./bootstrap.sh --prefix=/usr --with-python=python
-            ./b2 install threading=multi link=shared
-            cd ..
-            export CXXFLAGS="-I/usr/include"
-            export LDFLAGS="-L/usr/lib64"
-
-            # Clean up
-            rm -rf boost_1_*
-            rm -rf swig-4*
-      - name: Upload artifacts for inspection
-        if: ${{ env.ACT }} != 'true'  # Skip this step if running locally using 'act'
+      - name: Upload Built Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: wheels
-          path: ./wheelhouse/*.whl
+          name: dist
+          path: dist/*
 
   build_sdist:
     name: Build source distribution
