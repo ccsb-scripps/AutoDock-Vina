@@ -68,6 +68,9 @@ jobs:
       - name: Compile Vina for macOS x86_64
         if: matrix.os == 'macos-latest' && matrix.arch == 'x86_64'
         run: |
+          arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.bash_profile
+          eval "$(/usr/local/bin/brew shellenv)"
           arch -x86_64 brew install boost swig
           cd ./build/mac/release
           arch -x86_64 make
