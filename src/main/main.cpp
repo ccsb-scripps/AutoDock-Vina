@@ -328,11 +328,9 @@ Thank you!\n";
 			exit(EXIT_FAILURE);
 		}
 
-		if (!vm.count("ligand") && !vm.count("batch")) {
-			if (!vm.count("write_maps")) {
-				std::cerr << desc_simple << "\n\nERROR: Missing ligand(s) or --write_maps.\n";
-				exit(EXIT_FAILURE);
-			}
+		if (!vm.count("ligand") && !vm.count("batch") && !vm.count("write_maps")) {
+			std::cerr << desc_simple << "\n\nERROR: Missing ligand(s) or --write_maps.\n";
+			exit(EXIT_FAILURE);
 		} else if (vm.count("ligand") && vm.count("batch")) {
 			std::cerr << desc_simple << "\n\nERROR: Can't use both --ligand and --batch arguments simultaneously.\n";
 			exit(EXIT_FAILURE);
