@@ -31,6 +31,7 @@
 #include "utils.h"
 #include "scoring_function.h"
 #include <unordered_map>
+#include <boost/filesystem.hpp>
 
 struct usage_error : public std::runtime_error {
 	usage_error(const std::string& message) : std::runtime_error(message) {}
