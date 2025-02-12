@@ -468,6 +468,17 @@ Thank you!\n";
 				}
 			}
 
+			// Iter all .pdbqt files in the batch input directory
+			if (batch_ligand_names.size() == 1 && is_directory(batch_ligand_names[0])) {
+				std::string in_dir = batch_ligand_names[0];
+				batch_ligand_names.clear();
+				for (const auto& entry : boost::filesystem::directory_iterator(in_dir)) {
+					if (entry.path().extension() == ".pdbqt") {
+						batch_ligand_names.push_back(entry.path().string());
+					}
+				}
+			}
+
 			std::set<std::string> repeated_names;
 			std::set<std::string> raw_names;
 			std::string name;
