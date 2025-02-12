@@ -419,14 +419,11 @@ Thank you!\n";
 				} else {
 					// Will compute maps only for Vina atom types in the ligand(s)
 					// In the case users ask for score and local only with the autobox arg, we compute the optimal box size for it/them.
-					if ((score_only || local_only) && autobox) {
+					if (autobox) {
 						std::vector<double> dim = v.grid_dimensions_from_ligand(buffer_size);
 						v.compute_vina_maps(dim[0], dim[1], dim[2], dim[3], dim[4], dim[5], grid_spacing, force_even_voxels);
 					} else {
 						v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing, force_even_voxels);
-					}
-					if (vm.count("write_maps")) {
-						v.write_maps(out_maps);
 					}
 				}
 			}
@@ -456,15 +453,12 @@ Thank you!\n";
 				if (vm.count("maps")) {
 					v.load_maps(maps);
 				} else {
-					if ((score_only || local_only) && autobox) {
-						std::vector<double> dim = v.grid_dimensions_from_ligand(buffer_size);
-						v.compute_vina_maps(dim[0], dim[1], dim[2], dim[3], dim[4], dim[5], grid_spacing, force_even_voxels);
-					} else {
+					// if ((score_only || local_only) && autobox) {
+					// 	std::vector<double> dim = v.grid_dimensions_from_ligand(buffer_size);
+					// 	v.compute_vina_maps(dim[0], dim[1], dim[2], dim[3], dim[4], dim[5], grid_spacing, force_even_voxels);
+					// } else {
 						v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing, force_even_voxels);
-					}
-					if (vm.count("write_maps")) {
-						v.write_maps(out_maps);
-					}
+					// }
 				}
 			}
 
@@ -528,10 +522,13 @@ Thank you!\n";
 			if (failed_ligand_parsing) {
 				std::cout << "Failed to parse " << failed_ligand_parsing << " ligands.\n";
 			}
-		} else if (vm.count("write_maps")) {
+		}
+		
+		if (vm.count("write_maps")) {
 			// Will compute maps only for Vina atom types in the ligand(s)
 			// In the case users ask for score and local only with the autobox arg, we compute the optimal box size for it/them.
-			if ((score_only || local_only) && autobox) {
+			if (vm.count("ligand") && autobox) {
+				v.set_ligand_from_file(ligand_names);
 				std::vector<double> dim = v.grid_dimensions_from_ligand(buffer_size);
 				v.compute_vina_maps(dim[0], dim[1], dim[2], dim[3], dim[4], dim[5], grid_spacing, force_even_voxels);
 			} else {
