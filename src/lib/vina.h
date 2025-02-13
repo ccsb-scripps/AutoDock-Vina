@@ -33,9 +33,7 @@
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/program_options.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/exception.hpp>
-#include <boost/filesystem/convenience.hpp> // filesystem::basename
+#include <boost/filesystem.hpp>
 #include <boost/thread/thread.hpp> // hardware_concurrency // FIXME rm ?
 #include <boost/algorithm/string.hpp>
 //#include <openbabel/mol.h>
@@ -53,6 +51,7 @@
 #include "utils.h"
 #include "scoring_function.h"
 #include "precalculate.h"
+#include <memory>
 
 
 class vina_runtime_error : public std::exception {
@@ -162,7 +161,7 @@ private:
 	// scoring function
 	scoring_function_choice m_sf_choice;
 	flv m_weights;
-	ScoringFunction m_scoring_function;
+	std::shared_ptr<ScoringFunction> m_scoring_function;
 	precalculate_byatom m_precalculated_byatom;
 	precalculate m_precalculated_sf;
 	// maps

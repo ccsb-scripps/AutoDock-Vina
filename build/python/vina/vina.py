@@ -222,10 +222,10 @@ class Vina:
         else:
             if len(weights) != 6:
                 raise ValueError('Error: Number of weights does not correspond to AD4 or Vinardo scoring function.')
-                if self._sf_name == 'ad4':
-                    self._vina.set_ad4_weights(*weights)
-                else:
-                    self._vina.set_vinardo_weights(*weights)
+            if self._sf_name == 'ad4':
+                self._vina.set_ad4_weights(*weights)
+            else:
+                self._vina.set_vinardo_weights(*weights)
 
         self._weights = weights
 

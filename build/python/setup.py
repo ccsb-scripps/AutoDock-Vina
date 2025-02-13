@@ -19,7 +19,7 @@ from distutils.version import StrictVersion
 from distutils.util import convert_path
 from distutils.sysconfig import customize_compiler
 from distutils.ccompiler import show_compilers
-
+from packaging.version import Version, InvalidVersion
 
 # Path to the directory that contains this setup.py file.
 base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -53,24 +53,37 @@ def find_version():
     3. __init__.py (as failback)
 
     """
+
+    def is_compliant(version_str):
+        try:
+            # Attempt to parse the version string using packaging's Version class
+            Version(version_str)
+            return True
+        except InvalidVersion:
+            # If parsing fails, the version is not PEP 440 compliant
+            print(f"{version_str} is not PEP 440 compliant")
+            return False
+        
     version_file = os.path.join(base_dir, 'vina', 'version.py')
     if os.path.isfile(version_file):
         with open(version_file) as f:
             version = f.read().strip()
         
         print('Version found: %s (from version.py)' % version)
-        return version
+        if is_compliant(version):
+            return version
 
     try:
-        git_output = subprocess.check_output(['git', 'describe', '--abbrev=7', '--dirty', '--always', '--tags'])
+        git_output = subprocess.check_output(['git', 'describe', '--abbrev=7', '--dirty=@mod', '--always', '--tags'])
         git_output = git_output.strip().decode()
 
         if git_output.startswith('v'):
             git_output = git_output[1:]
-        version = git_output.replace('dirty', 'mod').replace('-', '+', 1).replace('-', '.')
+        version = git_output.replace('-', '.dev', 1).replace('@', '-', 1).replace('-', '+', 1).replace('-','')
 
         print('Version found %s (from git describe)' % version)
-        return version
+        if is_compliant(version):
+            return version
     except:
         pass
     
@@ -105,7 +118,7 @@ def locate_boost():
             data_pathname = sysconfig.get_path("data") # just for readthedocs build
         include_dirs = data_pathname + os.path.sep + 'include'
         library_dirs = data_pathname + os.path.sep + 'lib'
-        
+
         if os.path.isdir(include_dirs + os.path.sep + 'boost'):
             print('Boost library location automatically determined in this conda environment.')
             return include_dirs, library_dirs
@@ -117,6 +130,8 @@ def locate_boost():
     if os.path.isdir(include_dirs + os.path.sep + 'boost'):
         if glob.glob('/usr/local/lib/x86_64-linux-gnu/libboost*'):
             return include_dirs, '/usr/local/lib/x86_64-linux-gnu'
+        elif glob.glob('/usr/local/lib/aarch64-linux-gnu/libboost*'):
+            return include_dirs, '/usr/local/lib/aarch64-linux-gnu'
         elif glob.glob('/usr/local/lib64/libboost*'):
             return include_dirs, '/usr/local/lib64'
         elif glob.glob('/usr/local/lib/libboost*'):
@@ -127,6 +142,8 @@ def locate_boost():
     if os.path.isdir(include_dirs + os.path.sep + 'boost'):
         if glob.glob('/usr/lib/x86_64-linux-gnu/libboost*'):
             return include_dirs, '/usr/lib/x86_64-linux-gnu'
+        elif glob.glob('/usr/lib/aarch64-linux-gnu/libboost*'):
+            return include_dirs, '/usr/lib/aarch64-linux-gnu'
         elif glob.glob('/usr/lib64/libboost*'):
             return include_dirs, '/usr/lib64'
         elif glob.glob('/usr/lib/libboost*'):
@@ -223,7 +240,7 @@ class CustomBuildExt(build_ext):
             print('\nError: SWIG failed.',
                   'You may need to manually specify the location of Open Babel include and library directories. '
                   'For example:',
-                  '  python setup.py build_ext -I{} -L{}'.format(self.include_dirs, self.library_dir),
+                  '  python setup.py build_ext -I{} -L{}'.format(self.include_dirs, self.library_dirs),
                   '  python setup.py install',
                   sep='\n')
             sys.exit(1)
@@ -242,13 +259,14 @@ class CustomBuildExt(build_ext):
             # To get the right @rpath on macos for libraries
             self.extensions[0].extra_link_args.append('-Wl,-rpath,' + self.library_dirs[0])
             self.extensions[0].extra_link_args.append('-Wl,-rpath,' + '/usr/lib')
-        
+
         print('- extra link args: %s' % self.extensions[0].extra_link_args)
 
         # Replace current compiler to g++
         self.compiler.compiler_so[0] = "g++"
         self.compiler.compiler_so.insert(2, "-shared")
 
+        # Remove compiler flags if we can
         remove_flags = ["-Wstrict-prototypes", "-Wall"]
         for remove_flag in remove_flags:
             try:
@@ -257,13 +275,19 @@ class CustomBuildExt(build_ext):
                 print('Warning: compiler flag %s is not present, cannot remove it.' % remove_flag)
                 pass
 
-        self.compiler.compiler_so.append("-std=c++11")
-        self.compiler.compiler_so.append("-Wno-long-long")
-        self.compiler.compiler_so.append("-pedantic")
         # Source: https://stackoverflow.com/questions/9723793/undefined-reference-to-boostsystemsystem-category-when-compiling
-        self.compiler.compiler_so.append('-DBOOST_ERROR_CODE_HEADER_ONLY')
+        vina_compiler_options = [
+                               "-std=c++11",
+                               "-Wno-long-long",
+                               "-pedantic",
+                               '-DBOOST_ERROR_CODE_HEADER_ONLY'
+                              ]
 
-        print('- compiler options: %s' % self.compiler.compiler_so)
+        print('- compiler options: %s' % (self.compiler.compiler_so + vina_compiler_options))
+
+        for ext in self.extensions:
+            ext.extra_compile_args += vina_compiler_options
+
         build_ext.build_extensions(self)
 
 
@@ -305,7 +329,7 @@ setup(
     cmdclass={'build': CustomBuild, 'build_ext': CustomBuildExt, 'install': CustomInstall, 'sdist': CustomSdist},
     packages=['vina'],
     package_dir=package_dir,
-    install_requires=['numpy>=1.18'],
+    install_requires=['numpy>=1.18', "setuptools>=50.3", "wheel", "packaging"],
     python_requires='>=3.5',
     ext_modules=[obextension],
     #entry_points={"console_scripts": ["vina = vina.vina_cli:main"]},

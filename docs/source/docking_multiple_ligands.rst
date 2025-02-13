@@ -7,79 +7,88 @@ Vina is now able to dock simultaneously multiple ligands. This functionality may
 
 The protein PDE in complex with two inhibitors (pdb id: `5x72 <https://www.rcsb.org/structure/5X72>`_) was used as an example to demonstrate the ability of the AutoDock Vina to dock successfully multiple ligands. The two inhibitors in this structure are stereoisomers, and only the R-isomer is able to bind in a specific region of the pocket, while both the R- and S-isomers can bind to the second location. 
 
-.. note::
-    This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the meeko Python package.
+System and software requirements
+--------
 
-Materials for this tutorial
----------------------------
+This is a command-line tutorial for a flexible docking experiment with AutoDock-Vina. It can be done on macOS, Linux, and Windows Subsystem for Linux (WSL). 
 
-For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/mulitple_ligands_docking/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/mulitple_ligands_docking>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/mulitple_ligands_docking/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
+This tutorial uses python package **Meeko for receptor and ligand preparation**. Installation guide and advanced usage can be found from the `Meeko documentation <https://meeko.readthedocs.io>`_.
 
-1. Preparing the flexible receptor
+The **input and expected output files** can be found here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/mulitple_ligands_docking>`_.
+
+
+1. Preparing receptor
 ----------------------------------
 
-Exactly like the :ref:`basic_docking` tutorial, the method requires a receptor coordinate file that includes all hydrogen atoms. The file ``5x72_receptorH.pdb`` is provided (see ``data`` directory located at ``<autodock-vina_directory>/example/multiple_ligands_docking/``). This file contains the receptor coordinates taken from the PDB entry ``5x72``. It was manually obtained by extracting the receptor coordinates (using an text editor) from the original PDB file ``5x72.pdb`` in the ``data`` directory, and the hydrogen atoms added using `reduce <http://kinemage.biochem.duke.edu/software/reduce.php>`_.
+Exactly like the :ref:`basic_docking` tutorial, the method requires a receptor coordinate file that includes all hydrogen atoms. The file ``5x72_receptorH.pdb`` is provided. This file contains the receptor coordinates taken from the PDB entry ``5x72``. It was manually obtained by extracting the receptor coordinates (using an text editor) from the original PDB file ``5x72.pdb`` in the ``data`` directory, and the hydrogen atoms added using `reduce <https://github.com/rlabduke/reduce>`_. To create the PDBQT file and the vina box TXT (configuration) file, we will use the ``mk_prepare_receptor.py`` command-line script: 
 
 .. code-block:: bash
     
-    $ prepare_receptor -r 5x72_receptorH.pdb -o 5x72_receptor.pdbqt
+    $ mk_prepare_receptor.py -i 5x72_receptorH.pdb -o 5x72_receptor -p -v \
+    --box_center -15.000 15.000 129.000 --box_size 30 24 24 \                     
+    --default_altloc A -a
 
-If you are not sure about this step, the output PDBQT file ``5x72_receptor.pdbqt`` is available in the ``solution`` directory.
+Here again we're using the ``-a`` option to ignore the partially resolve residue, LYS29 in chain A. Alternatively, it can be conviniently removed by ``--delete_residues A:29``. 
 
 2. Prepare ligands
 ------------------
 
-Here, we will prepare two ligands instead of only one. We will start from the SDF files ``5x72_ligand_p59.sdf`` and ``5x72_ligand_p69.sdf`` located in the ``data`` directory. They were also obtained directly from the `PDB <https://www.rcsb.org>`_ here: `5x72 <https://www.rcsb.org/structure/5X72>`_ (see ``Download instance Coordinates`` link for the P59 and P69 molecules). Since the ligand files do not include the hydrogen atoms, we are going to automatically add them.
-
-.. warning::
-  
-  We strongly advice you against using PDB format for preparing small molecules, since it does not contain information about bond connections. Please don't forget to always check the protonation state of your molecules before docking. Your success can sometimes hang by just an hydrogen atom. ;-)
+Here, we will prepare two ligands instead of only one. We will start from the SDF files ``5x72_ligand_p59.sdf`` and ``5x72_ligand_p69.sdf`` located in the ``data`` directory. They were also obtained directly from the `PDB <https://www.rcsb.org>`_ here: `5x72 <https://www.rcsb.org/structure/5X72>`_ (see ``Download instance Coordinates`` link for the P59 and P69 molecules). Since the ligand files do not include the hydrogen atoms, we are going to add them using ``scrub.py`` from python package Molscrub.
 
 .. code-block:: bash
 
-    $ mk_prepare_ligand.py -i 5x72_ligand_p59.sdf -o 5x72_ligand_p59.pdbqt
-    $ mk_prepare_ligand.py -i 5x72_ligand_p69.sdf -o 5x72_ligand_p69.pdbqt
+    $ scrub.py 5x72_ligand_p59.sdf -o 5x72_ligand_p59H.sdf 
+    $ mk_prepare_ligand.py -i 5x72_ligand_p59H.sdf -o 5x72_ligand_p59.pdbqt
+    $ scrub.py 5x72_ligand_p69.sdf -o 5x72_ligand_p69H.sdf 
+    $ mk_prepare_ligand.py -i 5x72_ligand_p69H.sdf -o 5x72_ligand_p69.pdbqt
 
-The output PDBQT ``5x72_ligand_p59.pdbqt`` and ``5x72_ligand_p69.pdbqt`` can be found in the ``solution`` directory.
 
 3. (Optional) Generating affinity maps for AutoDock FF
 ------------------------------------------------------
 
-As well as for the docking with a fully rigid receptor, we need to generate a GPF file to precalculate the affinity maps for each atom type. However, instead of using the full receptor, affinity maps will be calculated only for the rigid part of the receptor (``5x72_receptor.pdbqt``).
+Similar to what's done in :ref:`basic_docking`, to use the AutoDock FF for docking calculation, we need to generate a GPF file to precalculate the affinity map for each atom types. 
 
-To prepare the GPF file for the rigid part of the receptor:
+To prepare the GPF file for the rigid part of the receptor, you can run (or rerun) ``mk_prepare_receptor.py`` with the additional option, ``-g`` that will enable the writing of the GPF file. 
 
 .. code-block:: bash
+    
+    $ mk_prepare_receptor.py -i 5x72_receptorH.pdb -o 5x72_receptor -p -v -g \
+    --box_center -15.000 15.000 129.000 --box_size 30 24 24 \                     
+    --default_altloc A -a
 
-    $ pythonsh <script_directory>/prepare_gpf.py -l 5x72_ligand_p59.pdbqt -r 5x72_receptor.pdbqt \ 
-               -p npts='80,64,64' -p gridcenter='-15 15 129' -o 5x72_receptor.gpf
-
-This time we manually specified the center of the grid ``-p gridcenter='-15 15 129'`` as well as its size ``-p npts='80,64,64'``.
+After creating the GPF file, and now we can use the ``autogrid4`` command to generate the different map files that will be used for the molecular docking: 
 
 .. code-block:: console
     :caption: Content of the grid parameter file (**5x72_receptor.gpf**) for the receptor (**5x72_receptor.pdbqt**)
-
-    npts 80 64 64                        # num.grid points in xyz
-    gridfld 5x72_receptor.maps.fld       # grid_data_file
-    spacing 0.375                        # spacing(A)
-    receptor_types A C NA OA N SA HD     # receptor atom types
-    ligand_types A C F OA N HD           # ligand atom types
-    receptor 5x72_receptor.pdbqt         # macromolecule
-    gridcenter -15.000 15.000 129.000    # xyz-coordinates or auto
-    smooth 0.5                           # store minimum energy w/in rad(A)
-    map 5x72_receptor.A.map              # atom-specific affinity map
-    map 5x72_receptor.C.map              # atom-specific affinity map
-    map 5x72_receptor.F.map              # atom-specific affinity map
-    map 5x72_receptor.OA.map             # atom-specific affinity map
-    map 5x72_receptor.N.map              # atom-specific affinity map
-    map 5x72_receptor.HD.map             # atom-specific affinity map
-    elecmap 5x72_receptor.e.map          # electrostatic potential map
-    dsolvmap 5x72_receptor.d.map              # desolvation potential map
-    dielectric -0.1465                   # <0, AD4 distance-dep.diel;>0, constant
-
-.. warning::
-
-    You might have to manually edit the GPF file and add addtional atom types if the second ligand contains different atom types not present in the ligand used for creating the GPF file.
+    parameter_file boron-silicon-atom_par.dat
+    npts 80 64 64
+    gridfld 5x72_receptor.maps.fld
+    spacing 0.375
+    receptor_types HD C A N NA OA F P SA S Cl Br I Mg Ca Mn Fe Zn
+    ligand_types HD C A N NA OA F P SA S Cl CL Br BR I Si B
+    receptor 5x72_receptor.pdbqt
+    gridcenter -15.000 15.000 129.000
+    smooth 0.500
+    map 5x72_receptor.HD.map
+    map 5x72_receptor.C.map
+    map 5x72_receptor.A.map
+    map 5x72_receptor.N.map
+    map 5x72_receptor.NA.map
+    map 5x72_receptor.OA.map
+    map 5x72_receptor.F.map
+    map 5x72_receptor.P.map
+    map 5x72_receptor.SA.map
+    map 5x72_receptor.S.map
+    map 5x72_receptor.Cl.map
+    map 5x72_receptor.CL.map
+    map 5x72_receptor.Br.map
+    map 5x72_receptor.BR.map
+    map 5x72_receptor.I.map
+    map 5x72_receptor.Si.map
+    map 5x72_receptor.B.map
+    elecmap 5x72_receptor.e.map
+    dsolvmap 5x72_receptor.d.map
+    dielectric -42.000
 
 To execute ``autogrid4`` using ``5x72_receptor.gpf``, run the folllowing command line:
 
@@ -91,10 +100,10 @@ You should obtain as well the following files:
 
 .. code-block:: console
 
-    1fpu_receptor.maps.fld       # grid data file
-    1fpu_receptor.*.map          # affinity maps for A, C, HD, NA, N, OA atom types
-    1fpu_receptor.d.map          # desolvation map
-    1fpu_receptor.e.map          # electrostatic map
+    5x72_receptor.maps.fld       # grid data file
+    5x72_receptor.*.map          # affinity maps for A, C, HD, NA, N, OA atom types
+    5x72_receptor.d.map          # desolvation map
+    5x72_receptor.e.map          # electrostatic map
 
 4. Running AutoDock Vina
 ------------------------
@@ -112,31 +121,31 @@ When using the AutoDock4 forcefield, you only need to provide the affinity maps 
 4.b. Using Vina forcefield
 __________________________
 
-As well as for the fully rigid molecular docking, you only need to specify the center and dimensions (in Angstrom) of the grid. Here, instead of specifying each parameters for the grid box using the arguments ``--center_x, --center_y, --center_z`` and ``--size_x, --size_y, --size_z``, we will also store all those informations in a text file ``5x72_receptor_vina_box.txt``.
+Contrary to AutoDock4, you don't need to precalculate the affinity grid maps with ``autogrid4`` when using the Vina forcefield. AutoDock Vina computes those maps internally before the docking. If you did not make the box dimension file when preparing receptor in the previous step, you could specify the center and dimensions (in Angstrom) of the grid box in a new TXT file:  
 
 .. code-block:: console
-    :caption: Content of the config file (**5x72_receptor_vina_box.txt**) for AutoDock Vina
+    :caption: Content of the config file (**5x72_receptor.box.txt**) for AutoDock Vina
 
-    center_x = -15
-    center_y = 15
-    center_z = 129
-    size_x = 30
-    size_y = 24
-    size_z = 24
+    center_x = 15.190
+    center_y = 53.903
+    center_z = 16.917
+    size_x = 20.0
+    size_y = 20.0
+    size_z = 20.0
 
-However, when using the Vina forcefield, you will need to specify the receptor ``5x72_receptor.pdbqt`` (needed to compute internally the affinity maps). To perform the same docking experiment but using Vina forcefield run the following command line:
+And then run the following command to execute the docking calculation: 
 
 .. code-block:: bash
 
     $ vina --receptor 5x72_receptor.pdbqt --ligand 5x72_ligand_p59.pdbqt 5x72_ligand_p69.pdbqt \
-           --config 5x72_receptor_vina_box.txt \
-           --exhaustiveness 32 --out 5x72_ligand_vina_out.pdbqt
+           --config 5x72_receptor.box.txt \
+           --exhaustiveness=32 --out 5x72_ligand_vina_out.pdbqt
 
 .. tip::
 
     Alternatively, you can use the Vinardo forcefield by adding the ``--scoring vinardo`` option.
 
-Running AutoDock Vina will write a PDBQT file called ``5x72_ligand_flex_vina_out.pdbqt``.
+Running AutoDock Vina will write a PDBQT file called ``5x72_ligand_vina_out.pdbqt``.
 
 5. Results
 ----------
@@ -148,71 +157,71 @@ Running AutoDock Vina will write a PDBQT file called ``5x72_ligand_flex_vina_out
 5.a. Using AutoDock forcefield
 ______________________________
 
-The predicted free energy of binding should be about ``-18 kcal/mol`` for poses that are similar to the crystallographic pose. Using the AutoDock4 scoring function, the first two sets of poses (top 2) need to be considered to show also a good overlap with the crystallographic poses
+The predicted free energy of binding should be near ``-18 kcal/mol`` for poses that are similar to the crystallographic pose. Using the AutoDock4 scoring function, the first two sets of poses (top 2) need to be considered to show also a good overlap with the crystallographic poses
  
 .. code-block:: console
 
     Scoring function : ad4
     Ligands:
-      - 5x72_ligand_p59.pdbqt
-      - 5x72_ligand_p69.pdbqt
+    - 5x72_ligand_p59.pdbqt
+    - 5x72_ligand_p69.pdbqt
     Exhaustiveness: 32
     CPU: 0
     Verbosity: 1
 
     Reading AD4.2 maps ... done.
-    Performing docking (random seed: 1295744643) ... 
+    Performing docking (random seed: -1370364650) ... 
     0%   10   20   30   40   50   60   70   80   90   100%
     |----|----|----|----|----|----|----|----|----|----|
     ***************************************************
 
     mode |   affinity | dist from best mode
-         | (kcal/mol) | rmsd l.b.| rmsd u.b.
+        | (kcal/mol) | rmsd l.b.| rmsd u.b.
     -----+------------+----------+----------
-       1       -18.94          0          0
-       2       -18.62      1.634      3.349
-       3        -18.4      1.413      3.312
-       4       -18.24      1.341      3.921
-       5       -18.03      1.599      9.262
-       6       -17.93      1.631      9.166
-       7       -17.84      1.928      4.933
-       8       -17.74       1.74      8.879
-       9       -17.74          2      9.433
+    1       -17.67          0          0
+    2       -17.61      1.124      3.731
+    3       -17.45      1.837      3.718
+    4       -17.41      1.981      9.343
+    5       -17.17      1.242      3.802
+    6       -17.17      1.436      9.123
+    7       -17.11      1.478       5.26
+    8        -17.1       1.62      8.954
+    9          -17      1.669       9.66
 
 5.b. Using Vina forcefield
 __________________________
 
-Using the vina forcefield, you should obtain a similar output from Vina with the best score around ``-21 kcal/mol``. Using the Vina scoring function, the best set of poses (top 1) shows an excellent overlap with the crystallographic coordinates for one of the isomers.
+Using the vina forcefield, you should obtain a similar output from Vina with the best score around ``-19 kcal/mol``. Using the Vina scoring function, the best set of poses (top 1) shows an excellent overlap with the crystallographic coordinates for one of the isomers.
 
 .. code-block:: console
 
     Scoring function : vina
     Rigid receptor: 5x72_receptor.pdbqt
     Ligands:
-      - 5x72_ligand_p59.pdbqt
-      - 5x72_ligand_p69.pdbqt
-    Center: X -15 Y 15 Z 129
-    Size: X 30 Y 24 Z 24
-    Grid space: 0.375
+    - 5x72_ligand_p59.pdbqt
+    - 5x72_ligand_p69.pdbqt
+    Grid center: X -15 Y 15 Z 129
+    Grid size  : X 30 Y 24 Z 24
+    Grid space : 0.375
     Exhaustiveness: 32
     CPU: 0
     Verbosity: 1
 
     Computing Vina grid ... done.
-    Performing docking (random seed: -2141167371) ... 
+    Performing docking (random seed: -1632509975) ... 
     0%   10   20   30   40   50   60   70   80   90   100%
     |----|----|----|----|----|----|----|----|----|----|
     ***************************************************
 
     mode |   affinity | dist from best mode
-         | (kcal/mol) | rmsd l.b.| rmsd u.b.
+        | (kcal/mol) | rmsd l.b.| rmsd u.b.
     -----+------------+----------+----------
-       1       -21.32          0          0
-       2       -20.94      1.061      3.648
-       3       -20.73      1.392      3.181
-       4       -19.93      1.744      4.841
-       5       -19.34      1.384      3.352
-       6       -19.05      1.185      9.184
-       7        -18.9      1.198      3.586
-       8       -18.76      1.862      8.986
-       9       -18.63      1.749      9.194
+    1       -19.04          0          0
+    2       -18.33       1.22       3.81
+    3       -17.27      1.247      3.007
+    4       -17.22      1.432      3.286
+    5       -16.45      1.099      3.717
+    6       -16.35        1.7      4.839
+    7       -16.24      1.335      5.195
+    8          -16      2.332      9.449
+    9       -15.29      7.079       13.5

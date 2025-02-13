@@ -7,36 +7,20 @@ Installation
 
     Currently, the python bindings and the binary installation are two separate processes. The installation of the python bindings does not include the Vina executable, and vice versa.
 
-Unix- and Linux-based OS
+Pre-compiled Executables: vina and vina_split
 ------------------------
 
-Vina is expected to work on x86 and compatible 64-bit Linux systems. The executable for the latest release are available here: `https://github.com/ccsb-scripps/AutoDock-Vina/releases <https://github.com/ccsb-scripps/AutoDock-Vina/releases>`_.
+The executables for the latest release are available here: `https://github.com/ccsb-scripps/AutoDock-Vina/releases <https://github.com/ccsb-scripps/AutoDock-Vina/releases>`_.
 
 **Running**:
 
 .. code-block:: bash
 
-    ./vina_1.2.0_linux_x86_64 --help
+    ./vina_<version number>_<OS name>_<architecture> --help
 
-If the executable is in your PATH, you can just type "vina --help" instead.
 
-macOS
-------
-
-Vina is expected to work on macOS 10.15 (Catalina) and newer. The executable for the latest release are available here: `https://github.com/ccsb-scripps/AutoDock-Vina/releases <https://github.com/ccsb-scripps/AutoDock-Vina/releases>`_.
-
-**Running**:
-
-.. code-block:: bash
-
-    ./vina_1.2.0_macos_x86_64 --help
-
-If the executable is in your PATH, you can just type "vina --help" instead.
-
-Python bindings
+Python bindings (Linux and Mac only)
 ---------------
-
-Currently working on Linux and Mac. We did not test on Windows.
 
 **AutoDock Vina installation using pip**:
 
@@ -65,7 +49,7 @@ The Anaconda Python distribution, which can be download from `https://docs.conti
 
 .. code-block:: bash
 
-    $ conda install -c conda-forge numpy swig boost-cpp sphinx sphinx_rtd_theme
+    $ conda install -c conda-forge numpy swig boost-cpp libboost sphinx sphinx_rtd_theme
     $ pip install vina
 
 Building from Source

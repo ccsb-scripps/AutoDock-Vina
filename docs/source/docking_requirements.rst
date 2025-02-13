@@ -3,14 +3,66 @@
 Software requirements
 =====================
 
-For those tutorials, the ADFR software suite, providing a number of software tools for automated docking and peripheral tasks, and the Python package Raccoon-lite, for preparing macrocycle for example, are necessary.
+In addition to AutoDockTools, the long standing GUI for docking calculation setup and management, the following helper tools are developed at the `Center for Computational Structural Biology (CCSB) <https://ccsb.scripps.edu>`_ and can be used for docking input preparation. 
+
+Python package Meeko
+-----
+
+The Python package `meeko <https://meeko.readthedocs.io>`_ is package recently developped in the Forli lab also at the `Center for Computational Structural Biology (CCSB) <https://ccsb.scripps.edu>`_. As showcased in the Colab examples, `Meeko <https://github.com/forlilab/Meeko>`_ provides commandline scripts for ligand preparation, receptor preparation and other essential tools for the following docking protocols:
+
+    - Docking with flexible macrocycles
+    - Flexible docking
+    - Covalent docking
+    - Reactive docking
+    - Hydrated docking
+
+**Meeko installation using pip**:
+
+.. note::
+
+    When using ``pip``, it's good practice to do so in a virtual (conda, mamba, etc.) environment instead of the base environment. An example with the `Conda package manager <https://docs.conda.io/en/latest/>`_ is available further down.
+
+.. code-block:: bash
+    
+    $ pip install -U numpy scipy rdkit vina meeko gemmi prody
+
+If the installation was successful, you should now be able to access to the following command from your terminal by typing:
+
+    - mk_prepare_ligand.py
+    - mk_prepare_receptor.py
+    - mk_export.py
+
+**Meeko installation in a Conda environment**:
+
+.. note::
+
+    See instructions in :ref:`installation` on how to setup and create an dedicated ``Conda`` environment.
+
+Type the following command to install ``Meeko`` and (optionally) ``ProDy``:
+
+.. code-block:: bash
+    
+    $ conda activate vina
+    $ conda install python=3.10    # for ProDy interoperability
+    $ conda install -c conda-forge numpy scipy rdkit vina meeko gemmi autogrid
+    $ pip install prody
+
+AutoGrid4
+--------
+Git Repository: `CCSB-Scripps AutoGrid <https://github.com/ccsb-scripps/AutoGrid>`_
+
+.. code-block:: bash
+
+    $ conda install -c conda-forge autogrid 
+
+Alternatively, see instruction in the repository's ``README`` to build the latest version of autogrid4. 
 
 ADFR software suite
 -------------------
 
 .. warning::
 
-    macOS users please note that ADFR software suite is NOT working under Catalina (10.15). We will send email to the mailing list if and when ADFR software suite or an alternative will be available for this version of macOS. If you already are using Catalina, we recommend install VirtualBox and running ADFR software suite inside the virtual box.
+    macOS users please note that ADFR software suite is NOT working under Catalina (10.15). We will send email to the mailing list if and when ADFR software suite or an alternative will be available for this version of macOS. If you already are using Catalina, we recommend install VirtualBox and running ADFR software suite inside the virtual box. 
 
 The ADFR software suite was developed in the Sanner lab at the `Center for Computational Structural Biology (CCSB) <https://ccsb.scripps.edu>`_ formerly known as the Molecular Graphics Laboratory (MGL) of The Scripps Research Institute for visualization and analysis of molecular structures. You can find more information about the ADFR software suite installation process here: `https://ccsb.scripps.edu/adfr/downloads <https://ccsb.scripps.edu/adfr/downloads/>`_. The current version contains the following tools for docking:
     
@@ -32,43 +84,3 @@ Moreover, the ADFR software suite provides a number of software tools for automa
     - Ravindranath, P. A., Forli, S., Goodsell, D. S., Olson, A. J., & Sanner, M. F. (2015). AutoDockFR: advances in protein-ligand docking with explicitly specified binding site flexibility. PLoS computational biology, 11(12), e1004586.
     - Zhao, Y., Stoffler, D., & Sanner, M. (2006). Hierarchical and multi-resolution representation of protein flexibility. Bioinformatics, 22(22), 2768-2774.
 
-Meeko
------
-
-The Python package ``meeko`` is a new type of package developped in the Forli lab also at the `Center for Computational Structural Biology (CCSB) <https://ccsb.scripps.edu>`_.  It provides tools covering other docking aspects not handled by the ADFR software suite. This package provides addtionnal tools for the following docking protocols:
-
-    - Hydrated docking
-    - Macrocycles
-
-**Meeko installation using pip**:
-
-.. note::
-
-    When using ``pip``, it's good pratice to use a virtual environment and also the easiest solution. An example with the `Conda package manager <https://docs.conda.io/en/latest/>`_ is available further down.
-
-.. warning::
-    
-    OpenBabel executable and library must be installed first, see `installation instruction <https://open-babel.readthedocs.io/en/latest/Installation/install.html#install-binaries>`_.
-
-.. code-block:: bash
-    
-    $ pip install -U numpy openbabel meeko
-
-If the installation was successful, you should now be able to access to the following command from your terminal by typing:
-
-    - mk_prepare_ligand.py
-
-**Meeko installation in a Conda environment**:
-
-.. note::
-
-    See instructions in :ref:`installation` on how to setup and create an dedicated ``Conda`` environment.
-
-Type the following command to install ``NumPy``, ``OpenBabel`` and ``meeko``:
-
-.. code-block:: bash
-    
-    $ conda activate vina
-    $ conda install python=3.9.7    # not strictly needed but prevents RDKit incompatibility
-    $ conda install -c conda-forge numpy openbabel scipy rdkit
-    $ pip install meeko

@@ -9,13 +9,13 @@ Availability
 ------------
 AutoDock Vina can be easily installed with all its dependencies using `pip` or `conda` package managers.
 
-All **source code** is available under the `Apache License, version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`_ from `github.com/ccsb-scripps/AutoDock-Vina <https://github.com/ccsb-scripps/AutoDock-Vina>`_ and the Python Package index `pypi.org/project/Vina <pypi.org/project/Vina>`_.
+All **source code** is available under the `Apache License, version 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`_ from `github.com/ccsb-scripps/AutoDock-Vina <https://github.com/ccsb-scripps/AutoDock-Vina>`_ and the Python Package index `pypi.org/project/Vina <https://pypi.org/project/Vina>`_.
 
 Participating
 -------------
 Please report bugs or enhancement requests through the `Issue Tracker <https://github.com/ccsb-scripps/AutoDock-Vina/issues>`_.
 
-AutoDock Vina is **open source** and welcomes your contributions. `Fork the repository on GitHub <https://github.com/ccsb-scripps/AutoDock-Vina>`_ and submit a pull request. Participate on the `developer mailing list <http://mgldev.scripps.edu/mailman/listinfo/autodock>`_.
+AutoDock Vina is **open source** and welcomes your contributions. `Fork the repository on GitHub <https://github.com/ccsb-scripps/AutoDock-Vina>`_ and submit a pull request. 
 
 .. toctree::
    :maxdepth: 2
@@ -24,6 +24,7 @@ AutoDock Vina is **open source** and welcomes your contributions. `Fork the repo
 
    introduction
    installation
+   colab_examples
    faq
    citations
    changes
@@ -37,6 +38,7 @@ AutoDock Vina is **open source** and welcomes your contributions. `Fork the repo
    docking_basic
    docking_flexible
    docking_multiple_ligands
+   docking_in_batch
    docking_zinc
    docking_hydrated
    docking_macrocycle

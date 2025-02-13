@@ -8,10 +8,11 @@ Zinc is present in a wide variety of proteins and is important in the metabolism
 The AutoDock4 force field was extended to include a specialized potential describing the interactions of zinc-coordinating ligands. This potential describes both the energetic and geometric components of the interaction. The new force field, named AutoDock4Zn, was calibrated on a data set of 292 crystal complexes containing zinc. Redocking experiments show that the force field provides significant improvement in performance in both free energy of binding estimation as well as in root-mean-square deviation from the crystal structure pose.
 
 .. note::
+
     This tutorial requires a certain degree of familiarity with the command-line interface. Also, we assume that you installed the ADFR software suite as well as the meeko Python package.
 
 .. note::
-
+    
     Please cite this paper if you are using this protocol in your work:
 
     - Santos-Martins, D., Forli, S., Ramos, M. J., & Olson, A. J. (2014). AutoDock4Zn: an improved AutoDock force field for small-molecule docking to zinc metalloproteins. Journal of chemical information and modeling, 54(8), 2371-2379.
@@ -19,29 +20,50 @@ The AutoDock4 force field was extended to include a specialized potential descri
 Materials for this tutorial
 ---------------------------
 
-For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/docking_with_zinc_metalloproteins/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/docking_with_zinc_metalloproteins>`_). If you ever feel lost, you can always take a look at the solution here: ``AutoDock-Vina/example/docking_with_zinc_metalloproteins/solution``. All the Python scripts used here (except for ``prepare_receptor`` and ``mk_prepare_ligand.py``) are located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_.
+For this tutorial, all the basic material are provided and can be found in the ``AutoDock-Vina/example/docking_with_zinc_metalloproteins/data`` directory (or on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/docking_with_zinc_metalloproteins>`_). This includes a special parameter data file, ``AD4Zn.dat``, which is required by this tutorial. 
+
+Additionally, the receptor preparation requires specialized command-line scripts, ``zinc_pseudo.py`` and ``prepare_gpf4zn.py``, located in the ``AutoDock-Vina/example/autodock_scripts`` directory, alternatively you can also find them here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/autodock_scripts>`_. The execution of ``prepare_gpf4zn.py`` and the grid map computation require ADFR suite. 
 
 1. Preparing the receptor
 -------------------------
 
-During this step we will create the PDBQT file of the receptor using the PDB file called ``proteinH.pdb``, containing all the hydrogen atoms, and add the tetrahedral zinc pseudo atoms (``TZ``) around the zinc ion. TZ atoms represent the preferred position for tetrahedral coordination by the ligand. This file contains the receptor coordinates of chain A and B taken from the PDB entry `1s63 <https://www.rcsb.org/structure/1S63>`_.
+During this step we will create the PDBQT file of the receptor using the PDB file called ``proteinH.pdb``, containing all the hydrogen atoms, and add the tetrahedral zinc pseudo atoms (``TZ``) around the zinc ion. TZ atoms represent the preferred position for tetrahedral coordination by the ligand. This file contains the receptor coordinates taken from the PDB entry `1s63 <https://www.rcsb.org/structure/1S63>`_. Additionally, we're removing 
 
 To prepare the receptor, execute the following command lines:
 
 .. code-block:: bash
 
-    $ prepare_receptor -r protein.pdb -o protein.pdbqt -U nphs_lps_waters
+    $ mk_prepare_receptor.py -i proteinH.pdb -o protein -p 
     $ pythonsh <script_directory>/zinc_pseudo.py -r protein.pdbqt -o protein_tz.pdbqt
 
-NOTE: default for `prepare_receptor` is to remove chains consisting exclusively of non-standard residues (e.g. Zn),
-If zinc is in a chain without standard protein residues, option -U nphs_lps_waters` will prevent zinc removal.
-The execution of these two commands should output these two messages. One informing us that the charge for the zinc ion was not set by ``prepare_receptor``. In this context, the message can be safely ignored since the ligand will interact preferentially with the zinc pseudo atoms (TZ). The PDBQT output files can be found in the ``solution`` directory.
+The execution of the first command will output the following message: 
 
 .. code-block:: console
+    
+    Input residues {'B:3011': 'FPP'} not in residue_templates
 
-    Sorry, there are no Gasteiger parameters available for atom proteinH:B: ZN1001:ZN
+    Trying to resolve unknown residues by building chemical templates... 
+    ******************** New Template Built ********************
+    {
+        "ambiguous": {
+            "FPP": ["FPP"]
+        },
+        "residue_templates": {
+            "FPP": {
+                "smiles": "[H]C(=C(C([H])([H])[H])C([H])([H])C([H])([H])C([H])=C(C([H])([H])[H])C([H])([H])C([H])([H])C([H])=C(C([H])([H])[H])C([H])([H])[H])C([H])([H])OP(=O)([O-])OP(=O)([O-])[O-]",
+                "atom_name": ["H2", "C2", "C3", "C4", "H41", "H42", "H43", "C5", "H51", "H52", "C6", "H61", "H62", "C7", "H7", "C8", "C10", "H101", "H102", "H103", "C9", "H91", "H92", "C11", "H111", "H112", "C12", "H12", "C13", "C14", "H141", "H142", "H143", "C15", "H151", "H152", "H153", "C1", "H11", "H12A", "O1", "PA", "O1A", "O2A", "O3A", "PB", "O1B", "O2B", "O3B"],
+                "link_labels": {}
+            }
+        }
+    }
+    ************************************************************
 
-The second message is telling us that only one zinc pseudo atom (TZ) was added to the receptor.
+    Files written:
+    protein.pdbqt <-- static (i.e., rigid) receptor input file
+
+This is informing us that the noncovalent cofactor, ``FPP``, has been created based on the definition CIF file that is downloaed from PDB. 
+
+The execution of the second command will output the following message, telling us that only one zinc pseudo atom (TZ) was added to the receptor.
 
 .. code-block:: console
 
@@ -50,13 +72,12 @@ The second message is telling us that only one zinc pseudo atom (TZ) was added t
 2. Preparing the ligand
 -----------------------
 
-The second step consists to prepare the ligand, by converting the SDF file ``1s63_ligand.msdf`` to a PDBQT file readable by AutoDock Vina. As usual, we will use the ``mk_prepare_ligand.py`` Python script from ``Meeko`` (see installation instruction here: :ref:`docking_requirements`) for this task. For your convenience, the molecule file ``1s63_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1s63 <https://www.rcsb.org/structure/1S63>`_ (see ``Download instance Coordinates`` link for the 778 molecule. Since the ligand file does not include the hydrogen atoms, we are going to automatically add them.
+The second step consists to prepare the ligand, by converting the SDF file ``1s63_ligand.sdf`` to a PDBQT file readable by AutoDock Vina. As usual, we will use the ``mk_prepare_ligand.py`` Python script from ``Meeko`` (see installation instruction here: :ref:`docking_requirements`) for this task. For your convenience, the molecule file ``1s63_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1s63 <https://www.rcsb.org/structure/1S63>`_ (see ``Download instance Coordinates`` link for the 778 molecule. Since the ligand file does not include the hydrogen atoms, we are going to add them using ``scrub.py`` from python package Molscrub. 
 
 .. code-block:: bash
 
-    $ mk_prepare_ligand.py -i 1s63_ligand.sdf -o 1s63_ligand.pdbqt
-
-The output PDBQT  ``1s63_ligand.pdbqt`` can be found in the ``solution`` directory.
+    $ scrub.py 1s63_ligand.sdf -o 1s63_ligandH.sdf 
+    $ mk_prepare_ligand.py -i 1s63_ligandH.sdf -o 1s63_ligand.pdbqt
 
 3. Generating affinity maps
 ---------------------------

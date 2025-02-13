@@ -22,9 +22,7 @@ $ conda install -c conda-forge numpy swig boost-cpp sphinx sphinx_rtd_theme
 Finally, we can install the `Vina` package
 ```bash
 $ git clone https://github.com/ccsb-scripps/AutoDock-Vina
-$ cd AutoDock-Vina
-$ git checkout boost-python
-$ cd build/python
+$ cd AutoDock-Vina/build/python
 $ python setup.py build install
 ```
 
