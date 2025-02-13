@@ -430,9 +430,9 @@ Thank you!\n";
 					} else {
 						v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing, force_even_voxels);
 					}
-					
+
 					if (vm.count("write_maps"))
-					v.write_maps(out_maps);
+						v.write_maps(out_maps);
 				}
 			}
 
