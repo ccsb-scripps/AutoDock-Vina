@@ -309,6 +309,11 @@ Thank you!\n";
 			exit(EXIT_FAILURE);
 		}
 
+		if (vm.count("maps") && vm.count("write_maps")) {
+			std::cerr << "ERROR: --maps (argument to specify the input maps) and --write_maps cannot be used together. \n";
+			exit(EXIT_FAILURE);
+		}
+
 		if (sf_name.compare("vina") == 0 || sf_name.compare("vinardo") == 0) {
 			if (!vm.count("receptor") && !vm.count("maps")) {
 				std::cerr << desc_simple << "ERROR: The receptor or affinity maps must be specified.\n";
@@ -425,10 +430,10 @@ Thank you!\n";
 					} else {
 						v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing, force_even_voxels);
 					}
+					
+					if (vm.count("write_maps"))
+					v.write_maps(out_maps);
 				}
-
-				if (vm.count("write_maps"))
-				v.write_maps(out_maps);
 			}
 
 			if (randomize_only) {
