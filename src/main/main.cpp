@@ -426,9 +426,9 @@ Thank you!\n";
 						v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing, force_even_voxels);
 					}
 				}
-				if (vm.count("write_maps")) {
-					v.write_maps(out_maps);
-				}
+
+				if (vm.count("write_maps"))
+				v.write_maps(out_maps);
 			}
 
 			if (randomize_only) {
@@ -456,10 +456,11 @@ Thank you!\n";
 				if (vm.count("maps")) {
 					v.load_maps(maps);
 				} else {
+					// Will compute maps for all Vina atom types
 					v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing, force_even_voxels);
-				}
-				if (vm.count("write_maps")) {
-					v.write_maps(out_maps);
+
+					if (vm.count("write_maps"))
+						v.write_maps(out_maps);
 				}
 			}
 
