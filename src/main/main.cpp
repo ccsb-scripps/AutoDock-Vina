@@ -530,12 +530,7 @@ Thank you!\n";
 				std::cout << "Failed to parse " << failed_ligand_parsing << " ligands.\n";
 			}
 		} else if (vm.count("write_maps")) {
-			// Will compute maps only for Vina atom types in the ligand(s)
-			// In the case users ask for score and local only with the autobox arg, we compute the optimal box size for it/them.
-			if (!vm.count("receptor")) {
-				std::cerr << "ERROR: --receptor is required for --write_maps.\n";
-				exit(EXIT_FAILURE);
-			}
+			// Will compute maps for all Vina atom types
 			v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing, force_even_voxels);
 			v.write_maps(out_maps);
 		}
