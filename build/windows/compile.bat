@@ -70,8 +70,8 @@ if NOT exist "%msbuild_path%" (
 echo Using MSBuild: "%msbuild_path%"
 
 :: Retrieve Git Version
-set GIT_VERSION=0.0.0-unknown
-for /f %%i in ('git describe --abbrev=7 --dirty --always --tags 2^>nul') do set GIT_VERSION=%%i
+if NOT "%~5"=="" set "GIT_VERSION=%~5"
+if "%GIT_VERSION%"=="" set GIT_VERSION=0.0.0-unknown
 
 :: Print Git Version
 echo Program Version from Git: "%GIT_VERSION%"
