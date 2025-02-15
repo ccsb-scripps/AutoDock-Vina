@@ -96,7 +96,7 @@ jobs:
           }
 
           # Get and pass Git version
-          echo "GIT_VERSION=$(git describe --abbrev=7 --dirty --always --tags 2>$null)" >> $env:GITHUB_ENV
+          $GIT_VERSION = git describe --abbrev=7 --dirty --always --tags 2>$null
 
           # Execute compile.bat (in cmd)
           cd .\build\windows
