@@ -44,16 +44,17 @@ if NOT exist "%msbuild_path%" (
 
     :: Define possible search locations
     set search_dirs="%ProgramFiles(x86)%" "%ProgramFiles%" "%LocalAppData%"
-    set expect_paths=MSBuild\Current\Bin\amd64\MSBuild.exe
-
-    if /i "%platform%" NEQ "x64" set expect_paths=MSBuild\Current\Bin\MSBuild.exe
+    set expect_paths="MSBuild\Current\Bin\MSBuild.exe"
+    if /i "%platform%" EQ "x64" set expect_paths="MSBuild\Current\Bin\amd64\MSBuild.exe" "MSBuild\Current\Bin\MSBuild.exe"
 
     :: Loop through search directories to find MSBuild
     for %%D in (%search_dirs%) do (
-        for /f "delims=" %%A in ('cmd /c dir "%%D\Microsoft Visual Studio\" /s /b 2^>nul') do (
-            if exist "%%A\%expect_paths%" (
-                set "msbuild_path=%%A\%expect_paths%"
-                goto found
+        for %%P in (%expect_paths%) do (
+            for /f "delims=" %%A in ('cmd /c dir "%%D\Microsoft Visual Studio\" /s /b 2^>nul') do (
+                if exist "%%A\%expect_paths%" (
+                    set "msbuild_path=%%A\%expect_paths%"
+                    goto found
+                )
             )
         )
     )
