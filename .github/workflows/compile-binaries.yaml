@@ -23,7 +23,7 @@ on:
 
 jobs:
   compile_binaries:
-    name: Compile binaries on ${{ matrix.os }}
+    name: Compile binaries on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -37,6 +37,7 @@ jobs:
           - os: macos-latest
             arch: aarch64
           - os: windows-2019
+            arch: x64
 
     steps:
       - name: Checkout
@@ -51,7 +52,7 @@ jobs:
           cd ./build/linux/release
           make
       - name: Compile Vina for linux ${{ matrix.arch }}
-        if: matrix.os == 'ubuntu-latest' && matrix.arch != 'x86_64'
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'aarch64'
         uses: uraimo/run-on-arch-action@v2
         with:
           arch: ${{ matrix.arch }}
@@ -80,7 +81,7 @@ jobs:
           cd ./build/mac/release
           make
       - name: Compile Vina for Windows x64
-        if: matrix.os == 'windows-2019'
+        if: matrix.os == 'windows-2019' && matrix.arch == 'x64'
         run: |
           # Download boost binary
           $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.83.0/boost_1_83_0-msvc-14.2-64.exe"
