@@ -14,7 +14,7 @@ if NOT "%~2"=="" set platform=%~2
 
 :: Check if Boost library is provided
 if NOT "%~3"=="" (
-    set boost_lib=%~3
+    set "boost_lib=%~3"
 ) else (
     :: Default Boost library path based on choice of platform
     if /i "%platform%"=="x64" (
@@ -33,7 +33,7 @@ echo Using Boost library: "%boost_lib%"
 
 :: Check if MSBuild path is provided
 if NOT "%~4"=="" (
-    set msbuild_path=%~4
+    set "msbuild_path=%~4"
 )
 
 :: Validate MSBuild path
