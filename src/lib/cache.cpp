@@ -423,7 +423,7 @@ void cache::write(const std::string& out_prefix, const szv& atom_types, const st
 					{
 						VINA_FOR(x, m_grids[t].m_data.dim0())
 						{
-							out << std::setprecision(4) << m_grids[t].m_data(x, y, z) << "\n"; // slow?
+							out << std::setprecision(10) << m_grids[t].m_data(x, y, z) << "\n"; // slow?
 						} // x
 					} // y
 				} // z
