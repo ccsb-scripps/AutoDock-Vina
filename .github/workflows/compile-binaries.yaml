@@ -36,7 +36,7 @@ jobs:
             arch: x86_64
           - os: macos-latest
             arch: aarch64
-          - os: windows-2019
+          - os: windows-latest
 
     steps:
       - name: Checkout
@@ -80,14 +80,20 @@ jobs:
           cd ./build/mac/release
           make
       - name: Compile Vina for Windows x64
-        if: matrix.os == 'windows-2019'
+        if: matrix.os == 'windows-latest'
         run: |
-          $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.77.0/boost_1_77_0-msvc-14.2-64.exe"
+          # Download boost binary
+          $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.83.0/boost_1_83_0-msvc-14.3-64.exe"
           [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
           $wcl=(New-Object System.Net.WebClient)
           $wcl.Headers.Add("user-agent", "Wget/1.21.0")
           $wcl.DownloadFile($Url, "$env:TEMP\boost.exe")
           Start-Process -Wait -FilePath "$env:TEMP\boost.exe" "/SILENT","/SP-","/SUPPRESSMSGBOXES"
+          
+          # Install Git
+          winget install --id Git.Git -e --source winget
+
+          # Execute compile.bat (in cmd)
           cd .\build\windows
           .\compile.bat
         shell: powershell
