@@ -80,10 +80,10 @@ jobs:
           cd ./build/mac/release
           make
       - name: Compile Vina for Windows x64
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-2019'
         run: |
           # Download boost binary
-          $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.83.0/boost_1_83_0-msvc-14.3-64.exe"
+          $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.83.0/boost_1_83_0-msvc-14.2-64.exe"
           [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
           $wcl=(New-Object System.Net.WebClient)
           $wcl.Headers.Add("user-agent", "Wget/1.21.0")
