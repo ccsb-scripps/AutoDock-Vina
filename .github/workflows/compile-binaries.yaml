@@ -95,8 +95,8 @@ jobs:
               choco install git -y --no-progress
           }
 
-          # Get ans pass Git version
-          echo "GIT_VERSION=$(git describe --abbrev=7 --dirty --always --tags 2>nul)" >> $GITHUB_ENV
+          # Get and pass Git version
+          echo "GIT_VERSION=$(git describe --abbrev=7 --dirty --always --tags 2>$null)" >> $env:GITHUB_ENV
 
           # Execute compile.bat (in cmd)
           cd .\build\windows
