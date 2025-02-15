@@ -23,7 +23,7 @@ on:
 
 jobs:
   compile_binaries:
-    name: Build wheels on ${{ matrix.os }} ${{ matrix.arch }}
+    name: Compile binaries on ${{ matrix.os }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -37,21 +37,22 @@ jobs:
           - os: macos-latest
             arch: aarch64
           - os: windows-2019
+            arch: x64
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with: 
           fetch-depth: 0
-      - name: Compile Vina for Linux x86-64
+      - name: Compile Vina for linux x86-64
         if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         run: |
           sudo apt-get update -y
           sudo apt-get install -y libboost-all-dev swig
           cd ./build/linux/release
           make
-      - name: Compile Vina for Linux aarch64
-        if: matrix.os == 'ubuntu-latest' && matrix.arch != 'x86_64'
+      - name: Compile Vina for linux ${{ matrix.arch }}
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'aarch64'
         uses: uraimo/run-on-arch-action@v2
         with:
           arch: ${{ matrix.arch }}
@@ -80,16 +81,38 @@ jobs:
           cd ./build/mac/release
           make
       - name: Compile Vina for Windows x64
-        if: matrix.os == 'windows-2019'
+        if: matrix.os == 'windows-2019' && matrix.arch == 'x64'
         run: |
-          $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.77.0/boost_1_77_0-msvc-14.2-64.exe"
+          # Download boost binary
+          $Url = "https://sourceforge.net/projects/boost/files/boost-binaries/1.83.0/boost_1_83_0-msvc-14.2-64.exe"
           [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
           $wcl=(New-Object System.Net.WebClient)
           $wcl.Headers.Add("user-agent", "Wget/1.21.0")
           $wcl.DownloadFile($Url, "$env:TEMP\boost.exe")
           Start-Process -Wait -FilePath "$env:TEMP\boost.exe" "/SILENT","/SP-","/SUPPRESSMSGBOXES"
+          
+          # Install Git using Chocolatey (if not already installed)
+          if (-Not (Get-Command git -ErrorAction SilentlyContinue)) {
+              choco install git -y --no-progress
+          }
+
+          # Fetch all tags
+          if ($(git rev-parse --is-shallow-repository) -eq "true") {
+              git fetch --prune --unshallow --tags 2>$null
+          } else {
+              git fetch --prune --tags 2>$null
+          }
+
+          # Get the nearest tag, fallback to commit hash if no tag exists
+          $env:GIT_VERSION = $(git describe --tags --abbrev=7 --dirty --always 2>$null)
+          
+          # Ensure fallback value if Git describe fails
+          if (-not $env:GIT_VERSION) { $env:GIT_VERSION = "0.0.0-unknown" }
+          echo "GIT_VERSION=$env:GIT_VERSION" >> $env:GITHUB_ENV
+
+          # Execute compile.bat (in cmd)
           cd .\build\windows
-          .\compile.bat
+          .\compile.bat Release x64 "C:\local\boost_1_83_0\lib64-msvc-14.2" "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" "$env:GIT_VERSION"
         shell: powershell
       - name: Upload artifacts for inspection
         uses: actions/upload-artifact@v4
