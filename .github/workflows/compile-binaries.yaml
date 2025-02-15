@@ -36,7 +36,7 @@ jobs:
             arch: x86_64
           - os: macos-latest
             arch: aarch64
-          - os: windows-latest
+          - os: windows-2019
 
     steps:
       - name: Checkout
@@ -97,7 +97,7 @@ jobs:
 
           # Execute compile.bat (in cmd)
           cd .\build\windows
-          .\compile.bat
+          .\compile.bat Release x64 "C:\local\boost_1_83_0\lib32-msvc-14.2" "C:\local\boost_1_83_0\lib64-msvc-14.2"
         shell: powershell
       - name: Upload artifacts for inspection
         uses: actions/upload-artifact@v4
