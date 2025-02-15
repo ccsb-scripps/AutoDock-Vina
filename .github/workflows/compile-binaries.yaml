@@ -95,8 +95,17 @@ jobs:
               choco install git -y --no-progress
           }
 
-          # Get and pass Git version
-          $env:GIT_VERSION = $(git describe --abbrev=7 --dirty --always --tags 2>$null) -replace "dirty", "mod"
+          # Fetch all tags
+          if ($(git rev-parse --is-shallow-repository) -eq "true") {
+              git fetch --prune --unshallow --tags 2>$null
+          } else {
+              git fetch --prune --tags 2>$null
+          }
+
+          # Get the nearest tag, fallback to commit hash if no tag exists
+          $env:GIT_VERSION = $(git describe --tags --abbrev=7 --dirty --always 2>$null)
+          
+          # Ensure fallback value if Git describe fails
           if (-not $env:GIT_VERSION) { $env:GIT_VERSION = "0.0.0-unknown" }
           echo "GIT_VERSION=$env:GIT_VERSION" >> $env:GITHUB_ENV
 
