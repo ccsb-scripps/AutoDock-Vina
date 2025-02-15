@@ -54,7 +54,6 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  </PropertyGroup>
   <PropertyGroup>
     <BoostRootPath>$([System.IO.Path]::GetDirectoryName($(BoostLibraryPath)))</BoostRootPath>
   </PropertyGroup>
