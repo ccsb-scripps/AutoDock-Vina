@@ -90,8 +90,10 @@ jobs:
           $wcl.DownloadFile($Url, "$env:TEMP\boost.exe")
           Start-Process -Wait -FilePath "$env:TEMP\boost.exe" "/SILENT","/SP-","/SUPPRESSMSGBOXES"
           
-          # Install Git
-          winget install --id Git.Git -e --source winget
+          # Install Git using Chocolatey (if not already installed)
+          if (-Not (Get-Command git -ErrorAction SilentlyContinue)) {
+              choco install git -y --no-progress
+          }
 
           # Execute compile.bat (in cmd)
           cd .\build\windows
