@@ -5,7 +5,6 @@ on:
     branches:
       - master
       - develop
-      - ga_pypi_ubuntu
     paths-ignore:
       - 'example/**'
       - 'docs/**'
@@ -36,7 +35,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: '3.x'
           architecture: 'x64'
       - name: Set up QEMU
         if: runner.os == 'Linux'
@@ -64,10 +63,6 @@ jobs:
           cp -R ./build/python/* .
           cp ./build/python/setup.py .
           cp ./build/python/MANIFEST.in .
-          echo "Checking director contents"
-          ls -l 
-          echo "Checking contents of vina/"
-          ls -l vina/
           python -m build
 
       - name: Upload Built Artifacts
