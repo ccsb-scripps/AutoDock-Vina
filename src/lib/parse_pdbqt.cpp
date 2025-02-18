@@ -259,6 +259,10 @@ void parse_pdbqt_rigid(const path& name, rigid& r) {
     ifile in(name);
     std::string str;
 
+    if (!in) {
+        throw pdbqt_parse_error("Failed to open rigid PDBQT file: " + name.string());
+    }
+
     while(std::getline(in, str)) {
         if(str.empty()) {} // ignore ""
         else if(starts_with(str, "TER")) {} // ignore 
@@ -667,6 +671,11 @@ model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& fle
     }
 
     if (!rigid_name.empty()) {
+        if (r.atoms.empty()) {
+            std::cerr << "Warning: The receptor file '" << rigid_name
+                      << "' appears to be empty. Proceed with empty receptor. "
+                      << std::endl;
+        } 
         tmp.initialize_from_rigid(r);
         if (flex_name.empty()) {
             distance_type_matrix mobility_matrix;
