@@ -49,6 +49,7 @@ struct ligand : public flexible_body, atom_range {
 	interacting_pairs pairs;
 	context cont;
 	ligand(const flexible_body& f, unsigned degrees_of_freedom_) : flexible_body(f), atom_range(0, 0), degrees_of_freedom(degrees_of_freedom_) {}
+	ligand() : flexible_body(), atom_range(0, 0), degrees_of_freedom(0) {}
 	void set_range();
 };
 
