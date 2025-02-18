@@ -628,6 +628,15 @@ void Vina::write_pose(const std::string& output_name, const std::string& remark)
 	m_model.write_structure(f, format_remark.str());
 }
 
+void Vina::write_pose_with_vina_remarks(const std::string& output_name, output_type& pose) {
+    std::ostringstream formatted_remark;
+    formatted_remark.setf(std::ios::fixed, std::ios::floatfield);
+    formatted_remark.setf(std::ios::showpoint);
+
+    std::string vina_remark = vina_remarks(pose, pose.lb, pose.ub);
+    write_pose(output_name, vina_remark);
+}
+
 void Vina::randomize(const int max_steps) {
 	// Randomize ligand/flex residues conformation
 	// Check the box was defined
