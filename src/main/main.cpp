@@ -378,6 +378,10 @@ Thank you!\n";
 				std::cout << "Grid size  : X " << size_x << " Y " << size_y << " Z " << size_z << "\n";
 				std::cout << "Grid space : " << grid_spacing << "\n";
 			} else if (autobox) {
+				if (!score_only && !local_only) {
+					std::cerr << desc_simple << "\n\nERROR: --autobox can only be used to set box dimensions for --score_only or --local_only.\n";
+					exit(EXIT_FAILURE);
+				}
 				std::cout << "Grid center: ligand center (autobox)\n";
 				std::cout << "Grid size  : ligand size + " << buffer_size << " A in each dimension (autobox)\n";
 				std::cout << "Grid space : " << grid_spacing << "\n";
