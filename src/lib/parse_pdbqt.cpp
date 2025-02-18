@@ -453,7 +453,7 @@ void postprocess_ligand(non_rigid_parsed& nr, parsing_struct& p, context& c, uns
     } else {
         std::cerr << "Warning: The ligand appears to have no atoms. Proceed with empty ligand. "
         << std::endl;
-        nr.ligands.push_back(ligand())
+        nr.ligands.push_back(ligand());
     }
 }
 
@@ -486,7 +486,7 @@ void parse_pdbqt_ligand_core(std::istream& in, non_rigid_parsed& nr, context& c)
 
     parse_pdbqt_aux(in, p, c, torsdof, false);
 
-    if (!p.atoms.empty()) && (!torsdof) {
+    if (!p.atoms.empty() && !torsdof) {
         throw pdbqt_parse_error("Missing TORSDOF keyword in a nonempty ligand.");
     } else {
         postprocess_ligand(nr, p, c, unsigned(torsdof.get()));
