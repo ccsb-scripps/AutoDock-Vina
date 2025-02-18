@@ -76,7 +76,7 @@ void Vina::set_receptor(const std::string& rigid_name, const std::string& flex_n
 		exit(EXIT_FAILURE);
 	} else if (m_sf_choice == SF_AD42 && !rigid_name.empty()) {
 		// CONDITIONS 2, 3
-		std::cerr << "ERROR: Only flexible residues allowed with the AD4 scoring function. No (rigid) receptor.\n";
+		std::cerr << "ERROR: With AD4 scoring, autogrid maps must be provided instead of receptor PDBQT. (vina.cpp)\n";
 		exit(EXIT_FAILURE);
 	}
 
