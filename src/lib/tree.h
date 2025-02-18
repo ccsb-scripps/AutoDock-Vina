@@ -98,7 +98,9 @@ struct axis_frame : public atom_frame {
 	axis_frame(const vec& origin_, sz begin_, sz end_, const vec& axis_root) : atom_frame(origin_, begin_, end_) {
 		vec diff; diff = origin - axis_root;
 		fl nrm = diff.norm();
-		VINA_CHECK(nrm >= epsilon_fl);
+		if (nrm < epsilon_fl) {
+			throw std::runtime_error("ERROR: axis_frame construction failed due to near-zero norm. Check geometry! ");
+		}
 		axis = (1/nrm) * diff;
 	}
 	void set_derivative(const vecp& force_torque, fl& c) const {

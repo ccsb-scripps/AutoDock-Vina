@@ -21,7 +21,7 @@
 */
 
 #include "utils.h"
-#include "boost/filesystem.h"
+#include "boost/filesystem.hpp"
 
 namespace fs = boost::filesystem;
 
