@@ -21,20 +21,18 @@
 */
 
 #include "utils.h"
+#include "boost/filesystem.h"
+
+namespace fs = boost::filesystem;
 
 
 inline char separator() {
-    // Source: https://stackoverflow.com/questions/12971499/how-to-get-the-file-separator-symbol-in-standard-c-c-or
-    #ifdef _WIN32
-        return '\\';
-    #else
-        return '/';
-    #endif
+    return fs::path::preferred_separator;
 }
 
 
 path make_path(const std::string& str) {
-    boost::filesystem::path p(str);
+    fs::path p(str);
   return p;
 }
 
@@ -53,11 +51,19 @@ void done(int verbosity, int level) {
 }
 
 
+std::string normalize_path(const std::string& dir_path) {
+    return fs::path(dir_path).make_preferred().string();
+}
+
+
 std::string default_output(const std::string& input_name) {
     std::string tmp = input_name;
     if (tmp.size() >= 6 && tmp.substr(tmp.size()-6, 6) == ".pdbqt")
         tmp.resize(tmp.size() - 6); // FIXME?
-    return tmp + "_out.pdbqt";
+
+    std::string output_path = tmp + "_out.pdbqt";
+    return normalize_path(output_path);
+
 }
 
 
@@ -65,17 +71,19 @@ std::string default_output(const std::string& input_name, int idx) {
     std::string tmp = input_name;
     if (tmp.size() >= 6 && tmp.substr(tmp.size()-6, 6) == ".pdbqt")
         tmp.resize(tmp.size() - 6); // FIXME?
-    return tmp + "_instance" + std::to_string(idx) + "_out.pdbqt";
+
+    std::string output_path = tmp + "_instance" + std::to_string(idx) + "_out.pdbqt";
+    return normalize_path(output_path);
 }
 
 
 std::string default_output(const std::string& input_name, const std::string& directory_pathname) {
-    return directory_pathname + separator() + default_output(input_name);
+    return normalize_path(directory_pathname) + separator() + default_output(input_name);
 }
 
 
 std::string default_output(const std::string& input_name, const std::string& directory_pathname, int idx) {
-    return directory_pathname + separator() + default_output(input_name, idx);
+    return normalize_path(directory_pathname) + separator() + default_output(input_name, idx);
 }
 
 
