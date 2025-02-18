@@ -570,7 +570,7 @@ Thank you!\n";
 
 	// Errors that shouldn't happen:
 	catch(std::exception& e) {
-		std::cerr << "\n\nAn error occurred: " << e.what() << ". " << error_message;
+		std::cerr << "\n\nAn error occurred: " << e.what() << error_message;
 		return 1;
 	}
 	catch(internal_error& e) {

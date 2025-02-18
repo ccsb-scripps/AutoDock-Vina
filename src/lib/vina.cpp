@@ -324,7 +324,7 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
 		// m_model
 		throw vina_runtime_error("Cannot compute Vina or Vinardo affinity maps. The (rigid) receptor was not initialized.");
 	} else if (size_x <= 0 || size_y <= 0 || size_z <= 0) {
-		throw vina_runtime_error("Grid box dimensions must be greater than 0 Angstrom");
+		throw vina_runtime_error("Grid box dimensions must be greater than 0 Angstrom.");
 	} else if (size_x * size_y * size_z > 27e3) {
 		std::cerr << "WARNING: Search space volume is greater than 27000 Angstrom^3 (See FAQ)\n";
 	}
@@ -870,7 +870,7 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 	} else if (!m_map_initialized) {
 		throw vina_runtime_error("Cannot do the global search. Affinity maps were not initialized.");
 	} else if (exhaustiveness < 1) {
-		throw vina_runtime_error("Exhaustiveness must be 1 or greater");
+		throw vina_runtime_error("Exhaustiveness must be 1 or greater.");
 	}
 
 	if (exhaustiveness < m_cpu) {
