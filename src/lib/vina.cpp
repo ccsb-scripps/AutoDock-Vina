@@ -649,9 +649,12 @@ void Vina::write_optimized_pose(const std::string& output_name) {
     updated_pose.conf_independent = optimized_energies[6];  // Torsional energy
     updated_pose.unbound = optimized_energies[7];  // Unbound energy
 
-    // Compute RMSD values (if applicable, otherwise 0.0)
-    double lb = 0.0;  // Lower bound RMSD
-    double ub = 0.0;  // Upper bound RMSD
+    // Compute RMSD values 
+	// Create a temporary model for initial conformation
+	model initial_model = m_model;  // Copy current model
+	initial_model.set(m_model.get_initial_conf());  // Set it to the initial configuration
+	double lb = m_model.rmsd_lower_bound(initial_model);
+	double ub = m_model.rmsd_upper_bound(initial_model);
 
     // Generate Vina remarks
     std::string vina_remark = vina_remarks(updated_pose, lb, ub);
