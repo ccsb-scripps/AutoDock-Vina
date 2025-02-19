@@ -23,6 +23,7 @@
 #include "vina.h"
 #include "scoring_function.h"
 #include "precalculate.h"
+#include "conf.h"
 
 
 void Vina::cite() {
@@ -628,6 +629,38 @@ void Vina::write_pose(const std::string& output_name, const std::string& remark)
 	m_model.write_structure(f, format_remark.str());
 }
 
+
+void Vina::write_optimized_pose(const std::string& output_name) {
+    std::ostringstream format_remark;
+    format_remark.setf(std::ios::fixed, std::ios::floatfield);
+    format_remark.setf(std::ios::showpoint);
+
+    // Compute optimized energy values for the current model conformation
+    std::vector<double> optimized_energies = score();
+
+    // Get the current conformation (instead of initial_conf)
+    conf current_conf = m_model.get_size();  // Retrieves current ligand conformation
+
+    // Create an `output_type` object with the updated model state
+    output_type updated_pose(current_conf, optimized_energies[0]);  // Total binding energy
+    updated_pose.total = optimized_energies[1] + optimized_energies[2];  // Total interaction energy
+    updated_pose.inter = optimized_energies[1];  // Intermolecular energy
+    updated_pose.intra = optimized_energies[2];  // Intramolecular energy
+    updated_pose.conf_independent = optimized_energies[6];  // Torsional energy
+    updated_pose.unbound = optimized_energies[7];  // Unbound energy
+
+    // Compute RMSD values (if applicable, otherwise 0.0)
+    double lb = 0.0;  // Lower bound RMSD
+    double ub = 0.0;  // Upper bound RMSD
+
+    // Generate Vina remarks
+    std::string vina_remark = vina_remarks(updated_pose, lb, ub);
+    format_remark << vina_remark;
+
+    // Write to file
+    ofile f(make_path(output_name));
+    m_model.write_structure(f, format_remark.str());
+}
 
 void Vina::randomize(const int max_steps) {
 	// Randomize ligand/flex residues conformation
