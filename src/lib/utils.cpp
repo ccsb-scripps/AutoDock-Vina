@@ -101,13 +101,14 @@ bool is_directory(const std::string& directory_pathname) {
 
 
 std::string get_filename(const std::string& s) {
-    size_t i = s.rfind(separator(), s.length());
+    std::string normalized = normalize_path(s); // Normalize the input path
+    size_t i = normalized.rfind(separator(), normalized.length());
 
     if (i != std::string::npos) {
-        return(s.substr(i + 1, s.length() - i));
+        return normalized.substr(i + 1, normalized.length() - i);
     }
 
-    return(s);
+    return normalized;
 }
 
 std::string get_file_contents(const std::string& filename) {   
