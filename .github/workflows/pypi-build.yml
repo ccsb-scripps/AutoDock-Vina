@@ -65,6 +65,7 @@ jobs:
           cp -R ./build/python/* .
           python -m cibuildwheel --output-dir wheelhouse
         env:
+          CIBW_BUILD: cp38-* cp39-* cp310-* cp311-* cp312-*
           CIBW_SKIP: pp*
           CIBW_ARCHS: auto64
           CIBW_ARCHS_LINUX: ${{ matrix.arch }}
