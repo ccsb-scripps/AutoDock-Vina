@@ -5,7 +5,6 @@ on:
     branches:
       - master
       - develop
-      - pypi-test
     paths-ignore:
       - 'example/**'
       - 'docs/**'
@@ -106,7 +105,6 @@ jobs:
             rm -rf boost_1_*
             rm -rf swig-4*
       - name: Upload artifacts for inspection
-        if: ${{ env.ACT }} != 'true'  # Skip this step if running locally using 'act'
         uses: actions/upload-artifact@v4
         with:
           name: wheels
@@ -145,7 +143,7 @@ jobs:
   upload_pypi:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
-    # if: github.event_name == 'release' && github.event.action == 'published'
+    if: github.event_name == 'release' && github.event.action == 'published'
 
     steps:
       - name: Checkout
@@ -172,9 +170,9 @@ jobs:
         run: ls -lah dist
       - name: Check packages before upload
         run: twine check dist/*
-      # - name: Publish sdist and wheel to PyPI
-      #   run: |
-      #     twine upload dist/*
-      #   env:
-      #     TWINE_USERNAME: __token__
-      #     TWINE_PASSWORD: ${{ secrets.PYPI_FORLILAB }}
+      - name: Publish sdist and wheel to PyPI
+        run: |
+          twine upload dist/*
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_FORLILAB }}
