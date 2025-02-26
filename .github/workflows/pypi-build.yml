@@ -55,12 +55,20 @@ jobs:
           platforms: arm64 
       - name: Add tag to version.py file
         run: |
-          git describe --abbrev=7 --dirty --always --tags | \
-            sed 's/dirty/mod/g' | \
-            sed 's/-/+/' | \
-            sed 's/-/./g' | \
-            sed 's/v//' > ./build/python/vina/version.py
-          cat ./build/python/vina/version.py
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            $version = git describe --abbrev=7 --dirty --always --tags
+            $version = $version -replace "dirty", "mod"
+            $version = $version -replace "-", "+"
+            $version = $version -replace "-", "."
+            $version = $version -replace "v", ""
+            Set-Content -Path .\build\python\vina\version.py -Value $version
+          else: 
+            git describe --abbrev=7 --dirty --always --tags | \
+              sed 's/dirty/mod/g' | \
+              sed 's/-/+/' | \
+              sed 's/-/./g' | \
+              sed 's/v//' > ./build/python/vina/version.py
+            cat ./build/python/vina/version.py
       - name: Install Python dependencies
         run: python -m pip install cibuildwheel setuptools wheel packaging
       - name: Check setuptools version
@@ -100,7 +108,7 @@ jobs:
             brew install boost swig
           CIBW_BEFORE_ALL_WINDOWS: |
             choco install -y swig boost-msvc-14.2
-            
+
       - name: Upload artifacts for inspection
         uses: actions/upload-artifact@v4
         with:
