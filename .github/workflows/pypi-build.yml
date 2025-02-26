@@ -89,21 +89,21 @@ jobs:
         run: |
           brew install boost swig
       - name: Install dependencies (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          choco install -y swig boost-msvc-14.2
-          echo "Boost and SWIG installed"
+        # if: runner.os == 'Windows'
+        # run: |
+        #   choco install -y swig boost-msvc-14.2
+        #   echo "Boost and SWIG installed"
 
-          ls "C:\local\"
+        #   ls "C:\local\"
 
-          # Set BOOST_ROOT manually
-          $BOOST_PATH = "C:\local\boost_1_87_0"
-          if (Test-Path $BOOST_PATH) {
-          echo "Setting BOOST_ROOT..."
-          [System.Environment]::SetEnvironmentVariable("BOOST_ROOT", $BOOST_PATH, "Machine")
-          } else {
-          echo "ERROR: Boost directory not found at $BOOST_PATH"
-          }
+        #   # Set BOOST_ROOT manually
+        #   $BOOST_PATH = "C:\local\boost_1_87_0"
+        #   if (Test-Path $BOOST_PATH) {
+        #   echo "Setting BOOST_ROOT..."
+        #   [System.Environment]::SetEnvironmentVariable("BOOST_ROOT", $BOOST_PATH, "Machine")
+        #   } else {
+        #   echo "ERROR: Boost directory not found at $BOOST_PATH"
+        #   }
 
       - name: Build wheels
         run: |

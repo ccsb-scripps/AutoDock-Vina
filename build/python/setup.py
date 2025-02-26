@@ -160,8 +160,12 @@ def locate_boost():
             "C:\\Program Files\\Boost",   # Rare, but possible
             os.environ.get("BOOST_ROOT", ""),  # Environment variable if set
         ]
-
+        print ("debugging, possible paths:")
+        print(possible_paths)
+        print(os.listdir("C:\\local"))
+        print(os.listdir("C:\\local\\boost_1_87_0"))
         for path in possible_paths:
+            print(f"path: {path}")
             if path and os.path.isdir(os.path.join(path, "include", "boost")):
                 include_dirs = os.path.join(path, "include")
                 lib_dirs = os.path.join(path, "lib")
