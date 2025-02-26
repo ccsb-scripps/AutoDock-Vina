@@ -141,6 +141,11 @@ jobs:
             export LDFLAGS="-L$(brew --prefix boost)/lib"
           CIBW_BEFORE_ALL_WINDOWS: |
             choco install -y swig boost-msvc-14.2
+            # debugging steps. 
+            echo "Checking Boost environment variables..."
+            echo "BOOST_ROOT: $env:BOOST_ROOT"
+            echo "Checking Boost files..."
+            Get-ChildItem -Path C:\local\boost_1_82_0 -Recurse | Select-String "boost"
 
       - name: Upload artifacts for inspection
         uses: actions/upload-artifact@v4
