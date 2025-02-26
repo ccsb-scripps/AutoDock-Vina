@@ -116,6 +116,7 @@ def locate_boost():
             data_pathname = os.environ["CONDA_PREFIX"]
         else:
             data_pathname = sysconfig.get_path("data") # just for readthedocs build
+
         include_dirs = data_pathname + os.path.sep + 'include'
         library_dirs = data_pathname + os.path.sep + 'lib'
 
@@ -125,6 +126,31 @@ def locate_boost():
         else:
             print('Boost library is not installed in this conda environment.')
 
+
+    macos_paths = ["/opt/homebrew", "/usr/local"]
+    for path in macos_paths:
+        include_dirs = f"{path}/include"
+        lib_dirs = [f"{path}/lib", f"{path}/lib64"]
+
+        if os.path.isdir(os.path.join(include_dirs, "boost")):
+            for lib_dir in lib_dirs:
+                if glob.glob(f"{lib_dir}/libboost*"):
+                    print(f"Boost found in {path}")
+                    return include_dirs, lib_dir
+                
+    # ✅ Standard Linux paths
+    linux_paths = ["/usr/local", "/usr"]
+    for path in linux_paths:
+        include_dirs = f"{path}/include"
+        lib_dirs = [f"{path}/lib", f"{path}/lib64", f"{path}/lib/x86_64-linux-gnu", f"{path}/lib/aarch64-linux-gnu"]
+
+        if os.path.isdir(os.path.join(include_dirs, "boost")):
+            for lib_dir in lib_dirs:
+                if glob.glob(f"{lib_dir}/libboost*"):
+                    print(f"Boost found in {path}")
+                    return include_dirs, lib_dir
+
+                          
     include_dirs = '/usr/local/include'
 
     if os.path.isdir(include_dirs + os.path.sep + 'boost'):
