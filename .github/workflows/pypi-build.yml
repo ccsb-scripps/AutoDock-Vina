@@ -107,6 +107,10 @@ jobs:
           CIBW_BEFORE_ALL_LINUX: |
             yum install -y wget python-devel pcre-devel
             yum install -y boost-devel boost-system boost-filesystem boost-thread boost-program-options swig
+            # Explicitly export Boost include and library paths
+            export CXXFLAGS="-I/usr/include/boost"
+            export LDFLAGS="-L/usr/lib64 -L/usr/lib"
+          CIBW_ENVIRONMENT_MACOS: MACOSX_DEPLOYMENT_TARGET=14.0
           CIBW_BEFORE_ALL_MACOS: |
             brew install boost swig
             export CXXFLAGS="-I$(brew --prefix boost)/include"
