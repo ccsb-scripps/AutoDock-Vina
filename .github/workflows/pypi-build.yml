@@ -36,7 +36,7 @@ jobs:
           - os: macos-latest
             arch: arm64
           - os: windows-latest
-            arch: x86_64
+            arch: AMD64
 
     steps:
       - name: Checkout
@@ -105,11 +105,35 @@ jobs:
 
           # Install dependencies inside cibuildwheel
           CIBW_BEFORE_ALL_LINUX: |
+            sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo 
+            sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo 
+            sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
+            yum clean all && yum -y update 
             yum install -y wget python-devel pcre-devel
-            yum install -y boost-devel boost-system boost-filesystem boost-thread boost-program-options swig
-            # Explicitly export Boost include and library paths
-            export CXXFLAGS="-I/usr/include/boost"
-            export LDFLAGS="-L/usr/lib64 -L/usr/lib"
+
+            # Install SWIG
+            wget https://downloads.sourceforge.net/swig/swig-4.0.2.tar.gz
+            tar -xvf swig-4*.tar.gz 
+            cd swig-4*
+            ./configure --prefix=/usr --without-maximum-compile-warnings && make
+            make install && install -v -m755 -d /usr/share/doc/swig-4.0.2 && cp -v -R Doc/* /usr/share/doc/swig-4.0.2
+            cd ..
+
+            # Install Boost
+            # wget https://boostorg.jfrog.io/artifactory/main/release/1.75.0/source/boost_1_75_0.tar.gz
+            wget https://archives.boost.io/release/1.82.0/source/boost_1_82_0.tar.gz
+            tar -xzf boost_1_82_0.tar.gz
+            cd boost_1_82_0 
+            ls
+            ./bootstrap.sh --prefix=/usr --with-python=python
+            ./b2 install threading=multi link=shared
+            cd ..
+            export CXXFLAGS="-I/usr/include"
+            export LDFLAGS="-L/usr/lib64"
+
+            # Clean up
+            rm -rf boost_1_*
+            rm -rf swig-4*
           CIBW_ENVIRONMENT_MACOS: MACOSX_DEPLOYMENT_TARGET=14.0
           CIBW_BEFORE_ALL_MACOS: |
             brew install boost swig
