@@ -155,7 +155,7 @@ def locate_boost():
    # Check Windows Paths
     if sys.platform == "win32":
         possible_paths = [
-            "C:\\local\\boost_1_82_0",    # Common manual install path
+            "C:\\local\\boost_1_87_0",    # Common manual install path
             "C:\\Boost\\include",         # Another common location
             "C:\\Program Files\\Boost",   # Rare, but possible
             os.environ.get("BOOST_ROOT", ""),  # Environment variable if set

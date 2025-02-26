@@ -97,7 +97,7 @@ jobs:
           ls "C:\local\"
 
           # Set BOOST_ROOT manually
-          $BOOST_PATH = "C:\local\boost_1_82_0"
+          $BOOST_PATH = "C:\local\boost_1_87_0"
           if (Test-Path $BOOST_PATH) {
           echo "Setting BOOST_ROOT..."
           [System.Environment]::SetEnvironmentVariable("BOOST_ROOT", $BOOST_PATH, "Machine")
@@ -108,7 +108,7 @@ jobs:
           echo "Checking Boost environment variables..."
           echo "BOOST_ROOT: $env:BOOST_ROOT"
           echo "Checking Boost files..."
-          Get-ChildItem -Path C:\local\boost_1_82_0 -Recurse | Select-String "boost"
+          Get-ChildItem -Path C:\local\boost_1_87_0 -Recurse | Select-String "boost"
       - name: Build wheels
         run: |
           cp -R ./build/python/* .
