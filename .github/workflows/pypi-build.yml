@@ -93,6 +93,10 @@ jobs:
         run: |
           choco install -y swig boost-msvc-14.2
           echo "Boost and SWIG installed"
+          echo "Checking Boost environment variables..."
+          echo "BOOST_ROOT: $env:BOOST_ROOT"
+          echo "Checking Boost files..."
+          Get-ChildItem -Path C:\local\boost_1_82_0 -Recurse | Select-String "boost"
       - name: Build wheels
         run: |
           cp -R ./build/python/* .
