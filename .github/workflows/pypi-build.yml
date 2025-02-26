@@ -53,22 +53,25 @@ jobs:
         uses: docker/setup-qemu-action@v2
         with:
           platforms: arm64 
-      - name: Add tag to version.py file
+      - name: Add tag to version.py file windows
+        if: runner.os == 'windows'
+        shell: powershell
         run: |
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            $version = git describe --abbrev=7 --dirty --always --tags
-            $version = $version -replace "dirty", "mod"
-            $version = $version -replace "-", "+"
-            $version = $version -replace "-", "."
-            $version = $version -replace "v", ""
-            Set-Content -Path .\build\python\vina\version.py -Value $version
-          else: 
-            git describe --abbrev=7 --dirty --always --tags | \
-              sed 's/dirty/mod/g' | \
-              sed 's/-/+/' | \
-              sed 's/-/./g' | \
-              sed 's/v//' > ./build/python/vina/version.py
-            cat ./build/python/vina/version.py
+          $version = git describe --abbrev=7 --dirty --always --tags
+          $version = $version -replace "dirty", "mod"
+          $version = $version -replace "-", "+"
+          $version = $version -replace "-", "."
+          $version = $version -replace "v", ""
+          Set-Content -Path .\build\python\vina\version.py -Value $version
+      - name: Add tag to version.py file linux and macos
+        if: runner.os != 'windows'
+        run: |  
+          git describe --abbrev=7 --dirty --always --tags | \
+            sed 's/dirty/mod/g' | \
+            sed 's/-/+/' | \
+            sed 's/-/./g' | \
+            sed 's/v//' > ./build/python/vina/version.py
+          cat ./build/python/vina/version.py
       - name: Install Python dependencies
         run: python -m pip install cibuildwheel setuptools wheel packaging
       - name: Check setuptools version
@@ -76,20 +79,20 @@ jobs:
           echo "checking setuptools version"
           python -c "import setuptools; print(setuptools.__version__)"
 
-      # - name: Install dependencies (Linux)
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y libboost-all-dev swig
-      # - name: Install dependencies (macOS)
-      #   if: runner.os == 'macOS'
-      #   run: |
-      #     brew install boost swig
-      # - name: Install dependencies (Windows)
-      #   if: runner.os == 'Windows'
-      #   run: |
-      #     choco install -y swig boost-msvc-14.2
-      #     echo "Boost and SWIG installed"
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libboost-all-dev swig
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install boost swig
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install -y swig boost-msvc-14.2
+          echo "Boost and SWIG installed"
       - name: Build wheels
         run: |
           cp -R ./build/python/* .
@@ -106,6 +109,8 @@ jobs:
             yum install -y boost-devel swig  # Ensure Boost and SWIG inside manylinux
           CIBW_BEFORE_ALL_MACOS: |
             brew install boost swig
+            export CXXFLAGS="-I$(brew --prefix boost)/include"
+            export LDFLAGS="-L$(brew --prefix boost)/lib"
           CIBW_BEFORE_ALL_WINDOWS: |
             choco install -y swig boost-msvc-14.2
 
