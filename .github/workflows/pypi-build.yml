@@ -105,7 +105,6 @@ jobs:
             rm -rf boost_1_*
             rm -rf swig-4*
       - name: Upload artifacts for inspection
-        if: ${{ env.ACT }} != 'true'  # Skip this step if running locally using 'act'
         uses: actions/upload-artifact@v4
         with:
           name: wheels
@@ -157,11 +156,20 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip setuptools twine
-      - name: Download artifacts
+      - name: Download wheel artifacts
         uses: actions/download-artifact@v4
         with:
-          name: dist
+          name: wheels
           path: ./dist
+      - name: Download sdist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: sdist
+          path: ./dist
+      - name: Verify dist directory
+        run: ls -lah dist
+      - name: Check packages before upload
+        run: twine check dist/*
       - name: Publish sdist and wheel to PyPI
         run: |
           twine upload dist/*
