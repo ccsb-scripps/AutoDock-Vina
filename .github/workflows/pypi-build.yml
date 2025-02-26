@@ -106,7 +106,7 @@ jobs:
           # Install dependencies inside cibuildwheel
           CIBW_BEFORE_ALL_LINUX: |
             yum install -y wget python-devel pcre-devel
-            yum install -y boost-devel swig  # Ensure Boost and SWIG inside manylinux
+            yum install -y boost-devel boost-system boost-filesystem boost-thread boost-program-options swig
           CIBW_BEFORE_ALL_MACOS: |
             brew install boost swig
             export CXXFLAGS="-I$(brew --prefix boost)/include"

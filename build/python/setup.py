@@ -127,6 +127,7 @@ def locate_boost():
             print('Boost library is not installed in this conda environment.')
 
 
+    # macos paths
     macos_paths = ["/opt/homebrew", "/usr/local"]
     for path in macos_paths:
         include_dirs = f"{path}/include"
@@ -138,7 +139,7 @@ def locate_boost():
                     print(f"Boost found in {path}")
                     return include_dirs, lib_dir
                 
-    # ✅ Standard Linux paths
+    # Standard Linux paths
     linux_paths = ["/usr/local", "/usr"]
     for path in linux_paths:
         include_dirs = f"{path}/include"
@@ -303,7 +304,7 @@ class CustomBuildExt(build_ext):
 
         # Source: https://stackoverflow.com/questions/9723793/undefined-reference-to-boostsystemsystem-category-when-compiling
         vina_compiler_options = [
-                               "-std=c++11",
+                               "-std=c++14",
                                "-Wno-long-long",
                                "-pedantic",
                                '-DBOOST_ERROR_CODE_HEADER_ONLY'
