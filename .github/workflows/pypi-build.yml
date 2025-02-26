@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - develop
+      - pip-win-macos
     paths-ignore:
       - 'example/**'
       - 'docs/**'
@@ -23,12 +24,18 @@ on:
 
 jobs:
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}
+    name: Build wheels on ${{ matrix.os }} / ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
           - os: ubuntu-latest
+            arch: x86_64
+          - os: macos-latest
+            arch: x86_64
+          - os: macos-latest
+            arch: arm64
+          - os: windows-latest
             arch: x86_64
 
     steps:
@@ -45,7 +52,7 @@ jobs:
         if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@v2
         with:
-          platforms: arm64
+          platforms: arm64 
       - name: Add tag to version.py file
         run: |
           git describe --abbrev=7 --dirty --always --tags | \
@@ -60,6 +67,21 @@ jobs:
         run: |
           echo "checking setuptools version"
           python -c "import setuptools; print(setuptools.__version__)"
+
+      # - name: Install dependencies (Linux)
+      #   if: runner.os == 'Linux'
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y libboost-all-dev swig
+      # - name: Install dependencies (macOS)
+      #   if: runner.os == 'macOS'
+      #   run: |
+      #     brew install boost swig
+      # - name: Install dependencies (Windows)
+      #   if: runner.os == 'Windows'
+      #   run: |
+      #     choco install -y swig boost-msvc-14.2
+      #     echo "Boost and SWIG installed"
       - name: Build wheels
         run: |
           cp -R ./build/python/* .
@@ -67,43 +89,18 @@ jobs:
         env:
           CIBW_BUILD: cp38-* cp39-* cp310-* cp311-* cp312-*
           CIBW_SKIP: pp*
-          CIBW_ARCHS: auto64
-          CIBW_ARCHS_LINUX: ${{ matrix.arch }}
-          CIBW_BEFORE_BUILD: |
-            pip install --upgrade pip setuptools wheel packaging
+          
+          CIBW_ARCHS: ${{ matrix.arch }}
+
+          # Install dependencies inside cibuildwheel
+          CIBW_BEFORE_ALL_LINUX: |
+            yum install -y wget python-devel pcre-devel
+            yum install -y boost-devel swig  # Ensure Boost and SWIG inside manylinux
           CIBW_BEFORE_ALL_MACOS: |
             brew install boost swig
-          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
-          CIBW_BEFORE_ALL_LINUX: |
-            sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo 
-            sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo 
-            sed -i s/^mirrorlist=http/#mirrorlist=http/g /etc/yum.repos.d/*.repo
-            yum clean all && yum -y update 
-            yum install -y wget python-devel pcre-devel
-
-            # Install SWIG
-            wget https://downloads.sourceforge.net/swig/swig-4.0.2.tar.gz
-            tar -xvf swig-4*.tar.gz 
-            cd swig-4*
-            ./configure --prefix=/usr --without-maximum-compile-warnings && make
-            make install && install -v -m755 -d /usr/share/doc/swig-4.0.2 && cp -v -R Doc/* /usr/share/doc/swig-4.0.2
-            cd ..
-
-            # Install Boost
-            # wget https://boostorg.jfrog.io/artifactory/main/release/1.75.0/source/boost_1_75_0.tar.gz
-            wget https://archives.boost.io/release/1.82.0/source/boost_1_82_0.tar.gz
-            tar -xzf boost_1_82_0.tar.gz
-            cd boost_1_82_0 
-            ls
-            ./bootstrap.sh --prefix=/usr --with-python=python
-            ./b2 install threading=multi link=shared
-            cd ..
-            export CXXFLAGS="-I/usr/include"
-            export LDFLAGS="-L/usr/lib64"
-
-            # Clean up
-            rm -rf boost_1_*
-            rm -rf swig-4*
+          CIBW_BEFORE_ALL_WINDOWS: |
+            choco install -y swig boost-msvc-14.2
+            
       - name: Upload artifacts for inspection
         uses: actions/upload-artifact@v4
         with:
