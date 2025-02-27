@@ -167,6 +167,22 @@ jobs:
             echo "ERROR: Boost directory not found at $BOOST_PATH"
             }
 
+            # Set up MSVC environment variables
+            Import-Module "$env:ProgramFiles\Microsoft Visual Studio\Installer\vswhere"
+            $VCVarsPath = (& "$env:ProgramFiles\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath) + "\VC\Auxiliary\Build\vcvarsall.bat"
+            echo "Running vcvarsall.bat..."
+            cmd /c """$VCVarsPath"" x64 && set" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+            # Set BOOST_ROOT manually
+            echo "Setting BOOST_ROOT to C:\local\boost_1_87_0"
+            echo "BOOST_ROOT=C:\local\boost_1_87_0" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+            # Debug environment
+            echo "Checking BOOST_ROOT..."
+            echo "BOOST_ROOT: $env:BOOST_ROOT"
+            echo "Checking Boost library files..."
+            Get-ChildItem -Path C:\local\boost_1_87_0\lib64-msvc-14.2 -Filter "boost_*.lib"
+
       - name: Upload artifacts for inspection
         uses: actions/upload-artifact@v4
         with:
