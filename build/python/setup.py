@@ -114,6 +114,8 @@ def locate_boost():
     if in_conda():
         if "CONDA_PREFIX" in os.environ.keys():
             data_pathname = os.environ["CONDA_PREFIX"]
+            if sys.platform =="win32":
+                data_pathname = os.path.join(data_pathname, "Library")
         else:
             data_pathname = sysconfig.get_path("data") # just for readthedocs build
         include_dirs = data_pathname + os.path.sep + 'include'
@@ -262,28 +264,35 @@ class CustomBuildExt(build_ext):
 
         print('- extra link args: %s' % self.extensions[0].extra_link_args)
 
-        # Replace current compiler to g++
-        self.compiler.compiler_so[0] = "g++"
-        self.compiler.compiler_so.insert(2, "-shared")
+        if sys.platform != "win32":
+            # Replace current compiler to g++
+            self.compiler.compiler_so[0] = "g++"
+            self.compiler.compiler_so.insert(2, "-shared")
 
-        # Remove compiler flags if we can
-        remove_flags = ["-Wstrict-prototypes", "-Wall"]
-        for remove_flag in remove_flags:
-            try:
-                self.compiler.compiler_so.remove(remove_flag)
-            except ValueError:
-                print('Warning: compiler flag %s is not present, cannot remove it.' % remove_flag)
-                pass
+            # Remove compiler flags if we can
+            remove_flags = ["-Wstrict-prototypes", "-Wall"]
+            for remove_flag in remove_flags:
+                try:
+                    self.compiler.compiler_so.remove(remove_flag)
+                except ValueError:
+                    print('Warning: compiler flag %s is not present, cannot remove it.' % remove_flag)
+                    pass
 
         # Source: https://stackoverflow.com/questions/9723793/undefined-reference-to-boostsystemsystem-category-when-compiling
-        vina_compiler_options = [
-                               "-std=c++11",
-                               "-Wno-long-long",
-                               "-pedantic",
-                               '-DBOOST_ERROR_CODE_HEADER_ONLY'
-                              ]
+        if sys.platform=="win32":
+            vina_compiler_options = [
+                "/std=c++11",
+                '/DBOOST_ERROR_CODE_HEADER_ONLY'
+            ]
+            print('%s compiler options: %s' % (self.compiler.compiler_type, vina_compiler_options))
+        else:
+            vina_compiler_options = [
+                                   "/std:c++11",
+                                   "/Wall",
+                                   '-DBOOST_ERROR_CODE_HEADER_ONLY'
+                                  ]
+            print('- compiler options: %s' % (self.compiler.compiler_so + vina_compiler_options))
 
-        print('- compiler options: %s' % (self.compiler.compiler_so + vina_compiler_options))
 
         for ext in self.extensions:
             ext.extra_compile_args += vina_compiler_options
