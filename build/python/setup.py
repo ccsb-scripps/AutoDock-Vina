@@ -151,35 +151,6 @@ def locate_boost():
                     print(f"Boost found in {path}")
                     return include_dirs, lib_dir
 
-
-   # Check Windows Paths
-    if sys.platform == "win32":
-        # 🔹 Check BOOST_ROOT environment variable
-        boost_root = os.environ.get("BOOST_ROOT", "")
-        if boost_root and os.path.isdir(os.path.join(boost_root, "boost")):
-            include_dirs = os.path.join(boost_root, "boost")
-            lib_dirs = os.path.join(boost_root, "lib64-msvc-14.2")
-
-            if glob.glob(f"{lib_dirs}\\boost_*.lib"):
-                print(f"Boost found at {boost_root}")
-                return include_dirs, lib_dirs
-
-        # 🔹 Check common Windows install paths
-        possible_paths = [
-            "C:\\local\\boost_1_87_0",  # Common manual install path
-            "C:\\Boost\\include",  # Alternative location
-            "C:\\Program Files\\Boost",  # Rare, but possible
-        ]
-
-        for path in possible_paths:
-            print(f"Checking path: {path}")
-            if os.path.isdir(os.path.join(path, "boost")):
-                include_dirs = os.path.join(path, "boost")
-                lib_dirs = os.path.join(path, "lib64-msvc-14.2")  # Update for MSVC
-
-                if glob.glob(f"{lib_dirs}\\boost_*.lib"):
-                    print(f"Boost found in {path}")
-                    return include_dirs, lib_dirs
                 
     include_dirs = '/usr/local/include'
 
