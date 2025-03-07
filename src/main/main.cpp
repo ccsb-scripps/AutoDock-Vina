@@ -378,6 +378,10 @@ Thank you!\n";
 				std::cout << "Grid size  : X " << size_x << " Y " << size_y << " Z " << size_z << "\n";
 				std::cout << "Grid space : " << grid_spacing << "\n";
 			} else if (autobox) {
+				if (!score_only && !local_only) {
+					std::cerr << desc_simple << "\n\nERROR: --autobox can only be used to set box dimensions for --score_only or --local_only.\n";
+					exit(EXIT_FAILURE);
+				}
 				std::cout << "Grid center: ligand center (autobox)\n";
 				std::cout << "Grid size  : ligand size + " << buffer_size << " A in each dimension (autobox)\n";
 				std::cout << "Grid space : " << grid_spacing << "\n";
@@ -450,7 +454,7 @@ Thank you!\n";
 			} else if (local_only) {
 				std::vector<double> energies;
 				energies = v.optimize();
-				v.write_pose(out_name);
+				v.write_optimized_pose(out_name);
 				v.show_score(energies);
 			} else {
 				v.global_search(exhaustiveness, num_modes, min_rmsd, max_evals);
@@ -527,7 +531,7 @@ Thank you!\n";
 					}
 				} else if (local_only) {
 					v.optimize();
-					v.write_pose(out_name);
+					v.write_optimized_pose(out_name);
 				} else {
 					v.global_search(exhaustiveness, num_modes, min_rmsd, max_evals);
 					v.write_poses(out_name, num_modes, energy_range);
@@ -566,7 +570,7 @@ Thank you!\n";
 
 	// Errors that shouldn't happen:
 	catch(std::exception& e) {
-		std::cerr << "\n\nAn error occurred: " << e.what() << ". " << error_message;
+		std::cerr << "\n\nAn error occurred: " << e.what() << error_message;
 		return 1;
 	}
 	catch(internal_error& e) {

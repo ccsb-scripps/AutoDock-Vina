@@ -1,5 +1,8 @@
 *.DS_Store
 *.o
+.vscode
+vina
+vina_split
 build/python/vina/autodock_vina_wrap.cpp
 build/python/vina/vina_wrapper.py
 build/python/vina.egg-info/

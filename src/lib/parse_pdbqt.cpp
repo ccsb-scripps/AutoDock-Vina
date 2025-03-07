@@ -29,6 +29,7 @@
 #include <boost/optional.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
 //#include <openbabel/mol.h>
 //#include <openbabel/obconversion.h>
 #include "model.h"
@@ -257,7 +258,14 @@ void parse_two_unsigneds(const std::string& str, const std::string& start, unsig
 
 void parse_pdbqt_rigid(const path& name, rigid& r) {
     ifile in(name);
+    if (!in) {
+        throw pdbqt_parse_error("Failed to open rigid PDBQT file: " + name.string());
+    }
     std::string str;
+    
+    if (!boost::filesystem::is_regular_file(name)) {
+        throw pdbqt_parse_error("Error: '" + name.string() + "' is not a valid file (it may be a directory).");
+    }
 
     while(std::getline(in, str)) {
         if(str.empty()) {} // ignore ""
@@ -438,10 +446,15 @@ void postprocess_branch(non_rigid_parsed& nr, parsing_struct& p, context& c, B& 
 }
 
 void postprocess_ligand(non_rigid_parsed& nr, parsing_struct& p, context& c, unsigned torsdof) {
-    VINA_CHECK(!p.atoms.empty());
-    nr.ligands.push_back(ligand(flexible_body(rigid_body(p.atoms[0].a.coords, 0, 0)), torsdof)); // postprocess_branch will assign begin and end
-    postprocess_branch(nr, p, c, nr.ligands.back());
-    nr_update_matrixes(nr); // FIXME ?
+    if (!p.atoms.empty()) {
+        nr.ligands.push_back(ligand(flexible_body(rigid_body(p.atoms[0].a.coords, 0, 0)), torsdof)); // postprocess_branch will assign begin and end
+        postprocess_branch(nr, p, c, nr.ligands.back());
+        nr_update_matrixes(nr); // FIXME ?
+    } else {
+        std::cerr << "Warning: The ligand appears to have no atoms. Proceed with empty ligand. "
+        << std::endl;
+        nr.ligands.push_back(ligand());
+    }
 }
 
 void postprocess_residue(non_rigid_parsed& nr, parsing_struct& p, context& c) {
@@ -466,38 +479,33 @@ void postprocess_residue(non_rigid_parsed& nr, parsing_struct& p, context& c) {
     VINA_CHECK(nr.atoms_inflex_bonds.dim_2() == nr.inflex.size());
 }
 
-//dkoes, stream version
-void parse_pdbqt_ligand(std::istream& in, non_rigid_parsed& nr, context& c) {
+
+void parse_pdbqt_ligand_core(std::istream& in, non_rigid_parsed& nr, context& c) {
     parsing_struct p;
     boost::optional<unsigned> torsdof;
 
     parse_pdbqt_aux(in, p, c, torsdof, false);
 
-    if(p.atoms.empty()) 
-        throw pdbqt_parse_error("No atoms in this ligand.");
-    if(!torsdof)
-        throw pdbqt_parse_error("Missing TORSDOF keyword.");
-
-    postprocess_ligand(nr, p, c, unsigned(torsdof.get())); // bizarre size_t -> unsigned compiler complaint
+    if (!p.atoms.empty() && !torsdof) {
+        throw pdbqt_parse_error("Missing TORSDOF keyword in a nonempty ligand.");
+    } else {
+        postprocess_ligand(nr, p, c, unsigned(torsdof.get()));
+    }
 
     VINA_CHECK(nr.atoms_atoms_bonds.dim() == nr.atoms.size());
 }
 
+//dkoes, stream version
+void parse_pdbqt_ligand(std::istream& in, non_rigid_parsed& nr, context& c) {
+    parse_pdbqt_ligand_core(in, nr, c);
+}
+
 void parse_pdbqt_ligand(const path& name, non_rigid_parsed& nr, context& c) {
     ifile in(name);
-    parsing_struct p;
-    boost::optional<unsigned> torsdof;
-
-    parse_pdbqt_aux(in, p, c, torsdof, false);
-
-    if(p.atoms.empty()) 
-        throw pdbqt_parse_error("No atoms in this ligand.");
-    if(!torsdof)
-        throw pdbqt_parse_error("Missing TORSDOF keyword in this ligand.");
-
-    postprocess_ligand(nr, p, c, unsigned(torsdof.get())); // bizarre size_t -> unsigned compiler complaint
-
-    VINA_CHECK(nr.atoms_atoms_bonds.dim() == nr.atoms.size());
+    if (!in) {
+        throw pdbqt_parse_error("Failed to open ligand PDBQT file: " + name.string());
+    }
+    parse_pdbqt_ligand_core(in, nr, c);
 }
 
 void parse_pdbqt_residue(std::istream& in, parsing_struct& p, context& c) { 
@@ -507,6 +515,9 @@ void parse_pdbqt_residue(std::istream& in, parsing_struct& p, context& c) {
 
 void parse_pdbqt_flex(const path& name, non_rigid_parsed& nr, context& c) {
     ifile in(name);
+    if (!in) {
+        throw pdbqt_parse_error("Failed to open flex PDBQT file: " + name.string());
+    }
     std::string str;
 
     while(std::getline(in, str)) {
@@ -667,6 +678,11 @@ model parse_receptor_pdbqt(const std::string& rigid_name, const std::string& fle
     }
 
     if (!rigid_name.empty()) {
+        if (r.atoms.empty()) {
+            std::cerr << "Warning: The receptor file '" << rigid_name
+                      << "' appears to be empty. Proceed with empty receptor. "
+                      << std::endl;
+        } 
         tmp.initialize_from_rigid(r);
         if (flex_name.empty()) {
             distance_type_matrix mobility_matrix;
