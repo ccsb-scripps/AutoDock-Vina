@@ -134,7 +134,6 @@ public:
 	void update(ligand& lig) const {
 		lig.transform(*this); // ligand as an atom_range subclass
 		transform_ranges(lig, *this);
-	
 		VINA_FOR_IN(i, lig.pairs)
 			this->update(lig.pairs[i]);
 	
@@ -753,12 +752,7 @@ std::string model::write_model(sz model_number, const std::string &remark) {
 
 	out << "ENDMDL\n";
 
-    std::string result = out.str();
-
-    // result.erase(std::remove(result.begin(), result.end(), '\0'), result.end());
-    // result.erase(std::remove(result.begin(), result.end(), '\r'), result.end());
-
-    return result;
+    return out.str();
 }
 
 void model::set         (const conf& c) {
