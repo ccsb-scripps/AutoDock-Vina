@@ -90,6 +90,7 @@ jobs:
           cp -R ./build/python/* .
           python -m cibuildwheel --output-dir wheelhouse
         env:
+          CIBW_BUILD_FRONTEND: "build"
           CIBW_BUILD: cp38-* cp39-* cp310-* cp311-* cp312-*
           CIBW_SKIP: pp*
           
@@ -97,8 +98,8 @@ jobs:
 
           # Install dependencies inside cibuildwheel
           CIBW_BEFORE_ALL_LINUX: |
-            apt update
-            apt install -y build-essential python3-dev libpcre3-dev
+            sudo apt-get update
+            sudo apt-get install -y build-essential python3-dev libpcre3-dev
 
             # Install SWIG
             wget https://downloads.sourceforge.net/swig/swig-4.0.2.tar.gz
