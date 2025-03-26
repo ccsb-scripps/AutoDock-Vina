@@ -99,7 +99,7 @@ jobs:
           # Install dependencies inside cibuildwheel
           CIBW_BEFORE_ALL_LINUX: |
             sudo apt-get update
-            sudo apt-get install -y build-essential python3-dev libpcre3-dev
+            sudo apt-get install -y build-essential python3-dev libpcre3-dev wget
 
             # Install SWIG
             wget https://downloads.sourceforge.net/swig/swig-4.0.2.tar.gz
