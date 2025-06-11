@@ -18,7 +18,7 @@ System and software requirements
 
 This is a command-line tutorial for a hydrated docking experiment with AutoDock-Vina. It can be done on macOS, Linux, and Windows Subsystem for Linux (WSL). 
 
-This tutorial uses python package **Meeko for receptor and ligand preparation**. Installation guide and advanced usage can be found from the `Meeko documentation <https://meeko.readthedocs.io/en/release>`_.
+This tutorial uses python package **Meeko for receptor and ligand preparation**. Installation guide and advanced usage can be found from the `Meeko documentation <https://meeko.readthedocs.io>`_.
 
 The **input and expected output files** can be found here on `GitHub <https://github.com/ccsb-scripps/AutoDock-Vina/tree/develop/example/hydrated_docking>`_. 
 
@@ -45,7 +45,7 @@ The receptor can be prepared using the method described earlier in the following
 2. Preparing the ligand
 -----------------------
 
-For the hydrated docking, explicit water molecules (W atoms) must be added to the molecule. And for that, we will use ``Meeko`` (see installation instruction here: :ref:`docking_requirements`). For convenience, the molecule file ``1uw6_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1uw6 <https://www.rcsb.org/structure/1UW6>`_ (see ``Download instance Coordinates`` link for the NCT molecule (chain U [A])). Since the ligand file does not include the hydrogen atoms, we are going to add them using ``scrub.py`` from python package Scrubber. The option ``-w`` is use to add explicit water molecule to the molecule.
+For the hydrated docking, explicit water molecules (W atoms) must be added to the molecule. And for that, we will use ``Meeko`` (see installation instruction here: :ref:`docking_requirements`). For convenience, the molecule file ``1uw6_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1uw6 <https://www.rcsb.org/structure/1UW6>`_ (see ``Download instance Coordinates`` link for the NCT molecule (chain U [A])). Since the ligand file does not include the hydrogen atoms, we are going to add them using ``scrub.py`` from python package Molscrub. The option ``-w`` is use to add explicit water molecule to the molecule.
 
 .. warning::
   

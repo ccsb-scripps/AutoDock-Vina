@@ -8,7 +8,7 @@ In addition to AutoDockTools, the long standing GUI for docking calculation setu
 Python package Meeko
 -----
 
-The Python package ``meeko`` is package recently developped in the Forli lab also at the `Center for Computational Structural Biology (CCSB) <https://ccsb.scripps.edu>`_. As showcased in the Colab examples, `Meeko <https://github.com/forlilab/Meeko>`_ provides commandline scripts for ligand preparation, receptor preparation and other essential tools for the following docking protocols:
+The Python package `meeko <https://meeko.readthedocs.io>`_ is package recently developped in the Forli lab also at the `Center for Computational Structural Biology (CCSB) <https://ccsb.scripps.edu>`_. As showcased in the Colab examples, `Meeko <https://github.com/forlilab/Meeko>`_ provides commandline scripts for ligand preparation, receptor preparation and other essential tools for the following docking protocols:
 
     - Docking with flexible macrocycles
     - Flexible docking
@@ -44,9 +44,18 @@ Type the following command to install ``Meeko`` and (optionally) ``ProDy``:
     
     $ conda activate vina
     $ conda install python=3.10    # for ProDy interoperability
-    $ conda install -c conda-forge numpy scipy rdkit vina meeko gemmi
+    $ conda install -c conda-forge numpy scipy rdkit vina meeko gemmi autogrid
     $ pip install prody
 
+AutoGrid4
+--------
+Git Repository: `CCSB-Scripps AutoGrid <https://github.com/ccsb-scripps/AutoGrid>`_
+
+.. code-block:: bash
+
+    $ conda install -c conda-forge autogrid 
+
+Alternatively, see instruction in the repository's ``README`` to build the latest version of autogrid4. 
 
 ADFR software suite
 -------------------

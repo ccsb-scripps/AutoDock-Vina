@@ -31,6 +31,7 @@
 #include "utils.h"
 #include "scoring_function.h"
 #include <unordered_map>
+#include <boost/filesystem.hpp>
 
 struct usage_error : public std::runtime_error {
 	usage_error(const std::string& message) : std::runtime_error(message) {}
@@ -179,7 +180,7 @@ Thank you!\n";
 			("receptor", value<std::string>(&rigid_name), "rigid part of the receptor (PDBQT)")
 			("flex", value<std::string>(&flex_name), "flexible side chains, if any (PDBQT)")
 			("ligand", value< std::vector<std::string> >(&ligand_names)->multitoken(), "ligand (PDBQT)")
-			("batch", value< std::vector<std::string> >(&batch_ligand_names)->multitoken(), "batch ligand (PDBQT)")
+			("batch", value< std::vector<std::string> >(&batch_ligand_names)->multitoken(), "batch directory or ligands (PDBQT)")
 			("scoring", value<std::string>(&sf_name)->default_value(sf_name), "scoring function (ad4, vina or vinardo)")
 		;
 		//options_description search_area("Search area (required, except with --score_only)");
@@ -465,6 +466,17 @@ Thank you!\n";
 
 					if (vm.count("write_maps"))
 						v.write_maps(out_maps);
+				}
+			}
+
+			// Iter all .pdbqt files in the batch input directory
+			if (batch_ligand_names.size() == 1 && is_directory(batch_ligand_names[0])) {
+				std::string in_dir = batch_ligand_names[0];
+				batch_ligand_names.clear();
+				for (const auto& entry : boost::filesystem::directory_iterator(in_dir)) {
+					if (entry.path().extension() == ".pdbqt") {
+						batch_ligand_names.push_back(entry.path().string());
+					}
 				}
 			}
 

@@ -72,7 +72,7 @@ The execution of the second command will output the following message, telling u
 2. Preparing the ligand
 -----------------------
 
-The second step consists to prepare the ligand, by converting the SDF file ``1s63_ligand.sdf`` to a PDBQT file readable by AutoDock Vina. As usual, we will use the ``mk_prepare_ligand.py`` Python script from ``Meeko`` (see installation instruction here: :ref:`docking_requirements`) for this task. For your convenience, the molecule file ``1s63_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1s63 <https://www.rcsb.org/structure/1S63>`_ (see ``Download instance Coordinates`` link for the 778 molecule. Since the ligand file does not include the hydrogen atoms, we are going to add them using ``scrub.py`` from python package Scrubber. 
+The second step consists to prepare the ligand, by converting the SDF file ``1s63_ligand.sdf`` to a PDBQT file readable by AutoDock Vina. As usual, we will use the ``mk_prepare_ligand.py`` Python script from ``Meeko`` (see installation instruction here: :ref:`docking_requirements`) for this task. For your convenience, the molecule file ``1s63_ligand.sdf`` is provided (see ``data`` directory). But you can obtain it directly from the `PDB <https://www.rcsb.org>`_ here: `1s63 <https://www.rcsb.org/structure/1S63>`_ (see ``Download instance Coordinates`` link for the 778 molecule. Since the ligand file does not include the hydrogen atoms, we are going to add them using ``scrub.py`` from python package Molscrub. 
 
 .. code-block:: bash
 

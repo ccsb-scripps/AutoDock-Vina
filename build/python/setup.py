@@ -116,20 +116,49 @@ def locate_boost():
             data_pathname = os.environ["CONDA_PREFIX"]
         else:
             data_pathname = sysconfig.get_path("data") # just for readthedocs build
+
         include_dirs = data_pathname + os.path.sep + 'include'
         library_dirs = data_pathname + os.path.sep + 'lib'
-        
+
         if os.path.isdir(include_dirs + os.path.sep + 'boost'):
             print('Boost library location automatically determined in this conda environment.')
             return include_dirs, library_dirs
         else:
             print('Boost library is not installed in this conda environment.')
 
+
+    # macos paths
+    macos_paths = ["/opt/homebrew", "/usr/local"]
+    for path in macos_paths:
+        include_dirs = f"{path}/include"
+        lib_dirs = [f"{path}/lib", f"{path}/lib64"]
+
+        if os.path.isdir(os.path.join(include_dirs, "boost")):
+            for lib_dir in lib_dirs:
+                if glob.glob(f"{lib_dir}/libboost*"):
+                    print(f"Boost found in {path}")
+                    return include_dirs, lib_dir
+                
+    # Standard Linux paths
+    linux_paths = ["/usr/local", "/usr"]
+    for path in linux_paths:
+        include_dirs = f"{path}/include"
+        lib_dirs = [f"{path}/lib", f"{path}/lib64", f"{path}/lib/x86_64-linux-gnu", f"{path}/lib/aarch64-linux-gnu"]
+
+        if os.path.isdir(os.path.join(include_dirs, "boost")):
+            for lib_dir in lib_dirs:
+                if glob.glob(f"{lib_dir}/libboost*"):
+                    print(f"Boost found in {path}")
+                    return include_dirs, lib_dir
+
+                
     include_dirs = '/usr/local/include'
 
     if os.path.isdir(include_dirs + os.path.sep + 'boost'):
         if glob.glob('/usr/local/lib/x86_64-linux-gnu/libboost*'):
             return include_dirs, '/usr/local/lib/x86_64-linux-gnu'
+        elif glob.glob('/usr/local/lib/aarch64-linux-gnu/libboost*'):
+            return include_dirs, '/usr/local/lib/aarch64-linux-gnu'
         elif glob.glob('/usr/local/lib64/libboost*'):
             return include_dirs, '/usr/local/lib64'
         elif glob.glob('/usr/local/lib/libboost*'):
@@ -140,6 +169,8 @@ def locate_boost():
     if os.path.isdir(include_dirs + os.path.sep + 'boost'):
         if glob.glob('/usr/lib/x86_64-linux-gnu/libboost*'):
             return include_dirs, '/usr/lib/x86_64-linux-gnu'
+        elif glob.glob('/usr/lib/aarch64-linux-gnu/libboost*'):
+            return include_dirs, '/usr/lib/aarch64-linux-gnu'
         elif glob.glob('/usr/lib64/libboost*'):
             return include_dirs, '/usr/lib64'
         elif glob.glob('/usr/lib/libboost*'):
@@ -273,7 +304,7 @@ class CustomBuildExt(build_ext):
 
         # Source: https://stackoverflow.com/questions/9723793/undefined-reference-to-boostsystemsystem-category-when-compiling
         vina_compiler_options = [
-                               "-std=c++11",
+                               "-std=c++14",
                                "-Wno-long-long",
                                "-pedantic",
                                '-DBOOST_ERROR_CODE_HEADER_ONLY'
@@ -325,7 +356,7 @@ setup(
     cmdclass={'build': CustomBuild, 'build_ext': CustomBuildExt, 'install': CustomInstall, 'sdist': CustomSdist},
     packages=['vina'],
     package_dir=package_dir,
-    install_requires=['numpy>=1.18'],
+    install_requires=['numpy>=1.18', "setuptools>=50.3", "wheel", "packaging"],
     python_requires='>=3.5',
     ext_modules=[obextension],
     #entry_points={"console_scripts": ["vina = vina.vina_cli:main"]},
