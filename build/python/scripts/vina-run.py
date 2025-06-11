@@ -5,7 +5,13 @@ from meeko import MoleculePreparation
 from meeko import PDBQTWriterLegacy
 from meeko import PDBQTMolecule
 from meeko import RDKitMolCreate
-from ringtail import RingtailCore
+from meeko import Polymer
+try:
+    from ringtail import RingtailCore
+    _got_ringtail = True
+except ImportError as err:
+    _got_ringtail = False
+    _ringtail_import_err = err
 
 import argparse
 import json
@@ -14,6 +20,7 @@ import multiprocessing
 from os import linesep
 import pathlib
 import sys
+import tempfile
 
 from rdkit import Chem
 from rdkit import RDLogger
@@ -79,15 +86,47 @@ class MolSupplier:
         return tmp % self.counter
 
 
+def parse_vina_box(text):
+    center_x = None
+    center_y = None
+    center_z = None
+    size_x = None
+    size_y = None
+    size_z = None
+    spacing = None
+    for line in text.splitlines():
+        line = line.strip()
+        if line.startswith("center_x"):
+            center_x = float(line.split("=")[1])
+        elif line.startswith("center_y"):
+            center_y = float(line.split("=")[1])
+        elif line.startswith("center_z"):
+            center_z = float(line.split("=")[1])
+        elif line.startswith("size_x"):
+            size_x = float(line.split("=")[1])
+        elif line.startswith("size_y"):
+            size_y = float(line.split("=")[1])
+        elif line.startswith("size_z"):
+            size_z = float(line.split("=")[1])
+        elif line.startswith("spacing"):
+            spacing = float(line.split("=")[1])
+    center = (center_x, center_y, center_z)
+    size = (size_x, size_y, size_z)
+    return center, size, spacing
+
+DEFAULT_SPACING = 0.375
+
 parser = argparse.ArgumentParser(description="Run vina from SDF to SQLite")
 
 parser.add_argument("-l", "--ligands", help="input filename (.sdf)", required=True)
-parser.add_argument("-r", "--receptor", help="receptor filename (.pdbqt)")
+parser.add_argument("-r", "--receptor", help="filename of Meeko Polymer serialized to JSON")
 parser.add_argument("-m", "--maps", help="base filename of grid maps")
 parser.add_argument(      "--scoring_function", choices=["vina", "vinardo", "ad4"], default="vina")
 parser.add_argument("--out_db", help="output sqlite3 filename (.sqlite3/.db)")
 parser.add_argument("--size", help="size of search space (grid maps)", type=float, nargs=3)
 parser.add_argument("--center", help="center of search space (grid maps)", type=float, nargs=3)
+parser.add_argument("--spacing", help=f"distance between grid points (default: {DEFAULT_SPACING} Angstrom)", type=float)
+parser.add_argument('-b', '--vina_box', help="filename of vina config with box size and center")
 parser.add_argument("--out_sdf", help="output SD filename")
 parser.add_argument("--name_from_prop", help="set input molecule name from RDKit/SDF property")
 parser.add_argument("--log_filename", help="write log to this filename")
@@ -97,19 +136,54 @@ args = parser.parse_args()
 Chem.SetDefaultPickleProperties(Chem.PropertyPickleOptions.MolProps |
                                 Chem.PropertyPickleOptions.PrivateProps)
 RDLogger.DisableLog("rdApp.*")
-rt_logger = logging.getLogger("ringtail")
+root_logger = logging.getLogger()
+root_logger.setLevel("INFO")
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 if args.log_filename is not None:
-    root_logger = logging.getLogger()
-    root_logger.setLevel("INFO")
-    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
     file_handler = logging.FileHandler(args.log_filename)
     file_handler.setFormatter(formatter)
     root_logger.addHandler(file_handler)
+else:
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
+    root_logger.addHandler(handler)
 
 # check there is output
 if args.out_db is None and args.out_sdf is None:
     print("Use --out_db and/or --out_sdf")
     sys.exit(2)
+
+def grid_usage_error():
+    print("use both --center and --size, or --vina_box, or --maps")
+    sys.exit(2)
+    return
+
+if (args.center is None) != (args.size is None):
+    grid_usage_error()
+if args.vina_box is not None and args.center is not None:
+    grid_usage_error()
+if args.vina_box is None and (args.center is None or args.size is None):
+    grid_usage_error()
+if args.maps is not None and (args.center is not None or args.vina_box is not None):
+    grid_usage_error()
+spacing = DEFAULT_SPACING
+if args.vina_box is not None:
+    with open(args.vina_box) as f:
+        txt = f.read()
+    center, size, spacing_from_vina_box = parse_vina_box(txt)
+    if spacing_from_vina_box is not None:
+        spacing = spacing_from_vina_box
+    if args.spacing is not None:
+        spacing = args.spacing
+elif args.center is not None:
+    center = args.center
+    size = args.size
+elif args.maps is not None:
+    center = None
+    size = None
+else:
+    print("logic error in determining where box size/center is coming from")
+    sys.exit(1)
 
 # we always need receptor to insert in DB
 if args.scoring_function == "ad4":
@@ -123,8 +197,16 @@ else:
     if args.maps is not None:
         v.load_maps(args.maps)
     else:
-        v.set_receptor(args.receptor)
-        v.compute_vina_maps(center=args.center, box_size=args.size)
+        with open(args.receptor) as f:
+            json_str = f.read()
+        polymer = Polymer.from_json(json_str)
+        with tempfile.NamedTemporaryFile(mode="wt", suffix=".pdbqt") as tmp:
+            rigid, flex_dict = PDBQTWriterLegacy.write_from_polymer(polymer)
+            tmp.write(rigid)
+            v.set_receptor(tmp.name)
+            if flex_dict:
+                raise NotImplementedError("receptor has flexres, which are not passed along yet")
+        v.compute_vina_maps(center=center, box_size=size)
 
 supplier = Chem.SDMolSupplier(args.ligands, removeHs=False)
 if args.name_from_prop:
@@ -134,8 +216,11 @@ if args.name_from_prop:
 meeko_prep = MoleculePreparation()
 
 if args.out_db is not None:
+    if not _got_ringtail:
+        raise ImportError from _ringtail_import_err
     rtc = RingtailCore(args.out_db)
-    rtc.save_receptor(args.receptor)
+    rtc.save_receptor(args.receptor)  # TODO JSON?
+    rt_logger = logging.getLogger("ringtail")
     rt_logger.setLevel("WARNING")
 
 def dock(mol):
@@ -187,6 +272,7 @@ for vina_strings in map_fn(dock, supplier):
             root_logger.info(f"writing {mol_name=} to {args.out_sdf}")
             pdbqt_mol = PDBQTMolecule(vina_strings[mol_name])
             output_rdmol = RDKitMolCreate.from_pdbqt_mol(pdbqt_mol)[0] # ignore sidechains
+            output_rdmol.SetDoubleProp("VinaScore", pdbqt_mol[0].score)
             w.write(output_rdmol)
     except Exception as error:
         root_logger.error(str(error))
