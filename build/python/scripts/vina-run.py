@@ -234,8 +234,8 @@ def dock(mol):
         if not is_ok:
             raise RuntimeError(f'ligand not ok {mol.GetProp("_Name")=}')
         v.set_ligand_from_string(lig_pdbqt)
-        v.dock(max_evals=128000)
-        output_pdbqt = v.poses(2)
+        v.dock()
+        output_pdbqt = v.poses()
         vina_strings = {mol_name: output_pdbqt}
         return vina_strings
     except Exception as error:
