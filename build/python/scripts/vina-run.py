@@ -277,7 +277,7 @@ if args.scoring == "ad4":
         with open(args.receptor) as f:
             json_str = f.read()
         polymer = Polymer.from_json(json_str)
-        with temporary_directory(clean=False) as tmpdir:
+        with temporary_directory() as tmpdir:
             pdbqt_tuple = PDBQTWriterLegacy.write_from_polymer(polymer)
             rigid_pdbqt, flex_dict = pdbqt_tuple
             if flex_dict:
