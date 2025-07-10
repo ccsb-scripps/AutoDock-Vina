@@ -6,6 +6,7 @@ from meeko import PDBQTWriterLegacy
 from meeko import PDBQTMolecule
 from meeko import RDKitMolCreate
 from meeko import Polymer
+from meeko import gridbox
 try:
     from ringtail import RingtailCore
     _got_ringtail = True
@@ -14,18 +15,38 @@ except ImportError as err:
     _ringtail_import_err = err
 
 import argparse
+import contextlib
 import json
 import logging
 import multiprocessing
 from os import linesep
+from os import getcwd
+from os import chdir
 import pathlib
+import subprocess
 import sys
 import tempfile
+import shutil
 
 from rdkit import Chem
 from rdkit import RDLogger
 from rdkit.Chem import rdMolInterchange
 
+
+logger = logging.getLogger(__name__)
+
+@contextlib.contextmanager
+def temporary_directory(suffix=None, prefix=None, dir=None, clean=True):
+    """Create and enter a temporary directory; used as context manager."""
+    temp_dir = tempfile.mkdtemp(suffix, prefix, dir)
+    cwd = getcwd()
+    chdir(temp_dir)
+    try:
+        yield temp_dir
+    finally:
+        chdir(cwd)
+        if clean:
+            shutil.rmtree(temp_dir)
 
 class MolSupplier:
     """wraps other suppliers (e.g. Chem.SDMolSupplier) to change non-integer
@@ -85,6 +106,67 @@ class MolSupplier:
         tmp = "RN%0" + "%d" % self.nr_digits + "d"
         return tmp % self.counter
 
+def get_parameter_text(vdw, hb, elec, dsolv):
+    txt =  f"FE_coeff_vdW    {vdw:.4f}\n"
+    txt += f"FE_coeff_hbond  {hb:.4f}\n"
+    txt += f"FE_coeff_estat  {elec:.4f}\n"
+    txt += f"FE_coeff_desolv {dsolv:.4f}\n"
+    return txt
+
+def create_gpf_dir(gpf_text, dest_folder, new_gpf_fn, vdw, hb, elec, dsolv):
+    p = pathlib.Path(dest_folder)
+    p.mkdir(exist_ok=True)
+    weights_filename = "weights.dat"
+    weights_text = get_parameter_text(vdw, hb, elec, dsolv)
+    with open(p / weights_filename, "w") as f:
+        f.write(weights_text)
+    gpf_text = f"parameter_file {weights_filename}" + "\n" + gpf_text
+    with open(p / new_gpf_fn, "w") as f:
+        f.write(gpf_text)
+    return
+
+def wrap_autogrid(
+    rec_path, box_center, box_size, dest_folder, grid_spacing, autogrid_path,
+    rec_types, lig_types,
+    vdw=0.1662, hb=0.1209, elec=0.1406, dsolv=0.1322,
+):
+    rec_fn = pathlib.Path(rec_path).name
+    gpf_string, _npts = gridbox.get_gpf_string(
+        box_center,
+        box_size,
+        rec_fn,
+        rec_types,
+        lig_types,
+        dielectric=-42,
+        smooth=0.5, 
+        spacing=grid_spacing,
+        ff_param_fname=None,
+    )
+    create_gpf_dir(gpf_string, dest_folder, "autogrid.gpf", vdw, hb, elec, dsolv)
+    if len(pathlib.Path(rec_path).parents) > 1:
+        shutil.copy(rec_path, str(pathlib.Path(dest_folder) / rec_fn))
+    cmds = [autogrid_path, "-p", "autogrid.gpf", "-l", "autogrid.glg"]
+    logger.info(f"subprocess run: {cmds}")
+    o = subprocess.run(cmds, cwd=dest_folder, capture_output=True)
+    logger.info(f"subprocess stdout: {o}")
+
+    #fld_fn = [fn for fn in pathlib.Path(f"grids_{term.replace('ad4_', '')}").glob("*.maps.fld")]
+    fld_fn = [fn for fn in pathlib.Path(dest_folder).glob("*.maps.fld")]
+    if len(fld_fn) != 1:
+        raise RuntimeError("expected 1 file eding with .maps.fld, got {len(fld_fn)=} {fld_fn=}")
+    maps_fn = str(fld_fn[0]).replace(".maps.fld", "")
+    return maps_fn
+
+def _get_types_from_pdbqt(fname):
+    atypes = set()
+    with open(fname) as f:
+        for line in f:
+            is_atom = line.startswith("ATOM") or line.startswith("HETATM")
+            if not is_atom:
+                continue
+            atype = line[77:].strip()
+            atypes.add(atype)
+    return atypes
 
 def parse_vina_box(text):
     center_x = None
@@ -121,7 +203,7 @@ parser = argparse.ArgumentParser(description="Run vina from SDF to SQLite")
 parser.add_argument("-l", "--ligands", help="input filename (.sdf)", required=True)
 parser.add_argument("-r", "--receptor", help="filename of Meeko Polymer serialized to JSON")
 parser.add_argument("-m", "--maps", help="base filename of grid maps")
-parser.add_argument(      "--scoring_function", choices=["vina", "vinardo", "ad4"], default="vina")
+parser.add_argument("-s", "--scoring", choices=["vina", "vinardo", "ad4"], default="vina")
 parser.add_argument("--out_db", help="output sqlite3 filename (.sqlite3/.db)")
 parser.add_argument("--size", help="size of search space (grid maps)", type=float, nargs=3)
 parser.add_argument("--center", help="center of search space (grid maps)", type=float, nargs=3)
@@ -130,7 +212,8 @@ parser.add_argument('-b', '--vina_box', help="filename of vina config with box s
 parser.add_argument("--out_sdf", help="output SD filename")
 parser.add_argument("--name_from_prop", help="set input molecule name from RDKit/SDF property")
 parser.add_argument("--log_filename", help="write log to this filename")
-parser.add_argument("--cpu", type=int, default=0)
+parser.add_argument("--vina_cpp_threads", type=int, default=1)
+parser.add_argument("--nr_process", type=int, default=0)
 args = parser.parse_args()
 
 Chem.SetDefaultPickleProperties(Chem.PropertyPickleOptions.MolProps |
@@ -186,14 +269,37 @@ else:
     sys.exit(1)
 
 # we always need receptor to insert in DB
-if args.scoring_function == "ad4":
+if args.scoring == "ad4":
+    v = Vina(sf_name="ad4", cpu=args.vina_cpp_threads)
     if args.maps is None:
-        print("AD4 scoring function requires --maps to be passed in")
-        sys.exit(2)
-    v = Vina(sf_name="ad4", cpu=1)
-    v.load_maps(args.maps)
+        ligtypes = ["HD", "C", "A", "N", "NA", "OA", "F", "P", "SA", "S", "Cl", "Br", "I", "Si"]
+        rec_fn = str(pathlib.Path(args.receptor).resolve())
+        with open(args.receptor) as f:
+            json_str = f.read()
+        polymer = Polymer.from_json(json_str)
+        with temporary_directory(clean=False) as tmpdir:
+            pdbqt_tuple = PDBQTWriterLegacy.write_from_polymer(polymer)
+            rigid_pdbqt, flex_dict = pdbqt_tuple
+            if flex_dict:
+                raise NotImplementedError("receptor has flexres, which are not passed along yet")
+            with open("receptor.pdbqt", "w") as f:
+                f.write(rigid_pdbqt)
+            rectypes = _get_types_from_pdbqt("receptor.pdbqt")
+            maps_fn = wrap_autogrid(
+                "receptor.pdbqt",
+                center,
+                size,
+                tmpdir,
+                spacing,
+                "autogrid4",
+                rec_types=rectypes,
+                lig_types=ligtypes,
+            ) 
+        v.load_maps(maps_fn)
+    else:
+        v.load_maps(args.maps)
 else:
-    v = Vina(sf_name=args.scoring_function, cpu=1)
+    v = Vina(sf_name=args.scoring, cpu=args.vina_cpp_threads)
     if args.maps is not None:
         v.load_maps(args.maps)
     else:
@@ -241,17 +347,17 @@ def dock(mol):
     except Exception as error:
         return error
     
-if args.cpu == 0:
+if args.nr_process == 0:
     nr_cores = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(nr_cores - 1) # leave 1 for writing
     map_fn = pool.imap_unordered
-elif args.cpu > 1:
-    pool = multiprocessing.Pool(args.cpu - 1) # leave 1 for writing
+elif args.nr_process > 1:
+    pool = multiprocessing.Pool(args.nr_process - 1) # leave 1 for writing
     map_fn = pool.imap_unordered 
-elif args.cpu == 1:
+elif args.nr_process == 1:
     map_fn = map
 else:
-    print("args.cpu can't be negative")
+    print("--nr_process can't be negative")
     sys.exit(2)
 
 if args.out_sdf is not None:
