@@ -7,6 +7,7 @@ from meeko import PDBQTMolecule
 from meeko import RDKitMolCreate
 from meeko import Polymer
 from meeko import gridbox
+from meeko import pdbutils
 try:
     from ringtail import RingtailCore
     _got_ringtail = True
@@ -172,16 +173,30 @@ def _get_types_from_pdbqt(fname):
     return atypes
 
 
-def get_ref_mol(ref_lig_path):
-    ext = ref_lig_path.split('.')[-1]
-    if ext == 'pdb':
-        ref_lig_path = pathlib.Path(ref_lig_path).resolve()
-        ref_mol = Chem.MolFromPDBFile(str(ref_lig_path), removeHs=True, sanitize=False)
-    elif ext == 'sdf':
-        ref_lig_path = pathlib.Path(ref_lig_path).resolve()
-        supplier = Chem.SDMolSupplier(str(ref_lig_path), removeHs=True, sanitize=False)
-        ref_mol = next(supplier)
-    return ref_mol
+def get_positions_from_molecule_file(filename):
+    ext = filename.split('.')[-1]
+    suppliers = {
+        "pdb": None,  # overriden below, needed here as valid type
+        "mol": Chem.MolFromMolFile,
+        "mol2": Chem.MolFromMol2File,
+        "sdf": Chem.SDMolSupplier,
+        "pdbqt": None,
+    }
+    if ext not in suppliers.keys():
+        print(f"File type given to --box_enveloping must be [.pdb/.mol/.mol2/.sdf/.pdbqt]")
+        sys.exit(2)
+    elif ext == ".pdb":
+        pdbstr = pdbutils.strip_altloc_from_pdb_file(filename)
+        mol = Chem.MolFromPDBBlock(pdbstr, removeHs=False, sanitize=False)
+    elif ext == ".sdf":
+        mol = next(suppliers[ext](filename, removeHs=False, sanitize=False))
+    elif ext == ".pdbqt":
+        pdbqtmol = PDBQTMolecule.from_file(filename)
+        mol = RDKitMolCreate.from_pdbqt_mol(pdbqtmol)
+    else:
+        mol = suppliers[ext](filename, removeHs=False, sanitize=False)
+    positions = mol.GetConformer.GetPositions() 
+    return positions
 
 
 def parse_vina_box(text):
@@ -221,9 +236,10 @@ parser.add_argument("-l", "--ligands", help="input filename (.sdf)", required=Tr
 parser.add_argument("-r", "--receptor", help="filename of Meeko Polymer serialized to JSON")
 parser.add_argument("-m", "--maps", help="base filename of grid maps")
 parser.add_argument("-s", "--scoring", choices=["vina", "vinardo", "ad4"], default="vina")
-parser.add_argument("--detect_center_from_ref_ligand", help="extract center from reference ligand (pdb or sdf)", action="store_true")
-parser.add_argument("--padding_from_ref_ligand", help=f"space between reference ligand and box (default: {DEFAULT_PADDING})", default=DEFAULT_PADDING, type=float)
-parser.add_argument("--ref_ligand", help="reference ligand to define box center. can also be used as input for docking [.sdf/.pdb]")
+# do not set default padding here at argparse level so we can test if the user passed a value
+# deliberately with args.padding is None
+parser.add_argument("--padding", help=f"Angstroms between box and atoms passed to --box_enveloping (default: {DEFAULT_PADDING})", type=float)
+parser.add_argument("--box_enveloping", help="Box will envelop atoms in this file [.sdf .mol .mol2 .pdb .pdbqt]")
 parser.add_argument("--flexible_amides", action="store_true")
 parser.add_argument("--out_db", help="output sqlite3 filename (.sqlite3/.db)")
 parser.add_argument("--size", help="size of search space (grid maps)", type=float, nargs=3)
@@ -259,27 +275,36 @@ if args.out_db is None and args.out_sdf is None:
     sys.exit(2)
 
 def grid_usage_error():
-    print("use both --center and --size, or --vina_box, or --maps")
+    print("use one of these combinations:")
+    print(f"    1) --box_enveloping                 (will pad with {DEFAULT_PADDING} Angstrom)")
+    print(f"    2) --box_enveloping and --padding")
+    print(f"    3) --box_enveloping and --size")
+    print(f"    4) --vina_box")
+    print(f"    5) --vina_box and --size            (to override size in --vina_box)")
+    print(f"    6) --maps")
+    print(f"    7) --center and --size")
     sys.exit(2)
     return
 
-
-if args.detect_center_from_ref_ligand:
-    if args.center is not None:
-        print("use either --center or --detect_center_from_ref_ligand")
-        sys.exit(2)
-    if args.ref_ligand is None:
-        print("if detect_center_from_ref_ligand, ref_ligand must be passed")
-        sys.exit(2)
-else:
-    if (args.center is None) != (args.size is None):
-        grid_usage_error()
-    if args.vina_box is not None and args.center is not None:
-        grid_usage_error()
-    if args.vina_box is None and (args.center is None or args.size is None):
-        grid_usage_error()
-    if args.maps is not None and (args.center is not None or args.vina_box is not None):
-        grid_usage_error()
+nr_box_options = 0
+nr_box_options += int(args.box_enveloping is not None)
+nr_box_options += int(args.maps is not None)
+nr_box_options += int(args.vina_box is not None)
+nr_box_options += int(args.center is not None)
+if nr_box_options != 1:
+    grid_usage_error()
+if args.padding is not None and args.box_enveloping is None:
+    print("--padding requires --box_enveloping")
+    grid_usage_error()
+if args.center is not None and args.size is None:
+    print("--center requires --size")
+    grid_usage_error()
+if args.size is not None and (args.box_envelopping is None and args.center is None):
+    print("--size requires either --center or --box_enveloping or --vina_box")
+    grid_usage_error()
+if args.size is not None and args.padding is not None:
+    print("can't use both --size and --padding")
+    grid_usage_error()
 
 spacing = DEFAULT_SPACING
 if args.vina_box is not None:
@@ -290,31 +315,19 @@ if args.vina_box is not None:
         spacing = spacing_from_vina_box
     if args.spacing is not None:
         spacing = args.spacing
+    if args.size is not None:
+        size = args.size
 elif args.center is not None:
     center = args.center
     size = args.size
-elif args.detect_center_from_ref_ligand:
-    ref_mol = get_ref_mol(args.ref_ligand)
-    centroid = rdMolTransforms.ComputeCentroid(ref_mol.GetConformer())
-    center = [centroid.x,centroid.y,centroid.z]
-    nr_size_definitions = int(args.size is not None) + int(args.padding_from_ref_ligand is not None)
-    if nr_size_definitions > 1:
-        print("use maximum one of --size, or --padding_from_ref_ligand")
-        sys.exit(2)
-    elif args.size is not None:
-        padding = None
-    else:
-        padding = args.padding_from_ref_ligand
-    if padding is not None:
-        p = ref_mol.GetConformer().GetPositions()
-        size = np.max(p, axis=0) - np.min(p, axis=0) + 2 * padding
-        print(f"computed {size=} from {padding=}")
-    spacing = args.spacing
-elif args.maps is not None:
-    center = None
-    size = None
+elif args.box_enveloping is not None:
+    padding = DEFAULT_PADDING if args.padding is None else args.padding
+    positions = get_positions_from_molecule_file(args.box_enveloping)
+    center, size = gridbox.calc_box(positions, padding)
+    if args.size is not None:
+        size = args.size
 else:
-    print("logic error in determining where box size/center is coming from")
+    print("logic error in determining where box size/center is coming from, please report on github")
     sys.exit(1)
 
 # we always need receptor to insert in DB
