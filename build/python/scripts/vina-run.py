@@ -7,6 +7,7 @@ from meeko import PDBQTMolecule
 from meeko import RDKitMolCreate
 from meeko import Polymer
 from meeko import gridbox
+from meeko import pdbutils
 try:
     from ringtail import RingtailCore
     _got_ringtail = True
@@ -28,7 +29,10 @@ import sys
 import tempfile
 import shutil
 
+import numpy as np 
+
 from rdkit import Chem
+from rdkit.Chem import rdMolTransforms
 from rdkit import RDLogger
 from rdkit.Chem import rdMolInterchange
 
@@ -168,6 +172,33 @@ def _get_types_from_pdbqt(fname):
             atypes.add(atype)
     return atypes
 
+
+def get_positions_from_molecule_file(filename):
+    ext = filename.split('.')[-1]
+    suppliers = {
+        "pdb": None,  # overriden below, needed here as valid type
+        "mol": Chem.MolFromMolFile,
+        "mol2": Chem.MolFromMol2File,
+        "sdf": Chem.SDMolSupplier,
+        "pdbqt": None,
+    }
+    if ext not in suppliers.keys():
+        print(f"File type given to --box_enveloping must be [.pdb/.mol/.mol2/.sdf/.pdbqt]")
+        sys.exit(2)
+    elif ext == ".pdb":
+        pdbstr = pdbutils.strip_altloc_from_pdb_file(filename)
+        mol = Chem.MolFromPDBBlock(pdbstr, removeHs=False, sanitize=False)
+    elif ext == ".sdf":
+        mol = next(suppliers[ext](filename, removeHs=False, sanitize=False))
+    elif ext == ".pdbqt":
+        pdbqtmol = PDBQTMolecule.from_file(filename)
+        mol = RDKitMolCreate.from_pdbqt_mol(pdbqtmol)
+    else:
+        mol = suppliers[ext](filename, removeHs=False, sanitize=False)
+    positions = mol.GetConformer.GetPositions() 
+    return positions
+
+
 def parse_vina_box(text):
     center_x = None
     center_y = None
@@ -197,6 +228,7 @@ def parse_vina_box(text):
     return center, size, spacing
 
 DEFAULT_SPACING = 0.375
+DEFAULT_PADDING = 10
 
 parser = argparse.ArgumentParser(description="Run vina from SDF to SQLite")
 
@@ -204,6 +236,11 @@ parser.add_argument("-l", "--ligands", help="input filename (.sdf)", required=Tr
 parser.add_argument("-r", "--receptor", help="filename of Meeko Polymer serialized to JSON")
 parser.add_argument("-m", "--maps", help="base filename of grid maps")
 parser.add_argument("-s", "--scoring", choices=["vina", "vinardo", "ad4"], default="vina")
+# do not set default padding here at argparse level so we can test if the user passed a value
+# deliberately with args.padding is None
+parser.add_argument("--padding", help=f"Angstroms between box and atoms passed to --box_enveloping (default: {DEFAULT_PADDING})", type=float)
+parser.add_argument("--box_enveloping", help="Box will envelop atoms in this file [.sdf .mol .mol2 .pdb .pdbqt]")
+parser.add_argument("--flexible_amides", action="store_true")
 parser.add_argument("--out_db", help="output sqlite3 filename (.sqlite3/.db)")
 parser.add_argument("--size", help="size of search space (grid maps)", type=float, nargs=3)
 parser.add_argument("--center", help="center of search space (grid maps)", type=float, nargs=3)
@@ -214,6 +251,7 @@ parser.add_argument("--name_from_prop", help="set input molecule name from RDKit
 parser.add_argument("--log_filename", help="write log to this filename")
 parser.add_argument("--vina_cpp_threads", type=int, default=1)
 parser.add_argument("--nr_process", type=int, default=0)
+parser.add_argument("--exhaustiveness", type=int)
 args = parser.parse_args()
 
 Chem.SetDefaultPickleProperties(Chem.PropertyPickleOptions.MolProps |
@@ -237,18 +275,37 @@ if args.out_db is None and args.out_sdf is None:
     sys.exit(2)
 
 def grid_usage_error():
-    print("use both --center and --size, or --vina_box, or --maps")
+    print("use one of these combinations:")
+    print(f"    1) --box_enveloping                 (will pad with {DEFAULT_PADDING} Angstrom)")
+    print(f"    2) --box_enveloping and --padding")
+    print(f"    3) --box_enveloping and --size")
+    print(f"    4) --vina_box")
+    print(f"    5) --vina_box and --size            (to override size in --vina_box)")
+    print(f"    6) --maps")
+    print(f"    7) --center and --size")
     sys.exit(2)
     return
 
-if (args.center is None) != (args.size is None):
+nr_box_options = 0
+nr_box_options += int(args.box_enveloping is not None)
+nr_box_options += int(args.maps is not None)
+nr_box_options += int(args.vina_box is not None)
+nr_box_options += int(args.center is not None)
+if nr_box_options != 1:
     grid_usage_error()
-if args.vina_box is not None and args.center is not None:
+if args.padding is not None and args.box_enveloping is None:
+    print("--padding requires --box_enveloping")
     grid_usage_error()
-if args.vina_box is None and (args.center is None or args.size is None):
+if args.center is not None and args.size is None:
+    print("--center requires --size")
     grid_usage_error()
-if args.maps is not None and (args.center is not None or args.vina_box is not None):
+if args.size is not None and (args.box_envelopping is None and args.center is None):
+    print("--size requires either --center or --box_enveloping or --vina_box")
     grid_usage_error()
+if args.size is not None and args.padding is not None:
+    print("can't use both --size and --padding")
+    grid_usage_error()
+
 spacing = DEFAULT_SPACING
 if args.vina_box is not None:
     with open(args.vina_box) as f:
@@ -258,14 +315,19 @@ if args.vina_box is not None:
         spacing = spacing_from_vina_box
     if args.spacing is not None:
         spacing = args.spacing
+    if args.size is not None:
+        size = args.size
 elif args.center is not None:
     center = args.center
     size = args.size
-elif args.maps is not None:
-    center = None
-    size = None
+elif args.box_enveloping is not None:
+    padding = DEFAULT_PADDING if args.padding is None else args.padding
+    positions = get_positions_from_molecule_file(args.box_enveloping)
+    center, size = gridbox.calc_box(positions, padding)
+    if args.size is not None:
+        size = args.size
 else:
-    print("logic error in determining where box size/center is coming from")
+    print("logic error in determining where box size/center is coming from, please report on github")
     sys.exit(1)
 
 # we always need receptor to insert in DB
@@ -295,7 +357,7 @@ if args.scoring == "ad4":
                 rec_types=rectypes,
                 lig_types=ligtypes,
             ) 
-        v.load_maps(maps_fn)
+            v.load_maps(maps_fn)
     else:
         v.load_maps(args.maps)
 else:
@@ -314,12 +376,16 @@ else:
                 raise NotImplementedError("receptor has flexres, which are not passed along yet")
         v.compute_vina_maps(center=center, box_size=size)
 
-supplier = Chem.SDMolSupplier(args.ligands, removeHs=False)
+mol_supplier = Chem.SDMolSupplier(args.ligands, removeHs=False)
 if args.name_from_prop:
-    supplier = MolSupplier(supplier, name_from_prop=args.name_from_prop)
+    mol_supplier = MolSupplier(mol_supplier, name_from_prop=args.name_from_prop)
+
+def wrap_mol_supplier(mol_supplier, *more_args):
+    for mol in mol_supplier:
+        yield (mol, *more_args)
 
 # prepare ligand pdbqt
-meeko_prep = MoleculePreparation()
+meeko_prep = MoleculePreparation(flexible_amides=args.flexible_amides)
 
 if args.out_db is not None:
     if not _got_ringtail:
@@ -329,7 +395,8 @@ if args.out_db is not None:
     rt_logger = logging.getLogger("ringtail")
     rt_logger.setLevel("WARNING")
 
-def dock(mol):
+def dock(args):
+    mol, exhaustiveness = args
     try:
         mol_name = mol.GetProp("_Name")
         molsetups = meeko_prep.prepare(mol)
@@ -340,7 +407,10 @@ def dock(mol):
         if not is_ok:
             raise RuntimeError(f'ligand not ok {mol.GetProp("_Name")=}')
         v.set_ligand_from_string(lig_pdbqt)
-        v.dock()
+        if exhaustiveness is None:
+            v.dock()
+        else:
+            v.dock(exhaustiveness=exhaustiveness)
         output_pdbqt = v.poses()
         vina_strings = {mol_name: output_pdbqt}
         return vina_strings
@@ -363,6 +433,7 @@ else:
 if args.out_sdf is not None:
     w = Chem.SDWriter(args.out_sdf)
 
+supplier = wrap_mol_supplier(mol_supplier, args.exhaustiveness)
 for vina_strings in map_fn(dock, supplier):
     if isinstance(vina_strings, Exception):
         root_logger.error(str(vina_strings))
@@ -379,6 +450,7 @@ for vina_strings in map_fn(dock, supplier):
             pdbqt_mol = PDBQTMolecule(vina_strings[mol_name])
             output_rdmol = RDKitMolCreate.from_pdbqt_mol(pdbqt_mol)[0] # ignore sidechains
             output_rdmol.SetDoubleProp("VinaScore", pdbqt_mol[0].score)
+            output_rdmol.SetProp("_Name", mol_name)
             w.write(output_rdmol)
     except Exception as error:
         root_logger.error(str(error))
