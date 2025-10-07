@@ -14,7 +14,7 @@ C_OPTIONS+=-DVERSION=\"$(GIT_VERSION)\"
 #CC = ${GPP} ${C_PLATFORM} -ansi -pedantic -Wno-long-long ${C_OPTIONS} $(INCFLAGS)
 CC = ${GPP} ${C_PLATFORM} -ansi -Wno-long-long ${C_OPTIONS} $(INCFLAGS)
 
-LDFLAGS = -L$(BASE)/lib -L.
+LDFLAGS+= -L$(BASE)/lib -L.
 
 # test if boost_thread-mt exists, this is
 # necessary as some versions of boost only
