@@ -40,7 +40,8 @@ const sz EL_TYPE_Si   = 10; // Silicon
 const sz EL_TYPE_At   = 11; // Astatine
 const sz EL_TYPE_Met  = 12;
 const sz EL_TYPE_Dummy= 13;
-const sz EL_TYPE_SIZE = 14;
+const sz EL_TYPE_B    = 14; // Boron
+const sz EL_TYPE_SIZE = 15;
 
 // AutoDock4
 const sz AD_TYPE_C    =  0;
@@ -74,7 +75,8 @@ const sz AD_TYPE_CG1  = 27;
 const sz AD_TYPE_CG2  = 28;
 const sz AD_TYPE_CG3  = 29;
 const sz AD_TYPE_W    = 30; // hydrated ligand
-const sz AD_TYPE_SIZE = 31;
+const sz AD_TYPE_B    = 31; // Boron
+const sz AD_TYPE_SIZE = 32;
 
 // X-Score
 const sz XS_TYPE_C_H   =  0;
@@ -109,7 +111,8 @@ const sz XS_TYPE_C_H_CG3 = 28;
 const sz XS_TYPE_C_P_CG3 = 29;
 const sz XS_TYPE_G3      = 30;
 const sz XS_TYPE_W       = 31; // hydrated ligand
-const sz XS_TYPE_SIZE    = 32;
+const sz XS_TYPE_B       = 32; // Boron
+const sz XS_TYPE_SIZE    = 33;
 
 // DrugScore-CSD
 const sz SY_TYPE_C_3   =  0;
@@ -177,7 +180,8 @@ const atom_kind atom_kind_data[] = {
 	{"CG1",2.00000, 0.15000, 0.0, 0.0,   -0.00143,   33.51030,   0.77}, // 27
 	{"CG2",2.00000, 0.15000, 0.0, 0.0,   -0.00143,   33.51030,   0.77}, // 28
 	{"CG3",2.00000, 0.15000, 0.0, 0.0,   -0.00143,   33.51030,   0.77}, // 29
-	{"W",  0.00000, 0.00000, 0.0, 0.0,    0.00000,    0.00000,   0.00}  // 30
+	{"W",  0.00000, 0.00000, 0.0, 0.0,    0.00000,    0.00000,   0.00}, // 30
+	{ "B", 1.92000, 0.15500, 0.0, 0.0,   -0.00152,   29.64780,   0.84}  // 31
 };
 
 const fl metal_solvation_parameter = -0.00110;
@@ -254,6 +258,7 @@ inline sz ad_type_to_el_type(sz t) {
 		case AD_TYPE_G2   : return EL_TYPE_Dummy;
 		case AD_TYPE_G3   : return EL_TYPE_Dummy;
 		case AD_TYPE_W    : return EL_TYPE_Dummy;
+		case AD_TYPE_B    : return EL_TYPE_B;
 		case AD_TYPE_SIZE : return EL_TYPE_SIZE;
 		default: VINA_CHECK(false);
 	}
@@ -292,7 +297,8 @@ const fl xs_vdw_radii[] = {
     0.0, // G1
     0.0, // G2
     0.0, // G3
-    0.0  // W
+    0.0, // W
+    1.9  // B
 };
 
 const fl xs_vinardo_vdw_radii[] = {
@@ -327,7 +333,8 @@ const fl xs_vinardo_vdw_radii[] = {
 	0.0, // G1
 	0.0, // G2
 	0.0, // G3
-	0.0	 // W
+	0.0, // W
+	1.9  // B
 };
 
 inline fl xs_radius(sz t) {
