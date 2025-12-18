@@ -172,32 +172,30 @@ def _get_types_from_pdbqt(fname):
             atypes.add(atype)
     return atypes
 
-
 def get_positions_from_molecule_file(filename):
     ext = filename.split('.')[-1]
-    suppliers = {
+    suppliers = { 
         "pdb": None,  # overriden below, needed here as valid type
         "mol": Chem.MolFromMolFile,
         "mol2": Chem.MolFromMol2File,
         "sdf": Chem.SDMolSupplier,
         "pdbqt": None,
-    }
+    }   
     if ext not in suppliers.keys():
         print(f"File type given to --box_enveloping must be [.pdb/.mol/.mol2/.sdf/.pdbqt]")
         sys.exit(2)
-    elif ext == ".pdb":
+    elif ext == "pdb":
         pdbstr = pdbutils.strip_altloc_from_pdb_file(filename)
         mol = Chem.MolFromPDBBlock(pdbstr, removeHs=False, sanitize=False)
-    elif ext == ".sdf":
+    elif ext == "sdf":
         mol = next(suppliers[ext](filename, removeHs=False, sanitize=False))
-    elif ext == ".pdbqt":
+    elif ext == "pdbqt":
         pdbqtmol = PDBQTMolecule.from_file(filename)
         mol = RDKitMolCreate.from_pdbqt_mol(pdbqtmol)
     else:
         mol = suppliers[ext](filename, removeHs=False, sanitize=False)
-    positions = mol.GetConformer.GetPositions() 
+    positions = mol.GetConformer().GetPositions() 
     return positions
-
 
 def parse_vina_box(text):
     center_x = None
