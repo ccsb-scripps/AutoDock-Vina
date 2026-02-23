@@ -451,17 +451,18 @@ if args.nr_process == 0:
     nr_cores = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(nr_cores - 1) # leave 1 for writing
     map_fn = pool.imap_unordered
-    root_logger.info(f"using {nr_cores} cores for mk_prep and engine")
+    parallel_info_str = f"using {nr_cores - 1} cores" 
 elif args.nr_process > 1:
     pool = multiprocessing.Pool(args.nr_process - 1) # leave 1 for writing
     map_fn = pool.imap_unordered 
-    root_logger.info(f"using {args.nr_process} cores for mk_prep and engine")
+    parallel_info_str = f"using {nr_cores - 1} cores" 
 elif args.nr_process == 1:
     map_fn = map
-    root_logger.info(f"using single core for mk_prep and engine")
+    parallel_info_str = f"using single core" 
 else:
     print("--nr_process can't be negative")
     sys.exit(2)
+root_logger.info(f"{parallel_info_str} for mk_prep and engine")
 
 if args.write_sdf:
     output_sdf = output_dir / "docked_ligands.sdf"
@@ -499,7 +500,7 @@ for vina_strings, mk_prep_time, engine_time in map_fn(dock, supplier):
 if args.write_sdf:
     w.close()
 
-root_logger.info(f"time(mk_prep ligs): ms={1000*total_mk_prep_time:.3f}")
-root_logger.info(f"time(engine): includes docking and map creation ms={1000*total_engine_time:.3f}")
+root_logger.info(f"time(mk_prep ligs): ms={1000*total_mk_prep_time:.3f} {parallel_info_str}")
+root_logger.info(f"time(engine): includes docking and map creation ms={1000*total_engine_time:.3f} {parallel_info_str}")
 root_logger.info(f"time(output): nr={output_counter} ms={1000*total_output_time:.3f}")
 root_logger.info(f"time(total): total time in main script ms={1000*(time() - t_start):.3f}")
