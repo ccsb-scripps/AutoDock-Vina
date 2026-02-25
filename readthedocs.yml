@@ -11,19 +11,20 @@ sphinx:
    configuration: docs/source/conf.py
    fail_on_warning: false
 
-# Optionally build your docs in additional formats such as PDF
-formats: all
+## Optionally build your docs in additional formats such as PDF
+#formats: all
 
 build:
   os: ubuntu-22.04
   tools:
-    python: "miniconda3-4.7"
+    python: "3.12"
 
-conda:
-  environment: build/python/environment.yml
+#conda:
+#  environment: build/python/environment.yml
 
 # Optionally set the version of Python and requirements required to build your docs
 python:
    install:
-   - method: setuptools
-     path: build/python
+     - requirements: docs/requirements.txt
+#   - method: setuptools
+#     path: build/python
