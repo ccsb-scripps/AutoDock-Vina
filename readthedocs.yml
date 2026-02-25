@@ -11,8 +11,8 @@ sphinx:
    configuration: docs/source/conf.py
    fail_on_warning: false
 
-## Optionally build your docs in additional formats such as PDF
-#formats: all
+# Optionally build your docs in additional formats such as PDF
+formats: all
 
 build:
   os: ubuntu-22.04
