@@ -132,8 +132,23 @@ And then run the following command to execute the docking calculation:
 
 Running AutoDock Vina will write a PDBQT file called ``1iep_ligand_vina_out.pdbqt``.
 
-5. Results
-----------
+4.c. Exporting results to SDF
+-----------------------------
+
+For use with other software and guarantee correct bond orders and formal charges,
+convert the docking results from PDBQT to SDF format with Meeko. Other tools,
+such as OpenBabel, attempt the difficult task of guessing bond orders from the
+PDBQT format, which is impossible for some molecules. Meeko writes a SMILES
+string in the header of the PDBQT file, and uses it to instantiate an RDKit
+molecule with the same bond orders and formal charges as in the original input.
+
+.. code-block:: bash
+
+    $ mk_export.py 1iep_ligand_vina_out.pdbqt -s 1iep_ligand_vina_out.sdf
+    $ mk_export.py 1iep_ligand_ad4_out.pdbqt -s 1iep_ligand_ad4_out.sdf
+
+5. Expected results
+-------------------
 
 With ``exhaustiveness`` set to ``32``, Vina will most often give a single docked pose with this energy. With the lower default exhaustiveness, several poses flipped end to end, with less favorable energy, may be reported.
 
@@ -144,7 +159,7 @@ With ``exhaustiveness`` set to ``32``, Vina will most often give a single docked
 5.a. Using AutoDock forcefield
 ______________________________
 
-The predicted free energy of binding should be about ``-14 kcal/mol`` for poses that are similar to the crystallographic pose.
+The predicted free energy of binding should be about ``-14 kcal/mol`` for poses that are similar to the crystallographic pose for this example system.
 
 .. code-block:: console
 
@@ -177,7 +192,7 @@ The predicted free energy of binding should be about ``-14 kcal/mol`` for poses 
 5.b. Using Vina forcefield
 __________________________
 
-Using the vina forcefield, you should obtain a similar output from Vina with the best score around ``-13 kcal/mol``.
+Using the vina forcefield, you should obtain a similar output from Vina with the best score around ``-13 kcal/mol`` for this example system.
 
 .. code-block:: console
 
