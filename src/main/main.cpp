@@ -329,8 +329,8 @@ Thank you!\n";
 			exit(EXIT_FAILURE);
 		}
 
-		if (!vm.count("ligand") && !vm.count("batch")) {
-			std::cerr << desc_simple << "\n\nERROR: Missing ligand(s).\n";
+		if (!vm.count("ligand") && !vm.count("batch") && !vm.count("write_maps")) {
+			std::cerr << desc_simple << "\n\nERROR: Missing ligand(s) or --write_maps.\n";
 			exit(EXIT_FAILURE);
 		} else if (vm.count("ligand") && vm.count("batch")) {
 			std::cerr << desc_simple << "\n\nERROR: Can't use both --ligand and --batch arguments simultaneously.\n";
@@ -409,10 +409,6 @@ Thank you!\n";
 			v.set_ad4_weights(weight_ad4_vdw, weight_ad4_hb, weight_ad4_elec,
 							  weight_ad4_dsolv, weight_glue, weight_ad4_rot);
 			v.load_maps(maps);
-
-			// It works, but why would you do this?!
-			if (vm.count("write_maps"))
-				v.write_maps(out_maps);
 		}
 
 		if (vm.count("ligand")) {
@@ -430,9 +426,6 @@ Thank you!\n";
 					} else {
 						v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing, force_even_voxels);
 					}
-
-					if (vm.count("write_maps"))
-						v.write_maps(out_maps);
 				}
 			}
 
@@ -461,11 +454,8 @@ Thank you!\n";
 				if (vm.count("maps")) {
 					v.load_maps(maps);
 				} else {
-					// Will compute maps for all Vina atom types
-					v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing);
-
-					if (vm.count("write_maps"))
-						v.write_maps(out_maps);
+					// Batch mode is allowed only if not ad4?
+					v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing, force_even_voxels);
 				}
 			}
 
@@ -540,6 +530,19 @@ Thank you!\n";
 			if (failed_ligand_parsing) {
 				std::cout << "Failed to parse " << failed_ligand_parsing << " ligands.\n";
 			}
+		}
+		
+		if (vm.count("write_maps")) {
+			// Will compute maps only for Vina atom types in the ligand(s)
+			// In the case users ask for score and local only with the autobox arg, we compute the optimal box size for it/them.
+			if (vm.count("ligand") && autobox) {
+				v.set_ligand_from_file(ligand_names);
+				std::vector<double> dim = v.grid_dimensions_from_ligand(buffer_size);
+				v.compute_vina_maps(dim[0], dim[1], dim[2], dim[3], dim[4], dim[5], grid_spacing, force_even_voxels);
+			} else {
+				v.compute_vina_maps(center_x, center_y, center_z, size_x, size_y, size_z, grid_spacing, force_even_voxels);
+			}
+			v.write_maps(out_maps);
 		}
 	}
 
