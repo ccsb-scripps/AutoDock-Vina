@@ -49,6 +49,7 @@ std::string convert_XS_to_string(sz t) {
 		case XS_TYPE_At      : return "At";
 		case XS_TYPE_Met_D   : return "Met_D";
 		case XS_TYPE_W       : return "W";
+		case XS_TYPE_B       : return "B";
 		default: VINA_CHECK(false);
 	}
 }

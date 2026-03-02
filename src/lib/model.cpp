@@ -437,6 +437,7 @@ void model::assign_types() {
 			case EL_TYPE_Si   : x = XS_TYPE_Si; break;
 			case EL_TYPE_At   : x = XS_TYPE_At; break;
 			case EL_TYPE_Met  : x = XS_TYPE_Met_D; break;
+			case EL_TYPE_B    : x = XS_TYPE_B; break;
             case EL_TYPE_Dummy: {
                 if      (a.ad == AD_TYPE_G0) x = XS_TYPE_G0;
                 else if (a.ad == AD_TYPE_G1) x = XS_TYPE_G1;
