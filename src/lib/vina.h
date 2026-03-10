@@ -134,7 +134,8 @@ public:
 	std::vector<double> grid_dimensions_from_ligand(double buffer_size=4);
 	void compute_vina_maps(double center_x, double center_y, double center_z,
 								  double size_x, double size_y, double size_z,
-								  double granularity=0.5, bool force_even_voxels=false);
+								  double granularity=0.5, bool force_even_voxels=false,
+								  double max_search_space = 27e3);
 	void load_maps(std::string maps);
 	void randomize(const int max_steps=10000);
 	std::vector<double> score();
