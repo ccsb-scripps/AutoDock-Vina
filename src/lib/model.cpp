@@ -136,8 +136,17 @@ public:
 		transform_ranges(lig, *this);
 		VINA_FOR_IN(i, lig.pairs)
 			this->update(lig.pairs[i]);
-		VINA_FOR_IN(i, lig.cont)
+	
+		VINA_FOR_IN(i, lig.cont) {
 			this->update(lig.cont[i]); // parsed_line update, below
+	
+			std::string& context_str = lig.cont[i].first;
+			if (context_str.find('\0') != std::string::npos) {
+				std::cerr << "Warning: NULL detected in lig.cont[" << i << "]: "
+						  << " [" << context_str << "]" << std::endl;
+				context_str.erase(std::remove(context_str.begin(), context_str.end(), '\0'), context_str.end());
+			}
+		}
 	}
 	void update(residue& r) const {
 		transform_ranges(r, *this);
@@ -743,7 +752,7 @@ std::string model::write_model(sz model_number, const std::string &remark) {
 
 	out << "ENDMDL\n";
 
-	return out.str();
+    return out.str();
 }
 
 void model::set         (const conf& c) {
