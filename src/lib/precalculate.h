@@ -129,13 +129,13 @@ public:
         m_factor = factor;
         m_cutoff_sqr = sqr(sf.get_cutoff());
         m_max_cutoff_sqr = sqr(sf.get_max_cutoff());
-        m_n = sz(m_factor * m_max_cutoff_sqr) + 3; // sz(factor * r^2) + 1 <= sz(factor * max_cutoff_sqr) + 2 <= n-1 < n  // see assert below
+        m_n = sz(m_factor * m_cutoff_sqr) + 3; // only queried for r2 <= cutoff_sqr (grid maps and non_cache)
         //std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate = " << m_max_cutoff_sqr << "\n";
         triangular_matrix<precalculate_element> data(num_atom_types(sf.get_atom_typing()), precalculate_element(m_n, m_factor));
 
         VINA_CHECK(m_factor > epsilon_fl);
-        VINA_CHECK(sz(m_max_cutoff_sqr * m_factor) + 1 < m_n); // max_cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
-        VINA_CHECK(m_max_cutoff_sqr * m_factor + 1 < m_n);
+        VINA_CHECK(sz(m_cutoff_sqr * m_factor) + 1 < m_n); // cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
+        VINA_CHECK(m_cutoff_sqr * m_factor + 1 < m_n);
 
         flv rs = calculate_rs();
 
@@ -158,11 +158,11 @@ public:
         m_data = data;
     };
     fl eval_fast(sz type_pair_index, fl r2) const{
-        assert(r2 <= m_max_cutoff_sqr);
+        assert(r2 <= m_cutoff_sqr);
         return m_data(type_pair_index).eval_fast(r2);
     };
     pr eval_deriv(sz type_pair_index, fl r2) const{
-        assert(r2 <= m_max_cutoff_sqr);
+        assert(r2 <= m_cutoff_sqr);
         return m_data(type_pair_index).eval_deriv(r2);
     };
     sz index_permissive(sz t1, sz t2) const { return m_data.index_permissive(t1, t2); }
@@ -198,12 +198,28 @@ public:
         // sf should not be discontinuous, even near cutoff, for the sake of the derivatives
         m_factor = factor;
         m_cutoff_sqr = sqr(sf.get_cutoff());
-        m_max_cutoff_sqr = sqr(sf.get_max_cutoff());
+        // Smaller 8 A tables are safe only because macrocycle glue pairs (G0..G3) are the sole users of the 20 A range.
+        m_max_cutoff_sqr = model.get_glue_pairs().empty() ? m_cutoff_sqr : sqr(sf.get_max_cutoff());
         m_n = sz(m_factor * m_max_cutoff_sqr) + 3; // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
         // std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate = " << m_cutoff_sqr << "\n";
         sz n_atoms = model.num_atoms();
         atomv atoms = model.get_atoms();
-        triangular_matrix<precalculate_element> data(n_atoms, precalculate_element(m_n, m_factor));
+
+        // Pair energies depend only on atom type (and charge for AD4), not on the atom itself,
+        // so build one table per pair of distinct types rather than per pair of atoms.
+        atomv types;
+        m_type.resize(n_atoms);
+        VINA_FOR(i, n_atoms) {
+            sz t = 0;
+            for (; t < types.size(); ++t) {
+                if (sf.get_atom_typing() == atom_type::XS ? atoms[i].xs == types[t].xs
+                    : (atoms[i].ad == types[t].ad && atoms[i].xs == types[t].xs && atoms[i].charge == types[t].charge))
+                    break;
+            }
+            if (t == types.size()) types.push_back(atoms[i]);
+            m_type[i] = t;
+        }
+        triangular_matrix<precalculate_element> data(types.size(), precalculate_element(m_n, m_factor));
 
         VINA_CHECK(m_factor > epsilon_fl);
         VINA_CHECK(sz(m_max_cutoff_sqr * m_factor) + 1 < m_n); // cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
@@ -219,7 +235,7 @@ public:
                 // init smooth[].first
                 VINA_FOR_IN(k, p.smooth)
                 {
-                    p.smooth[k].first = (std::min)(v, sf.eval(atoms[i], atoms[j], rs[k]));
+                    p.smooth[k].first = (std::min)(v, sf.eval(types[i], types[j], rs[k]));
                 }
 
                 // init the rest
@@ -230,13 +246,13 @@ public:
     };
     fl eval_fast(sz i, sz j, fl r2) const{
         assert(r2 <= m_max_cutoff_sqr);
-        return m_data(i, j).eval_fast(r2);
+        return m_data(index_permissive(i, j)).eval_fast(r2);
     };
     pr eval_deriv(sz i, sz j, fl r2) const{
         assert(r2 <= m_max_cutoff_sqr);
-        return m_data(i, j).eval_deriv(r2);
+        return m_data(index_permissive(i, j)).eval_deriv(r2);
     };
-    sz index_permissive(sz t1, sz t2) const { return m_data.index_permissive(t1, t2); }
+    sz index_permissive(sz i, sz j) const { return m_data.index_permissive(m_type[i], m_type[j]); }
     fl cutoff_sqr() const { return m_cutoff_sqr; }
     fl max_cutoff_sqr() const { return m_max_cutoff_sqr; }
     sz get_factor() const { return m_factor; }
@@ -259,6 +275,7 @@ private:
     sz m_n;
     fl m_factor;
 
+    szv m_type; // atom index -> index of its distinct type in m_data
     triangular_matrix<precalculate_element> m_data;
 };
 
