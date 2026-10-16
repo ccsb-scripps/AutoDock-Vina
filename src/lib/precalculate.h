@@ -141,7 +141,7 @@ public:
 
         VINA_FOR(t1, data.dim())
         {
-            VINA_RANGE(t2, t1, data.dim())
+            VINA_RANGE(t2, t1, data.dim()) // t1 < t2
             {
                 precalculate_element &p = data(t1, t2);
                 // init smooth[].first

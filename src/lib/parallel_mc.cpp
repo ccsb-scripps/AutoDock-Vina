@@ -29,6 +29,7 @@ struct parallel_mc_task {
 	model m;
 	output_container out;
 	rng generator;
+	stats statcount;
 	parallel_mc_task(const model& m_, int seed) : m(m_), generator(static_cast<rng::result_type>(seed)) {}
 };
 
@@ -44,7 +45,7 @@ struct parallel_mc_aux {
 	parallel_mc_aux(const monte_carlo* mc_, const precalculate_byatom* p_, const igrid* ig_, const vec* corner1_, const vec* corner2_, parallel_progress* pg_)
 		: mc(mc_), p(p_), ig(ig_), corner1(corner1_), corner2(corner2_), pg(pg_) {}
 	void operator()(parallel_mc_task& t) const {
-		(*mc)(t.m, t.out, *p, *ig, *corner1, *corner2, pg, t.generator);
+		(*mc)(t.m, t.out, *p, *ig, *corner1, *corner2, pg, t.generator, t.statcount);
 	}
 };
 
@@ -53,22 +54,24 @@ void merge_output_containers(const output_container& in, output_container& out, 
 		add_to_output_container(out, in[i], min_rmsd, max_size);
 }
 
-void merge_output_containers(const parallel_mc_task_container& many, output_container& out, fl min_rmsd, sz max_size) {
+void merge_output_containers(const parallel_mc_task_container& many, output_container& out, fl min_rmsd, sz max_size, stats& statcount) {
 	min_rmsd = 2; // FIXME? perhaps it's necessary to separate min_rmsd during search and during output?
-	VINA_FOR_IN(i, many)
+	VINA_FOR_IN(i, many){
 		merge_output_containers(many[i].out, out, min_rmsd, max_size);
+		statcount += many[i].statcount;
+	}
 	out.sort();
 }
 
-void parallel_mc::operator()(const model& m, output_container& out, const precalculate_byatom& p, const igrid& ig, const vec& corner1, const vec& corner2, rng& generator, std::function<void(double)>* progress_callback) const {
+void parallel_mc::operator()(const model& m, output_container& out, const precalculate_byatom& p, const igrid& ig, const vec& corner1, const vec& corner2, rng& generator, stats& statcount, std::function<void(double)>* progress_callback) const {
 	parallel_progress pp (progress_callback);
 	parallel_mc_aux parallel_mc_aux_instance(&mc, &p, &ig, &corner1, &corner2, (display_progress ? (&pp) : NULL));
 	parallel_mc_task_container task_container;
 	VINA_FOR(i, num_tasks)
 		task_container.push_back(new parallel_mc_task(m, random_int(0, 1000000, generator)));
-	if(display_progress) 
+	if(display_progress)
 		pp.init(num_tasks * mc.global_steps);
 	parallel_iter<parallel_mc_aux, parallel_mc_task_container, parallel_mc_task, true> parallel_iter_instance(&parallel_mc_aux_instance, num_threads);
 	parallel_iter_instance.run(task_container);
-	merge_output_containers(task_container, out, mc.min_rmsd, mc.num_saved_mins);
+	merge_output_containers(task_container, out, mc.min_rmsd, mc.num_saved_mins, statcount);
 }

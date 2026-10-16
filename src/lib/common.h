@@ -54,6 +54,25 @@ const fl not_a_num = std::sqrt(fl(-1)); // FIXME? check
 typedef std::size_t sz;
 typedef std::pair<fl, fl> pr;
 
+struct stats {
+	sz data[4]; // 0 .. evalcount, 1 .. nr tries, 2 .. nr accepted, 3 .. nr line searches
+	stats() {
+		this->reset();
+	}
+	const sz& operator[](int i) const { assert(i < 4); return data[i]; }
+	      sz& operator[](int i)       { assert(i < 4); return data[i]; }
+	const stats& operator+=(const stats& v) {
+		data[0] += v[0];
+		data[1] += v[1];
+		data[2] += v[2];
+		data[3] += v[3];
+		return *this;
+	}
+	void reset() {
+		data[0] = data[1] = data[2] = data[3] = 0;
+	}
+};
+
 struct vec {
 	fl data[3];
 	vec() {

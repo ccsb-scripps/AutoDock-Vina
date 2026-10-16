@@ -25,9 +25,9 @@
 #include "mutate.h"
 #include "quasi_newton.h"
 
-output_type monte_carlo::operator()(model& m, const precalculate_byatom& p, const igrid& ig, const vec& corner1, const vec& corner2, incrementable* increment_me, rng& generator) const {
+output_type monte_carlo::operator()(model& m, const precalculate_byatom& p, const igrid& ig, const vec& corner1, const vec& corner2, incrementable* increment_me, rng& generator, stats& statcount) const {
 	output_container tmp;
-	this->operator()(m, tmp, p, ig, corner1, corner2, increment_me, generator); // call the version that produces the whole container
+	this->operator()(m, tmp, p, ig, corner1, corner2, increment_me, generator, statcount); // call the version that produces the whole container
 	VINA_CHECK(!tmp.empty());
 	return tmp.front();
 }
@@ -39,30 +39,31 @@ bool metropolis_accept(fl old_f, fl new_f, fl temperature, rng& generator) {
 }
 
 // out is sorted
-void monte_carlo::operator()(model& m, output_container& out, const precalculate_byatom& p, const igrid& ig, const vec& corner1, const vec& corner2, incrementable* increment_me, rng& generator) const {
-    int evalcount = 0;
+void monte_carlo::operator()(model& m, output_container& out, const precalculate_byatom& p, const igrid& ig, const vec& corner1, const vec& corner2, incrementable* increment_me, rng& generator, stats& statcount) const {
 	vec authentic_v(1000, 1000, 1000); // FIXME? this is here to avoid max_fl/max_fl
 	conf_size s = m.get_size();
 	change g(s);
+	stats l_count;
 	output_type tmp(s, 0);
 	tmp.c.randomize(corner1, corner2, generator);
 	fl best_e = max_fl;
 	quasi_newton quasi_newton_par;
-    quasi_newton_par.max_steps = local_steps;
+	quasi_newton_par.max_steps = local_steps;
 	VINA_U_FOR(step, global_steps) {
 		if(increment_me)
 			++(*increment_me);
-		if((max_evals > 0) & (evalcount > max_evals))
+		if((max_evals > 0) & (l_count[0] > max_evals))
 			break;
 		output_type candidate = tmp;
+		l_count[1]++; // increase nr tries
 		mutate_conf(candidate.c, m, mutation_amplitude, generator);
-		quasi_newton_par(m, p, ig, candidate, g, hunt_cap, evalcount);
+		quasi_newton_par(m, p, ig, candidate, g, hunt_cap, l_count);
 		if(step == 0 || metropolis_accept(tmp.e, candidate.e, temperature, generator)) {
 			tmp = candidate;
-
+			l_count[2]++; // increase nr accepted
 			// FIXME only for very promising ones
 			if(tmp.e < best_e || out.size() < num_saved_mins) {
-				quasi_newton_par(m, p, ig, tmp, g, authentic_v, evalcount);
+				quasi_newton_par(m, p, ig, tmp, g, authentic_v, l_count);
 				tmp.coords = m.get_heavy_atom_movable_coords();
 				add_to_output_container(out, tmp, min_rmsd, num_saved_mins); // 20 - max size
 				if(tmp.e < best_e)
@@ -70,6 +71,7 @@ void monte_carlo::operator()(model& m, output_container& out, const precalculate
 			}
 		}
 	}
+	statcount += l_count;
 	VINA_CHECK(!out.empty());
 	VINA_CHECK(out.front().e <= out.back().e); // make sure the sorting worked in the correct order
 }

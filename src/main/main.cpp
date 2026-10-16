@@ -130,6 +130,7 @@ Thank you!\n";
 		int seed = 0;
 		int exhaustiveness = 8;
 		int max_evals = 0;
+		bool statistics = false;
 		int verbosity = 1;
 		int num_modes = 9;
 		double min_rmsd = 1.0;
@@ -242,6 +243,7 @@ Thank you!\n";
 			("min_rmsd", value<double>(&min_rmsd)->default_value(1.0), "minimum RMSD between output poses")
 			("energy_range", value<double>(&energy_range)->default_value(3.0), "maximum energy difference between the best binding mode and the worst one displayed (kcal/mol)")
 			("spacing", value<double>(&grid_spacing)->default_value(0.375), "grid spacing (Angstrom)")
+			("statistics", value<bool>(&statistics)->default_value(false), "output runtime statistics")
 			("verbosity", value<int>(&verbosity)->default_value(1), "verbosity (0=no output, 1=normal, 2=verbose)")
 		;
 		options_description config("Configuration file (optional)");
@@ -390,7 +392,7 @@ Thank you!\n";
 			std::cout << "\n";
 		}
 
-		Vina v(sf_name, cpu, seed, verbosity, no_refine);
+		Vina v(sf_name, cpu, seed, verbosity, no_refine, statistics);
 
 		// rigid_name variable can be ignored for AD4
 		if (vm.count("receptor") || vm.count("flex"))
