@@ -264,6 +264,52 @@ struct change {
 			tmp += flex[i].torsions.size();
 		return tmp;
 	}
+	void read_flat(fl* out) const {
+		sz k = 0;
+		VINA_FOR_IN(i, ligands) {
+			const ligand_change& lig = ligands[i];
+			out[k++] = lig.rigid.position[0];
+			out[k++] = lig.rigid.position[1];
+			out[k++] = lig.rigid.position[2];
+			out[k++] = lig.rigid.orientation[0];
+			out[k++] = lig.rigid.orientation[1];
+			out[k++] = lig.rigid.orientation[2];
+			const sz nt = lig.torsions.size();
+			const fl* tors = nt ? &lig.torsions[0] : NULL;
+			VINA_FOR(j, nt)
+				out[k++] = tors[j];
+		}
+		VINA_FOR_IN(i, flex) {
+			const residue_change& res = flex[i];
+			const sz nt = res.torsions.size();
+			const fl* tors = nt ? &res.torsions[0] : NULL;
+			VINA_FOR(j, nt)
+				out[k++] = tors[j];
+		}
+	}
+	void write_flat(const fl* in) {
+		sz k = 0;
+		VINA_FOR_IN(i, ligands) {
+			ligand_change& lig = ligands[i];
+			lig.rigid.position[0] = in[k++];
+			lig.rigid.position[1] = in[k++];
+			lig.rigid.position[2] = in[k++];
+			lig.rigid.orientation[0] = in[k++];
+			lig.rigid.orientation[1] = in[k++];
+			lig.rigid.orientation[2] = in[k++];
+			const sz nt = lig.torsions.size();
+			fl* tors = nt ? &lig.torsions[0] : NULL;
+			VINA_FOR(j, nt)
+				tors[j] = in[k++];
+		}
+		VINA_FOR_IN(i, flex) {
+			residue_change& res = flex[i];
+			const sz nt = res.torsions.size();
+			fl* tors = nt ? &res.torsions[0] : NULL;
+			VINA_FOR(j, nt)
+				tors[j] = in[k++];
+		}
+	}
 	void print() const {
 		VINA_FOR_IN(i, ligands)
 			ligands[i].print();
