@@ -23,6 +23,7 @@
 #include "vina.h"
 #include "scoring_function.h"
 #include "precalculate.h"
+#include "conf.h"
 
 
 void Vina::cite() {
@@ -76,7 +77,7 @@ void Vina::set_receptor(const std::string& rigid_name, const std::string& flex_n
 		exit(EXIT_FAILURE);
 	} else if (m_sf_choice == SF_AD42 && !rigid_name.empty()) {
 		// CONDITIONS 2, 3
-		std::cerr << "ERROR: Only flexible residues allowed with the AD4 scoring function. No (rigid) receptor.\n";
+		std::cerr << "ERROR: With AD4 scoring, autogrid maps must be provided instead of receptor PDBQT. (vina.cpp)\n";
 		exit(EXIT_FAILURE);
 	}
 
@@ -324,7 +325,7 @@ void Vina::compute_vina_maps(double center_x, double center_y, double center_z, 
 		// m_model
 		throw vina_runtime_error("Cannot compute Vina or Vinardo affinity maps. The (rigid) receptor was not initialized.");
 	} else if (size_x <= 0 || size_y <= 0 || size_z <= 0) {
-		throw vina_runtime_error("Grid box dimensions must be greater than 0 Angstrom");
+		throw vina_runtime_error("Grid box dimensions must be greater than 0 Angstrom.");
 	} else if (size_x * size_y * size_z > 27e3) {
 		std::cerr << "WARNING: Search space volume is greater than 27000 Angstrom^3 (See FAQ)\n";
 	}
@@ -628,6 +629,42 @@ void Vina::write_pose(const std::string& output_name, const std::string& remark)
 	m_model.write_structure(f, format_remark.str());
 }
 
+
+void Vina::write_optimized_pose(const std::string& output_name) {
+    std::ostringstream format_remark;
+    format_remark.setf(std::ios::fixed, std::ios::floatfield);
+    format_remark.setf(std::ios::showpoint);
+
+    // Compute optimized energy values for the current model conformation
+    std::vector<double> optimized_energies = score();
+
+    // Get the current conformation (instead of initial_conf)
+    conf current_conf = m_model.get_size();  // Retrieves current ligand conformation
+
+    // Create an `output_type` object with the updated model state
+    output_type updated_pose(current_conf, optimized_energies[0]);  // Total binding energy
+    updated_pose.total = optimized_energies[1] + optimized_energies[2];  // Total interaction energy
+    updated_pose.inter = optimized_energies[1];  // Intermolecular energy
+    updated_pose.intra = optimized_energies[2];  // Intramolecular energy
+    updated_pose.conf_independent = optimized_energies[6];  // Torsional energy
+    updated_pose.unbound = optimized_energies[7];  // Unbound energy
+
+    // Compute RMSD values 
+	// Create a temporary model for initial conformation
+	model initial_model = m_model;  // Copy current model
+	initial_model.set(m_model.get_initial_conf());  // Set it to the initial configuration
+	double lb = m_model.rmsd_lower_bound(initial_model);
+	double ub = m_model.rmsd_upper_bound(initial_model);
+
+    // Generate Vina remarks
+    std::string vina_remark = vina_remarks(updated_pose, lb, ub);
+    format_remark << vina_remark;
+
+    // Write to file
+    ofile f(make_path(output_name));
+    m_model.write_structure(f, format_remark.str());
+}
+
 void Vina::randomize(const int max_steps) {
 	// Randomize ligand/flex residues conformation
 	// Check the box was defined
@@ -870,7 +907,7 @@ void Vina::global_search(const int exhaustiveness, const int n_poses, const doub
 	} else if (!m_map_initialized) {
 		throw vina_runtime_error("Cannot do the global search. Affinity maps were not initialized.");
 	} else if (exhaustiveness < 1) {
-		throw vina_runtime_error("Exhaustiveness must be 1 or greater");
+		throw vina_runtime_error("Exhaustiveness must be 1 or greater.");
 	}
 
 	if (exhaustiveness < m_cpu) {

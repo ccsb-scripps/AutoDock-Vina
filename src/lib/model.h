@@ -48,6 +48,7 @@ struct ligand : public flexible_body, atom_range {
 	unsigned degrees_of_freedom; // can be different from the apparent number of rotatable bonds, because of the disabled torsions
 	interacting_pairs pairs;
 	context cont;
+	ligand() : flexible_body(rigid_body(vec(0, 0, 0), 0, 0)), atom_range(0, 0), degrees_of_freedom(0) {}
 	ligand(const flexible_body& f, unsigned degrees_of_freedom_) : flexible_body(f), atom_range(0, 0), degrees_of_freedom(degrees_of_freedom_) {}
 	void set_range();
 };
