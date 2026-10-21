@@ -778,7 +778,8 @@ fl eval_interacting_pairs(const precalculate_byatom& p, fl v, const interacting_
 		const interacting_pair& ip = pairs[i];
 		fl r2 = vec_distance_sqr(coords[ip.a], coords[ip.b]);
 		if(r2 < cutoff_sqr) {
-			fl tmp = p.eval_fast(ip.a, ip.b, r2);
+			fl tmp = with_max_cutoff ? p.eval_glue_fast(ip.a, ip.b, r2)
+			                         : p.eval_fast(ip.a, ip.b, r2);
 			curl(tmp, v);
 			e += tmp;
 		}
@@ -799,7 +800,8 @@ fl eval_interacting_pairs_deriv(const precalculate_byatom& p, fl v, const intera
 		vec r = coords[ip.b] - coords[ip.a]; // a -> b
 		fl r2 = sqr(r);
 		if(r2 < cutoff_sqr) {
-			pr tmp = p.eval_deriv(ip.a, ip.b, r2);
+			pr tmp = with_max_cutoff ? p.eval_glue_deriv(ip.a, ip.b, r2)
+			                         : p.eval_deriv(ip.a, ip.b, r2);
 			vec force; force = tmp.second * r;
 			curl(tmp.first, force, v);
 			e += tmp.first;

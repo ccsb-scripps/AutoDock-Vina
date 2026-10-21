@@ -128,6 +128,9 @@ public:
     virtual fl eval(const atom& a, const atom& b, fl r) { return 0; };
     virtual fl eval(sz t1, sz t2, fl r) { return 0; };
     virtual fl get_cutoff() { return 0; }
+    // True only for the macrocycle closure term, the one interaction whose
+    // range exceeds the regular scoring function cutoff.
+    virtual bool is_glue_term() const { return false; }
 };
 
 // Vina
@@ -512,6 +515,7 @@ public:
             return 0.0;
     };
     fl get_cutoff() { return cutoff; }
+    bool is_glue_term() const { return true; }
 private:
     fl cutoff;
 };

@@ -157,6 +157,15 @@ public:
     };
     sz get_num_atom_types() const { return num_atom_types(m_atom_typing); }
     flv get_weights() const { return m_weights; }
+    // Weight of the macrocycle closure term (0 if the scoring function has none).
+    // Used by precalculate_byatom to evaluate that term analytically past the
+    // regular cutoff, where it is the only surviving contribution.
+    fl get_glue_weight() const {
+        VINA_FOR(i, m_num_potentials)
+            if (m_potentials[i]->is_glue_term())
+                return m_weights[i];
+        return 0;
+    }
 
 private:
     std::vector<Potential*> m_potentials;

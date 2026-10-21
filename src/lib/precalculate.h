@@ -25,6 +25,7 @@
 
 #include "scoring_function.h"
 #include "matrix.h"
+#include <cmath>
 
 
 //Forward declaration
@@ -200,7 +201,12 @@ public:
         m_cutoff_sqr = sqr(sf.get_cutoff());
         // Smaller 8 A tables are safe only because macrocycle glue pairs (G0..G3) are the sole users of the 20 A range.
         m_max_cutoff_sqr = model.get_glue_pairs().empty() ? m_cutoff_sqr : sqr(sf.get_max_cutoff());
-        m_n = sz(m_factor * m_max_cutoff_sqr) + 3; // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
+        // The table only has to cover the regular cutoff: every pair, glue
+        // included, is looked up from it below that radius, and a glue pair
+        // holds nothing but linearattraction beyond it, which eval_glue_* 
+        // evaluate in closed form.
+        m_n = sz(m_factor * m_cutoff_sqr) + 3; // sz(factor * r^2) + 1 <= sz(factor * cutoff_sqr) + 2 <= n-1 < n  // see assert below
+        m_glue_weight = sf.get_glue_weight();
         // std::cout << "-- DEBUG -- sf.cutoff^2 in precalculate = " << m_cutoff_sqr << "\n";
         sz n_atoms = model.num_atoms();
         atomv atoms = model.get_atoms();
@@ -222,8 +228,8 @@ public:
         triangular_matrix<precalculate_element> data(types.size(), precalculate_element(m_n, m_factor));
 
         VINA_CHECK(m_factor > epsilon_fl);
-        VINA_CHECK(sz(m_max_cutoff_sqr * m_factor) + 1 < m_n); // cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
-        VINA_CHECK(m_max_cutoff_sqr * m_factor + 1 < m_n);
+        VINA_CHECK(sz(m_cutoff_sqr * m_factor) + 1 < m_n); // cutoff_sqr * factor is the largest float we may end up converting into sz, then 1 can be added to the result
+        VINA_CHECK(m_cutoff_sqr * m_factor + 1 < m_n);
 
         flv rs = calculate_rs();
 
@@ -245,12 +251,33 @@ public:
         m_data = data;
     };
     fl eval_fast(sz i, sz j, fl r2) const{
-        assert(r2 <= m_max_cutoff_sqr);
+        assert(r2 <= m_cutoff_sqr);
         return m_data(index_permissive(i, j)).eval_fast(r2);
     };
     pr eval_deriv(sz i, sz j, fl r2) const{
-        assert(r2 <= m_max_cutoff_sqr);
+        assert(r2 <= m_cutoff_sqr);
         return m_data(index_permissive(i, j)).eval_deriv(r2);
+    };
+    // Glue pairs are the only ones reaching past the regular cutoff.  Below it
+    // the table already holds every contribution.  Above it the table stops, 
+    // and linearattraction is all that is left, so evaluate it directly.
+    fl eval_glue_fast(sz i, sz j, fl r2) const{
+        if (r2 <= m_cutoff_sqr)
+            return m_data(index_permissive(i, j)).eval_fast(r2);
+        assert(r2 <= m_max_cutoff_sqr);
+        assert(m_glue_weight != 0);
+        return m_glue_weight * std::sqrt(r2);
+    };
+    pr eval_glue_deriv(sz i, sz j, fl r2) const{
+        if (r2 <= m_cutoff_sqr)
+            return m_data(index_permissive(i, j)).eval_deriv(r2);
+        assert(r2 <= m_max_cutoff_sqr);
+        assert(m_glue_weight != 0);
+        // dor stores (dE/dr)/r, not dE/dr: callers build force = dor * r_vec
+        // with |r_vec| = r (model.cpp), so |force| comes out as dE/dr only if
+        // the /r is folded in here.
+        fl r = std::sqrt(r2);
+        return pr(m_glue_weight * r, m_glue_weight / r);
     };
     sz index_permissive(sz i, sz j) const { return m_data.index_permissive(m_type[i], m_type[j]); }
     fl cutoff_sqr() const { return m_cutoff_sqr; }
@@ -277,6 +304,7 @@ private:
 
     szv m_type; // atom index -> index of its distinct type in m_data
     triangular_matrix<precalculate_element> m_data;
+    fl m_glue_weight = 0; // weight of the closure term, for the r > cutoff branch
 };
 
 #endif
