@@ -52,11 +52,15 @@ public:
                 m_potentials.push_back(new vina_repulsion(0.0, 8.0));
                 m_potentials.push_back(new vina_hydrophobic(0.5, 1.5, 8.0));
                 m_potentials.push_back(new vina_non_dir_h_bond(-0.7, 0, 8.0));
-                m_potentials.push_back(new linearattraction(20.0));
+                // Glue range.  Raised 20 -> 100 A: a macrocycle that opens beyond
+                // 20 A used to lose the closure restraint entirely, which let the
+                // ring drift free instead of closing. This costs no table memory 
+                // (precalculate_byatom stays sized to the 8 A cutoff).
+                m_potentials.push_back(new linearattraction(100.0));
                 m_conf_independents.push_back(new num_tors_div());
                 m_atom_typing = atom_type::XS;
                 m_cutoff = 8.0;
-                m_max_cutoff = 20.0;
+                m_max_cutoff = 100.0;
                 break;
             }
             case SF_VINARDO:
@@ -65,11 +69,12 @@ public:
                 m_potentials.push_back(new vinardo_repulsion(0, 8.0));
                 m_potentials.push_back(new vinardo_hydrophobic(0, 2.5, 8.0));
                 m_potentials.push_back(new vinardo_non_dir_h_bond(-0.6, 0, 8.0));
-                m_potentials.push_back(new linearattraction(20.0));
+                // Glue range: 20 -> 100 A, see the note in the SF_VINA branch.
+                m_potentials.push_back(new linearattraction(100.0));
                 m_conf_independents.push_back(new num_tors_div());
                 m_atom_typing = atom_type::XS;
                 m_cutoff = 8.0;
-                m_max_cutoff = 20.0;
+                m_max_cutoff = 100.0;
                 break;
             }
             case SF_AD42:
